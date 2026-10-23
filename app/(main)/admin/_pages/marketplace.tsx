@@ -725,7 +725,7 @@ function ExtensionCard({
           <Badge
             tone="warning"
             icon={<AlertTriangle className="w-3 h-3" />}
-            title={`No published version runs on Bulwark v${CURRENT_APP_VERSION}. Open the details to see what the newest version needs.`}
+            title={`No published version runs on Loomix v${CURRENT_APP_VERSION}. Open the details to see what the newest version needs.`}
           >
             Not for v{CURRENT_APP_VERSION}
           </Badge>

@@ -153,7 +153,7 @@ export function PluginsPage() {
     <div>
       <AdminPageHeader
         title="Plugins"
-        description="Plugins installed for every user of this Bulwark. Open one to configure it."
+        description="Plugins installed for every user of this Loomix. Open one to configure it."
         actions={(
           <>
             <AdminButtonLink href={adminPath('marketplace')}>

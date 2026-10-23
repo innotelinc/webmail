@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.17.1-loomix (2026-10-23)
+
+Loomix Mail 1.17.1. The upstream security release is merged: Next.js 16.4.2 and
+DOMPurify 3.4.17 close six published advisories, three critical. The Loomix
+branding, artwork and admin copy are carried forward unchanged, and the admin
+pages follow upstream's move from `_tabs/` to `_pages/`.
+
 ## 1.17.2 (unreleased)
 
 ### Security

@@ -150,7 +150,7 @@ export function TelemetryPage() {
 
       <div className="space-y-10">
         <ConfigNote>
-          Bulwark can send one anonymous heartbeat per day so we can see how many instances are
+          Loomix can send one anonymous heartbeat per day so we can see how many instances are
           running, on what platforms, and which features they use. It&apos;s <strong>off by
           default</strong>; one click below enables it and helps us make the product better. No
           email addresses, no hostnames, no IPs are sent.{' '}

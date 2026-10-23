@@ -50,7 +50,7 @@ const FEATURE_GATE_LABELS: Partial<Record<keyof FeatureGates, { label: string; d
   accountArchiveEnabled: { label: 'Account List Backup', description: 'Let users save their list of accounts (address, server, label, colour) on this server, encrypted in the browser with a password of their choice, and restore it on another device. Mailbox passwords are stored only when the Passwords option below is on. Archives live in SETTINGS_DATA_DIR/account-archives; requires SESSION_SECRET.' },
   accountArchivePasswordsEnabled: { label: 'Account List Backup: Passwords', description: 'With Account List Backup on, offer to include the mailbox passwords of accounts signed in with a password, so a restore signs in to them by itself. They are encrypted in the browser with the backup password together with the list; the server never sees them in clear, but anyone who learns the backup password gets every mailbox in it. Accounts signed in with OAuth or a TOTP code are saved without.' },
   customFromEnabled: { label: 'Custom From Address', description: 'Let users type any sender address in the composer instead of picking one of their identities, and let replies to a catch-all address on their domain send from that address. Turn this off when users may only send as their configured identities.' },
-  archiveActionEnabled: { label: 'Archive Action', description: 'Offer "Archive" on messages: the toolbar button, the context menu and selection bar, the hover and swipe actions, the E shortcut and archiving after an export. Turn this off when mail is archived elsewhere, for example by a mail gateway; existing Archive folders stay as ordinary folders and Bulwark no longer creates one.' },
+  archiveActionEnabled: { label: 'Archive Action', description: 'Offer "Archive" on messages: the toolbar button, the context menu and selection bar, the hover and swipe actions, the E shortcut and archiving after an export. Turn this off when mail is archived elsewhere, for example by a mail gateway; existing Archive folders stay as ordinary folders and Loomix no longer creates one.' },
 };
 
 const RESTRICTABLE_SETTINGS = [
@@ -322,7 +322,7 @@ export function PolicyPage() {
           <SettingsSection
             id="push-relays"
             title="Push relays"
-            description="Relays users can pick from in notification settings. The built-in Bulwark relay is always offered; add your own here. Users choose from this list - they cannot enter a URL."
+            description="Relays users can pick from in notification settings. The built-in Loomix relay is always offered; add your own here. Users choose from this list - they cannot enter a URL."
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
@@ -341,7 +341,7 @@ export function PolicyPage() {
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-foreground">Bulwark relay</span>
+                    <span className="text-sm text-foreground">Loomix relay</span>
                     <Badge>built-in</Badge>
                   </div>
                   <p className="mt-0.5 truncate text-xs text-muted-foreground">{DEFAULT_RELAY_BASE_URL}</p>

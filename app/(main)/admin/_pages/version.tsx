@@ -186,7 +186,7 @@ export function VersionPage() {
         <SettingsSection
           id="source"
           title="Source"
-          description="Hourly check against the Bulwark version server. Severity is decided server-side and disable with BULWARK_UPDATE_CHECK=off."
+          description="Hourly check against the Loomix version server. Severity is decided server-side and disable with BULWARK_UPDATE_CHECK=off."
         >
           <SettingItem
             label="Endpoint"

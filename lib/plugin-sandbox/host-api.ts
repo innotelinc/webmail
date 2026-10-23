@@ -1007,7 +1007,7 @@ async function doCreatePRF(
     const credential = await navigator.credentials.create({
       publicKey: {
         challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp: { name: "Bulwark Webmail", id: rpId },
+        rp: { name: "Loomix Mail", id: rpId },
         user: {
           id: crypto.getRandomValues(new Uint8Array(16)),
           name: name,

@@ -59,7 +59,7 @@ export const ADMIN_PAGES: readonly AdminPageDef[] = [
   {
     id: 'dashboard',
     label: 'Overview',
-    description: 'What this Bulwark is running and what needs attention',
+    description: 'What this Loomix is running and what needs attention',
     group: 'top',
     keywords: 'dashboard home status warnings accounts activity recent',
     sections: [],
@@ -67,7 +67,7 @@ export const ADMIN_PAGES: readonly AdminPageDef[] = [
   {
     id: 'settings',
     label: 'Server',
-    description: 'How this Bulwark connects and what the login page offers',
+    description: 'How this Loomix connects and what the login page offers',
     group: 'top',
     keywords: 'settings application name jmap server url demo mode stalwart features search engine indexing',
     sections: [
