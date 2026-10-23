@@ -4,6 +4,11 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# The webpack build peaks above Node's default heap on a small builder, where the
+# kernel kills it instead of letting V8 collect. Dispatch passes a cap sized to
+# the builder; empty keeps Node's default.
+ARG NODE_OPTIONS=
+ENV NODE_OPTIONS=$NODE_OPTIONS
 # Optional: serve under a subpath like /webmail. Baked into emitted asset URLs
 # at build time, so it cannot be changed without rebuilding.
 ARG NEXT_PUBLIC_BASE_PATH=
