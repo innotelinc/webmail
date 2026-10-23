@@ -37,7 +37,7 @@ FROM node:24-alpine AS runner
 LABEL org.opencontainers.image.title="Loomix Mail"
 LABEL org.opencontainers.image.description="Loomix Mail — email, calendars, contacts and files for Stalwart Mail Server"
 LABEL org.opencontainers.image.source="https://github.com/innotelinc/webmail"
-LABEL org.opencontainers.image.url="https://oasis.innotel.us"
+LABEL org.opencontainers.image.url="https://loomix.art"
 LABEL org.opencontainers.image.licenses="AGPL-3.0-only"
 LABEL org.opencontainers.image.vendor="Innotel"
 
