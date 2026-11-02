@@ -29,6 +29,23 @@ export function refreshTokenServerCookieName(slot: number): string {
 }
 
 /**
+ * Path the cached access token is scoped to.
+ *
+ * Only `/api/auth/token` reads it: the cookie is httpOnly, so no client code
+ * can, and no other route touches it. Stored at `Path=/` it rode every page
+ * load, every RSC fetch and every asset request instead - one multi-kilobyte
+ * JWT per signed-in account, on every request. That is what pushed a
+ * multi-account browser's Cookie header into the edge's buffer limit and into
+ * Node's 16 KiB request-header cap, so the whole jar had to be given room it
+ * should never have needed. Scoping it to the one route that reads it takes it
+ * out of the request path entirely, the way the id token already is; the
+ * cookie still expires with the token it caches.
+ */
+export function accessTokenCookiePath(basePath?: string): string {
+  return `${basePath ?? ''}/api/auth/token`;
+}
+
+/**
  * Cookie caching the *current* access token for a slot, so a page reload can
  * resume with the token it already had instead of burning a refresh.
  */

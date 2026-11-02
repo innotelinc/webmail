@@ -5,6 +5,7 @@ import {
   refreshTokenCookieName,
   refreshTokenServerCookieName,
   accessTokenCookieName,
+  accessTokenCookiePath,
   encodeCachedAccessToken,
   decodeCachedAccessToken,
 } from '@/lib/oauth/tokens';
@@ -14,6 +15,7 @@ import {
   getMetadata,
   getRequiredConfig,
   getTokenEndpoint,
+  defaultClientOptions,
   DEFAULT_CLIENT_ID,
 } from '@/lib/oauth/token-exchange';
 import type { OAuthMetadata } from '@/lib/oauth/discovery';
@@ -50,7 +52,7 @@ async function revokeRefreshToken(token: string, serverId: string | null, metada
   const params = buildOAuthParams({
     token,
     token_type_hint: 'refresh_token',
-  }, serverId, { fallbackClientId: DEFAULT_CLIENT_ID });
+  }, serverId, await defaultClientOptions(serverId).catch(() => ({ fallbackClientId: DEFAULT_CLIENT_ID })));
 
   try {
     // Never follow a redirect with the refresh token and client secret in
@@ -113,15 +115,18 @@ function cacheAccessToken(
   accessToken: string,
   expiresIn: number,
   otherCookieValues: ReadonlyArray<string | null | undefined>,
+  basePath: string | undefined,
 ): string | null {
   const name = accessTokenCookieName(slot);
+  const path = accessTokenCookiePath(basePath);
   const value = encodeCachedAccessToken(accessToken, expiresIn);
   if (!value || !fitsSetCookieBudget([...otherCookieValues, value])) {
-    // Drop any stale entry rather than leaving a mismatch.
-    if (cookieStore.get(name)) cookieStore.delete(name);
+    // Drop any stale entry rather than leaving a mismatch. The cookie is
+    // path-scoped, so a bare delete (which targets `/`) would not reach it.
+    if (cookieStore.get(name)) cookieStore.delete({ name, path });
     return null;
   }
-  cookieStore.set(name, value, { ...getCookieOptions(), maxAge: expiresIn });
+  cookieStore.set(name, value, { ...getCookieOptions(), maxAge: expiresIn, path });
   return value;
 }
 
@@ -152,7 +157,7 @@ export async function POST(request: NextRequest) {
       const cookieName = refreshTokenCookieName(slot);
       cookieStore.set(cookieName, tokens.refresh_token, getCookieOptions());
     }
-    const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, tokens.expires_in || 3600, [tokens.refresh_token, serverId]);
+    const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, tokens.expires_in || 3600, [tokens.refresh_token, serverId], request.nextUrl.basePath);
     storeIdToken(cookieStore, slot, tokens.id_token, request.nextUrl.basePath, [tokens.refresh_token, cachedAccessToken, serverId]);
     // Persist which server entry minted this refresh token so the PUT/DELETE
     // handlers can route the refresh/revocation calls to the right token
@@ -184,7 +189,7 @@ export async function PUT(request: NextRequest) {
     const serverId = cookieStore.get(refreshTokenServerCookieName(slot))?.value || null;
 
     if (!refreshToken) {
-      cookieStore.delete(accessTokenCookieName(slot));
+      cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(request.nextUrl.basePath) });
       return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
     }
 
@@ -215,7 +220,7 @@ export async function PUT(request: NextRequest) {
     const params = buildOAuthParams({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
-    }, serverId, { fallbackClientId: DEFAULT_CLIENT_ID });
+    }, serverId, await defaultClientOptions(serverId));
 
     const tokenResponse = await fetch(tokenEndpoint, {
       method: 'POST',
@@ -235,7 +240,7 @@ export async function PUT(request: NextRequest) {
       if (status === 400 || status === 401 || status === 403) {
         cookieStore.delete(cookieName);
         cookieStore.delete(refreshTokenServerCookieName(slot));
-        cookieStore.delete(accessTokenCookieName(slot));
+        cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(request.nextUrl.basePath) });
         clearIdToken(cookieStore, slot, request.nextUrl.basePath);
         return NextResponse.json({ error: 'Refresh failed' }, { status: 401 });
       }
@@ -254,7 +259,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const expiresIn = tokens.expires_in || 3600;
-    const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, expiresIn, [tokens.refresh_token]);
+    const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, expiresIn, [tokens.refresh_token], request.nextUrl.basePath);
     // Providers may reissue the id token on refresh. Only a slot signed in
     // through the provider keeps one; a password login's slot gains none here.
     if (typeof tokens.id_token === 'string' && cookieStore.get(idTokenCookieName(slot))) {
@@ -303,8 +308,13 @@ async function signOutSlot(
   // to resume a session the user ended. Only cookies the browser sent are
   // cleared - signing out of every slot would otherwise answer with a
   // Set-Cookie header per slot and cookie, too large for some proxies.
-  for (const name of [cookieName, refreshTokenServerCookieName(slot), accessTokenCookieName(slot)]) {
+  for (const name of [cookieName, refreshTokenServerCookieName(slot)]) {
     if (cookieStore.get(name)) cookieStore.delete(name);
+  }
+  // The access-token cache lives on its own path, so it needs the matching one
+  // to clear.
+  if (cookieStore.get(accessTokenCookieName(slot))) {
+    cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(basePath) });
   }
   if (idToken !== undefined) clearIdToken(cookieStore, slot, basePath);
   return endSessionUrl;
