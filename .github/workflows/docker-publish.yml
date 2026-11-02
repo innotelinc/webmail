@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image_name: ${{ steps.set.outputs.image_name }}
+      release_image_name: ${{ steps.set.outputs.release_image_name }}
     steps:
       - name: Set image name
         id: set
@@ -40,6 +41,9 @@ jobs:
         run: |
           if [ "$REF_NAME" = "main" ]; then
             echo "image_name=ghcr.io/${REPOSITORY}-beta" >> "$GITHUB_OUTPUT"
+            # main is the deployment line: the same manifest is mirrored under
+            # the release image name, so a green main build is what hosts pull.
+            echo "release_image_name=ghcr.io/${REPOSITORY}" >> "$GITHUB_OUTPUT"
           else
             echo "image_name=ghcr.io/${REPOSITORY}-${REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
@@ -150,6 +154,29 @@ jobs:
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ needs.prepare.outputs.image_name }}@sha256:%s ' *)
 
+      # Promote the manifest just pushed to the release image name, so a host
+      # running `ghcr.io/<repo>:sha-<commit>` gets exactly what main built.
+      # Previously main only ever produced `-beta`, and the deployment had to be
+      # rebuilt by dispatching this workflow on a pinned release branch - which
+      # is how the host ended up on a package name nothing else published to.
+      - name: Mirror to the release image name
+        if: needs.prepare.outputs.release_image_name != ''
+        working-directory: /tmp/digests
+        run: |
+          docker buildx imagetools create \
+            -t "${{ needs.prepare.outputs.release_image_name }}:latest" \
+            -t "${{ needs.prepare.outputs.release_image_name }}:sha-${GITHUB_SHA::7}" \
+            $(printf '${{ needs.prepare.outputs.image_name }}@sha256:%s ' *)
+
+      - name: Inspect the release image
+        id: release
+        if: needs.prepare.outputs.release_image_name != ''
+        run: |
+          ref="${{ needs.prepare.outputs.release_image_name }}:sha-${GITHUB_SHA::7}"
+          docker buildx imagetools inspect "$ref"
+          digest=$(docker buildx imagetools inspect "$ref" --format '{{json .Manifest}}' | jq -r .digest)
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
       - name: Inspect image
         id: inspect
         run: |
@@ -164,5 +191,14 @@ jobs:
         with:
           subject-name: ${{ needs.prepare.outputs.image_name }}
           subject-digest: ${{ steps.inspect.outputs.digest }}
+          push-to-registry: true
+          create-storage-record: false
+
+      - name: Attest the release image
+        if: needs.prepare.outputs.release_image_name != ''
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ needs.prepare.outputs.release_image_name }}
+          subject-digest: ${{ steps.release.outputs.digest }}
           push-to-registry: true
           create-storage-record: false
