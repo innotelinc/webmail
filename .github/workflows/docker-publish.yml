@@ -43,7 +43,13 @@ jobs:
             echo "image_name=ghcr.io/${REPOSITORY}-beta" >> "$GITHUB_OUTPUT"
             # main is the deployment line: the same manifest is mirrored under
             # the release image name, so a green main build is what hosts pull.
-            echo "release_image_name=ghcr.io/${REPOSITORY}" >> "$GITHUB_OUTPUT"
+            #
+            # Not the bare repository name: `ghcr.io/innotelinc/webmail` already
+            # exists from before this repository was linked to it, and the
+            # workflow token is refused there (denied: permission_denied:
+            # read_package). A `-release` package is created and owned by this
+            # repository, so the mirror is allowed.
+            echo "release_image_name=ghcr.io/${REPOSITORY}-release" >> "$GITHUB_OUTPUT"
           else
             echo "image_name=ghcr.io/${REPOSITORY}-${REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
