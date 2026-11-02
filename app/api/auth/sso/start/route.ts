@@ -14,7 +14,13 @@ import { rejectCrossOriginRequest } from '@/lib/security/same-origin';
 import { mobileHandoffTarget } from '@/lib/auth/mobile-handoff';
 
 const SSO_PENDING_COOKIE = 'sso_pending';
-const SSO_PENDING_MAX_AGE = 300; // 5 minutes
+// 15 minutes, not 5: the window has to cover the whole IdP round trip,
+// including a first-time password entry, an MFA prompt and a slow mailbox
+// confirmation. At 5 minutes a user who pauses at the login screen comes
+// back to /auth/callback after the cookie has already been dropped by the
+// browser, and the completion handler can only answer "no pending SSO
+// session" - a dead end that looks like a broken provider.
+const SSO_PENDING_MAX_AGE = 900;
 
 // Only the mobile app's own callback link may flow through the mobile
 // handoff path (lib/auth/mobile-handoff.ts); without the guard the SSO
@@ -75,6 +81,17 @@ export async function POST(request: NextRequest) {
 
     const cookieStore = await cookies();
 
+    // The account slot is fixed here, while the flow starts, rather than being
+    // asked for again when the code comes back. At completion the browser no
+    // longer knows which slot this login is for: two sign-ins finishing close
+    // together were both handed "the next free slot", wrote their refresh
+    // tokens to the same cookie, and the account that lost the race could not
+    // be opened again - the reason a second account never stuck.
+    const requestedSlot =
+      typeof rawSlot === 'number' && Number.isInteger(rawSlot) && rawSlot >= 0 && rawSlot < MAX_ACCOUNT_SLOTS
+        ? rawSlot
+        : null;
+
     // A re-auth must hit the IdP of the account being paired. The client
     // doesn't know that account's server id, so read it from the slot's
     // server cookie like pair/create does. Without it, deployments that only
@@ -120,6 +137,7 @@ export async function POST(request: NextRequest) {
       code_verifier: codeVerifier,
       redirect_uri,
       created_at: Date.now(),
+      ...(requestedSlot !== null ? { slot: requestedSlot } : {}),
       ...(serverId ? { server_id: serverId } : {}),
       ...(mobileRedirectUri ? { mobile_redirect_uri: mobileRedirectUri } : {}),
       ...(mobileState ? { mobile_state: mobileState } : {}),

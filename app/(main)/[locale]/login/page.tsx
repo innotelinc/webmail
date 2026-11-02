@@ -505,6 +505,10 @@ function LoginPageContent() {
         body: JSON.stringify({
           redirect_uri: redirectUri,
           locale: params.locale,
+          // Fixed now, so /sso/complete writes this login's tokens to its own
+          // slot even if another account is signed in while the IdP round trip
+          // is still open.
+          slot: useAccountStore.getState().getNextCookieSlot(),
           server_id: selectedServer?.id,
           ...(isMobileHandoff
             ? { mobile_redirect_uri: mobileRedirectUri, mobile_state: mobileState }

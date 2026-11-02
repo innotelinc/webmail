@@ -16,7 +16,7 @@ import { rejectCrossOriginRequest } from '@/lib/security/same-origin';
 import { MAX_ACCOUNT_SLOTS } from '@/lib/account-utils';
 
 const SSO_PENDING_COOKIE = 'sso_pending';
-const SSO_PENDING_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+const SSO_PENDING_MAX_AGE_MS = 15 * 60 * 1000; // 15 minutes, matches /sso/start
 
 /**
  * The webmail's public base (origin + mount path) from the callback URL the
@@ -51,7 +51,10 @@ export async function POST(request: NextRequest) {
     // refresh-token cookie. Default to 0 for back-compat with any caller that
     // omits slot. Mirrors the validation in /api/auth/token POST: slots run
     // up to MAX_ACCOUNT_SLOTS, so a sixth account must not land on slot 0.
-    const slot = typeof bodySlot === 'number' && Number.isInteger(bodySlot)
+    // Provisional: the pending cookie's slot (decided at /sso/start) wins once
+    // it is decrypted below. The body's slot stays as the fallback for a flow
+    // that began before the slot was recorded.
+    let slot = typeof bodySlot === 'number' && Number.isInteger(bodySlot)
       && bodySlot >= 0 && bodySlot < MAX_ACCOUNT_SLOTS ? bodySlot : 0;
 
     // Read and decrypt the pending SSO cookie
@@ -88,6 +91,15 @@ export async function POST(request: NextRequest) {
       logger.warn('SSO complete: refused a pairing re-auth session');
       cookieStore.delete(SSO_PENDING_COOKIE);
       return NextResponse.json({ error: 'Not a login session' }, { status: 400 });
+    }
+
+    // The slot recorded when this flow started. Honouring it here is what makes
+    // a second account keep its own refresh-token cookie: "next free slot" was
+    // computed at completion time, so two logins returning at once picked the
+    // same slot and the loser's account was unusable afterwards.
+    if (typeof pending.slot === 'number' && Number.isInteger(pending.slot)
+      && pending.slot >= 0 && pending.slot < MAX_ACCOUNT_SLOTS) {
+      slot = pending.slot;
     }
 
     const codeVerifier = pending.code_verifier as string;

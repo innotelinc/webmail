@@ -35,6 +35,33 @@ function OAuthCallbackInner() {
     const state = searchParams.get("state");
     const errorParam = searchParams.get("error");
 
+    // The authorization code is single-use, and this page can run more than once
+    // for the same code: a second tab on the callback URL, a bfcache restore, or
+    // a re-render while the first exchange is still in flight. Every extra
+    // attempt spends a code that is already gone, and the provider answers
+    // `invalid_grant` - which the user sees as "Failed to complete
+    // authentication" on a sign-in that would otherwise have succeeded. Claim
+    // the code once per browser profile, not once per page instance.
+    try {
+      if (code) {
+        const claim = `oauth_code_claimed:${code}`;
+        if (localStorage.getItem(claim)) {
+          handledRef.current = true;
+          router.replace(toRouterPath(`${getPathPrefix(params.locale as string)}/${params.locale}/login`));
+          return;
+        }
+        localStorage.setItem(claim, String(Date.now()));
+        // Claims are only useful for the few minutes an exchange can take; drop
+        // the stale ones so a long-lived profile does not accumulate them.
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (!key || !key.startsWith("oauth_code_claimed:")) continue;
+          const at = Number(localStorage.getItem(key));
+          if (!Number.isFinite(at) || Date.now() - at > 10 * 60 * 1000) localStorage.removeItem(key);
+        }
+      }
+    } catch { /* localStorage may be unavailable */ }
+
     if (errorParam) {
       setError(errorParam === "access_denied" ? "access_denied" : "token_exchange_failed");
       return;
@@ -206,6 +233,13 @@ function OAuthCallbackInner() {
       }
 
       const ssoPrefix = getPathPrefix(params.locale as string);
+      const backToLogin = () => {
+        // A spent code, an expired pending cookie or a provider refusal all end
+        // here. The old behaviour parked the user on a dead end whose only
+        // button was this same page, so the only way forward was to work out
+        // that the sign-in had to be restarted by hand. Send them to it.
+        router.replace(toRouterPath(`${ssoPrefix}/${params.locale}/login`));
+      };
       loginWithServerSso(code, state)
         .then((success) => {
           if (success) {
@@ -219,11 +253,11 @@ function OAuthCallbackInner() {
             } catch { /* sessionStorage may be unavailable */ }
             router.push(toRouterPath(redirectTo));
           } else {
-            setError("token_exchange_failed");
+            backToLogin();
           }
         })
         .catch(() => {
-          setError("token_exchange_failed");
+          backToLogin();
         });
     } else {
       setError("invalid_state");
