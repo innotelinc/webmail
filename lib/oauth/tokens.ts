@@ -29,6 +29,21 @@ export function refreshTokenServerCookieName(slot: number): string {
 }
 
 /**
+ * Path the session cookies are scoped to.
+ *
+ * The refresh token and the server id that minted it are read only by routes
+ * under `/api` (token refresh, SSO completion, the TOTP exchange, the step-up
+ * re-auth). At `Path=/` they rode every page load, RSC fetch and asset request
+ * as well - a few hundred bytes per signed-in account, every time, for routes
+ * that never look at them. Scoping them to `/api` keeps the document path
+ * completely free of this app's session cookies, so adding accounts no longer
+ * grows the header on the requests a browser makes most.
+ */
+export function sessionCookiePath(basePath?: string): string {
+  return `${basePath ?? ''}/api`;
+}
+
+/**
  * Path the cached access token is scoped to.
  *
  * Only `/api/auth/token` reads it: the cookie is httpOnly, so no client code

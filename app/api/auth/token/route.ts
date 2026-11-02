@@ -6,6 +6,7 @@ import {
   refreshTokenServerCookieName,
   accessTokenCookieName,
   accessTokenCookiePath,
+  sessionCookiePath,
   encodeCachedAccessToken,
   decodeCachedAccessToken,
 } from '@/lib/oauth/tokens';
@@ -153,9 +154,10 @@ export async function POST(request: NextRequest) {
     });
 
     const cookieStore = await cookies();
+    const sessionPath = sessionCookiePath(request.nextUrl.basePath);
     if (tokens.refresh_token) {
       const cookieName = refreshTokenCookieName(slot);
-      cookieStore.set(cookieName, tokens.refresh_token, getCookieOptions());
+      cookieStore.set(cookieName, tokens.refresh_token, { ...getCookieOptions(), path: sessionPath });
     }
     const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, tokens.expires_in || 3600, [tokens.refresh_token, serverId], request.nextUrl.basePath);
     storeIdToken(cookieStore, slot, tokens.id_token, request.nextUrl.basePath, [tokens.refresh_token, cachedAccessToken, serverId]);
@@ -164,9 +166,9 @@ export async function POST(request: NextRequest) {
     // endpoint without the client having to track it across page loads.
     const serverCookieName = refreshTokenServerCookieName(slot);
     if (serverId) {
-      cookieStore.set(serverCookieName, serverId, getCookieOptions());
+      cookieStore.set(serverCookieName, serverId, { ...getCookieOptions(), path: sessionPath });
     } else if (cookieStore.get(serverCookieName)) {
-      cookieStore.delete(serverCookieName);
+      cookieStore.delete({ name: serverCookieName, path: sessionPath });
     }
 
     return response;
@@ -238,8 +240,8 @@ export async function PUT(request: NextRequest) {
       // the cookie lets the session resume once the server is back.
       const status = tokenResponse.status;
       if (status === 400 || status === 401 || status === 403) {
-        cookieStore.delete(cookieName);
-        cookieStore.delete(refreshTokenServerCookieName(slot));
+        cookieStore.delete({ name: cookieName, path: sessionCookiePath(request.nextUrl.basePath) });
+        cookieStore.delete({ name: refreshTokenServerCookieName(slot), path: sessionCookiePath(request.nextUrl.basePath) });
         cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(request.nextUrl.basePath) });
         clearIdToken(cookieStore, slot, request.nextUrl.basePath);
         return NextResponse.json({ error: 'Refresh failed' }, { status: 401 });
@@ -255,7 +257,7 @@ export async function PUT(request: NextRequest) {
     }
 
     if (tokens.refresh_token) {
-      cookieStore.set(cookieName, tokens.refresh_token, getCookieOptions());
+      cookieStore.set(cookieName, tokens.refresh_token, { ...getCookieOptions(), path: sessionCookiePath(request.nextUrl.basePath) });
     }
 
     const expiresIn = tokens.expires_in || 3600;
@@ -309,7 +311,7 @@ async function signOutSlot(
   // cleared - signing out of every slot would otherwise answer with a
   // Set-Cookie header per slot and cookie, too large for some proxies.
   for (const name of [cookieName, refreshTokenServerCookieName(slot)]) {
-    if (cookieStore.get(name)) cookieStore.delete(name);
+    if (cookieStore.get(name)) cookieStore.delete({ name, path: sessionCookiePath(basePath) });
   }
   // The access-token cache lives on its own path, so it needs the matching one
   // to clear.
