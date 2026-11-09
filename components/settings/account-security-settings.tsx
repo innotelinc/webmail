@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useId, useRef } from 'react';
+import { useState, useEffect, useCallback, useId, useRef } from 'react';
+import { IS_DESKTOP_BUILD } from '@/lib/desktop/flag';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
 import * as OTPAuth from 'otpauth';
-import { Shield, Key, Smartphone, Lock, Trash2, Plus, Eye, EyeOff, Copy, Check, CheckCircle, Loader2, Monitor, Terminal, QrCode, Unlock, RefreshCw } from '@/components/icons';
+import { Shield, Key, Smartphone, Lock, Trash2, Plus, Eye, EyeOff, Copy, Check, CheckCircle, Loader2, Terminal, ChevronDown, QrCode, Unlock, RefreshCw } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SettingsSection, SettingItem, ToggleSwitch, AdvancedOnly } from './settings-section';
@@ -17,11 +18,25 @@ import { toast } from '@/stores/toast-store';
 import { cn } from '@/lib/utils';
 import { sanitizeI18nHtml } from '@/lib/email-sanitization';
 import { IS_LITE } from '@/lib/lite';
+import { isPasswordSession } from '@/lib/auth/password-session';
 import { useConfig } from '@/hooks/use-config';
 import { totpIssuer } from '@/lib/totp-issuer';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { TermInfo } from '@/components/ui/term';
+import { IconButton } from '@/components/ui/icon-button';
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
+import { MailAppsSetup } from './mail-apps-setup';
+
+/** Ids that tie a visible label to its field: labelFor("key"). */
+function useLabelIds() {
+  const base = useId();
+  return (key: string) => `${base}-${key}`;
+}
 
 function PasswordChangeSection() {
   const t = useTranslations('settings.security');
+  const labelFor = useLabelIds();
+  const tLogin = useTranslations('login');
   const { changePassword, isSaving, otpEnabled } = useAccountSecurityStore();
   const [currentPassword, setCurrentPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -50,6 +65,13 @@ function PasswordChangeSection() {
       setOtpCode('');
       setNewPassword('');
       setConfirmPassword('');
+      // Stalwart revokes the account's tokens with the old password, refresh
+      // token included, so a password plus TOTP session ends here (#1432).
+      if (useAuthStore.getState().authMode !== 'basic') {
+        toast.success(t('password.success'), t('password.sign_in_again'));
+        void useAuthStore.getState().logout({ endProviderSession: false });
+        return;
+      }
       toast.success(t('password.success'));
     } catch (err) {
       const msg = err instanceof Error ? err.message : t('password.error_generic');
@@ -62,13 +84,14 @@ function PasswordChangeSection() {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Key className="w-4 h-4 text-muted-foreground" />
-        <h4 className="text-sm font-medium text-foreground">{t('password.title')}</h4>
+        <h4 data-search-label={t('password.title')} className="text-sm font-medium text-foreground">{t('password.title')}</h4>
       </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="text-xs text-muted-foreground mb-1 block">{t('password.current')}</label>
+          <label htmlFor={labelFor("current")} className="text-xs text-muted-foreground mb-1 block">{t('password.current')}</label>
           <div className="relative">
             <Input
+              id={labelFor("current")}
               type={showCurrent ? 'text' : 'password'}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
@@ -76,19 +99,21 @@ function PasswordChangeSection() {
               autoComplete="current-password"
               className="pe-10"
             />
-            <button
-              type="button"
+            <IconButton
+              label={showCurrent ? tLogin('hide_password') : tLogin('show_password')}
+              aria-pressed={showCurrent}
               onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute end-1 top-1/2 -translate-y-1/2 text-muted-foreground"
             >
-              {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
+              {showCurrent ? <EyeOff /> : <Eye />}
+            </IconButton>
           </div>
         </div>
         {otpEnabled && (
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{t('totp.verification_code')}</label>
+            <label htmlFor={labelFor("verification_code")} className="text-xs text-muted-foreground mb-1 block">{t('totp.verification_code')}</label>
             <Input
+              id={labelFor("verification_code")}
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value)}
               required
@@ -99,9 +124,10 @@ function PasswordChangeSection() {
           </div>
         )}
         <div>
-          <label className="text-xs text-muted-foreground mb-1 block">{t('password.new')}</label>
+          <label htmlFor={labelFor("new")} className="text-xs text-muted-foreground mb-1 block">{t('password.new')}</label>
           <div className="relative">
             <Input
+              id={labelFor("new")}
               type={showNew ? 'text' : 'password'}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -110,18 +136,20 @@ function PasswordChangeSection() {
               autoComplete="new-password"
               className="pe-10"
             />
-            <button
-              type="button"
+            <IconButton
+              label={showNew ? tLogin('hide_password') : tLogin('show_password')}
+              aria-pressed={showNew}
               onClick={() => setShowNew(!showNew)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute end-1 top-1/2 -translate-y-1/2 text-muted-foreground"
             >
-              {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
+              {showNew ? <EyeOff /> : <Eye />}
+            </IconButton>
           </div>
         </div>
         <div>
-          <label className="text-xs text-muted-foreground mb-1 block">{t('password.confirm')}</label>
+          <label htmlFor={labelFor("confirm")} className="text-xs text-muted-foreground mb-1 block">{t('password.confirm')}</label>
           <Input
+            id={labelFor("confirm")}
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -146,60 +174,6 @@ function PasswordChangeSection() {
   );
 }
 
-/**
- * Editable display name (the Stalwart principal's name). Rendered by the
- * Account page's Profile section; the Security page no longer repeats it.
- */
-export function DisplayNameSection() {
-  const t = useTranslations('settings.security');
-  const { displayName, updateDisplayName, isSaving, isLoadingPrincipal } = useAccountSecurityStore();
-  const [name, setName] = useState(displayName);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    setName(displayName);
-  }, [displayName]);
-
-  const handleSave = async () => {
-    try {
-      await updateDisplayName(name);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-      toast.success(t('display_name.success'));
-    } catch (err) {
-      toast.error(t('display_name.error'), err instanceof Error ? err.message : undefined);
-    }
-  };
-
-  if (isLoadingPrincipal) {
-    return (
-      <SettingItem label={t('display_name.label')} description={t('display_name.description')}>
-        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-      </SettingItem>
-    );
-  }
-
-  return (
-    <SettingItem label={t('display_name.label')} description={t('display_name.description')}>
-      <div className="flex items-center gap-2">
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={displayName || t('display_name.placeholder')}
-          className="w-48"
-        />
-        <Button
-          size="sm"
-          onClick={handleSave}
-          disabled={isSaving || name === displayName}
-        >
-          {saved ? <Check className="w-4 h-4" /> : isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : t('display_name.save')}
-        </Button>
-      </div>
-    </SettingItem>
-  );
-}
-
 function generateTotp(accountLabel: string, issuer: string): { totp: OTPAuth.TOTP; url: string } {
   const totp = new OTPAuth.TOTP({
     issuer,
@@ -214,6 +188,7 @@ function generateTotp(accountLabel: string, issuer: string): { totp: OTPAuth.TOT
 
 function TotpSection() {
   const t = useTranslations('settings.security');
+  const labelFor = useLabelIds();
   const { otpEnabled, enableTotp, disableTotp, isSaving, isLoadingAuth } = useAccountSecurityStore();
   const { client } = useAuthStore();
   const { appName } = useConfig();
@@ -306,17 +281,12 @@ function TotpSection() {
 
   return (
     <div className="space-y-3">
-      <SettingItem label={t('totp.label')} description={t('totp.description')}>
-        <div className="flex items-center gap-2">
-          <ToggleSwitch
-            checked={otpEnabled || !!setupUrl}
-            onChange={handleToggle}
-            disabled={isSaving}
-          />
-          <span className={cn('text-xs font-medium', otpEnabled ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground')}>
-            {otpEnabled ? t('totp.active') : t('totp.inactive')}
-          </span>
-        </div>
+      <SettingItem label={t('totp.label')} description={t('totp.description')} term="totp">
+        <ToggleSwitch
+          checked={otpEnabled || !!setupUrl}
+          onChange={handleToggle}
+          disabled={isSaving}
+        />
       </SettingItem>
 
       {setupUrl && (
@@ -328,15 +298,15 @@ function TotpSection() {
             </div>
           )}
           <div className="flex items-center gap-2">
-            <code className="text-xs bg-background px-2 py-1 rounded border border-border flex-1 truncate">{setupUrl}</code>
+            <code dir="ltr" className="text-xs bg-background px-2 py-1 rounded border border-border flex-1 truncate">{setupUrl}</code>
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{t('password.current')}</label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+            <label htmlFor={labelFor("current-1")} className="text-xs text-muted-foreground mb-1 block">{t('password.current')}</label>
+            <Input id={labelFor("current-1")} type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{t('totp.verification_code')}</label>
-            <Input value={otpCode} onChange={(e) => setOtpCode(e.target.value)} inputMode="numeric" maxLength={6} />
+            <label htmlFor={labelFor("verification_code-1")} className="text-xs text-muted-foreground mb-1 block">{t('totp.verification_code')}</label>
+            <Input id={labelFor("verification_code-1")} value={otpCode} onChange={(e) => setOtpCode(e.target.value)} inputMode="numeric" maxLength={6} />
           </div>
           {setupError && <p className="text-xs text-destructive">{setupError}</p>}
           <div className="flex gap-2">
@@ -357,12 +327,14 @@ function TotpSection() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={t('password.current')}
+            aria-label={t('password.current')}
             autoComplete="current-password"
           />
           <Input
             value={otpCode}
             onChange={(e) => setOtpCode(e.target.value)}
             placeholder={t('totp.verification_code')}
+            aria-label={t('totp.verification_code')}
             inputMode="numeric"
             autoComplete="one-time-code"
             maxLength={6}
@@ -390,7 +362,7 @@ function parseIpList(raw: string): string[] {
     .filter(Boolean);
 }
 
-function CredentialRow({ entry, onRemove, isSaving }: { entry: AppPasswordInfo | ApiKeyInfo; onRemove: (id: string) => void; isSaving: boolean }) {
+function CredentialRow({ entry, onRemove, isSaving, deleteLabel }: { entry: AppPasswordInfo | ApiKeyInfo; onRemove: (id: string) => void; isSaving: boolean; deleteLabel: string }) {
   return (
     <div className="flex items-start justify-between py-2 px-3 bg-muted/50 rounded-md gap-2">
       <div className="flex flex-col min-w-0 flex-1">
@@ -406,7 +378,7 @@ function CredentialRow({ entry, onRemove, isSaving }: { entry: AppPasswordInfo |
             {entry.allowedIps.map((ip) => (
               <span
                 key={ip}
-                className="text-[10px] font-mono bg-background border border-border rounded px-1.5 py-0.5 text-muted-foreground"
+                className="text-[0.625rem] font-mono bg-background border border-border rounded px-1.5 py-0.5 text-muted-foreground"
               >
                 {ip}
               </span>
@@ -414,15 +386,14 @@ function CredentialRow({ entry, onRemove, isSaving }: { entry: AppPasswordInfo |
           </div>
         )}
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
+      <IconButton
+        label={deleteLabel}
         onClick={() => onRemove(entry.id)}
         disabled={isSaving}
         className="text-destructive hover:text-destructive shrink-0"
       >
-        <Trash2 className="w-3 h-3" />
-      </Button>
+        <Trash2 />
+      </IconButton>
     </div>
   );
 }
@@ -437,12 +408,17 @@ interface CredentialSectionProps {
 
 function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRemove }: CredentialSectionProps) {
   const t = useTranslations('settings.security');
+  const labelFor = useLabelIds();
+  const tCommon = useTranslations('common');
+  const tWording = useTranslations('uxs_wording');
   const tk = (key: string) => t(`${i18nNamespace}.${key}`);
   const { isSaving, isLoadingAuth } = useAccountSecurityStore();
   const [showAdd, setShowAdd] = useState(false);
   const [newDescription, setNewDescription] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
   const [allowedIpsRaw, setAllowedIpsRaw] = useState('');
+  // Expiry and allowed addresses are rarely needed, so they wait behind "More options".
+  const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [createdSecret, setCreatedSecret] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -460,6 +436,7 @@ function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRem
       setNewDescription('');
       setExpiresAt('');
       setAllowedIpsRaw('');
+      setShowMoreOptions(false);
       setShowAdd(false);
       toast.success(tk('added'));
     } catch (err) {
@@ -467,7 +444,18 @@ function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRem
     }
   };
 
+  const { dialogProps: confirmProps, confirm } = useConfirmDialog();
+
+  // A credential can't be brought back, so it asks first (R3).
   const handleRemove = async (id: string) => {
+    const entry = entries.find((e) => e.id === id);
+    const ok = await confirm({
+      title: tk('delete_title'),
+      message: t(`${i18nNamespace}.delete_message`, { name: entry?.description || id }),
+      confirmText: tCommon('delete'),
+      variant: 'destructive',
+    });
+    if (!ok) return;
     try {
       await onRemove(id);
       toast.success(tk('removed'));
@@ -489,7 +477,7 @@ function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRem
       <div className="space-y-2">
         <div className="flex items-center gap-2 mb-2">
           <Icon className="w-4 h-4 text-muted-foreground" />
-          <h4 className="text-sm font-medium text-foreground">{tk('title')}</h4>
+          <h4 data-search-label={tk('title')} className="text-sm font-medium text-foreground">{tk('title')}</h4>
         </div>
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
       </div>
@@ -501,11 +489,12 @@ function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRem
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Icon className="w-4 h-4 text-muted-foreground" />
-          <h4 className="text-sm font-medium text-foreground">{tk('title')}</h4>
+          <h4 data-search-label={tk('title')} className="text-sm font-medium text-foreground">{tk('title')}</h4>
+          {i18nNamespace === 'app_passwords' && <TermInfo id="app_password" />}
         </div>
         <Button variant="outline" size="sm" onClick={() => setShowAdd(!showAdd)}>
           <Plus className="w-3 h-3 me-1" />
-          {t('app_passwords.add')}
+          {tk('new')}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">{tk('description')}</p>
@@ -530,29 +519,42 @@ function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRem
       {showAdd && (
         <form onSubmit={handleAdd} className="p-3 bg-muted rounded-md space-y-2">
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{tk('name_label')}</label>
+            <label htmlFor={labelFor("field6")} className="text-xs text-muted-foreground mb-1 block">{tk('name_label')}</label>
             <Input
+              id={labelFor("field6")}
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder={tk('name_placeholder')}
               required
             />
           </div>
+          <button
+            type="button"
+            aria-expanded={showMoreOptions}
+            onClick={() => setShowMoreOptions((open) => !open)}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <ChevronDown className={cn('size-3.5 transition-transform', showMoreOptions && 'rotate-180')} aria-hidden="true" />
+            {tWording('more_options')}
+          </button>
+          {showMoreOptions && (<>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{t('app_passwords.expires_label')}</label>
-            <Input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+            <label htmlFor={labelFor("expires_label")} className="text-xs text-muted-foreground mb-1 block">{t('app_passwords.expires_label')}</label>
+            <Input id={labelFor("expires_label")} type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{t('app_passwords.allowed_ips_label')}</label>
+            <label htmlFor={labelFor("allowed_ips_label")} className="text-xs text-muted-foreground mb-1 block">{t('app_passwords.allowed_ips_label')}</label>
             <textarea
+              id={labelFor("allowed_ips_label")}
               value={allowedIpsRaw}
               onChange={(e) => setAllowedIpsRaw(e.target.value)}
               placeholder={t('app_passwords.allowed_ips_placeholder')}
               rows={2}
-              className="w-full text-xs font-mono px-3 py-2 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full text-xs font-mono px-3 py-2 rounded-md border border-border bg-background focus:outline-hidden"
             />
-            <p className="text-[10px] text-muted-foreground mt-1">{t('app_passwords.allowed_ips_hint')}</p>
+            <p className="text-[0.625rem] text-muted-foreground mt-1">{t('app_passwords.allowed_ips_hint')}</p>
           </div>
+          </>)}
           <div className="flex gap-2">
             <Button type="submit" size="sm" disabled={isSaving || !newDescription.trim()}>
               {isSaving ? <Loader2 className="w-4 h-4 me-1 animate-spin" /> : null}
@@ -568,12 +570,13 @@ function CredentialSection({ icon: Icon, i18nNamespace, entries, onCreate, onRem
       {entries.length > 0 ? (
         <div className="space-y-1">
           {entries.map((entry) => (
-            <CredentialRow key={entry.id} entry={entry} onRemove={handleRemove} isSaving={isSaving} />
+            <CredentialRow key={entry.id} entry={entry} onRemove={handleRemove} isSaving={isSaving} deleteLabel={tCommon('delete')} />
           ))}
         </div>
       ) : (
         <p className="text-xs text-muted-foreground italic">{tk('none')}</p>
       )}
+      <ConfirmDialog {...confirmProps} />
     </div>
   );
 }
@@ -606,6 +609,8 @@ function ApiKeysSection() {
 
 function PublicKeysSection() {
   const t = useTranslations('settings.security');
+  const labelFor = useLabelIds();
+  const tCommon = useTranslations('common');
   const tk = (key: string) => t(`public_keys.${key}`);
   const {
     publicKeys,
@@ -645,7 +650,17 @@ function PublicKeysSection() {
     }
   };
 
+  const { dialogProps: confirmProps, confirm } = useConfirmDialog();
+
   const handleRemove = async (id: string) => {
+    const key = publicKeys.find((k) => k.id === id);
+    const ok = await confirm({
+      title: tk('delete_title'),
+      message: t('public_keys.delete_message', { name: key?.description || id }),
+      confirmText: tCommon('delete'),
+      variant: 'destructive',
+    });
+    if (!ok) return;
     try {
       await removePublicKey(id);
       toast.success(tk('removed'));
@@ -659,7 +674,14 @@ function PublicKeysSection() {
       encryptionConfig.type !== 'Disabled' && encryptionConfig.publicKeyId === keyId;
 
     if (isCurrentlyActiveKey) {
-      // Disable encryption
+      // Turning it off changes how new mail is stored, so it asks first.
+      const ok = await confirm({
+        title: t('encryption.disable_title'),
+        message: t('encryption.disable_message'),
+        confirmText: t('encryption.disable_button'),
+        variant: 'destructive',
+      });
+      if (!ok) return;
       try {
         await updateEncryptionAtRest({ type: 'Disabled' });
         toast.success(t('encryption.disabled_success'));
@@ -698,7 +720,7 @@ function PublicKeysSection() {
       <div className="space-y-2">
         <div className="flex items-center gap-2 mb-2">
           <Lock className="w-4 h-4 text-muted-foreground" />
-          <h4 className="text-sm font-medium text-foreground">{tk('title')}</h4>
+          <h4 data-search-label={tk('title')} className="text-sm font-medium text-foreground">{tk('title')}</h4>
         </div>
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
       </div>
@@ -710,11 +732,12 @@ function PublicKeysSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Lock className="w-4 h-4 text-muted-foreground" />
-          <h4 className="text-sm font-medium text-foreground">{t('encryption.section_title')}</h4>
+          <h4 data-search-label={t('encryption.section_title')} className="text-sm font-medium text-foreground">{t('encryption.section_title')}</h4>
+          <TermInfo id="encryption_at_rest" />
         </div>
         <Button variant="outline" size="sm" onClick={() => setShowAdd(!showAdd)}>
           <Plus className="w-3 h-3 me-1" />
-          {t('app_passwords.add')}
+          {tk('add')}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">{t('encryption.description')}</p>
@@ -722,8 +745,9 @@ function PublicKeysSection() {
       {showAdd && (
         <form onSubmit={handleAdd} className="p-3 bg-muted rounded-md space-y-2">
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{tk('name_label')}</label>
+            <label htmlFor={labelFor("field9")} className="text-xs text-muted-foreground mb-1 block">{tk('name_label')}</label>
             <Input
+              id={labelFor("field9")}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={tk('name_placeholder')}
@@ -731,20 +755,24 @@ function PublicKeysSection() {
             />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{tk('key_label')}</label>
+            <div className="mb-1 flex items-center gap-1">
+              <label htmlFor={labelFor("field10")} className="text-xs text-muted-foreground block">{tk('key_label')}</label>
+              <TermInfo id="public_key" />
+            </div>
             <textarea
+              id={labelFor("field10")}
               value={publicKey}
               onChange={(e) => setPublicKey(e.target.value)}
               placeholder={tk('key_placeholder')}
               rows={3}
               required
-              className="w-full text-xs font-mono px-3 py-2 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full text-xs font-mono px-3 py-2 rounded-md border border-border bg-background focus:outline-hidden"
             />
           </div>
           <div className="flex gap-2">
             <Button type="submit" size="sm" disabled={isSaving || !description.trim() || !publicKey.trim()}>
               {isSaving ? <Loader2 className="w-4 h-4 me-1 animate-spin" /> : null}
-              {t('app_passwords.create')}
+              {tk('add_submit')}
             </Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => setShowAdd(false)}>
               {t('app_passwords.cancel')}
@@ -758,11 +786,12 @@ function PublicKeysSection() {
           <h5 className="text-xs font-semibold text-foreground">{t('encryption.configure_title')}</h5>
           
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">{t('encryption.algorithm_label')}</label>
+            <label htmlFor={labelFor("algorithm_label")} className="text-xs text-muted-foreground mb-1 block">{t('encryption.algorithm_label')}</label>
             <select
+              id={labelFor("algorithm_label")}
               value={selectedAlgorithm}
               onChange={(e) => setSelectedAlgorithm(e.target.value as 'Aes128' | 'Aes256')}
-              className="w-full text-xs px-3 py-1.5 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full text-xs px-3 py-1.5 rounded-md border border-border bg-background focus:outline-hidden"
             >
               <option value="Aes256">AES-256</option>
               <option value="Aes128">AES-128</option>
@@ -775,7 +804,7 @@ function PublicKeysSection() {
                 type="checkbox"
                 checked={encryptOnAppend}
                 onChange={(e) => setEncryptOnAppend(e.target.checked)}
-                className="rounded border-border text-primary focus:ring-ring"
+                className="rounded border-border text-primary"
               />
               {t('encryption.encrypt_on_append')}
             </label>
@@ -785,7 +814,7 @@ function PublicKeysSection() {
                 type="checkbox"
                 checked={allowSpamTraining}
                 onChange={(e) => setAllowSpamTraining(e.target.checked)}
-                className="rounded border-border text-primary focus:ring-ring"
+                className="rounded border-border text-primary"
               />
               {t('encryption.allow_spam_training')}
             </label>
@@ -820,7 +849,7 @@ function PublicKeysSection() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground truncate">{key.description || key.id}</span>
                     {isEncryptedWithThisKey && (
-                      <span className="text-[10px] bg-green-500/10 text-green-600 dark:text-green-400 font-medium px-1.5 py-0.5 rounded border border-green-500/20">
+                      <span className="text-[0.625rem] bg-green-500/10 text-green-600 dark:text-green-400 font-medium px-1.5 py-0.5 rounded border border-green-500/20">
                         {encryptionConfig.type}
                       </span>
                     )}
@@ -830,36 +859,33 @@ function PublicKeysSection() {
                       {new Date(key.createdAt).toLocaleDateString()}
                     </span>
                   )}
-                  <code className="text-[10px] font-mono bg-background border border-border rounded px-1.5 py-0.5 text-muted-foreground truncate mt-1">
+                  <code className="text-[0.625rem] font-mono bg-background border border-border rounded px-1.5 py-0.5 text-muted-foreground truncate mt-1">
                     {key.key}
                   </code>
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                  <IconButton
+                    label={isEncryptedWithThisKey ? t('encryption.disable_tooltip') : t('encryption.enable_tooltip')}
                     onClick={() => handleToggleEncryption(key.id)}
                     disabled={isSaving}
-                    title={isEncryptedWithThisKey ? t('encryption.disable_tooltip') : t('encryption.enable_tooltip')}
                     className={cn(
                       isEncryptedWithThisKey
                         ? 'text-green-600 hover:text-green-700 dark:text-green-400'
                         : 'text-muted-foreground hover:text-foreground'
                     )}
                   >
-                    {isEncryptedWithThisKey ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-                  </Button>
+                    {isEncryptedWithThisKey ? <Lock /> : <Unlock />}
+                  </IconButton>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                  <IconButton
+                    label={tCommon('delete')}
                     onClick={() => handleRemove(key.id)}
                     disabled={isSaving || isEncryptedWithThisKey}
                     className="text-destructive hover:text-destructive"
                   >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
+                    <Trash2 />
+                  </IconButton>
                 </div>
               </div>
             );
@@ -868,55 +894,7 @@ function PublicKeysSection() {
       ) : (
         <p className="text-xs text-muted-foreground italic">{tk('none')}</p>
       )}
-    </div>
-  );
-}
-
-function EmailClientSection() {
-  const t = useTranslations('settings.security');
-  const { client } = useAuthStore();
-  const [copied, setCopied] = useState(false);
-
-  const jmapUsername = useMemo(() => client?.getUsername() || '', [client]);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(jmapUsername).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Monitor className="w-4 h-4 text-muted-foreground" />
-        <h4 className="text-sm font-medium text-foreground">{t('email_client.title')}</h4>
-      </div>
-      <p className="text-xs text-muted-foreground">{t('email_client.description')}</p>
-      <div className="p-3 bg-muted/70 dark:bg-muted/40 rounded-md space-y-2">
-        <div>
-          <label className="text-xs text-muted-foreground mb-1 block">
-            {t('email_client.jmap_username_label')}
-          </label>
-          <div className="flex rounded-lg">
-            <input
-              type="text"
-              readOnly
-              value={jmapUsername}
-              className="py-2 px-3 block w-full bg-background border border-border border-e-transparent rounded-s-lg text-sm text-foreground focus:z-10 focus:border-ring focus:ring-ring"
-            />
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="h-[38px] px-3 shrink-0 inline-flex items-center gap-1.5 rounded-e-lg border border-border bg-muted text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-              {copied ? t('email_client.copied') : t('email_client.copy')}
-            </button>
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground pt-1">{t('email_client.password_instructions')}</p>
-      </div>
+      <ConfirmDialog {...confirmProps} />
     </div>
   );
 }
@@ -1288,7 +1266,7 @@ export function LinkDeviceSection() {
       <p className="sr-only" aria-live="polite">{announcement}</p>
       <div className="flex items-center gap-2">
         <QrCode className="w-4 h-4 text-muted-foreground" />
-        <h4 className="text-sm font-medium text-foreground">{t('link_device.title')}</h4>
+        <h4 data-search-label={t('link_device.title')} className="text-sm font-medium text-foreground">{t('link_device.title')}</h4>
       </div>
       <p className="text-xs text-muted-foreground">{t('link_device.description')}</p>
 
@@ -1382,15 +1360,15 @@ export function LinkDeviceSection() {
               dir="ltr"
               value={signInLink}
               onFocus={(e) => e.currentTarget.select()}
-              className="py-2 px-3 block w-full bg-background border border-border rounded-md text-xs font-mono text-foreground focus:border-ring focus:ring-ring"
+              className="py-2 px-3 block w-full bg-background border border-border rounded-md text-xs font-mono text-foreground focus:border-ring"
             />
             <Button type="button" variant="outline" size="sm" onClick={handleCopyLink}>
               {copied ? <Check className="w-3 h-3 me-1" /> : <Copy className="w-3 h-3 me-1" />}
               <span aria-live="polite">{copied ? t('link_device.copied') : t('link_device.copy_link')}</span>
             </Button>
-            <p className="text-[11px] text-muted-foreground">{t('link_device.copy_hint')}</p>
+            <p className="text-[0.6875rem] text-muted-foreground">{t('link_device.copy_hint')}</p>
           </div>
-          <p className="text-[11px] text-muted-foreground text-center">
+          <p className="text-[0.6875rem] text-muted-foreground text-center">
             {t('link_device.expires_in', { seconds: remaining })}
           </p>
         </div>
@@ -1441,9 +1419,10 @@ export function AccountSecuritySettings() {
   const t = useTranslations('settings.security');
   const { isStalwart, isProbing, probe, fetchAll, fetchAuthInfo, fetchPublicKeys, fetchCryptoInfo } = useAccountSecurityStore();
   const { isAuthenticated, authMode, client } = useAuthStore();
-  // OAuth and access-token sign-ins hold no password to change, and mail
-  // apps need an app password instead.
-  const withoutPassword = authMode === 'oauth' || authMode === 'token';
+  const activeAccount = useAccountStore((s) => s.getActiveAccount());
+  // Identity-provider and access-token sign-ins hold no password to change
+  // here, and mail apps need an app password instead.
+  const withoutPassword = !isPasswordSession(authMode, activeAccount);
 
   // Wait for `client` before probing. On reload the persisted `isAuthenticated`
   // flips true before the async OAuth reconnect sets `client`; probing in that
@@ -1494,8 +1473,12 @@ export function AccountSecuritySettings() {
       <SettingsSection id="devices" title={t('title')} description={t('description')}>
         {!IS_LITE ? (
           <div className="space-y-6">
-            <LinkDeviceSection />
-            <div className="border-t border-border" />
+            {!IS_DESKTOP_BUILD && (
+              <>
+                <LinkDeviceSection />
+                <div className="border-t border-border" />
+              </>
+            )}
             <div className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: sanitizeI18nHtml(t.raw('not_available')) }} />
           </div>
         ) : (
@@ -1507,8 +1490,9 @@ export function AccountSecuritySettings() {
 
   return (
     <div className="space-y-8">
-      {/* Sign-in: password and two-factor. OAuth and token sessions have
-          neither here, so the page opens with the apps and devices section. */}
+      {/* Sign-in: password and two-factor. Identity-provider and token
+          sessions have neither here, so the page opens with the apps and
+          devices section. */}
       {!withoutPassword && (
         <SettingsSection id="signin" title={t('title')} description={t('description')}>
           <div className="space-y-6">
@@ -1517,7 +1501,9 @@ export function AccountSecuritySettings() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Shield className="w-4 h-4 text-muted-foreground" />
-                <h4 className="text-sm font-medium text-foreground">{t('totp.section_title')}</h4>
+                {/* Named like its row, "Two-step sign-in", not "Two-factor authentication" (settings-p2-18). */}
+                <h4 data-search-label={t('totp.label')} className="text-sm font-medium text-foreground">{t('totp.label')}</h4>
+                <TermInfo id="two_factor" />
               </div>
               <TotpSection />
             </div>
@@ -1533,13 +1519,13 @@ export function AccountSecuritySettings() {
         description={withoutPassword ? t('description') : t('sections.devices_description')}
       >
         <div className="space-y-6">
-          {!IS_LITE && (
+          {!IS_LITE && !IS_DESKTOP_BUILD && (
             <>
               <LinkDeviceSection />
               <div className="border-t border-border" />
             </>
           )}
-          <EmailClientSection />
+          <MailAppsSetup />
           <div className="border-t border-border" />
           <AppPasswordsSection />
           <AdvancedOnly>

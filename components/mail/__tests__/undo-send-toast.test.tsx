@@ -30,7 +30,7 @@ vi.mock('@/components/layout/navigation-rail', () => ({ NavigationRail: () => nu
 vi.mock('@/components/layout/calendar-event-notification-toaster', () => ({ CalendarEventNotificationToaster: () => null }));
 vi.mock('@/components/layout/share-notification-toaster', () => ({ ShareNotificationToaster: () => null }));
 vi.mock('@/components/layout/mobile-header', () => ({ MobileHeader: () => null }));
-vi.mock('@/components/email/message-list-tabs', () => ({ MessageListTabs: () => null }));
+vi.mock('@/components/email/message-list-tabs', () => ({ useMessageListPanelProps: (id: string) => ({ id }), MessageListTabs: () => null }));
 vi.mock('@/components/search/search-box', () => ({ SearchBox: () => null }));
 vi.mock('@/components/tour/tour-provider', () => ({ useTour: () => ({ activeTour: null, registerStep: vi.fn() }) }));
 vi.mock('@/components/plugins/plugin-slot', () => ({ PluginSlot: () => null }));
@@ -114,9 +114,37 @@ describe('undo send toast', () => {
     await waitFor(() => expect(undoToast()).toBeDefined());
     const toast = undoToast()!;
     expect(toast.title).toBe('email_viewer.sending_in');
-    // 30 s is the setting, but only 10 s are left of the window.
-    expect(toast.duration).toBeLessThan(10_000);
+    // 30 s is the setting, but only 10 s are left of the window: Undo ends
+    // half a second before the server lets it go (undoEndsAt), and the toast
+    // stays a second longer to say "Sent".
+    expect(toast.duration).toBeLessThanOrEqual(10_000 - 500 + 1000);
     expect(toast.pauseOnHover).toBe(false);
+  });
+
+  // compose-p2-12: once Undo is over the toast says the message went.
+  it('turns into "Sent" with View before the server releases the message', async () => {
+    render(<MailApp />);
+    sendDelayedBy(2_500);
+
+    await waitFor(() => expect(undoToast()).toBeDefined());
+    const id = undoToast()!.id;
+    await waitFor(() => {
+      const toast = useToastStore.getState().toasts.find((t) => t.id === id);
+      expect(toast?.title).toBe('compose_send.sent');
+      expect(toast?.action?.label).toBe('compose_send.view');
+    }, { timeout: 3000 });
+  });
+
+  // compose-23: "Email scheduled for sending" with "Undo send" said neither
+  // when it goes nor that the button cancels it.
+  it('says when a scheduled message goes, with Cancel and Send now', async () => {
+    render(<MailApp />);
+    sendDelayedBy(3 * 86_400_000);
+
+    await waitFor(() => expect(useToastStore.getState().toasts.some((t) => t.title === 'compose_send.scheduled_for')).toBe(true));
+    const toast = useToastStore.getState().toasts.find((t) => t.title === 'compose_send.scheduled_for')!;
+    expect(toast.action?.label).toBe('cancel');
+    expect(toast.secondaryAction?.label).toBe('email_viewer.send_now');
   });
 
   it('says so when the undo comes too late', async () => {
@@ -129,5 +157,48 @@ describe('undo send toast', () => {
     act(() => { undoToast()!.action!.onClick(); });
 
     await waitFor(() => expect(useToastStore.getState().toasts.some((t) => t.type === 'error' && t.title === 'email_viewer.undo_send_failed')).toBe(true));
+  });
+
+  // Sent through login B, which is signed out before Undo is clicked. The
+  // submission id names another submission in the active login.
+  describe('of a login that is gone', () => {
+    beforeEach(() => {
+      const active = useAuthStore.getState().client;
+      const rescheduleEmailSubmission = vi.fn();
+      Object.assign(active as object, { rescheduleEmailSubmission });
+      useAuthStore.setState({ getClientForAccount: (id: string) => (id === 'login' ? active : undefined) as never });
+    });
+    function sendThroughGoneLogin() {
+      act(() => {
+        useEmailStore.setState({
+          pendingUndoSend: {
+            submissionId: 'sub-1', emailId: 'email-1', identityId: 'id-1', localAccountId: 'login-b',
+            sendAt: new Date(Date.now() + 10_000).toISOString(), isSmime: false,
+          },
+        } as never);
+      });
+    }
+
+    it('does not undo through the active login', async () => {
+      render(<MailApp />);
+      sendThroughGoneLogin();
+      await waitFor(() => expect(undoToast()).toBeDefined());
+
+      act(() => { undoToast()!.action!.onClick(); });
+
+      await waitFor(() => expect(useToastStore.getState().toasts.some((t) => t.type === 'error' && t.title === 'email_viewer.undo_send_signed_out')).toBe(true));
+      expect(cancelUndoSend).not.toHaveBeenCalled();
+    });
+
+    it('does not send now through the active login', async () => {
+      render(<MailApp />);
+      sendThroughGoneLogin();
+      await waitFor(() => expect(undoToast()).toBeDefined());
+
+      act(() => { undoToast()!.secondaryAction!.onClick(); });
+
+      await waitFor(() => expect(useToastStore.getState().toasts.some((t) => t.type === 'error' && t.title === 'email_viewer.undo_send_signed_out')).toBe(true));
+      expect((useAuthStore.getState().client as unknown as { rescheduleEmailSubmission: ReturnType<typeof vi.fn> }).rescheduleEmailSubmission).not.toHaveBeenCalled();
+    });
   });
 });

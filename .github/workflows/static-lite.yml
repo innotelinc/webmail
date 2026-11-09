@@ -57,10 +57,10 @@ jobs:
         target: [static, stalwart]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -79,7 +79,23 @@ jobs:
           LITE_APP_NAME: ${{ inputs.app_name }}
           LITE_LOCALES: ${{ inputs.locales }}
           LITE_DEMO_MODE: ${{ inputs.demo }}
+          # Browser source maps for Bugsink; build:lite moves them out of out/
+          # before anything is packed. https://bulwarkmail.org/docs/deployment/monitoring
+          BULWARK_SOURCE_MAPS: "1"
+          SOURCEMAPS_OUT: sourcemaps
         run: npm run build:lite
+
+      # Each target is its own build with its own chunks, so each uploads.
+      - name: Upload source maps to Bugsink
+        env:
+          BUGSINK_AUTH_TOKEN: ${{ secrets.BUGSINK_AUTH_TOKEN }}
+        run: bash scripts/upload-sourcemaps.sh sourcemaps
+
+      # Every host literal in the bundle must be a placeholder, the configured
+      # JMAP server, a built-in host the no-third-party switch turns off, or a
+      # string listed as never requested (#903).
+      - name: Scan the bundle for outside hosts
+        run: node scripts/lite/scan-hosts.mjs out
 
       - name: Package zip
         env:
@@ -101,8 +117,11 @@ jobs:
           echo "ZIP=${ZIP}" >> "$GITHUB_ENV"
           ls -la "${ZIP}"
 
+      - name: Check the zip holds no source maps
+        run: node scripts/sourcemaps.mjs check "$ZIP"
+
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bulwark-lite-${{ matrix.target }}
           path: ${{ env.ZIP }}
@@ -121,7 +140,7 @@ jobs:
       attestations: write
     steps:
       - name: Download zips
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: bulwark-lite-*
           path: zips
@@ -153,10 +172,10 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -182,7 +201,7 @@ jobs:
 
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lite-e2e-report
           path: playwright-report
@@ -198,10 +217,10 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -226,7 +245,7 @@ jobs:
 
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lite-e2e-stalwart-report
           path: playwright-report

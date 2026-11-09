@@ -1,5 +1,7 @@
 import { configManager } from '@/lib/admin/config-manager';
-import { DEFAULT_OAUTH_SCOPES } from './scopes';
+import { DEFAULT_OAUTH_SCOPES, stalwartScopesIn, withStalwartScopes } from './scopes';
+import { STALWART_LOGIN_SCOPE } from '@/lib/auth/stalwart-login-request';
+import { normalizeOauthResource } from './resource';
 
 /**
  * Resolve the OAuth scopes to request at authorize time.
@@ -14,6 +16,26 @@ export function getOauthScopes(): string {
   const extra = configManager.get<string>('oauthExtraScopes', '');
   return extra ? `${DEFAULT_OAUTH_SCOPES} ${extra}`.trim() : DEFAULT_OAUTH_SCOPES;
 }
+
+/**
+ * The scope the password (+TOTP) sign-in asks for with the admin's client:
+ * the data scopes plus the Stalwart scopes the admin configured for SSO
+ * (#1550). Stalwart 1.0.3 gives Account security only to a token with
+ * `security` or `full`, and refuses scopes the client isn't allowed, so only
+ * configured ones are added.
+ */
+export function getPasswordLoginScope(): string {
+  return withStalwartScopes(STALWART_LOGIN_SCOPE, stalwartScopesIn(getOauthScopes()));
+}
+
+/**
+ * The global RFC 8707 resource (admin override / OAUTH_RESOURCE), or '' when
+ * it is unset or not an absolute URI without a fragment (#1461).
+ * Server-only: callers in the browser read `oauthResource` from /api/config.
+ */
+export function getOauthResource(): string {
+  return normalizeOauthResource(configManager.get<string>('oauthResource', '')) ?? '';
+}
 export const REFRESH_TOKEN_COOKIE = 'jmap_rt';
 export const REFRESH_TOKEN_SERVER_COOKIE = 'jmap_rts';
 export const ACCESS_TOKEN_COOKIE = 'jmap_at';
@@ -26,38 +48,6 @@ export function refreshTokenCookieName(slot: number): string {
 /** Companion cookie storing which server entry id minted the refresh token at this slot. */
 export function refreshTokenServerCookieName(slot: number): string {
   return slot === 0 ? REFRESH_TOKEN_SERVER_COOKIE : `${REFRESH_TOKEN_SERVER_COOKIE}_${slot}`;
-}
-
-/**
- * Path the session cookies are scoped to.
- *
- * The refresh token and the server id that minted it are read only by routes
- * under `/api` (token refresh, SSO completion, the TOTP exchange, the step-up
- * re-auth). At `Path=/` they rode every page load, RSC fetch and asset request
- * as well - a few hundred bytes per signed-in account, every time, for routes
- * that never look at them. Scoping them to `/api` keeps the document path
- * completely free of this app's session cookies, so adding accounts no longer
- * grows the header on the requests a browser makes most.
- */
-export function sessionCookiePath(basePath?: string): string {
-  return `${basePath ?? ''}/api`;
-}
-
-/**
- * Path the cached access token is scoped to.
- *
- * Only `/api/auth/token` reads it: the cookie is httpOnly, so no client code
- * can, and no other route touches it. Stored at `Path=/` it rode every page
- * load, every RSC fetch and every asset request instead - one multi-kilobyte
- * JWT per signed-in account, on every request. That is what pushed a
- * multi-account browser's Cookie header into the edge's buffer limit and into
- * Node's 16 KiB request-header cap, so the whole jar had to be given room it
- * should never have needed. Scoping it to the one route that reads it takes it
- * out of the request path entirely, the way the id token already is; the
- * cookie still expires with the token it caches.
- */
-export function accessTokenCookiePath(basePath?: string): string {
-  return `${basePath ?? ''}/api/auth/token`;
 }
 
 /**

@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { endlessResponse } from './helpers/endless-body';
+import { loginFingerprint } from '@/lib/pwa-notify/login-fingerprint';
 
 vi.mock('next/server', () => ({
   NextResponse: {
@@ -38,6 +40,12 @@ vi.mock('@/lib/security/url-guard', () => ({
   DisallowedUrlError: class DisallowedUrlError extends Error {},
 }));
 
+// The route reads the device policy (Organisation > Devices); none is set here.
+vi.mock('@/lib/admin/config-manager', async () => {
+  const { DEFAULT_POLICY } = await import('@/lib/admin/types');
+  return { configManager: { ensureLoaded: async () => {}, getPolicy: () => DEFAULT_POLICY } };
+});
+
 function jsonResponse(data: unknown) {
   return { ok: true, json: async () => data };
 }
@@ -68,6 +76,7 @@ function mockJmap() {
 async function callRoute(accountId: string, emailId: string | null = null) {
   const { GET } = await import('@/app/api/push/preview/route');
   const request = {
+    headers: new Headers(),
     nextUrl: { searchParams: { get: (k: string) => (k === 'accountId' ? accountId : k === 'emailId' ? emailId : null) } },
   };
   const res = (await GET(request as unknown as Parameters<typeof GET>[0])) as unknown as {
@@ -102,6 +111,11 @@ describe('push preview route account resolution', () => {
       .map((b) => JSON.parse(b) as { methodCalls: [string, Record<string, unknown>, string][] })
       .find((b) => b.methodCalls[0][0] === 'Mailbox/query');
     expect(mailboxQuery?.methodCalls[0][1].accountId).toBe('g');
+  });
+
+  it('names the login for a message, as the action route knows it', async () => {
+    const { body } = await callRoute('a');
+    expect(body.login).toBe(await loginFingerprint('https://mail.example.com', undefined));
   });
 
   it('names the login (cookie slot) the account belongs to', async () => {
@@ -178,7 +192,7 @@ describe('push preview JMAP failures', () => {
         ['Email/get', { list: [{ id: 'd', threadId: 'td' }] }, 'delivered'],
       ] }));
     expect(await callRoute('a', 'd')).toEqual({
-      status: 200, body: { email: { id: 'd', threadId: 'td' }, unreadTotal: 1, slot: 0 },
+      status: 200, body: { email: { id: 'd', threadId: 'td' }, unreadTotal: 1, slot: 0, login: expect.any(String) },
     });
   });
 });
@@ -194,7 +208,7 @@ it('previews a delivered message outside an empty Inbox', async () => {
       ['Email/get', { list: [{ id: 'filed', threadId: 't2' }] }, 'delivered'],
     ] }));
   expect(await callRoute('a', 'filed')).toEqual({
-    status: 200, body: { email: { id: 'filed', threadId: 't2' }, unreadTotal: 1, slot: 0 },
+    status: 200, body: { email: { id: 'filed', threadId: 't2' }, unreadTotal: 1, slot: 0, login: expect.any(String) },
   });
 });
 
@@ -213,4 +227,31 @@ it('names no message when the delivered one cannot be read, rather than another'
   expect(await callRoute('a', 'gone')).toEqual({
     status: 200, body: { email: null, unreadTotal: 3, slot: 0 },
   });
+});
+
+it('sends the method calls to the server address it was configured with, not the public one', async () => {
+  // Stalwart advertises its own public hostname in apiUrl, which the webmail
+  // may not reach when it talks to the server over an internal address (#627).
+  fetchJmapServer.mockReset();
+  mockJmap();
+  const session = { ...SESSION, apiUrl: 'https://public.example.org/jmap/' };
+  const reply = fetchJmapServer.getMockImplementation()!;
+  fetchJmapServer.mockImplementation(async (url: string, init?: { body?: string }) =>
+    url.endsWith('/.well-known/jmap') ? jsonResponse(session) : reply(url, init));
+
+  expect((await callRoute('a')).status).toBe(200);
+  const posted = fetchJmapServer.mock.calls.map(([url]) => url).filter((url) => !url.endsWith('/.well-known/jmap'));
+  expect(posted).toEqual(['https://mail.example.com/jmap/', 'https://mail.example.com/jmap/']);
+});
+
+it('answers 502 instead of buffering a mailbox answer that never ends', async () => {
+  fetchJmapServer.mockReset();
+  mockJmap();
+  const reply = fetchJmapServer.getMockImplementation()!;
+  const endless = endlessResponse(500);
+  fetchJmapServer.mockImplementation(async (url: string, init?: { body?: string }) =>
+    url.endsWith('/.well-known/jmap') ? reply(url, init) : endless.response);
+
+  expect((await callRoute('a')).status).toBe(502);
+  expect(endless.pulled()).toBeLessThan(10);
 });

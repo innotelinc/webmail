@@ -1,4 +1,6 @@
 import { ConnectorClient } from '@/components/connector/connector-client';
+import { IntlProvider } from '@/components/providers/intl-provider';
+import { loadCatalog } from '@/i18n/catalog';
 import { TARGET_NAMES } from '@/lib/connector/registry';
 import { IS_LITE } from '@/lib/lite';
 
@@ -23,5 +25,9 @@ export default async function ConnectorRoute({
   params: Promise<{ target: string }>;
 }) {
   const { target } = await params;
-  return <ConnectorClient target={target} />;
+  return (
+    <IntlProvider locale="en" messages={IS_LITE ? undefined : await loadCatalog('en')}>
+      <ConnectorClient target={target} />
+    </IntlProvider>
+  );
 }

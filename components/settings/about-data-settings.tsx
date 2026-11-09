@@ -13,7 +13,14 @@ import { cn } from '@/lib/utils';
 import { getPathPrefix, withBasePath } from '@/lib/browser-navigation';
 import { clearCachedData } from '@/lib/clear-cached-data';
 import { SpamSiegeGame } from './spam-siege-game';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { toast } from '@/stores/toast-store';
 import { DebugSettings } from './debug-settings';
+import { MailBackupSettings } from '@/components/mail-transfer/mail-backup-settings';
+import { productName } from '@/lib/product-name';
+import { isDesktopApp } from '@/lib/desktop/bridge';
+import { IS_LITE } from '@/lib/lite';
+import { DesktopUpdateSettings } from './desktop-update-settings';
 
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || "0.0.0";
 const GIT_COMMIT = process.env.NEXT_PUBLIC_GIT_COMMIT || "unknown";
@@ -39,7 +46,7 @@ function VersionUpdateTag() {
   return (
     <span
       className={cn(
-        "ms-2 inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium align-middle",
+        "ms-2 inline-flex items-center rounded-full px-1.5 py-0.5 text-[0.625rem] font-medium align-middle",
         important
           ? "bg-red-500/15 text-red-700 dark:text-red-300"
           : "bg-amber-500/15 text-amber-700 dark:text-amber-300",
@@ -51,7 +58,7 @@ function VersionUpdateTag() {
 }
 
 /**
- * The About card, in the settings sidebar's footer: logo, version with the
+ * The About card, on Settings > About and at the foot of the admin's list: logo, version with the
  * update tag, and the source link. A modified build must offer its own
  * source (AGPL-3.0 §13), so a configured URL replaces the upstream link.
  * Three clicks on the logo open Spam Siege, as before.
@@ -62,8 +69,8 @@ export function AboutFooter() {
   // A branded deployment (APP_NAME / APP_LOGO_*) shows its own name and logo
   // here; without them the card keeps the Loomix mark and title. (#1160)
   const branded = appName && appName !== 'Webmail';
-  const logoLight = withBasePath(appLogoLightUrl || appLogoDarkUrl) || `${getPathPrefix()}/branding/Loomix_Mark.svg`;
-  const logoDark = withBasePath(appLogoDarkUrl || appLogoLightUrl) || `${getPathPrefix()}/branding/Loomix_Mark.svg`;
+  const logoLight = withBasePath(appLogoLightUrl || appLogoDarkUrl) || `${getPathPrefix()}/branding/Loomix_Logo_Color.svg`;
+  const logoDark = withBasePath(appLogoDarkUrl || appLogoLightUrl) || `${getPathPrefix()}/branding/Loomix_Logo_White.svg`;
   const [showGame, setShowGame] = useState(false);
   const logoClickCount = useRef(0);
   const logoClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -83,7 +90,13 @@ export function AboutFooter() {
     <div data-testid="settings-about" className="px-3 py-2">
       {showGame && <SpamSiegeGame onClose={() => setShowGame(false)} />}
       <div className="flex items-center gap-3">
-        <button onClick={handleLogoClick} className="flex items-center gap-3 flex-1 min-w-0 text-start focus:outline-none group/about cursor-pointer" aria-label="About">
+        {/* Named by what it shows (app name and version), with the focus
+            ring every other stop in the sidebar has. */}
+        <button
+          type="button"
+          onClick={handleLogoClick}
+          className="flex items-center gap-3 flex-1 min-w-0 text-start rounded-md focus-visible:outline-hidden group/about cursor-pointer"
+        >
           <img
             src={logoLight}
             alt={branded ? appName : 'Loomix'}
@@ -96,8 +109,8 @@ export function AboutFooter() {
           />
           <div className="min-w-0">
             <p className="text-xs font-medium text-foreground truncate">{branded ? appName : t('about.title')}</p>
-            <p className="text-[11px] text-muted-foreground truncate">
-              v{APP_VERSION} <span className="text-muted-foreground/60">({GIT_COMMIT})</span>
+            <p className="text-[0.6875rem] text-muted-foreground truncate">
+              v{APP_VERSION} <span className="text-muted-foreground">({GIT_COMMIT})</span>
               <VersionUpdateTag />
             </p>
           </div>
@@ -106,7 +119,7 @@ export function AboutFooter() {
           href={sourceCodeUrl || UPSTREAM_SOURCE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="shrink-0 inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+          className="shrink-0 inline-flex items-center gap-1 text-[0.6875rem] text-muted-foreground hover:text-foreground transition-colors"
         >
           {sourceCodeUrl ? t('about.source_code') : 'GitHub'} <ExternalLink className="w-3 h-3" />
         </a>
@@ -116,19 +129,44 @@ export function AboutFooter() {
 }
 
 /**
- * The Backup & reset page: keep settings (sync, export, import), fix a stale
- * view, start over, and (Advanced, where the admin allows it) debug logging.
- * The About card moved to the settings sidebar's footer.
+ * Settings > About, the last entry of the page list: the About card with the
+ * version and the source link. It was in the sidebar's footer, where it took
+ * room from the page list on short screens. In the desktop app it is "About &
+ * updates": the app's version, update check and channel follow the card
+ * (on General until the settings reorg of 2026-11-05).
+ */
+export function AboutSettings() {
+  const t = useTranslations('uxs_structure.about');
+  const appName = productName(useConfig().appName);
+  return (
+    <div className="space-y-8">
+      <SettingsSection id="about" title={t('title', { appName })}>
+        <div className="-mx-3">
+          <AboutFooter />
+        </div>
+      </SettingsSection>
+      {!IS_LITE && <DesktopUpdateSettings />}
+    </div>
+  );
+}
+
+/**
+ * The Backup & import page: keep settings (sync, export, import), bring mail
+ * in and save it as files. Offline has a page of its own; fixing a stale
+ * view, starting over and debug logging are on Troubleshooting (settings
+ * reorg 2026-11-05).
  */
 export function AboutDataSettings() {
   const t = useTranslations('settings.advanced');
-  const tCommon = useTranslations('common');
   const tSettings = useTranslations('settings');
-  const { settingsSyncDisabled, updateSetting, resetToDefaults, exportSettings, importSettings } =
+  const { settingsSyncDisabled, updateSetting, exportSettings, importSettings } =
     useSettingsStore();
   const { settingsSyncEnabled } = useConfig();
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [showRefreshConfirm, setShowRefreshConfirm] = useState(false);
+  const tWords = useTranslations('ux_p3_words');
+  // The app has no "other browsers" (settings-p2-4), and its Backup says only what it
+  // does: a settings file to export and import (settings-p3-9).
+  const [inApp, setInApp] = useState(false);
+  useEffect(() => setInApp(isDesktopApp()), []);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isFeatureEnabled } = usePolicyStore();
   const handleExport = () => {
@@ -157,39 +195,21 @@ export function AboutDataSettings() {
       const json = event.target?.result as string;
       const success = importSettings(json);
       if (success) {
-        alert(tSettings('import_success'));
+        toast.success(tSettings('import_success'));
       } else {
-        alert(tSettings('import_error'));
+        toast.error(tSettings('import_error'));
       }
     };
     reader.readAsText(file);
-  };
-
-  const handleRefreshCache = () => {
-    if (showRefreshConfirm) {
-      clearCachedData(); // reloads the page
-    } else {
-      setShowRefreshConfirm(true);
-      setTimeout(() => setShowRefreshConfirm(false), 5000);
-    }
-  };
-
-  const handleReset = () => {
-    if (showResetConfirm) {
-      resetToDefaults();
-      setShowResetConfirm(false);
-      alert(tSettings('save_success'));
-    } else {
-      setShowResetConfirm(true);
-      setTimeout(() => setShowResetConfirm(false), 5000);
-    }
+    // The same file can be picked again after fixing it.
+    e.target.value = '';
   };
 
   return (
     <div className="space-y-8">
-      <SettingsSection id="backup" title={t('sections.backup')} description={t('sections.backup_description')}>
+      <SettingsSection id="backup" title={t('sections.backup')} description={inApp ? tWords('backup_app') : t('sections.backup_description')}>
         {settingsSyncEnabled && (
-          <SettingItem label={t('settings_sync.label')} description={t('settings_sync.description')}>
+          <SettingItem label={t('settings_sync.label')} description={inApp ? tWords('sync_app') : t('settings_sync.description')} term="sync">
             <ToggleSwitch checked={!settingsSyncDisabled} onChange={(checked) => updateSetting('settingsSyncDisabled', !checked)} />
           </SettingItem>
         )}
@@ -220,27 +240,66 @@ export function AboutDataSettings() {
         )}
       </SettingsSection>
 
-      <SettingsSection id="fix" title={t('sections.fix')} description={t('sections.fix_description')}>
-        <SettingItem label={t('refresh_cache.label')} description={t('refresh_cache.description')}>
-          <Button
-            variant={showRefreshConfirm ? 'default' : 'outline'}
-            size="sm"
-            onClick={handleRefreshCache}
-          >
-            {showRefreshConfirm ? tCommon('yes') : t('refresh_cache.button')}
+      <MailBackupSettings />
+    </div>
+  );
+}
+
+/**
+ * Settings > Troubleshooting, listed only with "Show advanced settings" on
+ * (settings reorg 2026-11-05): fix a stale view or start over, and debugging
+ * (detailed logging, the desktop app's developer tools). Every section is
+ * advanced, so a search result or link shows its row alone with the switch
+ * off. These were on Backup & reset and General.
+ */
+export function TroubleshootingSettings() {
+  const t = useTranslations('settings.advanced');
+  const { settingsSyncDisabled, resetToDefaults } = useSettingsStore();
+  const { settingsSyncEnabled } = useConfig();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showRefreshConfirm, setShowRefreshConfirm] = useState(false);
+  const tP2 = useTranslations('uxp2_settings');
+  // A reset keeps the sync choice, so the other devices change only when sync is on (settings-p2-18).
+  const syncOn = settingsSyncEnabled && !settingsSyncDisabled;
+
+  const handleReset = () => {
+    resetToDefaults();
+    toast.success(t('reset_settings.done'));
+  };
+
+  return (
+    <div className="space-y-8">
+      <SettingsSection id="fix" advanced title={t('sections.fix')} description={t('sections.fix_description')}>
+        <SettingItem label={t('refresh_cache.label')} description={t('refresh_cache.description')} term="cache">
+          <Button variant="outline" size="sm" onClick={() => setShowRefreshConfirm(true)}>
+            {t('refresh_cache.button')}
           </Button>
         </SettingItem>
 
         <SettingItem label={t('reset_settings.label')} description={t('reset_settings.description')}>
-          <Button
-            variant={showResetConfirm ? 'destructive' : 'outline'}
-            size="sm"
-            onClick={handleReset}
-          >
-            {showResetConfirm ? tCommon('yes') : t('reset_settings.button')}
+          <Button variant="outline" size="sm" onClick={() => setShowResetConfirm(true)}>
+            {t('reset_settings.button')}
           </Button>
         </SettingItem>
       </SettingsSection>
+
+      <ConfirmDialog
+        isOpen={showRefreshConfirm}
+        onClose={() => setShowRefreshConfirm(false)}
+        onConfirm={() => clearCachedData() /* reloads the page */}
+        title={t('refresh_cache.confirm_title')}
+        message={t('refresh_cache.description')}
+        confirmText={t('refresh_cache.button')}
+      />
+      <ConfirmDialog
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={handleReset}
+        title={t('reset_settings.confirm_title')}
+        message={`${tP2('reset.message')} ${syncOn ? tP2('reset.sync_on') : tP2('reset.sync_off')}`}
+        confirmText={t('reset_settings.button')}
+        variant="destructive"
+      />
 
       <DebugSettings />
     </div>

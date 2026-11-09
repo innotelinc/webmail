@@ -12,7 +12,11 @@ import { toast } from "@/stores/toast-store";
 import { useProTabStore, registerProTabCloseInterceptor, type ProComposeTabData } from "@/stores/pro-tab-store";
 import { debug } from "@/lib/debug";
 import { threadKeyFor } from "@/lib/thread-utils";
+import { formatRejectedRecipients } from "@/lib/jmap/client";
 import { announceSent } from "@/lib/plugin-after-send";
+import { composerSendOptions } from "@/lib/outgoing/composer-send-options";
+import { usePopoutsAvailable } from "@/hooks/use-popouts-available";
+import { openComposerWindow } from "@/lib/popout/open";
 
 interface ProComposeTabBodyProps {
   tabId: string;
@@ -55,7 +59,8 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
   }, [client, refreshScheduledMetadata, isScheduledView, fetchScheduledEmails, closeTab]);
 
   const handleSend = useCallback(async (sendData: Parameters<NonNullable<React.ComponentProps<typeof EmailComposer>['onSend']>>[0]) => {
-    if (!client) return;
+    // Nothing is sent: the composer keeps what only goes once the mail is out.
+    if (!client) return false;
     // The Pro From dropdown lists identities from every connected account, so
     // the chosen identity may belong to a different account than the active
     // one. Submit through that account's own client - the identity id is only
@@ -87,30 +92,41 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
         sendData.references,
         sendData.delayedUntil,
         sendData.envelopeMailFrom,
-        { localAccountId: sendData.localAccountId },
+        // The composer's whole options, as the mail page passes them: the
+        // tab used to send without priority, read receipt, DSN, REQUIRETLS,
+        // plugin headers and the classification label.
+        composerSendOptions(sendData),
       );
       submitted = true;
-      announceSent(result, sendData);
-
-      if (result.scheduled) {
-        await handleScheduledSendCreated();
-        return;
+      if (result.rejectedRecipients?.length) {
+        // As in the inline composer: nothing else would say who never gets it.
+        toast.warning(t('email_composer.recipients_partly_refused', {
+          recipients: formatRejectedRecipients(result.rejectedRecipients),
+        }));
       }
+      announceSent(result, sendData);
 
       // Mark the original message as $answered / $forwarded so the standard
       // viewer and list reflect the action (same behaviour as inline compose).
+      // Before the scheduled return: with a send delay every send is a held
+      // submission, and the flag was never set. (#985)
       if (data.sourceEmailId && (data.mode === 'reply' || data.mode === 'replyAll')) {
         try {
-          await useEmailStore.getState().markEmailKeyword(client, data.sourceEmailId, '$answered');
+          await useEmailStore.getState().markEmailKeyword(client, data.sourceEmailId, '$answered', data.sourceEmailSource ?? undefined);
         } catch (e) {
           debug.error('Failed to set $answered keyword:', e);
         }
       } else if (data.sourceEmailId && data.mode === 'forward') {
         try {
-          await useEmailStore.getState().markEmailKeyword(client, data.sourceEmailId, '$forwarded');
+          await useEmailStore.getState().markEmailKeyword(client, data.sourceEmailId, '$forwarded', data.sourceEmailSource ?? undefined);
         } catch (e) {
           debug.error('Failed to set $forwarded keyword:', e);
         }
+      }
+
+      if (result.scheduled) {
+        await handleScheduledSendCreated();
+        return;
       }
 
       // Refresh the currently-active mail list so the new sent message /
@@ -140,7 +156,7 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
       if (!submitted) throw error;
       toast.error(t('notifications.error_sending'));
     }
-  }, [client, sendEmail, closeTab, data.sourceEmailId, data.mode, t, handleScheduledSendCreated, refreshCurrentMailbox]);
+  }, [client, sendEmail, closeTab, data.sourceEmailId, data.sourceEmailSource, data.mode, t, handleScheduledSendCreated, refreshCurrentMailbox]);
 
   const handleClose = useCallback(() => {
     closeTab(tabIdRef.current);
@@ -160,33 +176,38 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
     });
   }, [closeTab]);
 
-  const handleDiscardDraft = useCallback(async (draftId: string) => {
+  const handleDiscardDraft = useCallback(async (draftId: string, draft?: { accountId?: string; localAccountId?: string }) => {
     if (!client) return;
+    // Same routing as the inline composer's discard: the login the draft was
+    // saved with, and the account it lives in (see ComposerDraftData), never
+    // another login once that one is gone.
+    const draftClient = draft?.localAccountId
+      ? useAuthStore.getState().getClientForAccount(draft.localAccountId)
+      : client;
+    if (!draftClient) {
+      toast.error(t('email_composer.discard_signed_out'));
+      return;
+    }
     try {
-      await client.deleteEmail(draftId);
+      await draftClient.deleteEmail(draftId, draft?.accountId);
     } catch (error) {
       console.error('Failed to discard draft:', error);
     }
-  }, [client]);
+  }, [client, t]);
 
   const handleSaveState = useCallback((state: ComposerDraftData) => {
     updateComposeDraft(tabIdRef.current, state);
-    // Keep the tab title in sync with the working subject.
-    const subject = state.subject?.trim() || t('email_composer.new_message');
-    updateTabTitle(tabIdRef.current, subject);
-  }, [updateComposeDraft, updateTabTitle, t]);
+  }, [updateComposeDraft]);
 
-  // On first mount, ensure the tab title matches whatever subject we were
-  // initialised with (replies start with "Re: …", forwards with "Fwd: …").
-  useEffect(() => {
-    const initialSubject = data.initialData?.subject?.trim()
-      ?? data.replyTo?.subject
-      ?? '';
-    const title = initialSubject || t('email_composer.new_message');
-    updateTabTitle(tabIdRef.current, title);
-    // Run once on mount only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // The tab's title is the subject as it is typed, so several open compose
+  // tabs can be told apart. replyTo is no source for it: the mail tab fills
+  // that in from the selected message for a new message too.
+  const newMessageTitle = t('email_composer.new_message');
+  const handleSubjectChange = useCallback((subject: string) => {
+    updateTabTitle(tabIdRef.current, subject.trim() || newMessageTitle);
+  }, [updateTabTitle, newMessageTitle]);
+
+  const popoutsOn = usePopoutsAvailable();
 
   // Mirrors the standard shell (see the same prop in `components/mail/mail-app.tsx`).
   // Without it `mode === 'compose'` resolves `findComposeIdentityId(identities,
@@ -210,6 +231,22 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
     );
   });
 
+  const popOut = useCallback(() => {
+    const target = openComposerWindow(useAuthStore.getState().activeAccountId);
+    if (!target) return null;
+    return {
+      cancel: target.cancel,
+      handOver: (state: ComposerDraftData) => target.handOver({
+        mode: state.mode,
+        replyTo: state.replyTo,
+        initialData: state,
+        sourceEmailId: data.sourceEmailId,
+        sourceEmailSource: data.sourceEmailSource,
+        composeFromAccountEmail,
+      }),
+    };
+  }, [composeFromAccountEmail, data.sourceEmailId, data.sourceEmailSource]);
+
   return (
     <div className="flex h-full w-full flex-col bg-background">
       <ErrorBoundary fallback={ComposerErrorFallback}>
@@ -220,6 +257,7 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
           initialDraftText={data.initialDraftText}
           initialData={data.initialData}
           prefill={data.prefill}
+          initialFiles={data.initialFiles}
           sessionKey={`pro-${tabId}-${data.sessionId}`}
           sourceEmailId={data.sourceEmailId ?? undefined}
           composeFromAccountEmail={composeFromAccountEmail}
@@ -229,6 +267,8 @@ export function ProComposeTabBody({ tabId, data }: ProComposeTabBodyProps) {
           requestCloseRef={requestCloseRef}
           onDiscardDraft={handleDiscardDraft}
           onSaveState={handleSaveState}
+          popOut={popoutsOn ? popOut : undefined}
+          onSubjectChange={handleSubjectChange}
           className="flex-1"
         />
       </ErrorBoundary>

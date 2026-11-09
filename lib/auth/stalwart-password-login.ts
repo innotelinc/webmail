@@ -57,6 +57,12 @@ export interface StalwartPasswordLoginOptions {
    * {@link stalwartDefaultClient}) and signs in with that.
    */
   registerUnknownClient?: boolean;
+  /**
+   * Scope to ask for with `clientId` when the admin registered it (see
+   * getPasswordLoginScope). A client this login registers itself is allowed
+   * STALWART_LOGIN_SCOPE only, so it always gets that.
+   */
+  scope?: string;
 }
 
 export interface StalwartTokens {
@@ -170,7 +176,7 @@ export function resetStalwartDefaultClients(): void {
   defaultClients.clear();
 }
 
-/** Registers Bulwark as a public client at Stalwart 1.0 (see stalwartClientRegistration). */
+/** Registers Loomix as a public client at Stalwart 1.0 (see stalwartClientRegistration). */
 async function registerPublicClient(base: string, upstreamFetch: typeof fetch): Promise<LoginClient | null> {
   try {
     const response = await upstreamFetch(`${base}/auth/register`, {
@@ -265,6 +271,7 @@ async function requestLoginCode(
         redirectUri: client.redirectUri ?? opts.redirectUri,
         codeChallenge: challenge,
         state,
+        scope: client.redirectUri ? undefined : opts.scope,
       })),
     });
 

@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Search, X, RefreshCw, Loader2, Lock, AlertCircle, BookUser, CheckSquare, Square, ChevronLeft, ChevronRight, Menu, Users, MapPin, Box } from "@/components/icons";
-import { Input } from "@/components/ui/input";
+import { Search, RefreshCw, Loader2, Lock, AlertCircle, BookUser, CheckSquare, Square, ChevronLeft, ChevronRight, Menu, Users, MapPin, Box, Printer } from "@/components/icons";
+import { ToolbarButton, ToolbarSearch } from "@/components/ui/toolbar";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { IJMAPClient } from "@/lib/jmap/client-interface";
 import { useContactStore, type DirectoryEntry } from "@/stores/contact-store";
+import { DirectoryListPrint } from "./contact-print-views";
 
 export const DIRECTORY_PAGE_SIZE = 50;
 
@@ -45,7 +46,18 @@ interface DirectoryBrowserProps {
   activeKey?: string | null;
   onMenuClick?: () => void;
   autoFocusSearch?: boolean;
+  /** Print the entries the search leaves (all pages). */
+  onPrint?: () => void;
+  /** Set while the list is being printed. */
+  printing?: boolean;
   className?: string;
+  /**
+   * Browse these instead of the server's directory (the recipient picker's
+   * Contacts tab): nothing is fetched and there is nothing to refresh.
+   */
+  entries?: DirectoryEntry[];
+  /** With `entries`: the list's name and what an empty list or search says. */
+  labels?: { list: string; emptyTitle: string; emptyHint?: string; noMatch: string };
 }
 
 /**
@@ -61,13 +73,20 @@ export function DirectoryBrowser({
   activeKey,
   onMenuClick,
   autoFocusSearch,
+  onPrint,
+  printing = false,
   className,
+  entries: ownEntries,
+  labels,
 }: DirectoryBrowserProps) {
   const t = useTranslations("contacts.directory");
   const tContacts = useTranslations("contacts");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
-  const entries = useContactStore((s) => s.directoryPrincipals);
-  const status = useContactStore((s) => s.directoryStatus);
+  const directoryEntries = useContactStore((s) => s.directoryPrincipals);
+  const directoryStatus = useContactStore((s) => s.directoryStatus);
+  const entries = ownEntries ?? directoryEntries;
+  const status = ownEntries ? "ready" : directoryStatus;
   const fetchDirectory = useContactStore((s) => s.fetchDirectory);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(0);
@@ -75,8 +94,8 @@ export function DirectoryBrowser({
 
   // The directory loads at sign-in; fetch here only if that never ran.
   useEffect(() => {
-    if (client && status === "idle") void fetchDirectory(client);
-  }, [client, status, fetchDirectory]);
+    if (!ownEntries && client && status === "idle") void fetchDirectory(client);
+  }, [ownEntries, client, status, fetchDirectory]);
 
   useEffect(() => {
     if (autoFocusSearch) searchRef.current?.focus();
@@ -109,7 +128,9 @@ export function DirectoryBrowser({
   };
 
   let placeholder: React.ReactNode = null;
-  if (entries.length === 0) {
+  if (entries.length === 0 && ownEntries) {
+    placeholder = <StatePanel icon={<BookUser className="w-6 h-6" />} title={labels?.emptyTitle ?? t("empty_title")} hint={labels?.emptyHint} />;
+  } else if (entries.length === 0) {
     if (loading) {
       placeholder = (
         <StatePanel icon={<Loader2 className="w-6 h-6 animate-spin" />} title={t("loading")} />
@@ -124,75 +145,63 @@ export function DirectoryBrowser({
       placeholder = <StatePanel icon={<BookUser className="w-6 h-6" />} title={t("empty_title")} hint={t("empty_hint")} />;
     }
   } else if (filtered.length === 0) {
-    placeholder = <StatePanel icon={<Search className="w-6 h-6" />} title={t("no_match")} />;
+    placeholder = <StatePanel icon={<Search className="w-6 h-6" />} title={labels?.noMatch ?? t("no_match")} />;
   }
 
   return (
     <div className={cn("flex flex-col h-full min-h-0", className)}>
-      <div className="border-b border-border bg-background px-3 py-3">
-        <div className="flex items-center gap-1.5">
+      <div className="border-b border-border bg-background">
+        <div className="px-3 h-14 flex items-center gap-1">
           {onMenuClick && (
-            <button
-              type="button"
-              onClick={onMenuClick}
-              className="flex-shrink-0 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              aria-label={tContacts("open_categories")}
-            >
-              <Menu className="w-4 h-4" />
-            </button>
+            <ToolbarButton label={tContacts("open_categories")} onClick={onMenuClick}>
+              <Menu />
+            </ToolbarButton>
           )}
-          <button
-            type="button"
+          <ToolbarButton
+            label={pageAllSelected ? t("deselect_page") : t("select_page")}
             onClick={togglePage}
             disabled={pageEntries.length === 0}
-            className={cn(
-              "flex-shrink-0 p-2 rounded-md transition-colors disabled:opacity-50",
-              selected.size > 0 ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted",
-            )}
-            title={pageAllSelected ? t("deselect_page") : t("select_page")}
-            aria-label={pageAllSelected ? t("deselect_page") : t("select_page")}
+            active={selected.size > 0}
           >
-            {pageAllSelected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
-          </button>
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              ref={searchRef}
-              type="text"
-              placeholder={t("search_placeholder")}
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setPage(0); }}
-              className={cn("ps-9 h-9", query && "pe-8")}
-              aria-label={t("search_placeholder")}
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => { setQuery(""); setPage(0); }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                aria-label={tContacts("clear_search")}
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={refresh}
-            disabled={!client || status === "loading" || status === "unavailable"}
-            className="flex-shrink-0 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
-            title={t("refresh")}
-            aria-label={t("refresh")}
-          >
-            <RefreshCw className={cn("w-4 h-4", status === "loading" && "animate-spin")} />
-          </button>
+            {pageAllSelected ? <CheckSquare /> : <Square />}
+          </ToolbarButton>
+          <ToolbarSearch
+            ref={searchRef}
+            className="flex-1"
+            placeholder={t("search_placeholder")}
+            aria-label={t("search_placeholder")}
+            autoComplete="off"
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setPage(0); }}
+            onClear={() => { setQuery(""); setPage(0); }}
+            clearLabel={tContacts("clear_search")}
+          />
+          {!ownEntries && (
+            <ToolbarButton
+              label={t("refresh")}
+              onClick={refresh}
+              disabled={!client || status === "loading" || status === "unavailable"}
+            >
+              <RefreshCw className={cn(status === "loading" && "animate-spin [animation-direction:reverse]")} />
+            </ToolbarButton>
+          )}
+          {onPrint && (
+            <ToolbarButton label={tCommon("print")} onClick={onPrint}>
+              <Printer />
+            </ToolbarButton>
+          )}
         </div>
-        {entries.length > 0 && (status === "error" || status === "forbidden") && (
-          <p role="alert" className="mt-2 text-xs text-destructive">{t("refresh_failed")}</p>
+        {entries.length > 0 && status === "error" && (
+          <p role="alert" className="px-3 pb-2 -mt-1 text-xs text-destructive">{t("refresh_failed")}</p>
+        )}
+        {/* A refused listing (Stalwart 1.0 with directory queries off) still
+            holds the principals the user knows; nothing failed to refresh. */}
+        {entries.length > 0 && status === "forbidden" && (
+          <p role="status" className="px-3 pb-2 -mt-1 text-xs text-muted-foreground">{t("forbidden_hint")}</p>
         )}
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto" role="list" aria-label={t("title")}>
+      <div className="flex-1 min-h-0 overflow-y-auto" role="list" aria-label={labels?.list ?? t("title")}>
         {placeholder ?? pageEntries.map((entry) => {
           const key = directoryKey(entry);
           const checked = selected.has(key);
@@ -253,7 +262,7 @@ export function DirectoryBrowser({
                 className="p-1.5 rounded-md hover:bg-muted hover:text-foreground disabled:opacity-40 disabled:hover:bg-transparent"
                 aria-label={t("previous_page")}
               >
-                <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
               <span className="tabular-nums">{t("page", { page: currentPage + 1, count: pageCount })}</span>
               <button
@@ -263,12 +272,13 @@ export function DirectoryBrowser({
                 className="p-1.5 rounded-md hover:bg-muted hover:text-foreground disabled:opacity-40 disabled:hover:bg-transparent"
                 aria-label={t("next_page")}
               >
-                <ChevronRight className="w-4 h-4 rtl:rotate-180" />
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           )}
         </div>
       )}
+      {printing && <DirectoryListPrint entries={filtered} searchQuery={query} />}
     </div>
   );
 }

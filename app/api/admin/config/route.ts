@@ -10,6 +10,7 @@ import { logger } from '@/lib/logger';
 import { hasSessionSecret } from '@/lib/auth/session-secret';
 import { configReadOnlyResponse } from '@/lib/admin/config-read-only-response';
 import { checkExtensionDirectoryUrl } from '@/lib/admin/directory-url';
+import { parseNoThirdPartyEnv } from '@/lib/third-party-mode';
 
 // Strings that count as "no real secret configured" - used so the dashboard
 // can warn about a placeholder session secret without us ever returning the
@@ -99,6 +100,17 @@ export async function PATCH(request: NextRequest) {
       if (problem) return NextResponse.json({ error: problem }, { status: 400 });
     }
 
+    // The no-third-party switch is fail-closed: an "on" from the environment
+    // can't be undone from the panel (lib/admin/third-party-mode.ts).
+    if ('noThirdPartyTraffic' in updates) {
+      if (typeof updates.noThirdPartyTraffic !== 'boolean') {
+        return NextResponse.json({ error: 'noThirdPartyTraffic must be true or false' }, { status: 400 });
+      }
+      if (!updates.noThirdPartyTraffic && parseNoThirdPartyEnv(process.env.NO_THIRD_PARTY_TRAFFIC)) {
+        return NextResponse.json({ error: 'NO_THIRD_PARTY_TRAFFIC is set in the environment; change it there.' }, { status: 409 });
+      }
+    }
+
     // Enum keys only accept their declared values; a stray string would
     // otherwise be persisted and fail closed (or open) at the read site.
     for (const [key, value] of Object.entries(updates)) {
@@ -123,6 +135,7 @@ export async function PATCH(request: NextRequest) {
 
     // Normalize jmapServers: pass through the parser so invalid entries are
     // rejected (bad ids, duplicate ids, non-HTTP URLs) before they're persisted.
+    let jmapServers: unknown[] | null = null;
     if ('jmapServers' in updates) {
       const incoming = updates.jmapServers;
       if (incoming != null && !Array.isArray(incoming)) {
@@ -139,6 +152,8 @@ export async function PATCH(request: NextRequest) {
           error: 'One or more jmapServers entries are invalid (each needs a unique id, label, and HTTP(S) url).',
         }, { status: 400 });
       }
+      // Saved on its own below, with the secrets of the stored list.
+      jmapServers = Array.isArray(incoming) ? incoming : [];
       updates.jmapServers = sanitized;
     }
 
@@ -167,7 +182,18 @@ export async function PATCH(request: NextRequest) {
       oldValues[key] = configManager.get(key);
     }
 
-    await configManager.setAdminConfig(updates);
+    if (jmapServers) {
+      // The secrets the dashboard didn't send come from the stored list, not
+      // this instance's copy: a secret saved elsewhere a moment ago stays.
+      const { jmapServers: _servers, ...rest } = updates;
+      void _servers;
+      if (Object.keys(rest).length > 0) await configManager.setAdminConfig(rest);
+      const incoming = jmapServers;
+      updates.jmapServers = await configManager.updateAdminConfig<unknown>('jmapServers', (current) =>
+        parseJmapServers(withStoredClientSecrets(incoming, parseJmapServers(current))), []);
+    } else {
+      await configManager.setAdminConfig(updates);
+    }
     await auditLog('config.update', { changes: Object.keys(updates).map(k => ({ key: k, old: oldValues[k], new: updates[k] })) }, ip);
 
     return NextResponse.json({ ok: true });

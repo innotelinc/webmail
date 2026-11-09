@@ -132,15 +132,34 @@ describe('identity plugin hooks', () => {
   it('hands the signature to plugins and uses what they return', async () => {
     identityHooks.onSignatureRender.register('test', (sig: { html: string; text: string }, ctx: { identityId: string }) => {
       expect(ctx).toEqual({ identityId: 'id-1' });
-      return { html: `${sig.html}<p>Sent from Bulwark</p>`, text: `${sig.text}\nSent from Bulwark` };
+      return { html: `${sig.html}<p>Sent from Loomix</p>`, text: `${sig.text}\nSent from Loomix` };
     });
     const ident = identity();
     const { result } = renderHook(() => usePluginSignature(ident));
 
     await waitFor(() => expect(result.current.revision).toBe(1));
-    expect(result.current.identity?.htmlSignature).toBe('<b>Ann</b><p>Sent from Bulwark</p>');
-    expect(result.current.identity?.textSignature).toBe('Ann\nSent from Bulwark');
+    expect(result.current.identity?.htmlSignature).toBe('<b>Ann</b><p>Sent from Loomix</p>');
+    expect(result.current.identity?.textSignature).toBe('Ann\nSent from Loomix');
     expect(result.current.identity?.id).toBe('id-1');
+  });
+
+  // Plain-text mode reads textSignature, rich mode htmlSignature.
+  it('makes the text signature from the HTML when a plugin changed only the HTML', async () => {
+    identityHooks.onSignatureRender.register('test', (sig: { html: string; text: string }) => ({ ...sig, html: '<p>Ann &amp; Bo</p><p>Sales</p>' }));
+    const ident = identity();
+    const { result } = renderHook(() => usePluginSignature(ident));
+
+    await waitFor(() => expect(result.current.revision).toBe(1));
+    expect(result.current.identity?.textSignature).toBe('Ann & Bo\nSales');
+  });
+
+  it('makes the HTML signature from the text when a plugin changed only the text', async () => {
+    identityHooks.onSignatureRender.register('test', (sig: { html: string; text: string }) => ({ ...sig, text: 'Ann <Sales>\n555' }));
+    const ident = identity();
+    const { result } = renderHook(() => usePluginSignature(ident));
+
+    await waitFor(() => expect(result.current.revision).toBe(1));
+    expect(result.current.identity?.htmlSignature).toBe('Ann &lt;Sales&gt;<br>555');
   });
 
   it('leaves the signature alone when no plugin listens', () => {

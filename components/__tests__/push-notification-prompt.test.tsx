@@ -2,6 +2,8 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PUSH_NOTIFICATION_PROMPT_DELAY_MS, PushNotificationPrompt } from "../push-notification-prompt";
 import { PWA_INSTALL_PROMPT_VISIBILITY_EVENT } from "../pwa-install-prompt";
+import { jmapSetError } from "@/lib/jmap/jmap-error";
+import { useUIStore } from "@/stores/ui-store";
 
 const mocks = vi.hoisted(() => ({
   pathname: "/en",
@@ -60,8 +62,10 @@ vi.mock("@/stores/settings-store", () => ({
   useSettingsStore: Object.assign(
     (selector: (state: typeof mocks.settingsState) => unknown) =>
       selector(mocks.settingsState),
-    { getState: () => mocks.settingsState },
+    { getState: () => mocks.settingsState, subscribe: () => () => {} },
   ),
+  // calendar-store (pulled in via email-store) registers its sync bridge at load.
+  registerCalendarSubscriptionSyncBridge: () => {},
 }));
 
 vi.mock("@/stores/policy-store", () => ({
@@ -122,6 +126,7 @@ describe("PushNotificationPrompt", () => {
     mocks.resyncWebPush.mockReset().mockResolvedValue(false);
     mocks.waitForWebPushResync.mockReset().mockResolvedValue(undefined);
     setNotificationPermission("default");
+    useUIStore.setState({ composingCount: 0 });
   });
 
   afterEach(() => {
@@ -192,6 +197,33 @@ describe("PushNotificationPrompt", () => {
         relayBaseUrl: "https://notifications.relay.bulwarkmail.org",
       }),
     );
+  });
+
+  it.each([
+    [
+      "forbidden",
+      { type: "forbidden", description: "No access to one of the accounts in the emailPush map." },
+      "error_forbidden",
+    ],
+    [
+      "overQuota",
+      { type: "overQuota", description: "There are too many subscriptions, please delete some before adding a new one." },
+      "error_over_quota",
+    ],
+  ])("explains a %s refusal instead of showing the raw server error", async (_type, setError, key) => {
+    mocks.enableWebPush.mockRejectedValue(
+      jmapSetError(`PushSubscription/set create failed: ${setError.description}`, setError),
+    );
+    render(<PushNotificationPrompt />);
+    await advancePromptDelay();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText("enable"));
+      await Promise.resolve();
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent(key);
+    expect(screen.getByRole("alert")).not.toHaveTextContent("emailPush");
   });
 
   it("does not render when push is already enabled", async () => {
@@ -443,6 +475,18 @@ describe("PushNotificationPrompt", () => {
     await advancePromptDelay();
 
     expect(mocks.isWebPushEnabled).toHaveBeenCalledWith("account-1");
+    expect(screen.getByText("title")).toBeInTheDocument();
+  });
+
+  it("stays off the screen while a composer is open", async () => {
+    render(<PushNotificationPrompt />);
+    await advancePromptDelay();
+    expect(screen.getByText("title")).toBeInTheDocument();
+
+    act(() => useUIStore.getState().beginComposing());
+    expect(screen.queryByText("title")).not.toBeInTheDocument();
+
+    act(() => useUIStore.getState().endComposing());
     expect(screen.getByText("title")).toBeInTheDocument();
   });
 });

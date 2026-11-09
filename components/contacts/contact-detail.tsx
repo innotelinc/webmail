@@ -1,55 +1,56 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
-import { useTranslations } from "next-intl";
-import { Mail, Phone, Building, MapPin, StickyNote, Pencil, Trash2, BookUser, Copy, Send, Globe, Cake, KeyRound, Users, Briefcase, Heart, Languages, Calendar, UserCircle, Download, MoreHorizontal, Printer } from "@/components/icons";
+import { useEffect, useRef, useMemo } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { contactDateParts, formatContactDate } from "@/lib/contact-dates";
+import { Mail, Phone, Building, MapPin, StickyNote, Pencil, BookUser, Copy, Send, Globe, Cake, KeyRound, Users, Briefcase, Heart, Languages, Calendar, UserCircle, MoreVertical, Printer } from "@/components/icons";
 import { Avatar } from "@/components/ui/avatar";
 import { MailtoLink } from "@/components/ui/mailto-link";
 import { Button } from "@/components/ui/button";
-import { ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
 import { cn } from "@/lib/utils";
-import type { ContactCard, AnniversaryDate, PartialDate } from "@/lib/jmap/types";
-import { getContactDisplayName, getContactPrimaryEmail, getContactPhotoUri } from "@/stores/contact-store";
+import { formatAddressLines } from "@/lib/address-format";
+import type { ContactCard, AnniversaryDate } from "@/lib/jmap/types";
+import { getContactDisplayName, getContactPrimaryEmail, getContactPhotoRef } from "@/stores/contact-store";
 import { ContactActivity } from "./contact-activity";
 import { toast } from "@/stores/toast-store";
-import { exportContact } from "./contact-export";
-import { printContact } from "./contact-print";
+import { ContactContextMenu } from "./contact-context-menu";
+import { useContextMenu } from "@/hooks/use-context-menu";
+import { ToolbarButton } from "@/components/ui/toolbar";
 import { usePluginSlotOffers } from "@/hooks/use-plugin-slot-offers";
 import { PluginSlot } from "@/components/plugins/plugin-slot";
 import { contactHooks } from "@/lib/plugin-hooks";
 import { contactToView } from "@/lib/plugin-projection";
-
-type MoreItem =
-  | {
-      icon: React.ComponentType<{ className?: string }>;
-      label: string;
-      onClick: () => void;
-      destructive?: boolean;
-      separator?: false;
-    }
-  | { separator: true };
+import { gateLinkClick } from "@/lib/plugin-hook-result";
 
 interface ContactDetailProps {
   contact: ContactCard | null;
   onEdit: () => void;
   onDelete: () => void;
   onAddToGroup?: () => void;
-  onDuplicate?: () => void;
+  /** "Merge with…" in the ⋮. */
+  onMergeWith?: () => void;
+  /** Move to another address book; undefined where there is none to move to. */
+  onMoveTo?: () => void;
   /** Compose an email to this contact in the app (no OS mailto handoff). */
   onCompose?: () => void;
+  /** Print the contact on a sheet of its own. */
+  onPrint?: () => void;
   isMobile?: boolean;
   className?: string;
+  /** In an address book shared read-only: no Edit, Move or Delete. */
+  readOnly?: boolean;
 }
 
 // Contexts and phone features the contact form offers, shown with the same
-// labels here. Anything else (custom vCard types) is shown as stored.
+// labels here. Anything else (custom vCard types) is shown as stored. The
+// standard's "private" reads "Home" and "voice" reads "Phone" (#pim-19).
 const CONTEXT_LABEL_KEYS: Record<string, string> = {
   work: "form.context_work",
-  private: "form.context_private",
+  private: "ux_pim_contact.context_private",
 };
 
 const PHONE_FEATURE_LABEL_KEYS: Record<string, string> = {
-  voice: "form.phone_voice",
+  voice: "ux_pim_contact.phone_voice",
   cell: "form.phone_cell",
   mobile: "form.phone_cell",
   fax: "form.phone_fax",
@@ -63,32 +64,8 @@ function formatPhoneFeatures(features: Record<string, boolean> | undefined, labe
   return Object.keys(features).filter(k => features[k]).map(label).join(", ");
 }
 
-function getDateParts(dateInput: AnniversaryDate): { year?: number; month?: number; day?: number } {
-  if (typeof dateInput === "object" && dateInput !== null) {
-    if (dateInput["@type"] === "Timestamp" && typeof dateInput.utc === "string") {
-      const d = new Date(dateInput.utc);
-      if (!isNaN(d.getTime())) {
-        return { year: d.getUTCFullYear(), month: d.getUTCMonth() + 1, day: d.getUTCDate() };
-      }
-      return {};
-    }
-    const pd = dateInput as PartialDate;
-    return { year: pd.year, month: pd.month, day: pd.day };
-  }
-  const s = String(dateInput);
-  if (s.startsWith("--")) {
-    const parts = s.substring(2).split("-");
-    return { month: parseInt(parts[0], 10), day: parts[1] ? parseInt(parts[1], 10) : undefined };
-  }
-  const d = new Date(s);
-  if (!isNaN(d.getTime())) {
-    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
-  }
-  return {};
-}
-
 function getCompletedYears(dateInput: AnniversaryDate): number | null {
-  const { year, month, day } = getDateParts(dateInput);
+  const { year, month, day } = contactDateParts(dateInput);
   if (!year) return null;
   const now = new Date();
   let years = now.getFullYear() - year;
@@ -101,46 +78,17 @@ function getCompletedYears(dateInput: AnniversaryDate): number | null {
   return years;
 }
 
-function formatDate(dateInput: AnniversaryDate): string {
-  if (typeof dateInput === 'object' && dateInput !== null) {
-    if (dateInput['@type'] === 'Timestamp' && typeof dateInput.utc === 'string') {
-      try {
-        const d = new Date(dateInput.utc as string);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-        }
-      } catch { /* fallback */ }
-      return String(dateInput.utc);
-    }
-    const pd = dateInput as PartialDate;
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const parts: string[] = [];
-    if (pd.month && monthNames[pd.month - 1]) parts.push(monthNames[pd.month - 1]);
-    if (pd.day) parts.push(String(pd.day));
-    if (pd.year) parts.push(String(pd.year));
-    return parts.join(' ') || String(dateInput);
-  }
-  const dateStr = String(dateInput);
-  if (dateStr.startsWith("--")) {
-    const parts = dateStr.substring(2).split("-");
-    const month = parseInt(parts[0], 10);
-    const day = parts[1] ? parseInt(parts[1], 10) : undefined;
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return day ? `${monthNames[month - 1]} ${day}` : monthNames[month - 1];
-  }
-  try {
-    const d = new Date(dateStr);
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-    }
-  } catch { /* fallback */ }
-  return dateStr;
-}
 
-export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDuplicate, onCompose, isMobile, className }: ContactDetailProps) {
+export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onMergeWith, onMoveTo, onCompose, onPrint, isMobile, className, readOnly = false }: ContactDetailProps) {
   const t = useTranslations("contacts");
-  const contextLabel = (key: string) => (CONTEXT_LABEL_KEYS[key] ? t(CONTEXT_LABEL_KEYS[key]) : key);
-  const featureLabel = (key: string) => (PHONE_FEATURE_LABEL_KEYS[key] ? t(PHONE_FEATURE_LABEL_KEYS[key]) : key);
+  const tRoot = useTranslations();
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
+  // The ⋮ shows the contact's menu, the one right-click shows in the list (R6).
+  const moreMenu = useContextMenu<ContactCard>();
+  const label = (labelKey: string) => (labelKey.startsWith("ux_pim_contact.") ? tRoot(labelKey) : t(labelKey));
+  const contextLabel = (key: string) => (CONTEXT_LABEL_KEYS[key] ? label(CONTEXT_LABEL_KEYS[key]) : key);
+  const featureLabel = (key: string) => (PHONE_FEATURE_LABEL_KEYS[key] ? label(PHONE_FEATURE_LABEL_KEYS[key]) : key);
 
   const cryptoKeys = contact?.cryptoKeys ? Object.values(contact.cryptoKeys) : [];
   const hasCryptoKeysSlotOffers = usePluginSlotOffers('contact-cryptokeys').length > 0;
@@ -158,7 +106,9 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
 
   if (!contact) {
     return (
-      <div className={cn("flex flex-col items-center justify-center h-full text-muted-foreground", className)}>
+      <div className={cn("relative flex flex-col items-center justify-center h-full text-muted-foreground", className)}>
+        {/* The window's controls lie over this end, and its empty top is something to drag by. */}
+        <div aria-hidden="true" data-window-top-row="" className="absolute inset-x-0 top-0 h-14" />
         <BookUser className="w-16 h-16 mb-4 opacity-20" />
         <p className="text-sm">{t("detail.no_contact_selected")}</p>
       </div>
@@ -167,29 +117,9 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
 
   const name = getContactDisplayName(contact);
   const email = getContactPrimaryEmail(contact);
-  const photoUri = getContactPhotoUri(contact);
+  const photo = getContactPhotoRef(contact) ?? null;
   const phone = contact.phones ? Object.values(contact.phones)[0]?.number : undefined;
 
-  const handleExport = () => {
-    exportContact(contact);
-    toast.success(t("export.success", { count: 1 }));
-  };
-
-  const handlePrint = () => {
-    printContact(contact, name);
-  };
-
-  const moreItems: MoreItem[] = [];
-  if (onAddToGroup) {
-    moreItems.push({ icon: Users, label: t("context_menu.add_to_group"), onClick: onAddToGroup });
-  }
-  if (onDuplicate) {
-    moreItems.push({ icon: Copy, label: t("context_menu.duplicate"), onClick: onDuplicate });
-  }
-  moreItems.push({ icon: Download, label: t("context_menu.export_vcard"), onClick: handleExport });
-  moreItems.push({ icon: Printer, label: t("context_menu.print"), onClick: handlePrint });
-  moreItems.push({ separator: true });
-  moreItems.push({ icon: Trash2, label: t("context_menu.delete"), onClick: onDelete, destructive: true });
   const emails = contact.emails ? Object.values(contact.emails) : [];
   const phones = contact.phones ? Object.values(contact.phones) : [];
   const orgs = contact.organizations ? Object.values(contact.organizations) : [];
@@ -218,12 +148,13 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
 
   return (
     <div className={cn("flex flex-col h-full overflow-y-auto", className)}>
-      <div className={cn("border-b border-border", isMobile ? "px-4 py-4" : "px-6 py-6")}>
+      <div data-window-top-row="" className={cn("border-b border-border", isMobile ? "px-4 py-4" : "px-6 py-6")}>
         <div className={cn("flex gap-4", isMobile ? "flex-col" : "flex-wrap items-start justify-between")}>
-          <div className="flex items-center gap-4 min-w-0 flex-1 basis-60">
-            <Avatar name={name} email={email} contactPhotoUri={photoUri} size={isMobile ? "md" : "lg"} />
+          <div className={cn("flex items-center gap-4 min-w-0 flex-1", !isMobile && "basis-60")}>
+            <Avatar name={name} email={email} contactPhoto={photo} size={isMobile ? "md" : "lg"} />
             <div className="min-w-0 flex-1">
-              <h2 className={cn("font-semibold truncate", isMobile ? "text-lg" : "text-xl")}>{name || "-"}</h2>
+              {/* A long name takes two lines, then ends in "…" with the whole name on hover. */}
+              <h2 title={name || undefined} className={cn("font-semibold line-clamp-2 break-words", isMobile ? "text-lg" : "text-xl")}>{name || "-"}</h2>
               {hasNickname && (
                 <p className="text-sm text-muted-foreground truncate">&ldquo;{nicknames.map(n => n.name).join(", ")}&rdquo;</p>
               )}
@@ -232,32 +163,66 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
               )}
             </div>
           </div>
-          <div className="flex gap-2 flex-shrink-0 flex-wrap">
+          {/* May not grow past the pane: in a narrow one the buttons at the end were pushed out of reach. */}
+          <div className="flex items-center gap-1.5 max-w-full flex-wrap">
             {email && onCompose && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onCompose}
-                className="touch-manipulation"
-              >
-                <Send className="w-4 h-4 me-1" />
+              <Button variant="outline" size="xs" onClick={onCompose} className="gap-1.5 touch-manipulation">
+                <Send />
                 {t("detail.compose_email")}
               </Button>
             )}
             {phone && (
               <a
                 href={`tel:${phone}`}
-                className="inline-flex items-center justify-center rounded-md font-medium h-9 px-3 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors touch-manipulation"
+                className="inline-flex items-center justify-center gap-1.5 rounded-md font-medium h-8 px-2.5 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors touch-manipulation"
               >
-                <Phone className="w-4 h-4 me-1" />
+                <Phone className="w-4 h-4" />
                 {t("context_menu.call")}
               </a>
             )}
-            <Button variant="outline" size="sm" onClick={onEdit} className="touch-manipulation">
-              <Pencil className="w-4 h-4 me-1" />
-              {t("form.edit_title")}
-            </Button>
-            <MoreActionsMenu items={moreItems} label={t("detail.more_actions")} />
+            {/* A phone's row has no room for this label: the ⋮ fell onto a line of its own. */}
+            {readOnly ? null : isMobile ? (
+              <ToolbarButton label={t("form.edit_title")} onClick={onEdit} className="touch-manipulation">
+                <Pencil />
+              </ToolbarButton>
+            ) : (
+              <Button variant="outline" size="xs" onClick={onEdit} className="gap-1.5 touch-manipulation">
+                <Pencil />
+                {t("form.edit_title")}
+              </Button>
+            )}
+            {/* On a phone it stays in the ⋮, which has Print too. */}
+            {onPrint && !isMobile && (
+              <ToolbarButton label={tCommon("print")} onClick={onPrint} className="touch-manipulation">
+                <Printer />
+              </ToolbarButton>
+            )}
+            <ToolbarButton
+              label={t("detail.more_actions")}
+              aria-haspopup="menu"
+              aria-expanded={moreMenu.contextMenu.isOpen}
+              active={moreMenu.contextMenu.isOpen}
+              onClick={(e) => moreMenu.openContextMenuFrom(e.currentTarget, contact, "end")}
+              className="touch-manipulation"
+            >
+              <MoreVertical />
+            </ToolbarButton>
+            {moreMenu.contextMenu.data && (
+              <ContactContextMenu
+                contact={moreMenu.contextMenu.data}
+                position={moreMenu.contextMenu.position}
+                isOpen={moreMenu.contextMenu.isOpen}
+                onClose={moreMenu.closeContextMenu}
+                menuRef={moreMenu.menuRef}
+                inDetail
+                readOnly={readOnly}
+                onCompose={onCompose}
+                onDelete={onDelete}
+                onAddToGroup={onAddToGroup}
+                onMergeWith={onMergeWith}
+                onMoveTo={onMoveTo}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -305,23 +270,14 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
               })}
 
               {addresses.map((a, i) => {
-                const lines: string[] = [];
-                if (a.full || a.fullAddress) {
-                  lines.push((a.full || a.fullAddress) as string);
-                } else if (a.components && a.components.length > 0) {
-                  const joined = a.components.filter(c => c.kind !== 'separator').map(c => c.value).filter(Boolean).join(", ");
-                  if (joined) lines.push(joined);
-                } else {
-                  const parts = [a.street, [a.postcode, a.locality].filter(Boolean).join(" "), a.region, a.country]
-                    .map(s => (typeof s === "string" ? s.trim() : ""))
-                    .filter(Boolean) as string[];
-                  lines.push(...parts);
-                }
+                // One line per part, in the order of the address's country:
+                // "Hauptstraße 1" / "10000 Berlin" / "Germany".
+                const lines = formatAddressLines(a, locale);
                 return (
                   <FieldRow key={`ad${i}`} icon={MapPin} label={formatContexts(a.contexts, contextLabel) || t("detail.address_default_label")}>
-                    <div className="text-sm space-y-0.5">
+                    <div className="text-sm space-y-0.5" data-testid="contact-address">
                       {lines.map((line, idx) => (
-                        <div key={idx}>{line}</div>
+                        <div key={idx} data-address-line="">{line}</div>
                       ))}
                       {a.timeZone && (
                         <div className="text-xs text-muted-foreground">{t("detail.timezone")}: {a.timeZone}</div>
@@ -339,7 +295,7 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
                 >
                   <div className="flex items-center gap-2 group">
                     {typeof svc.uri === 'string' && svc.uri.startsWith("http") ? (
-                      <a href={svc.uri} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                      <a href={svc.uri} target="_blank" rel="noopener noreferrer" onClick={gateLinkClick} onAuxClick={gateLinkClick} className="text-sm text-primary hover:underline break-all">
                         {svc.user || svc.uri}
                       </a>
                     ) : (
@@ -390,7 +346,7 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
                 return (
                   <FieldRow key={`an${i}`} icon={Cake} label={t(`detail.anniversary_${ann.kind}`)}>
                     <div className="text-sm">
-                      {formatDate(ann.date)}
+                      {formatContactDate(ann.date, locale)}
                       {years !== null && (
                         <span className="text-muted-foreground"> · {t(suffixKey, { count: years })}</span>
                       )}
@@ -475,7 +431,7 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
                   <div className="flex items-start gap-2 text-sm break-all">
                     <KeyRound className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     {typeof key.uri === 'string' && key.uri.startsWith("http") ? (
-                      <a href={key.uri} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      <a href={key.uri} target="_blank" rel="noopener noreferrer" onClick={gateLinkClick} onAuxClick={gateLinkClick} className="text-primary hover:underline">
                         {key.uri}
                       </a>
                     ) : (
@@ -493,21 +449,21 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
             <div className="space-y-3">
               {contact.calendarUri && (
                 <FieldRow icon={Calendar} label={t("detail.calendar_uri")}>
-                  <a href={contact.calendarUri} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                  <a href={contact.calendarUri} target="_blank" rel="noopener noreferrer" onClick={gateLinkClick} onAuxClick={gateLinkClick} className="text-sm text-primary hover:underline break-all">
                     {contact.calendarUri}
                   </a>
                 </FieldRow>
               )}
               {contact.schedulingUri && (
                 <FieldRow icon={Calendar} label={t("detail.scheduling_uri")}>
-                  <a href={contact.schedulingUri} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                  <a href={contact.schedulingUri} target="_blank" rel="noopener noreferrer" onClick={gateLinkClick} onAuxClick={gateLinkClick} className="text-sm text-primary hover:underline break-all">
                     {contact.schedulingUri}
                   </a>
                 </FieldRow>
               )}
               {contact.freeBusyUri && (
                 <FieldRow icon={Calendar} label={t("detail.freebusy_uri")}>
-                  <a href={contact.freeBusyUri} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                  <a href={contact.freeBusyUri} target="_blank" rel="noopener noreferrer" onClick={gateLinkClick} onAuxClick={gateLinkClick} className="text-sm text-primary hover:underline break-all">
                     {contact.freeBusyUri}
                   </a>
                 </FieldRow>
@@ -537,8 +493,8 @@ export function ContactDetail({ contact, onEdit, onDelete, onAddToGroup, onDupli
 
         {(contact.created || contact.updated) && (
           <div className="py-4 text-xs text-muted-foreground space-y-1">
-            {contact.created && <div>{t("detail.created")}: {formatDate(contact.created)}</div>}
-            {contact.updated && <div>{t("detail.updated")}: {formatDate(contact.updated)}</div>}
+            {contact.created && <div>{t("detail.created")}: {formatContactDate(contact.created, locale)}</div>}
+            {contact.updated && <div>{t("detail.updated")}: {formatContactDate(contact.updated, locale)}</div>}
           </div>
         )}
       </div>
@@ -554,7 +510,7 @@ function formatContexts(contexts: Record<string, boolean> | undefined, label: (k
 export function Section({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
     <section className={cn("py-6", className)}>
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">{title}</h3>
+      <h3 className="text-xs font-semibold text-muted-foreground mb-3">{title}</h3>
       {children}
     </section>
   );
@@ -573,73 +529,11 @@ function FieldRow({ icon: Icon, label, children }: { icon: React.ComponentType<{
 }
 
 function RowActions({ children }: { children: React.ReactNode }) {
+  // Shown on hover, while the keyboard is in the row and always on touch
+  // screens, which have no hover (WCAG 2.1.1, 2.4.7).
   return (
-    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+    <div data-row-actions className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
       {children}
-    </div>
-  );
-}
-
-function MoreActionsMenu({ items, label }: { items: MoreItem[]; label: string }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDocMouseDown = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onDocMouseDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDocMouseDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  if (items.length === 0) return null;
-
-  return (
-    <div ref={ref} className="relative">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setOpen((o) => !o)}
-        title={label}
-        aria-label={label}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className="touch-manipulation"
-      >
-        <MoreHorizontal className="w-4 h-4" />
-      </Button>
-      {open && (
-        <div
-          role="menu"
-          className="absolute end-0 top-full mt-1 z-30 min-w-[200px] bg-background rounded-md shadow-lg border border-border py-1"
-        >
-          {items.map((item, i) => {
-            if (item.separator) {
-              return <ContextMenuSeparator key={i} />;
-            }
-            return (
-              <ContextMenuItem
-                key={i}
-                icon={item.icon}
-                label={item.label}
-                destructive={item.destructive}
-                onClick={() => {
-                  item.onClick();
-                  setOpen(false);
-                }}
-              />
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

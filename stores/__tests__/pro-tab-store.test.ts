@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { useOfflineStore } from '@/lib/offline/state';
 import {
   useProTabStore,
   normalizeProTabState,
@@ -161,6 +162,21 @@ describe('openEmailTab', () => {
     expect(id).toBe('e1');
     expect(s.activeSplitTabId).toBe('e1');
     expect(s.focusedPaneId).toBe('split');
+    assertInvariants();
+  });
+
+  // userb is account `e` on the 0.16.23 and the 1.0 test server, and message
+  // ids repeat across both: the same id and account on two logins are two
+  // messages.
+  it('opens the same id and account of another login in a tab of its own', () => {
+    const open = (clientAccountId: string) => useProTabStore.getState().openEmailTab({
+      accountId: 'e', clientAccountId, emailId: 'eaaaaab', mailboxId: null, title: clientAccountId,
+    });
+    const first = open('userb@v016');
+    const second = open('userb@v10');
+
+    expect(second).not.toBe(first);
+    expect(open('userb@v016')).toBe(first);
     assertInvariants();
   });
 
@@ -490,5 +506,26 @@ describe('property: random operation sequences never violate the invariants', ()
       }
       assertInvariants(`seed ${seedValue} step ${i} op ${op}`);
     }
+  });
+});
+
+describe('stored tabs with the local store on', () => {
+  const stored = () => localStorage.getItem('pro-tabs') ?? '';
+  const open = () => useProTabStore.getState().openEmailTab({ accountId: 'acc', emailId: 'm9', mailboxId: null, title: 'Secret subject' });
+
+  it('hold the subject without it', () => {
+    useOfflineStore.setState({ enabled: [] });
+    open();
+    expect(stored()).toContain('Secret subject');
+  });
+
+  it('lose it the moment it is turned on, and the open tab keeps its title', () => {
+    useOfflineStore.setState({ enabled: [] });
+    open();
+    useOfflineStore.setState({ enabled: ['acc'] });
+    expect(stored()).not.toContain('Secret subject');
+    expect(stored()).toContain('m9');
+    expect(useProTabStore.getState().tabs.some((tab) => tab.title === 'Secret subject')).toBe(true);
+    useOfflineStore.setState({ enabled: [] });
   });
 });

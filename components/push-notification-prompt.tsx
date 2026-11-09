@@ -3,11 +3,15 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Bell, Loader2, X } from "@/components/icons";
+import { Bell, X } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
+import { Spinner } from "@/components/ui/spinner";
 import { useAccountStore } from "@/stores/account-store";
 import { useAuthStore } from "@/stores/auth-store";
 import { usePolicyStore } from "@/stores/policy-store";
 import { useSettingsStore } from "@/stores/settings-store";
+import { useUIStore } from "@/stores/ui-store";
 import {
   enableWebPush,
   isWebPushEnabled,
@@ -15,6 +19,7 @@ import {
   resyncWebPush,
   waitForWebPushResync,
 } from "@/lib/web-push";
+import { webPushErrorKey } from "@/lib/web-push-errors";
 import { resolveActiveRelayUrl } from "@/lib/push-relays";
 import {
   isPWAInstallPromptVisible,
@@ -106,6 +111,8 @@ export function PushNotificationPrompt() {
   const policyLoaded = usePolicyStore((state) => state.loaded);
   const policy = usePolicyStore((state) => state.policy);
   const userPushRelayUrl = useSettingsStore((state) => state.pushRelayUrl);
+  // Sits where the install card does: keep off an open composer's Send button.
+  const composing = useUIStore((state) => state.composingCount > 0);
 
   const [showPrompt, setShowPrompt] = useState(false);
   const [isEnabling, setIsEnabling] = useState(false);
@@ -120,6 +127,7 @@ export function PushNotificationPrompt() {
   );
 
   const accountId = client?.getAccountId() ?? null;
+  // Empty when no relay may be used (third-party traffic off, no own relay).
   const relayBaseUrl = resolveActiveRelayUrl(policy, userPushRelayUrl);
 
   const dismissForSession = useCallback((id: string) => {
@@ -251,6 +259,7 @@ export function PushNotificationPrompt() {
       || wasDismissed(accountId)
       || !isWebPushSupported()
       || Notification.permission === "denied"
+      || !relayBaseUrl
     ) {
       return;
     }
@@ -283,6 +292,7 @@ export function PushNotificationPrompt() {
     pathname,
     policyLoaded,
     pwaPromptVisible,
+    relayBaseUrl,
     sessionDismissedAccountIds,
   ]);
 
@@ -300,7 +310,9 @@ export function PushNotificationPrompt() {
       });
       setShowPrompt(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to enable push");
+      // Readable text for what a user can act on.
+      const key = webPushErrorKey(err);
+      setError(key ? tPush(key) : err instanceof Error ? err.message : "Failed to enable push");
     } finally {
       setIsEnabling(false);
     }
@@ -319,31 +331,25 @@ export function PushNotificationPrompt() {
     setShowPrompt(false);
   };
 
-  if (!showPrompt) return null;
+  if (!showPrompt || composing) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 bg-white dark:bg-neutral-900 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-800 p-4 max-w-sm animate-in slide-in-from-bottom-4">
+    <div className="fixed bottom-4 end-4 z-50 max-w-sm rounded-lg border border-border bg-popover text-popover-foreground shadow-lg p-4 animate-in slide-in-from-bottom-4 max-sm:inset-x-3 max-sm:max-w-none max-sm:bottom-[calc(var(--bottom-controls-height,3.75rem)+0.75rem)]">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3">
-          <Bell className="w-5 h-5 mt-0.5 text-blue-600 dark:text-blue-400 shrink-0" />
+          <Bell className="w-5 h-5 mt-0.5 text-primary shrink-0" />
           <div>
-            <h3 className="font-semibold text-sm text-neutral-900 dark:text-white">
+            <h3 className="font-semibold text-sm text-foreground">
               {tPush("title")}
             </h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {tPush("description")}
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          disabled={isEnabling}
-          className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors disabled:opacity-50"
-          aria-label={tPush("dismiss_aria")}
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <IconButton label={tPush("dismiss_aria")} onClick={handleDismiss} disabled={isEnabling} className="-me-2 -mt-2 text-muted-foreground">
+          <X />
+        </IconButton>
       </div>
       <div className="flex flex-col gap-2">
         {error ? (
@@ -352,32 +358,17 @@ export function PushNotificationPrompt() {
           </p>
         ) : null}
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={handleDismiss}
-            disabled={isEnabling}
-            className="flex-1 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors disabled:opacity-50"
-          >
+          <Button type="button" variant="outline" size="sm" className="flex-1" onClick={handleDismiss} disabled={isEnabling}>
             {tInstall("not_now")}
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleEnable()}
-            disabled={isEnabling}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            {isEnabling ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+          </Button>
+          <Button type="button" size="sm" className="flex-1 gap-2" onClick={() => void handleEnable()} disabled={isEnabling}>
+            {isEnabling ? <Spinner size="sm" className="text-current" /> : null}
             {tPush("enable")}
-          </button>
+          </Button>
         </div>
-        <button
-          type="button"
-          onClick={handleDismissForever}
-          disabled={isEnabling}
-          className="w-full text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors text-center disabled:opacity-50"
-        >
+        <Button type="button" variant="ghost" size="xs" className="w-full text-xs text-muted-foreground" onClick={handleDismissForever} disabled={isEnabling}>
           {tInstall("dont_remind")}
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,28 +1,61 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-
-interface Position {
-  x: number;
-  y: number;
-}
+import type { ContextMenuPosition } from "@/components/ui/context-menu";
 
 interface ContextMenuState<T> {
   isOpen: boolean;
-  position: Position;
+  position: ContextMenuPosition;
   data: T | null;
 }
 
-interface UseContextMenuReturn<T> {
+export interface UseContextMenuReturn<T> {
   contextMenu: ContextMenuState<T>;
+  /**
+   * Open from a contextmenu or click event. Opened by keyboard (a click
+   * from Enter/Space, or Shift+F10 / the Menu key) it anchors to the
+   * element the handler sits on instead of the pointer.
+   */
   openContextMenu: (e: React.MouseEvent, data: T) => void;
+  /** Open under an element, e.g. a ⋮ button: lined up with its start or end edge. */
+  openContextMenuFrom: (element: HTMLElement, data: T, align?: "start" | "end") => void;
   closeContextMenu: () => void;
   menuRef: React.RefObject<HTMLDivElement | null>;
 }
 
-const MENU_WIDTH = 200;
-const MENU_HEIGHT = 320; // Approximate max height
-const VIEWPORT_MARGIN = 10;
+/** Shift+F10 or the Menu key: open the focused element's context menu. */
+export function isContextMenuKey(e: { key: string; shiftKey: boolean }): boolean {
+  return e.key === "ContextMenu" || (e.shiftKey && e.key === "F10");
+}
+
+/** Whether a mouse event came from the keyboard rather than a pointer. */
+function openedByKeyboard(e: React.MouseEvent): boolean {
+  if (e.type === "click") return e.detail === 0;
+  // Shift+F10 and the Menu key fire contextmenu at 0,0 (or without a point).
+  if (e.type === "contextmenu") return !e.clientX && !e.clientY;
+  return false;
+}
+
+/**
+ * Where the focus goes back to when the menu closes: the control inside the
+ * opener that had it (a folder row's button, a message row's checkbox, where
+ * Shift+F10 was pressed), else the opener itself.
+ */
+function focusReturnTarget(opener: HTMLElement): HTMLElement {
+  const active = typeof document === "undefined" ? null : document.activeElement;
+  return active instanceof HTMLElement && opener.contains(active) ? active : opener;
+}
+
+/** The position that opens a menu under an element. */
+export function anchorPosition(element: HTMLElement, align: "start" | "end" = "start"): ContextMenuPosition {
+  const rect = element.getBoundingClientRect();
+  return {
+    x: rect.left,
+    y: rect.bottom,
+    anchor: { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, align },
+    trigger: element,
+  };
+}
 
 export function useContextMenu<T>(): UseContextMenuReturn<T> {
   const [contextMenu, setContextMenu] = useState<ContextMenuState<T>>({
@@ -32,52 +65,51 @@ export function useContextMenu<T>(): UseContextMenuReturn<T> {
   });
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-
-  const calculatePosition = useCallback((clientX: number, clientY: number): Position => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    let x = clientX;
-    let y = clientY;
-
-    // Adjust for right edge
-    if (x + MENU_WIDTH > viewportWidth - VIEWPORT_MARGIN) {
-      x = viewportWidth - MENU_WIDTH - VIEWPORT_MARGIN;
-    }
-
-    // Adjust for bottom edge
-    if (y + MENU_HEIGHT > viewportHeight - VIEWPORT_MARGIN) {
-      y = viewportHeight - MENU_HEIGHT - VIEWPORT_MARGIN;
-    }
-
-    // Ensure minimum position
-    x = Math.max(VIEWPORT_MARGIN, x);
-    y = Math.max(VIEWPORT_MARGIN, y);
-
-    return { x, y };
-  }, []);
+  // Whether it is open, as last asked for: closing a closed menu sets nothing.
+  const openRef = useRef(contextMenu.isOpen);
+  openRef.current = contextMenu.isOpen;
 
   const openContextMenu = useCallback((e: React.MouseEvent, data: T) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const position = calculatePosition(e.clientX, e.clientY);
+    const target = e.currentTarget instanceof HTMLElement ? e.currentTarget : null;
+    const trigger = target ? focusReturnTarget(target) : null;
+    const position: ContextMenuPosition = target && openedByKeyboard(e)
+      ? { ...anchorPosition(target), trigger }
+      // At the pointer as it is: the menu places itself once it knows its size,
+      // opening up or to the side where there's no room (lib/menu-placement.ts).
+      : { x: e.clientX, y: e.clientY, trigger, fromPointer: true };
+    // The row it's for stays marked while it's open (a ⋮ inside the row counts as the row).
+    if (target) position.opener = target.closest<HTMLElement>("[data-menu-row]") ?? target;
 
+    openRef.current = true;
     setContextMenu({
       isOpen: true,
       position,
       data,
     });
-  }, [calculatePosition]);
-
-  const closeContextMenu = useCallback(() => {
-    setContextMenu((prev) => ({
-      ...prev,
-      isOpen: false,
-    }));
   }, []);
 
-  // Close on escape key, click outside, and scroll
+  const openContextMenuFrom = useCallback((element: HTMLElement, data: T, align: "start" | "end" = "start") => {
+    const position = anchorPosition(element, align);
+    // Focus goes back to it, and the row it's in stays marked while the menu is open.
+    position.trigger = focusReturnTarget(element);
+    position.opener = element.closest<HTMLElement>("[data-menu-row]") ?? element;
+    openRef.current = true;
+    setContextMenu({ isOpen: true, position, data });
+  }, []);
+
+  // A menu already closed is left alone: a new state, even an equal one,
+  // draws the component again (the reader closes its menus on every open).
+  const closeContextMenu = useCallback(() => {
+    if (!openRef.current) return;
+    openRef.current = false;
+    setContextMenu((prev) => (prev.isOpen ? { ...prev, isOpen: false } : prev));
+  }, []);
+
+  // Close on escape key, click outside, and scroll. (ContextMenu answers
+  // Escape itself and keeps it from the app; this one is a fallback.)
   useEffect(() => {
     if (!contextMenu.isOpen) return;
 
@@ -101,6 +133,9 @@ export function useContextMenu<T>(): UseContextMenuReturn<T> {
     };
 
     const handleBlur = () => {
+      // A focused control in the menu may have opened a system dialog that
+      // took the focus from the window, such as a color input's (#1366).
+      if (menuRef.current?.contains(document.activeElement)) return;
       closeContextMenu();
     };
 
@@ -124,6 +159,7 @@ export function useContextMenu<T>(): UseContextMenuReturn<T> {
   return {
     contextMenu,
     openContextMenu,
+    openContextMenuFrom,
     closeContextMenu,
     menuRef,
   };

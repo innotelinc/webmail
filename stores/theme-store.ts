@@ -10,10 +10,10 @@ import {
   injectThemeSkinCSS,
   removeThemeSkinCSS,
 } from '@/lib/theme-loader';
-import { extractTheme } from '@/lib/plugin-validator';
 import { BUILTIN_THEMES } from '@/lib/builtin-themes';
 import { usePolicyStore } from '@/stores/policy-store';
 import { apiFetch } from '@/lib/browser-navigation';
+import { fetchServerPluginList } from '@/lib/server-plugin-list';
 import { themeHooks } from '@/lib/plugin-hooks';
 import { syncThemeColorMeta } from '@/lib/theme-color-meta';
 import { IS_LITE } from '@/lib/lite';
@@ -158,6 +158,13 @@ export const useThemeStore = create<ThemeState>()(
           set({ activeThemeId: effectiveThemeId });
         }
 
+        // No theme in effect: drop the copy the boot script may have put back
+        // from the cache (lib/boot-skeleton/boot-script.ts, applyBootTheme).
+        if (!effectiveThemeId) {
+          removeThemeCSS();
+          removeThemeSkinCSS();
+        }
+
         // Apply active custom theme on boot
         if (effectiveThemeId) {
           const t = installedThemes.find(t => t.id === effectiveThemeId);
@@ -208,6 +215,8 @@ export const useThemeStore = create<ThemeState>()(
       },
 
       installTheme: async (file: File) => {
+        // The package reader (ZIP, manifest checks) loads with the first install, not with the page.
+        const { extractTheme } = await import('@/lib/plugin-validator');
         const result = await extractTheme(file);
         if (!result.valid || !result.manifest) {
           return { success: false, error: result.errors.join('; '), warnings: result.warnings };
@@ -368,11 +377,11 @@ export const useThemeStore = create<ThemeState>()(
 
         themeSyncPromise = (async () => {
           try {
-            const res = await apiFetch('/api/plugins');
+            const res = await fetchServerPluginList();
             if (!res.ok) return;
 
-            const data: { themes: ServerThemeInfo[] } = await res.json();
-            if (!data.themes || !Array.isArray(data.themes)) return;
+            const data = res.data as { themes: ServerThemeInfo[] };
+            if (!data?.themes || !Array.isArray(data.themes)) return;
 
             const serverThemes = data.themes;
 
@@ -593,7 +602,9 @@ function applyCustomThemeCSS(theme: InstalledTheme, resolvedTheme: 'light' | 'da
   // copy was stripped from localStorage on persist.
   if (theme.skin) {
     injectThemeSkinCSS(theme.skin, theme.id);
-  } else if (theme.apiVersion === 2) {
+  } else if (theme.apiVersion === 2 || theme.managed) {
+    // Server-synced themes carry no apiVersion, but their skin is kept in
+    // IndexedDB too (#1561).
     pluginStorage.getThemeSkin(theme.id).then((skin) => {
       // Bail out if the user switched themes mid-flight.
       if (useThemeStore.getState().activeThemeId !== theme.id) return;

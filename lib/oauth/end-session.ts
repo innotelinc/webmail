@@ -1,6 +1,6 @@
 import { configManager } from '@/lib/admin/config-manager';
 import { logger } from '@/lib/logger';
-import { getCookieOptions } from '@/lib/oauth/cookie-config';
+import { getSignInCookieOptions } from '@/lib/oauth/cookie-config';
 import { fitsSetCookieBudget } from '@/lib/oauth/set-cookie-budget';
 
 /*
@@ -52,6 +52,7 @@ export function storeIdToken(
   idToken: unknown,
   basePath: string | undefined,
   otherCookieValues: ReadonlyArray<string | null | undefined> = [],
+  remember = true,
 ): void {
   const name = idTokenCookieName(slot);
   const path = idTokenCookiePath(basePath);
@@ -61,7 +62,7 @@ export function storeIdToken(
     if (cookieStore.get(name)) cookieStore.delete({ name, path });
     return;
   }
-  cookieStore.set(name, idToken, { ...getCookieOptions(), path });
+  cookieStore.set(name, idToken, { ...getSignInCookieOptions(remember), path });
 }
 
 export function clearIdToken(cookieStore: CookieWriter, slot: number, basePath: string | undefined): void {
@@ -71,6 +72,11 @@ export function clearIdToken(cookieStore: CookieWriter, slot: number, basePath: 
 /** Whether signing out should also end the provider's session (OAUTH_END_SESSION). */
 export function isEndSessionEnabled(): boolean {
   return configManager.get<boolean>('oauthEndSession', true) !== false;
+}
+
+/** Whether signing out revokes the refresh token at the provider (OAUTH_REVOKE_ON_SIGN_OUT). */
+export function isRevokeOnSignOutEnabled(): boolean {
+  return configManager.get<boolean>('oauthRevokeOnSignOut', true) !== false;
 }
 
 function isLoopbackHost(hostname: string): boolean {

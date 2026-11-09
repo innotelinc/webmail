@@ -1,14 +1,11 @@
 {
-  "meta_description": "使用 JMAP 通訊協定的極簡網頁郵件用戶端",
+  "meta_description": "以 JMAP 為基礎的自架網頁郵件，整合郵件、行事曆、聯絡人與檔案",
   "login": {
     "title": "網頁郵件",
     "username_label": "電子郵件地址",
     "username_placeholder": "user@example.com",
     "password_label": "密碼",
     "password_placeholder": "請輸入密碼",
-    "jmap_endpoint_label": "JMAP 伺服器",
-    "jmap_endpoint_placeholder": "https://mail.example.com",
-    "jmap_endpoint_cors_hint": "伺服器必須允許來自此網域的 CORS 請求。",
     "jmap_server_label": "伺服器",
     "jmap_server_auto_picked": "已根據您的電子郵件網域選擇伺服器。",
     "sign_in": "登入",
@@ -29,7 +26,7 @@
     },
     "show_password": "顯示密碼",
     "hide_password": "隱藏密碼",
-    "totp_toggle": "我有 2FA 驗證碼",
+    "totp_toggle": "我有驗證器應用程式的驗證碼",
     "token_toggle": "使用存取權杖登入",
     "password_toggle": "使用密碼登入",
     "token_label": "存取權杖",
@@ -50,6 +47,18 @@
     "sign_in_sso": "使用 SSO 登入",
     "add_account_title": "新增帳號",
     "add_account_subtitle": "使用其他帳號登入",
+    "subtitle": "登入您的帳戶",
+    "version": {
+      "details": "版本詳細資料",
+      "version_line": "版本：{value}",
+      "build_line": "組建：{value}",
+      "latest_line": "最新：{value}",
+      "copy": "複製版本資訊",
+      "security_update": "有可用的安全性更新",
+      "unsupported": "此版本已不再支援",
+      "new_version": "有可用的新版本",
+      "release_notes": "版本資訊"
+    },
     "cancel": "取消",
     "website": "網站",
     "imprint": "法律聲明",
@@ -74,12 +83,63 @@
       "token_exchange_failed": "無法完成身分驗證。請再試一次。",
       "access_denied": "存取遭拒。請聯絡管理員。",
       "back_to_login": "返回登入頁面"
-    }
+    },
+    "recent_accounts": "最近使用的帳號",
+    "recent_accounts_hint": "用上下方向鍵選擇最近使用的帳號。按 Delete 鍵可將反白的帳號從此清單中移除。",
+    "remove_account_from_list": "從此清單中移除 {username}"
+  },
+  "session_limits": {
+    "idle_title": "您還在嗎？",
+    "idle_message": "由於沒有任何活動，您將在 {seconds, plural, other {# 秒}}後登出。開啟中的郵件會儲存為草稿。",
+    "stay": "保持登入",
+    "sign_out_now": "立即登出",
+    "max_title": "您的工作階段即將結束",
+    "max_message": "您的組織會在登入 {hours, plural, other {# 小時}}後結束工作階段。您將在 {seconds, plural, other {# 秒}}後登出。開啟中的郵件會儲存為草稿。",
+    "dismiss": "確定",
+    "signing_out": "正在儲存草稿並登出…",
+    "reason_idle": "由於 {minutes, plural, other {# 分鐘}}內沒有活動，您已登出。",
+    "reason_max": "由於工作階段已達 {hours, plural, other {# 小時}}的最長時限，您已登出。",
+    "drafts_not_saved": "有一封或多封開啟中的郵件無法儲存為草稿。",
+    "seconds_left": "剩下 {seconds, plural, other {# 秒}}"
+  },
+  "totp_reauth": {
+    "title": "工作階段已過期",
+    "description": "您的雙重驗證碼已變更。請輸入驗證器應用程式中的新驗證碼以繼續。",
+    "oauth_hint": "若不想再看到此提示，請請管理員啟用 OAuth 登入（Stalwart 內建的 OAuth 或外部身分提供者）。",
+    "code_label": "驗證碼",
+    "verify": "驗證"
+  },
+  "ux_p3_words": {
+    "appearance_description": "變更 {appName} 的外觀。",
+    "text_size_app": "縮放應用程式中的所有文字。100% 為正常大小。",
+    "scrollbars_app": "使用系統內建的捲軸，較寬，也較容易拖曳。",
+    "voice_app": "朗讀郵件的語音。清單會顯示這台電腦上適用於介面語言的語音。",
+    "voice_default_app": "系統語音",
+    "visual_alerts_app": "收到新郵件或提醒時，視窗標題會緩慢閃爍，提醒會一直留在畫面上，直到您關閉。",
+    "sounds_link_app": "通知音效和工作列圖示上的未讀數，在「通知」頁面設定。",
+    "writing_language_app": "您平常寫作使用的語言。校對和拼字檢查會使用它。",
+    "badge_all_app": "工作列圖示和系統匣上的數字會合計所有已登入帳號的收件匣。",
+    "badge_all_browser": "分頁和應用程式圖示上的數字會合計所有已登入帳號的收件匣。",
+    "dnd_title": "勿擾",
+    "pause_label": "暫停通知",
+    "pause_description": "新郵件不發出聲音、不跳出視窗、不語音播報，直到您再次關閉此項。",
+    "dnd_link_app": "在「通知」頁面暫停通知並設定勿擾時段。",
+    "dnd_link_browser": "在「通知」頁面暫停通知。",
+    "backup_app": "將設定匯出成檔案，再在其他裝置上匯入。",
+    "sync_app": "登入此帳號的其他裝置會取得相同的設定。",
+    "progress_attachments": "正在下載附件",
+    "progress_events": "正在下載活動",
+    "progress_contacts": "正在下載聯絡人",
+    "progress_files_list": "正在列出檔案",
+    "progress_other": "正在下載",
+    "keep_description": "在此裝置上加密保留你的郵件、行事曆、聯絡人，以及你在「檔案」中設為離線可用的檔案。離線時可以閱讀、標記和移動郵件，寫好的郵件會在寄件匣中等待。登出時會全部刪除。",
+    "filter_value_placeholder": "值",
+    "filter_values_hint": "若要比對多個值，請以逗號分隔。"
   },
   "sidebar": {
     "close": "關閉",
-    "compose": "撰寫郵件",
-    "compose_hint": "撰寫郵件 (c)",
+    "compose": "寫郵件",
+    "compose_hint": "寫郵件 (c)",
     "search_placeholder": "搜尋郵件…",
     "search_placeholder_hint": "搜尋郵件…（按 /）",
     "storage": "儲存空間",
@@ -90,7 +150,7 @@
     "sign_out_of": "登出 {account}",
     "sign_out_all": "登出所有帳號",
     "add_account": "新增帳號",
-    "set_as_default": "設為預設",
+    "set_as_default": "啟動時開啟此帳號",
     "switch_account": "切換帳號",
     "contacts": "聯絡人",
     "calendar": "行事曆",
@@ -135,12 +195,13 @@
     "collapse_tooltip": "收合",
     "mobile": {
       "search": "搜尋",
-      "compose": "撰寫郵件",
+      "compose": "寫郵件",
       "go_back": "返回",
       "toggle_menu": "切換選單"
     },
     "clear_search": "清除搜尋",
     "vacation_active": "休假自動回覆已開啟",
+    "vacation_turn_off": "關閉",
     "demo_banner": "示範模式",
     "demo_reset": "重設",
     "demo_tour": "功能導覽",
@@ -155,6 +216,8 @@
     "shared": "共用",
     "shared_account_hidden": "已從側邊欄隱藏。可在 設定 › 版面配置 中重新顯示。",
     "notifications_muted": "通知已靜音",
+    "folder_options": "{name} 的選項",
+    "unread_filter": "只顯示未讀（{count}）",
     "mail": "郵件",
     "nav_label": "導覽",
     "add_app": "應用程式",
@@ -163,6 +226,7 @@
     "unified_all_starred": "全部已加星號",
     "unified_all_mail": "全部郵件",
     "remove_account": "移除帳號",
+    "remove_account_title": "移除帳戶？",
     "remove_account_confirm": "要從這部裝置移除 {account} 嗎？您稍後仍可重新新增。",
     "labels": "標籤",
     "create_label": "建立新標籤",
@@ -173,34 +237,42 @@
     "mv_next_day": "後一天",
     "mv_add_another_account": "新增其他帳戶",
     "mv_manage_account": "管理您的帳戶",
-    "mv_storage_used": "已使用 {total} 中的 {percent}%"
+    "mv_storage_used": "已使用 {total} 中的 {percent}%",
+    "accessibility": "無障礙"
+  },
+  "account_unread": {
+    "others": "其他帳號中的未讀郵件：{count}",
+    "badge_all_accounts": {
+      "label": "計算所有帳號的未讀郵件",
+      "description": "分頁、應用程式圖示和系統匣上的數字會合計所有已登入帳號的收件匣。"
+    },
+    "empty_hint": "您可以清空「{folder}」信件匣，永久刪除其中的所有郵件。"
   },
   "protocol_handlers": {
     "title": "預設應用程式",
-    "description": "選擇電子郵件與行事曆連結是否要在 Loomix 開啟。Loomix 會註冊為 mailto: 與 webcal: 連結的通訊協定處理常式。",
+    "description": "選擇是否在 {appName} 中開啟郵件和行事曆連結。",
     "unsupported": "此瀏覽器或連線不支援手動註冊通訊協定處理常式。您仍可嘗試透過瀏覽器或作業系統設定，使用已安裝的 PWA。",
-    "mailto_label": "電子郵件連結",
-    "mailto_description": "使用預先填入的撰寫視窗，在 Loomix 開啟 mailto: 連結。",
-    "protocol_open_mode_label": "開啟通訊協定連結時",
-    "protocol_open_mode_description": "選擇 Loomix 要在新分頁開啟 mailto: 與 webcal: 連結，或使用現有的工作階段。現有工作階段選項需要通知權限；若瀏覽器阻止視窗取得焦點，您可以點擊備用通知，將 Loomix 移到最上層。",
+    "mailto_label": "在 {appName} 中開啟郵件連結",
+    "mailto_description": "點選網站上的電子郵件地址會在 {appName} 中寫新郵件。",
+    "protocol_open_mode_label": "連結的開啟方式",
+    "protocol_open_mode_description": "選擇 {appName} 要在新分頁開啟 mailto: 與 webcal: 連結，或使用現有的工作階段。現有工作階段選項需要通知權限；若瀏覽器阻止視窗取得焦點，您可以點擊備用通知，將 {appName} 移到最上層。",
     "protocol_open_mode_active_session": "盡可能在現有工作階段開啟",
     "protocol_open_mode_new_tab": "一律開啟新分頁",
-    "focus_notification_title": "開啟 Loomix",
-    "focus_notification_body": "連結已在 Loomix 開啟。點擊即可將視窗移到最上層。",
-    "webcal_label": "行事曆連結",
-    "webcal_description": "使用預先填入的行事曆訂閱對話方塊，在 Loomix 開啟 webcal: 連結。",
-    "register_mailto": "註冊電子郵件應用程式",
-    "register_webcal": "註冊行事曆應用程式",
+    "focus_notification_title": "開啟 {appName}",
+    "focus_notification_body": "連結已在 {appName} 開啟。點擊即可將視窗移到最上層。",
+    "webcal_label": "在 {appName} 中開啟行事曆連結",
+    "webcal_description": "點選網站上的行事曆連結會在 {appName} 中加入該行事曆。",
+    "register_mailto": "使用 {appName} 開啟郵件連結",
+    "register_webcal": "使用 {appName} 開啟行事曆連結",
     "mailto_registered": "已要求註冊電子郵件處理常式",
     "webcal_registered": "已要求註冊行事曆處理常式",
     "registration_failed": "通訊協定處理常式註冊失敗",
     "opening_mailto": "正在開啟撰寫視窗…",
     "opening_webcal": "正在開啟行事曆…",
-    "browser_note": "您的瀏覽器或作業系統可能會要求您確認，而且可能必須先安裝 Loomix，才能選為預設應用程式。",
+    "browser_note": "您的瀏覽器或作業系統可能會要求您確認，而且可能必須先安裝 {appName}，才能選為預設應用程式。",
     "select_account_title": "選擇帳號",
     "select_mailto_account": "選擇用於開啟此電子郵件連結的帳號。",
     "select_webcal_account": "選擇用於開啟此行事曆連結的帳號。",
-    "select_account_note": "此選擇僅適用於此協議連結。",
     "detail_to": "收件者",
     "detail_subject": "主題",
     "detail_no_subject": "無主題",
@@ -208,6 +280,28 @@
     "detail_source": "來源",
     "active_account": "使用中",
     "switching_account": "正在切換帳號…"
+  },
+  "pwaLaunch": {
+    "shortcut_new_message": "新郵件",
+    "shortcut_calendar": "行事曆",
+    "shortcut_contacts": "聯絡人",
+    "unsupported_file": "無法在此處開啟 {name}。",
+    "open_failed": "無法開啟檔案。請再次嘗試開啟。",
+    "share_gone": "您分享的內容已不在此處。請重新分享。",
+    "share_files_lost": "無法保留分享的檔案。請將它們重新加入郵件。",
+    "ics_needs_server": "匯入行事曆檔案需要連線到伺服器。您恢復連線後將開始匯入。",
+    "contacts_need_server": "匯入聯絡人需要連線到伺服器。請在恢復連線後再試一次。",
+    "share_confirm_title": "要開始寫新郵件嗎?",
+    "share_confirm_message": "另一個網站或應用程式想要開始寫郵件。除非您同意,否則不會上傳或儲存任何內容。",
+    "share_confirm_subject": "主旨:",
+    "share_confirm_text": "內文:",
+    "share_confirm_files": "{count, plural, other {檔案:}}",
+    "share_confirm_accept": "開始寫郵件",
+    "share_confirm_decline": "不要開始",
+    "share_cut": "分享的文字太長,已被縮短。",
+    "handoff_expired": "您開啟或分享的內容等待太久,已不存在。請重新開啟或分享。",
+    "compose_waiting": "請關閉此郵件以開始下一封。",
+    "save_first_failed": "無法儲存您的郵件,因此未開啟檔案。請儲存郵件,然後開啟行事曆或聯絡人。"
   },
   "sidebar_apps": {
     "modal_title": "側邊欄應用程式",
@@ -244,6 +338,11 @@
     "show_on_mobile": "在行動裝置上顯示"
   },
   "email_list": {
+    "sections": {
+      "unread": "未讀",
+      "everything_else": "其他所有郵件",
+      "unread_empty": "您已讀完收件匣中的所有郵件。"
+    },
     "columns": {
       "from": "寄件者",
       "to": "收件者",
@@ -255,6 +354,10 @@
     "no_emails_description": "此信件匣中沒有郵件",
     "no_search_results": "找不到結果",
     "no_search_results_description": "請調整搜尋條件或篩選器",
+    "more_results_searching": "正在搜尋更多結果…",
+    "resize_plugin_results": "調整外掛程式結果的大小",
+    "compact_plugin_results": "每個結果一行",
+    "plugin_result_score": "{count}/5",
     "loading": "正在載入郵件…",
     "unread": "未讀",
     "to_me": "寄給我",
@@ -275,17 +378,33 @@
     "no_more_emails": "沒有更多郵件可載入",
     "batch_actions": {
       "select": "選取郵件",
+      "select_row": "選取 {sender}：{subject}",
       "select_all": "全部選取",
       "selected_messages": "已選取 {count, plural, one {1} other {#}} 封郵件",
       "mark_read": "標示為已讀",
       "mark_unread": "標示為未讀",
       "delete": "刪除",
-      "delete_confirm_title": "刪除郵件",
+      "delete_confirm_title": "要刪除這些郵件嗎？",
       "delete_confirm_message": "您確定要刪除{count, plural, one {1 封郵件} other {# 封郵件}}嗎？",
-      "clear_selection": "清除選取"
+      "clear_selection": "清除選取",
+      "more": "所選項目的更多動作"
+    },
+    "skip_to_list": "跳到郵件清單",
+    "folder_actions": "資料夾動作",
+    "sort": {
+      "title": "排序",
+      "newest": "最新優先",
+      "oldest": "最舊優先",
+      "unread": "未讀優先",
+      "starred": "已加星號優先",
+      "sender": "寄件者（A–Z）",
+      "subject": "主旨（A–Z）",
+      "largest": "最大優先",
+      "custom": "自訂順序（在設定中）"
     },
     "permanent_delete": "永久刪除",
-    "permanent_delete_confirm_title": "永久刪除",
+    "permanent_delete_confirm_title": "要永久刪除這封郵件嗎？",
+    "permanent_delete_confirm_batch_title": "要永久刪除這些郵件嗎？",
     "permanent_delete_confirm_message": "這封郵件將永久刪除。此動作無法復原。",
     "permanent_delete_confirm_batch_message": "將永久刪除{count, plural, one {1 封郵件} other {# 封郵件}}。此動作無法復原。",
     "empty_folder": {
@@ -305,7 +424,78 @@
     "reschedule_send": "重新排程",
     "cancel_and_edit": "取消並編輯",
     "cancel_and_compose_again": "取消並重新撰寫",
-    "reschedule_prompt": "輸入新的日期與時間，例如 2026-05-04T15:30"
+    "confirm_remove": {
+      "delete_title": "{count, plural, other {要刪除 # 封郵件嗎？}}",
+      "delete_message": "{count, plural, other {郵件將移到垃圾桶。}}",
+      "archive_title": "{count, plural, other {要封存 # 封郵件嗎？}}",
+      "archive_message": "{count, plural, other {郵件將移到封存。}}",
+      "delete": "刪除",
+      "archive": "封存"
+    },
+    "status": {
+      "folder_loaded": "{folder}：{count, plural, =0 {沒有郵件} other {# 封郵件}}",
+      "search_results": "{count, plural, =0 {沒有結果} other {# 個結果}}"
+    },
+    "category_tabs": "收件匣分類",
+    "listbox_label": "郵件",
+    "row_actions": "動作",
+    "pages": {
+      "label": "郵件清單分頁",
+      "previous": "上一頁",
+      "next": "下一頁",
+      "position": "{more, select, yes {第 {page} 頁，共 {pages} 頁或更多} other {第 {page} 頁，共 {pages} 頁}}"
+    }
+  },
+  "mail_list_extra": {
+    "selected_conversations": "{count, plural, other {已選取 # 個對話串}}",
+    "search_count": "{conversations, plural, other {# 個對話串}}（{messages, plural, other {# 封郵件}}）",
+    "conversation_count": "{count, plural, other {# 個對話串}}",
+    "archived": "已封存",
+    "moved_to_trash": "已移至垃圾桶",
+    "moved_to": "已移至 {mailbox}",
+    "moved_count_to": "{count, plural, other {已將 # 封郵件移至 {mailbox}}}",
+    "new_folder_title": "新增信件匣",
+    "new_subfolder_title": "新增子信件匣"
+  },
+  "mail_p2_list": {
+    "conversations_archived": "{count, plural, other {已封存 # 個對話串}}",
+    "conversations_to_trash": "{count, plural, other {已將 # 個對話串移至垃圾桶}}",
+    "conversations_deleted": "{count, plural, other {已刪除 # 個對話串}}",
+    "conversations_moved_to": "{count, plural, other {已將 # 個對話串移至 {mailbox}}}",
+    "conversations_moved": "{count, plural, other {已移動 # 個對話串}}",
+    "select_all_in_folder": "{count, plural, other {選取 {folder} 中的全部 # 個對話串}}",
+    "select_all_emails_in_folder": "{count, plural, other {選取 {folder} 中的全部 # 封郵件}}",
+    "select_all_conversations": "{count, plural, other {選取全部 # 個對話串}}",
+    "select_all_emails": "{count, plural, other {選取全部 # 封郵件}}",
+    "selecting_all": "正在選取…"
+  },
+  "shared_tags": {
+    "title": "共用標籤",
+    "description": "您的群組信箱標籤。群組中的每個人在其郵件上看到的名稱和顏色都相同。",
+    "picker_heading": "與此信箱中的所有人共用",
+    "sidebar_heading": "標籤",
+    "edit": "編輯共用標籤",
+    "edit_tag": "編輯 {name}",
+    "delete_tag": "刪除 {name}",
+    "name_it": "為 {name} 命名",
+    "add": "新增共用標籤",
+    "name": "名稱",
+    "color": "顏色",
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "delete_confirm": "要為所有人刪除嗎？標籤仍會保留在其郵件上。",
+    "found_on_messages": "已在郵件上，尚未命名",
+    "empty": "還沒有共用標籤。",
+    "exists": "此信箱已有這個標籤。",
+    "too_long": "名稱太長。",
+    "loading": "載入中…",
+    "unsupported": "此郵件伺服器無法保存共用標籤，因此此信箱顯示的是您自己的標籤。",
+    "unavailable": "無法載入此信箱的共用標籤，因此顯示的是您自己的標籤。Loomix 稍後會再試一次。",
+    "no_rights": "您可以使用這些標籤，但無法在此信箱中變更。",
+    "too_many": "共用標籤太多。請先刪除一些再新增。",
+    "save_failed": "無法儲存共用標籤。伺服器回應後 Loomix 會再試一次。",
+    "save_pending": "尚未儲存。伺服器回應後 Loomix 會再試一次。"
   },
   "email_viewer": {
     "read_receipt": {
@@ -321,8 +511,8 @@
     "no_email_description": "請從清單選取一封郵件，即可在這裡檢視",
     "no_conversation_selected": "未選取對話串",
     "no_conversation_description": "請從清單選取一個對話串，即可在這裡閱讀",
-    "compose": "撰寫郵件",
-    "compose_hint": "撰寫新郵件",
+    "compose": "寫郵件",
+    "compose_hint": "寫新郵件",
     "no_subject": "（無主題）",
     "no_body_content": "（無內文內容）",
     "no_preview_available": "無可用預覽",
@@ -342,8 +532,6 @@
     "mark_read": "標示為已讀",
     "unread": "未讀",
     "read": "已讀",
-    "spam_short": "垃圾郵件",
-    "not_spam_short": "非垃圾郵件",
     "move": "移動",
     "print": "列印",
     "view_source": "檢視原始碼",
@@ -353,17 +541,24 @@
     "view_in_light_mode": "淺色模式檢視",
     "export_email": "匯出為 .eml",
     "forward_as_attachment": "以附件形式轉寄",
-    "import_email": "匯入 .eml 或 .zip",
-    "keyboard_shortcuts": "鍵盤快速鍵 (?)",
+    "keyboard_shortcuts": "鍵盤快速鍵",
     "email_source": "郵件原始碼",
     "draft_banner": "這是一封草稿郵件",
     "edit_draft": "編輯",
     "copy_source": "複製到剪貼簿",
+    "source_loading": "正在載入原始碼",
+    "source_load_failed": "無法載入郵件原始碼。請再試一次，或將其匯出為 .eml。",
+    "source_copy_failed": "無法複製原始碼",
+    "source_truncated": "僅顯示前 {size}。匯出郵件可查看其餘部分。",
     "source_copied": "原始碼已複製到剪貼簿",
     "attachments": "附件",
+    "attachments_count": "{count, plural, other {# 個附件}}",
+    "attachments_show_more": "再顯示 {count} 個",
+    "attachments_show_fewer": "顯示較少",
     "important": "重要",
     "download": "下載",
     "download_all": "全部下載",
+    "download_all_partial": "有 {count} 個附件未包含在 ZIP 中。",
     "from": "寄件者",
     "to": "收件者",
     "cc": "副本",
@@ -384,6 +579,11 @@
       "failed_sent_from": "這封郵件聲稱來自 {domain}，但它是從 {host} 寄出的，而且未通過 {domain} 的寄件者驗證，可能是偽造的。",
       "caution": "請小心其中的連結、附件，以及要求提供密碼或付款資訊的請求。"
     },
+    "brand_logo": {
+      "verified_label": "已驗證的標誌",
+      "verified": "此標誌已驗證屬於 {organization}。",
+      "verified_by": "{issuer} 已驗證此標誌屬於 {organization}。"
+    },
     "back_to_list": "回到清單",
     "view_contact": "檢視聯絡人",
     "message_details": "郵件詳細資料",
@@ -393,10 +593,14 @@
     "more_actions": "更多動作",
     "previous": "上一封",
     "next": "下一封",
-    "move_to": "移至…",
+    "move_to": "移至",
     "remove_tag": "移除標籤",
     "tag_filter_placeholder": "篩選標籤",
     "tag_no_matches": "沒有相符的標籤",
+    "new_tag": "新增標籤",
+    "new_tag_placeholder": "標籤名稱",
+    "tag_exists": "已有同名標籤",
+    "tag_name_invalid": "請選擇較短的名稱",
     "more_count": "另有 {count} 個",
     "characters_count": "{count} 個字元",
     "quick_reply_placeholder": "撰寫快速回覆…",
@@ -498,7 +702,7 @@
       "delete": "刪除 (# 或 Del)",
       "star": "加上星號 (s)",
       "unstar": "移除星號 (s)",
-      "compose": "撰寫郵件 (c)",
+      "compose": "寫郵件 (c)",
       "previous": "上一封郵件",
       "next": "下一封郵件",
       "edit_draft": "編輯草稿"
@@ -562,6 +766,8 @@
       "authentication_missing_info": "這封邀請未包含已驗證的郵件身分驗證資訊。若有任何可疑之處，請向主辦人確認詳細資料。",
       "sender_mismatch_info": "這封邀請是由 {sender} 傳送，但行事曆資料中列出的主辦人是 {organizer}。",
       "sender_mismatch_unverified_info": "這封邀請是由 {sender} 傳送，但行事曆資料中列出的主辦人是 {organizer}，而且無法驗證這封郵件。",
+      "attendee_mismatch_info": "這則回覆是由 {sender} 傳送，但行事曆資料中回覆的參與者是 {attendee}。",
+      "attendee_mismatch_unverified_info": "這則回覆是由 {sender} 傳送，但行事曆資料中回覆的參與者是 {attendee}，而且無法驗證這封郵件。",
       "organizer_role": "您是此活動的主辦人",
       "your_response": "您的回覆：{status}",
       "response_needed": "待回覆",
@@ -592,6 +798,9 @@
       "already_in_calendar": "已在您的行事曆中",
       "request_info": "您已受邀參加此活動。請回覆，讓主辦人知道您是否能參加。",
       "cancel_info": "主辦人已取消此活動。",
+      "remove_from_calendar": "從行事曆移除",
+      "removed_from_calendar": "已從你的行事曆移除。",
+      "cancel_outdated": "你的行事曆中此活動的版本比這份取消通知更新。",
       "event_updated": "更新 #{sequence}",
       "event_status_tentative": "暫定",
       "event_status_cancelled": "已取消",
@@ -604,14 +813,24 @@
     "scheduled_send_created": "郵件已排程寄送",
     "sending_in": "{seconds} 秒後寄出",
     "undo_send_failed": "無法復原。郵件可能已經寄出。",
+    "undo_send_signed_out": "無法復原：寄出此郵件的帳戶已登出。",
     "cancel_scheduled_send": "取消傳送",
     "reschedule_send": "重新排程",
     "cancel_and_edit": "取消並編輯",
     "cancel_and_compose_again": "取消並重新撰寫",
-    "reschedule_prompt": "輸入新的日期與時間，例如 2026-05-04T15:30",
     "scheduled_actions_only": "此檢視僅支援排程寄送動作",
     "undo_send_scheduled": "郵件已排程寄送",
     "undo_send": "取消傳送",
+    "send_cancelled_restore_failed": "已取消傳送，但無法將郵件放回草稿。郵件仍在「寄件備份」中。",
+    "send_cancelled_remove_failed": "已取消傳送，但無法從「寄件備份」移除未寄出的郵件。",
+    "cancel_scheduled_failed": "無法取消排定的傳送",
+    "send_cancelled": "已取消傳送",
+    "still_scheduled_at": "郵件仍排定於 {date} 傳送。",
+    "still_scheduled": "郵件仍在排定傳送中。",
+    "already_sent": "此郵件已寄出。",
+    "no_longer_scheduled": "此郵件已不在排定傳送中。",
+    "reschedule_recipients_refused": "未作任何變更：伺服器拒絕了 {recipients}。",
+    "rescheduled_for": "已改為在 {date} 傳送",
     "contact_sidebar": {
       "title": "聯絡人",
       "close": "關閉側邊欄",
@@ -638,10 +857,152 @@
       "copied": "驗證碼已複製",
       "copy_failed": "無法複製驗證碼"
     },
+    "structured_mail": {
+      "kind_flight": "航班",
+      "kind_train": "火車",
+      "kind_bus": "巴士",
+      "kind_lodging": "飯店",
+      "kind_rentalcar": "租車",
+      "kind_event": "活動",
+      "kind_restaurant": "餐廳",
+      "kind_order": "訂單",
+      "kind_parcel": "包裹",
+      "region_flight": "航班訂位",
+      "region_train": "火車訂票",
+      "region_bus": "巴士訂票",
+      "region_lodging": "飯店訂房",
+      "region_rentalcar": "租車預約",
+      "region_event": "活動預約",
+      "region_restaurant": "餐廳訂位",
+      "region_shipment": "訂單與配送",
+      "status_cancelled": "已取消",
+      "status_pending": "待確認",
+      "status_hold": "已保留",
+      "order_status_payment_due": "待付款",
+      "order_status_processing": "處理中",
+      "order_status_problem": "有問題",
+      "order_status_in_transit": "已出貨",
+      "order_status_pickup_available": "可取貨",
+      "order_status_returned": "已退回",
+      "order_status_delivered": "已送達",
+      "order_status_cancelled": "已取消",
+      "reference": "訂位代號",
+      "order_number": "訂單編號",
+      "tracking_number": "貨件追蹤號碼",
+      "copy_reference": "複製訂位代號 {value}",
+      "copy_order_number": "複製訂單編號 {value}",
+      "copy_tracking_number": "複製貨件追蹤號碼 {value}",
+      "copied_reference": "已複製訂位代號",
+      "copied_order_number": "已複製訂單編號",
+      "copied_tracking_number": "已複製貨件追蹤號碼",
+      "copy_failed": "無法複製到剪貼簿",
+      "passengers": "乘客",
+      "seats": "座位",
+      "tickets": "票券",
+      "link_check_in": "報到",
+      "link_manage": "管理訂位",
+      "link_ticket": "票券",
+      "link_track": "追蹤貨件",
+      "link_view_order": "查看訂單",
+      "check_in_label": "入住",
+      "check_out_label": "退房",
+      "from_time": "{time} 起",
+      "until_time": "{time} 前",
+      "nights": "{count, plural, other {# 晚}}",
+      "pickup": "取車",
+      "dropoff": "還車",
+      "party_size": "{count, plural, other {# 人桌}}",
+      "items_more": "及其他 {count} 件",
+      "items_count": "{count, plural, other {# 件商品}}",
+      "total": "總計 {total}",
+      "expected_by": "預計 {date} 前送達",
+      "local_time": "當地時間",
+      "local_time_title": "這是該地點的當地時間，而非你所在時區的時間",
+      "route": "{from} 至 {to}"
+    },
     "mv_position": "第 {index} 封，共 {total} 封",
     "plugin_panel_show": "顯示外掛程式面板",
     "plugin_panel_hide": "隱藏外掛程式面板",
-    "copy": "複製"
+    "plugin_panel": "外掛程式面板",
+    "copy": "複製",
+    "contact_added": "已新增聯絡人",
+    "save_to_files": {
+      "title": "儲存到檔案",
+      "save_here": "儲存在這裡",
+      "saved": "已儲存到檔案",
+      "saved_to": "在 {folder} 中",
+      "failed": "無法儲存到檔案",
+      "load_failed": "無法載入資料夾。請再試一次。"
+    },
+    "frame_title": "郵件：{subject}",
+    "frame_title_from": "來自 {sender} 的郵件",
+    "download_named": "下載 {name}",
+    "preview_named": "預覽 {name}",
+    "show_as_plain_text": "以純文字顯示",
+    "show_formatted": "以格式顯示",
+    "shown_as_plain_text": "此郵件以純文字顯示。",
+    "play_animation": "播放動畫",
+    "pause_animation": "暫停動畫",
+    "read_aloud": "朗讀",
+    "read_aloud_reading": "正在朗讀",
+    "read_aloud_paused": "朗讀已暫停",
+    "read_aloud_pause": "暫停",
+    "read_aloud_resume": "繼續",
+    "read_aloud_stop": "停止朗讀",
+    "reader_view": "閱讀檢視"
+  },
+  "reader_actions": {
+    "restore": "復原",
+    "restore_to": "移回 {folder}",
+    "delete_forever": "永久刪除"
+  },
+  "mail_p3_actions": {
+    "move_to_inbox": "移到收件匣",
+    "delete_forever_title": "要永久刪除這封郵件嗎？",
+    "delete_forever_batch_title": "{count, plural, one {要永久刪除這封郵件嗎？} other {要永久刪除這 # 封郵件嗎？}}",
+    "delete_forever_message": "刪除後無法復原。",
+    "delete_forever_batch_message": "{count, plural, one {刪除後無法復原。} other {刪除後無法復原。}}"
+  },
+  "external_mail": {
+    "sender_label": "外部",
+    "sender_tooltip": "來自 {domain}，位於您的組織之外",
+    "sender_tooltip_no_domain": "來自沒有網域的地址，位於您的組織之外",
+    "confirm_title": "要傳送到組織外部嗎？",
+    "confirm_message": "{count, plural, other {這 # 位收件者}}位於您的組織之外。請僅在確定要這麼做時傳送。",
+    "field_to": "收件者",
+    "field_cc": "副本",
+    "field_bcc": "密件副本",
+    "send_anyway": "仍然傳送",
+    "back": "返回"
+  },
+  "phishing_report": {
+    "action": "回報網路釣魚…",
+    "confirm_title": "要回報為網路釣魚嗎？",
+    "confirm_message": "{count, plural, =1 {這封郵件會傳送至 {address}，並移至垃圾郵件。} other {# 封郵件會各自作為單獨的回報傳送至 {address}，並移至垃圾郵件。}}",
+    "confirm": "回報",
+    "cancel": "取消",
+    "sending": "正在回報…",
+    "done": "{count, plural, =1 {已回報至 {address}，並移至垃圾郵件。} other {已將 # 封郵件回報至 {address}，並移至垃圾郵件。}}",
+    "not_moved": "{count, plural, =1 {已回報至 {address}，但無法將郵件移至垃圾郵件。} other {已回報至 {address}，但有 # 封郵件無法移至垃圾郵件。}}",
+    "failed": "{count, plural, =1 {無法回報這封郵件。} other {有 # 封郵件無法回報。}}",
+    "undo": "復原",
+    "undone": "{count, plural, =1 {已移回。回報已送出。} other {已移回。回報已送出。}}",
+    "undo_failed": "無法移回。",
+    "banner": "您已將這封郵件回報為網路釣魚。其中的連結已停用。",
+    "link_off": "連結已停用",
+    "link_off_note": "（連結已停用）",
+    "no_subject": "（無主題）"
+  },
+  "classification": {
+    "picker_label": "機密等級",
+    "chip_label": "機密等級：{name}",
+    "none": "未設定機密等級",
+    "pick_required": "選擇機密等級",
+    "required_hint": "您的組織要求設定機密等級。",
+    "required_toast": "傳送前請選擇機密等級。",
+    "quick_reply_needs_label": "此回覆需要設定機密等級。請在這裡選擇，然後傳送。",
+    "forward_needs_label": "必須設定機密等級。請從撰寫視窗轉寄此郵件。",
+    "received_hint": "由寄件者的郵件程式設定。任何人都能設定機密等級，因此無法證明任何事。"
   },
   "email_composer": {
     "select_from_directory": "從目錄中選取",
@@ -661,7 +1022,7 @@
     "cc": "副本",
     "bcc": "密件副本",
     "subject": "主題",
-    "body_placeholder": "撰寫郵件內容…",
+    "body_placeholder": "寫郵件內容…",
     "send": "傳送",
     "cancel": "取消",
     "attach": "附加",
@@ -683,6 +1044,7 @@
     "link_url_prompt": "輸入 URL",
     "draft_saved": "草稿已儲存",
     "save_failed": "儲存失敗",
+    "discard_signed_out": "草稿未刪除：儲存它的帳戶已登出。草稿仍保留在該帳戶的草稿匣中。",
     "to_placeholder": "收件者電子郵件地址",
     "cc_placeholder": "副本收件者",
     "bcc_placeholder": "密件副本收件者",
@@ -717,10 +1079,10 @@
       "email_placeholder": "alias@example.com",
       "envelope_notice": "如果您的伺服器不接受此地址作為信封寄件者，將改用 {identity}，收件者可以在 Return-Path 標頭中看到它。"
     },
-    "save_as_template": "儲存為範本",
+    "save_as_template": "儲存為範本…",
     "attach_from_device": "從此裝置上傳",
     "templates_menu": "範本",
-    "insert_template": "插入範本",
+    "insert_template": "插入範本…",
     "options": "選項",
     "option_plain_text": "純文字",
     "option_plain_text_hint": "不帶格式傳送",
@@ -750,6 +1112,10 @@
     "show_less": "顯示較少",
     "send_failed": "傳送郵件失敗",
     "send_timeout": "伺服器停止回應。再次傳送前，請先檢查「寄件備份」信件匣，因為郵件可能已經寄出。",
+    "submission_quota": "伺服器上此帳戶的已寄出郵件記錄過多。Loomix 已移除可以移除的記錄；如果問題持續發生，請要求管理員提高郵件提交數量上限。",
+    "submission_limit": "由於達到上限，伺服器拒絕傳送此郵件：{reason}",
+    "recipients_refused": "未傳送：伺服器拒絕了 {recipients}。",
+    "recipients_partly_refused": "伺服器拒絕了 {recipients}。其他收件者會收到此郵件。",
     "send_offline": "你似乎已離線。郵件仍保留在這裡，恢復連線後請再次寄出。",
     "formatting": "格式",
     "send_recipients_rejected": "未傳送：伺服器拒絕了所有收件者。",
@@ -780,9 +1146,25 @@
       "send_anyway": "仍然傳送",
       "back": "繼續編輯"
     },
+    "placeholder_warning": {
+      "title": "檢查預留位置？",
+      "message": "你的郵件中有收件者會看到的預留位置文字。要在傳送前編輯嗎？",
+      "found": "找到的預留位置",
+      "more": "以及另外 {count} 個",
+      "dont_ask_again": "不再提示",
+      "send_anyway": "仍然傳送",
+      "back": "繼續編輯"
+    },
+    "placeholder_words": {
+      "before": ["您的-", "你的-", "貴公司-", "插入-", "輸入-", "填寫-", "新增-", "在此-"],
+      "after": [],
+      "unfinished": []
+    },
     "schedule_send": "排程寄送",
-    "schedule_send_description": "選擇伺服器要在何時送出這封郵件。",
+    "schedule_send_description": "選擇寄送時間。",
     "schedule_preset": {
+      "this_morning": "今天早上",
+      "this_afternoon": "今天下午",
       "tomorrow_morning": "明天上午",
       "tomorrow_afternoon": "明天下午",
       "monday_morning": "星期一上午"
@@ -795,8 +1177,10 @@
     "schedule_send_cleanup_warning": "已建立排程寄送，但清理草稿失敗。",
     "send_delay_unsupported": "此帳號不支援傳送延遲。",
     "send_delay_unsupported_confirm": "此帳號不支援傳送延遲。是否立即傳送？",
+    "send_delay_unsupported_title": "不延遲直接傳送？",
     "recipient_edit_email": "編輯電子郵件地址",
     "recipient_edit_name": "編輯顯示名稱",
+    "recipient_remove": "移除",
     "recipient_email_placeholder": "電子郵件地址",
     "recipient_name_placeholder": "顯示名稱",
     "invalid_recipient": "不是有效的電子郵件地址",
@@ -824,6 +1208,12 @@
       "align_right": "右對齊",
       "text_direction": "文字方向 (RTL/LTR)",
       "link": "連結",
+      "insert_link": "插入連結",
+      "edit_link": "編輯連結",
+      "remove_link": "移除連結",
+      "link_address": "連結網址",
+      "link_text": "文字",
+      "link_invalid": "網址中不能包含空格",
       "table": "表格",
       "clear_formatting": "清除格式",
       "undo": "撤銷",
@@ -840,19 +1230,86 @@
       "font_size": "字型大小",
       "font_size_default": "預設",
       "background_color": "背景顏色",
-      "remove_background_color": "移除背景顏色"
+      "remove_background_color": "移除背景顏色",
+      "table_size": "{rows} × {cols} 表格",
+      "colors": {
+        "black": "黑色",
+        "dark_gray": "深灰色",
+        "gray": "灰色",
+        "dark_red": "深紅色",
+        "orange": "橘色",
+        "yellow": "黃色",
+        "green": "綠色",
+        "blue": "藍色",
+        "purple": "紫色",
+        "dark_pink": "深粉紅色",
+        "brown": "棕色",
+        "red": "紅色",
+        "light_orange": "淺橘色",
+        "light_green": "淺綠色",
+        "light_blue": "淺藍色",
+        "pink": "粉紅色"
+      }
     },
     "send_filing_warning": "郵件已傳送，但寄送後清理失敗，可能仍保留舊草稿。",
     "pop_out": "在獨立視窗中開啟回覆",
     "send_guard_failed": "未傳送 - 傳送前檢查郵件的外掛程式發生錯誤或沒有回應。",
     "cut": "剪下",
-    "copy": "複製"
+    "copy": "複製",
+    "recipient_remove_named": "移除 {name}",
+    "recipient_chip_hint": "按 Delete 移除，按 Enter 開啟更多選項",
+    "recipient_move_to": "移到{field}",
+    "recipient_added": "已將 {name} 新增到{field}",
+    "recipient_removed": "已將 {name} 從{field}移除",
+    "recipient_moved": "已將 {name} 移到{field}",
+    "recipients_added_count": "已將 {count, plural, other {# 位收件者}}新增到{field}",
+    "recipients_removed_count": "已將 {count, plural, other {# 位收件者}}從{field}移除",
+    "recipients_moved_count": "已將 {count, plural, other {# 位收件者}}移到{field}",
+    "body_label": "郵件內容",
+    "attachment_uploading": "正在上傳",
+    "attachment_upload_failed": "上傳失敗",
+    "attachment_progress": "已上傳 {percent}%",
+    "send_confirm": {
+      "title": "要傳送這封郵件嗎？",
+      "message": "將傳送給 {count, plural, other {# 位收件者}}。"
+    },
+    "image_alt": {
+      "title": "描述這張圖片",
+      "hint": "為看不到圖片的人寫下圖片的內容。",
+      "label": "圖片描述",
+      "decorative": "裝飾性圖片（無描述）",
+      "skip": "略過",
+      "edit": "編輯圖片描述",
+      "plain_text": "[圖片：{alt}]"
+    }
+  },
+  "compose_ux": {
+    "draft_discarded": "草稿已捨棄",
+    "undo": "復原",
+    "discard_draft": "捨棄草稿",
+    "save_failed_close": "無法儲存草稿。請再試一次或捨棄草稿。",
+    "try_again": "再試一次",
+    "add_description": "新增描述",
+    "attachments_summary": "附件：{count} 個，{size}",
+    "from_sub_address": "使用子地址…",
+    "from_edit_sender": "編輯寄件者…",
+    "shortcut_insert_link": "插入連結",
+    "shortcut_save_draft": "儲存草稿",
+    "shortcut_show_cc": "顯示副本",
+    "shortcut_show_bcc": "顯示密件副本"
+  },
+  "compose_dock": {
+    "open_draft": "開啟",
+    "reply_type": "回覆類型：{kind}",
+    "resize_reply": "調整回覆大小",
+    "fields_menu": "更多欄位"
   },
   "confirm_dialog": {
     "confirm": "確認",
     "cancel": "取消"
   },
   "common": {
+    "print": "列印",
     "loading": "正在載入…",
     "error": "錯誤",
     "success": "成功",
@@ -872,15 +1329,17 @@
     "app_title": "網頁郵件",
     "reconnecting": "連線中斷，正在嘗試重新連線…",
     "rate_limited_title": "伺服器驗證目前受到速率限制。",
-    "rate_limited_detail": "Loomix 已暫停背景請求，以免帳號遭鎖定。將在 {seconds} 秒後重試。",
+    "rate_limited_detail": "{appName} 已暫停背景請求，以免帳號遭鎖定。將在 {seconds} 秒後重試。",
     "rate_limited_action_title": "已暫停請求，以免帳號遭鎖定。",
-    "rate_limited_action_detail": "Loomix 正在等待伺服器的冷卻時間結束，再傳送更多需要驗證的請求。請在 {seconds} 秒後重試。",
+    "rate_limited_action_detail": "{appName} 正在等待伺服器的冷卻時間結束，再傳送更多需要驗證的請求。請在 {seconds} 秒後重試。",
     "pull_to_refresh": "下拉重新整理",
     "release_to_refresh": "鬆開重新整理",
-    "refreshing": "正在重新整理…"
+    "refreshing": "正在重新整理…",
+    "move_item_up": "上移 {name}",
+    "move_item_down": "下移 {name}"
   },
   "notifications": {
-    "email_sent": "郵件傳送成功",
+    "email_sent": "郵件已傳送",
     "email_deleted": "郵件已刪除",
     "email_archived": "郵件已封存",
     "emails_deleted": "{count, plural, other {已刪除 # 封郵件}}",
@@ -905,14 +1364,19 @@
     "move_failed": "移動郵件失敗",
     "removed_from_folder": "已從 {mailbox} 移除",
     "remove_from_folder_failed": "無法從此資料夾移除",
+    "undo": "復原",
+    "undo_done": "已移回",
+    "undo_failed": "無法復原",
+    "not_connected": "此帳號未連線。請重新登入。",
+    "trash_not_found": "此帳號沒有垃圾桶資料夾，因此未刪除任何內容。",
     "emails_copied": "{count} 封郵件已複製",
     "copy_failed": "複製失敗",
     "move_error": "無法將郵件移至選取的信件匣",
     "email_tagged": "郵件已加標籤",
     "emails_tagged": "{count} 封郵件已加標籤",
     "tag_failed": "加上標籤失敗",
-    "identity_created": "已成功建立寄件身分",
-    "identity_updated": "已成功更新寄件身分",
+    "identity_created": "已建立寄件身分",
+    "identity_updated": "已更新寄件身分",
     "identity_deleted": "已刪除寄件身分",
     "identity_set_primary": "已更新主要寄件身分",
     "identity_create_failed": "無法建立寄件身分：{error}",
@@ -922,16 +1386,14 @@
     "identity_not_found": "找不到寄件身分",
     "vacation_saved": "外出設定已儲存",
     "vacation_save_failed": "無法儲存外出設定",
-    "filters_saved": "篩選規則已成功儲存",
+    "filters_saved": "篩選規則已儲存",
     "filters_save_failed": "無法儲存篩選規則",
     "filters_deleted": "篩選規則已刪除",
-    "templates_exported": "範本匯出成功",
+    "templates_exported": "範本已匯出",
     "templates_imported": "已匯入{count, plural, one {# 個範本} other {# 個範本}}",
     "templates_import_errors": "部分範本無法匯入",
     "templates_import_empty": "檔案中找不到範本",
     "export_email_error": "無法匯出郵件",
-    "import_email_success": "郵件已成功匯入",
-    "import_email_error": "無法匯入郵件",
     "rule_created": "已建立規則",
     "rule_merged": "已加入規則「{name}」",
     "rule_already_covered": "規則「{name}」已涵蓋此項",
@@ -944,7 +1406,85 @@
     "rule_undo_failed": "無法復原規則變更",
     "rule_undo_conflict": "篩選規則在那之後已變更。請在篩選規則設定中復原該變更。",
     "rule_folder_failed": "無法建立資料夾",
-    "vacation_filters_save_failed": "外出設定已儲存，但轉寄和回覆對象設定未能儲存"
+    "vacation_filters_save_failed": "外出設定已儲存，但轉寄和回覆對象設定未能儲存",
+    "nothing_to_undo": "沒有可復原的動作",
+    "undo_hint": "按 {keys} 復原。",
+    "undone": "已復原",
+    "emails_marked_read": "{count, plural, other {已將 # 封郵件標示為已讀}}",
+    "emails_marked_unread": "{count, plural, other {已將 # 封郵件標示為未讀}}",
+    "tag_removed": "已移除標籤",
+    "tag_removed_count": "{count, plural, other {已從 # 封郵件移除標籤}}",
+    "new_mail_count": "{count, plural, other {# 封新郵件}}"
+  },
+  "org_notice": {
+    "label": "公告",
+    "dismiss": "關閉公告",
+    "severity_info": "資訊",
+    "severity_warning": "警告",
+    "severity_critical": "重要"
+  },
+  "vacation_templates": {
+    "title": "組織範本",
+    "description": "從組織撰寫的回覆開始。之後可以修改文字。",
+    "pick_label": "使用範本",
+    "pick_placeholder": "選擇範本",
+    "deputy_label": "代理人地址",
+    "deputy_placeholder": "colleague@example.com",
+    "deputy_hint": "回覆會寫明緊急事務請聯絡這位同事。",
+    "deputy_missing": "請先輸入代理人的地址。",
+    "deputy_name_label": "代理人姓名",
+    "deputy_name_missing": "請先輸入代理人的姓名。",
+    "apply": "使用此文字",
+    "apply_hint": "取代下方的主旨和內文。"
+  },
+  "uxs_vacation": {
+    "default_subject": "外出",
+    "default_message": "感謝您的來信。我目前不在辦公室，回來後會盡快回覆。",
+    "write_message_first": "請先寫一則訊息。沒有訊息的話，對方會收到空白回覆。",
+    "enter_address_first": "請先輸入要轉寄到的地址。",
+    "message_title": "您的回覆",
+    "message_label": "訊息",
+    "message_description": "寫信給您的人會收到的內容。可以使用格式和連結。",
+    "from_label": "開始（選填）",
+    "from_description": "留空即立即開始。",
+    "until_label": "結束（選填）",
+    "until_description": "留空即持續回覆，直到您關閉。",
+    "from_placeholder": "立即",
+    "until_placeholder": "直到您關閉",
+    "audience_all": "所有人",
+    "audience_internal": "僅限我的組織（{domains}）",
+    "audience_external": "僅限組織外的人",
+    "signature_label": "簽名",
+    "signature_plain_label": "簽名（純文字）",
+    "signature_plain_description": "您設定為只寫純文字（撰寫），所以簽名也是純文字。",
+    "edit_as_html": "以 HTML 編輯",
+    "edit_formatted": "返回格式編輯器",
+    "html_source_label": "HTML 簽名",
+    "signature_size": "已用 {bytes} / {max} 位元組",
+    "signature_too_long": "對伺服器來說太長（{bytes} / {max} 位元組）。請縮短。"
+  },
+  "retention_notice": {
+    "line": "此處的郵件會在移入 {count, plural, other {# 天}} 後刪除。"
+  },
+  "device_policy": {
+    "downloads_off": "你的組織已關閉下載。",
+    "download_off_named": "{name}：你的組織已關閉下載",
+    "download_blocked": "你的組織已關閉下載。",
+    "export_blocked": "你的組織已關閉郵件匯出。",
+    "print_blocked": "你的組織已關閉列印。"
+  },
+  "third_party": {
+    "push_needs_relay": "推送通知需要由您的組織執行的推送中繼，但尚未設定。應用程式開啟時，新郵件仍會顯示。",
+    "relay_desc": "由於此伺服器不會連線至外部服務，因此只提供您組織自己的中繼。",
+    "relay_none": "未設定",
+    "plugin_refused": "未啟動：此外掛程式會連線至外部服務，而您的組織已將其關閉。",
+    "remote_content_blocked": "您的組織會封鎖來自其他伺服器的內容，因此此郵件中的遠端圖片不會顯示。"
+  },
+  "remote_content_lock": {
+    "trusted_senders_note": "你的組織在所有郵件中封鎖遠端內容，因此受信任寄件者的遠端內容也不會載入。"
+  },
+  "trusted_senders_book": {
+    "unavailable": "無法使用：此帳號無法在伺服器上保存通訊錄。清單會留在這部裝置上。"
   },
   "date": {
     "today": "今天",
@@ -1012,13 +1552,15 @@
   },
   "settings": {
     "title": "設定",
+    "org_locked": "由您的組織設定",
     "back_to_mail": "回到郵件",
+    "back_to_settings": "返回設定",
     "save_success": "設定已成功儲存",
     "import_success": "已成功匯入設定",
     "import_error": "無法匯入設定",
     "reset_confirm": "您確定要將所有設定重設為預設值嗎？",
-    "unsaved_changes": "您有尚未儲存的變更",
-    "discard_changes": "要捨棄尚未儲存的變更嗎？",
+    "unsaved_changes": "你的變更尚未儲存。",
+    "discard_changes": "要捨棄變更嗎？",
     "discard": "捨棄",
     "keep_editing": "繼續編輯",
     "search_placeholder": "搜尋設定",
@@ -1041,7 +1583,8 @@
       "general": "一般",
       "organize": "資料夾與標籤",
       "addons": "附加元件",
-      "backup": "備份與重設"
+      "backup": "備份與重設",
+      "accessibility": "無障礙"
     },
     "themes": {
       "title": "主題",
@@ -1115,8 +1658,8 @@
       "title": "外觀",
       "description": "自訂網頁郵件的外觀與使用感受",
       "theme": {
-        "label": "主題",
-        "description": "選擇您喜歡的配色方案",
+        "label": "淺色或深色",
+        "description": "「系統」會依照裝置的設定",
         "light": "淺色",
         "dark": "深色",
         "system": "系統"
@@ -1144,7 +1687,7 @@
         "label": "介面版面配置",
         "description": "搜尋、導覽與工具列的位置",
         "default": "預設",
-        "mountain_view": "Mountain View"
+        "mountain_view": "搜尋列在上方"
       },
       "animations": {
         "label": "啟用動畫",
@@ -1164,13 +1707,17 @@
         "label": "隱藏側邊欄帳號切換器",
         "description": "隱藏信件匣側邊欄頂端的帳號選取器。您仍可從底部導覽列切換帳號。"
       },
+      "sidebar_account_switcher": {
+        "label": "側邊欄頂端的帳號切換器",
+        "description": "在信件匣上方顯示帳號切換器，並在郵件列表上顯示圓形的「寫郵件」按鈕。關閉後，「寫郵件」會改為顯示在信件匣上方。"
+      },
       "show_rail_account_list": {
         "label": "在導覽列顯示帳號頭像",
         "description": "在導覽列底部顯示各帳號的圓形頭像，方便快速切換，並在下方顯示登出按鈕。"
       },
       "unified_mailbox": {
         "label": "整合信箱",
-        "description": "顯示使用中帳號及其共用信件匣的整合信件匣（收件匣、寄件備份等）。",
+        "description": "顯示使用中帳號及其共用信件匣的整合信件匣（收件匣、寄件備份等）。只有在有內容可整合時才會顯示這個區段：開啟「跨所有帳號」且連線了多個帳號、在下方包含群組收件匣，或開啟所有郵件、未讀或已加星號。這三項是獨立選項，需由管理員開啟後才會出現。",
         "cross_account": {
           "label": "跨所有帳號",
           "description": "將整合信箱合併到所有已連線的帳號，而不只限於使用中的帳號。"
@@ -1188,7 +1735,7 @@
       },
       "colorful_sidebar_icons": {
         "label": "彩色側邊欄圖示",
-        "description": "依類型為信件匣與標籤圖示上色（藍色收件匣、紅色垃圾郵件、綠色寄件備份等）。停用後側邊欄會以單色顯示。"
+        "description": "依類型為資料夾和標籤圖示上色（收件匣藍色、垃圾郵件紅色、寄件備份綠色等）。關閉後圖示為灰色。"
       },
       "tint_list_rows": {
         "label": "依標籤顏色為清單列上色",
@@ -1200,11 +1747,15 @@
       },
       "favicon_unread_badge": {
         "label": "在分頁圖示顯示未讀數量",
-        "description": "在瀏覽器分頁圖示顯示收件匣未讀數量徽章，即使分頁不在前景也能看到新郵件。停用後不顯示徽章。"
+        "description": "這樣在其他分頁或應用程式中工作時也能看到新郵件。"
       },
       "show_shared_mail_accounts": {
         "label": "顯示共用郵件帳號",
         "description": "在側邊欄的「共用」下顯示與你共用的信箱資料夾。關閉可全部隱藏，也可以在下方逐一隱藏帳號。它們的行事曆和聯絡人仍會顯示。"
+      },
+      "compact_shared_mailboxes": {
+        "label": "精簡顯示共用信箱",
+        "description": "將每個共用信箱顯示為一列，點選即開啟其收件匣，資料夾列在下方。草稿、垃圾桶等空資料夾不會顯示。"
       },
       "pro_interface": {
         "label": "Pro 介面（實驗性）",
@@ -1238,11 +1789,16 @@
         "dot": "彩色圓點",
         "tint": "列著色",
         "none": "無"
+      },
+      "accessibility_link": {
+        "label": "文字大小與動態效果",
+        "description": "文字大小、字型、間距和減少動態效果都在「無障礙」頁面中。",
+        "button": "無障礙"
       }
     },
     "keywords": {
       "title": "電子郵件標籤",
-      "description": "定義用來整理郵件的標籤。這些標籤會以 JMAP 關鍵字儲存在伺服器上。",
+      "description": "建立標籤來整理郵件。標籤會和郵件一起儲存在伺服器上。",
       "add_keyword": "新增標籤",
       "label_field": "顯示名稱",
       "label_placeholder": "例如工作、個人、緊急",
@@ -1252,6 +1808,9 @@
       "id_exists": "此標籤 ID 已存在",
       "edit": "編輯標籤",
       "delete": "刪除標籤",
+      "edit_tag": "編輯 {name}",
+      "delete_tag": "刪除 {name}",
+      "deleted": "標籤已刪除",
       "save": "儲存",
       "add": "新增",
       "cancel": "取消",
@@ -1274,8 +1833,8 @@
         "hide": "隱藏"
       },
       "unrecognized": {
-        "title": "從伺服器復原標籤",
-        "description": "標籤名稱與顏色儲存在此瀏覽器中，標籤本身則以 JMAP 關鍵字附加在郵件上。掃描郵件以尋找這裡尚未定義的關鍵字，再將它們加回來。",
+        "title": "尋找郵件上有但這裡缺少的標籤",
+        "description": "此瀏覽器會儲存標籤的名稱與顏色。標籤本身儲存在郵件上。在郵件中尋找這裡缺少的標籤，再將它們加回來。",
         "scan": "掃描標籤",
         "rescan": "重新掃描",
         "scanning": "正在掃描… {total} 封郵件中的 {scanned} 封",
@@ -1289,14 +1848,14 @@
     "notifications": {
       "test_sound": "測試通知聲音",
       "sounds": {
-        "default": "預設（蜂鳴聲）",
+        "default": "蜂鳴聲",
         "cheerful": "快樂",
         "involved": "沉浸",
         "swift": "輕快手勢",
         "relax": "放鬆"
       },
       "push": {
-        "title": "背景通知",
+        "title": "{appName} 關閉時的通知",
         "description": "網站關閉時仍可接收新郵件的系統通知。通知會透過 Loomix 推送中繼傳送；中繼不會看到郵件內容。",
         "relay_label": "推送中繼",
         "relay_desc": "用來傳送通知的伺服器。請從管理員提供的中繼中選擇。",
@@ -1306,8 +1865,9 @@
         "status_inactive": "在此裝置上未啟用",
         "status_unsupported": "此瀏覽器不支援 Web Push",
         "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
+        "status_demo": "展示版不提供背景通知。",
         "status_busy": "工作中…",
-        "enable": "啟用",
+        "enable": "在此裝置上開啟",
         "reenable": "重新註冊",
         "disable": "停用",
         "confirm_disable_title": "要停用背景通知嗎？",
@@ -1329,7 +1889,15 @@
         "revoke": "撤銷",
         "confirm_revoke_title": "要撤銷此裝置的註冊嗎？",
         "confirm_revoke_message": "此裝置會立即停止接收背景通知。若在該裝置上再次啟用推送，將重新註冊。",
-        "confirm_revoke_message_this": "此裝置會立即停止接收背景通知。"
+        "confirm_revoke_message_this": "此裝置會立即停止接收背景通知。",
+        "shared_mailboxes_no_push": "其他人與您共用的信箱不會傳送背景通知。",
+        "error_forbidden": "郵件伺服器不允許此帳號使用背景通知。",
+        "error_over_quota": "此帳號在郵件伺服器上的推送註冊過多（上限通常為 15 個）。請在通知設定中撤銷不再使用的裝置，然後再試一次。",
+        "error_blocked": "此網站的通知已被封鎖。請在瀏覽器的網站設定中允許通知，然後再試一次。",
+        "error_not_granted": "未允許通知，因此推播保持關閉。",
+        "error_verification_timeout": "郵件伺服器未及時確認此裝置，因此推播保持關閉。請一分鐘後再試一次。",
+        "error_relay": "目前無法連線到推播中繼，因此推播保持關閉。請稍後再試。",
+        "error_teardown": "此瀏覽器的推播已關閉，但無法連線到郵件伺服器或中繼。通知可能還會持續幾天。如需盡快停止，請在恢復連線後開啟進階設定，並在已註冊裝置中撤銷此裝置。"
       },
       "push_all": {
           "title": "All accounts",
@@ -1344,17 +1912,17 @@
           "result_disabled": "Notifications disabled for {count} accounts."
         },
       "sound_selection": {
-        "title": "通知聲音",
+        "title": "聲音",
         "description": "選擇通知時播放的聲音",
-        "choose": "聲音",
+        "choose": "鈴聲",
         "choose_desc": "選擇通知音並點擊揚聲器圖示進行預覽"
       },
       "email": {
-        "title": "郵件通知",
+        "title": "新郵件",
         "description": "設定傳入郵件的通知",
         "enabled": "郵件通知",
         "enabled_desc": "新郵件到達時顯示通知",
-        "sound": "通知聲音",
+        "sound": "新郵件提示音",
         "sound_desc": "新郵件到達時播放音訊提醒",
         "inbox_only": "Inbox only",
         "inbox_only_desc": "Only notify for mail that lands in the Inbox; skip mail a filter files into another folder"
@@ -1364,7 +1932,7 @@
         "description": "設定行事曆活動的通知",
         "enabled": "活動通知",
         "enabled_desc": "顯示即將開始的行事曆活動提醒",
-        "sound": "通知聲音",
+        "sound": "提醒提示音",
         "sound_desc": "播放行事曆提醒的音訊提醒"
       }
     },
@@ -1403,7 +1971,7 @@
       },
       "first_day": {
         "label": "一週的第一天",
-        "description": "從週日或週一開始一週",
+        "description": "行事曆中一週的第一天",
         "sunday": "週日",
         "monday": "週一"
       },
@@ -1415,13 +1983,25 @@
       }
     },
     "email_behavior": {
+      "inbox_type": {
+        "label": "收件匣類型",
+        "description": "「未讀優先」會在收件匣其餘郵件上方的獨立區塊中顯示最新的 25 封未讀郵件",
+        "default": "預設",
+        "unread_first": "未讀優先"
+      },
       "clear_search_on_folder_change": {
         "label": "切換資料夾時清除搜尋",
         "description": "點擊資料夾（收件匣、寄件備份等）會清除目前的搜尋並瀏覽該資料夾。關閉時，搜尋會保留並在切換到的資料夾中重新執行。"
       },
+      "search_default_scope": {
+        "label": "搜尋範圍",
+        "description": "新搜尋的查找範圍。你仍可在搜尋篩選中選擇其他資料夾。",
+        "all": "除垃圾郵件和垃圾桶外的所有信件匣",
+        "folder": "目前開啟的資料夾"
+      },
       "request_read_receipt": {
         "label": "預設請求已讀回執",
-        "description": "撰寫新郵件時預先啟用已讀回執請求。"
+        "description": "寫新郵件時預先啟用已讀回執請求。"
       },
       "read_receipt_response": {
         "label": "回應已讀回執請求",
@@ -1481,13 +2061,13 @@
       },
       "mail_layout": {
         "label": "郵件版面配置",
-        "description": "選擇經典分割閱讀窗格、Gmail 風格的專注閱讀流程，或 Zimbra 風格的底部閱讀窗格。",
+        "description": "郵件清單和開啟的郵件在畫面上的位置。",
         "split": "分割窗格",
-        "split_description": "郵件清單與閱讀窗格並排顯示。",
+        "split_description": "清單和郵件並排",
         "focus": "專注清單",
-        "focus_description": "每封郵件顯示一列，開啟郵件時以全寬顯示，同時保留信件匣側邊欄。",
+        "focus_description": "先清單，再以全寬顯示郵件",
         "horizontal": "底部閱讀窗格",
-        "horizontal_description": "在頂端顯示郵件清單，並在下方閱讀窗格開啟選取的郵件。"
+        "horizontal_description": "郵件在清單下方"
       },
       "list_columns": {
         "label": "以欄位顯示清單",
@@ -1506,9 +2086,13 @@
         "label": "僅純文字",
         "description": "停用富文字編輯器，並將所有郵件（包括回覆和轉寄）以純文字傳送"
       },
+      "quick_reply": {
+        "label": "快速回覆",
+        "description": "在郵件下方顯示快速回覆框。"
+      },
       "auto_select_reply_identity": {
         "label": "使用收件地址回覆",
-        "description": "回覆時，使用原始郵件的收件地址寄送。系統會先比對寄件身分；若是網域 catch-all 收件，則透過主要寄件身分傳送，但將 From 標頭改寫為別名地址。"
+        "description": "回覆時，從郵件寄達的地址寄出。"
       },
       "reply_identity_match": {
         "label": "接收地址比對",
@@ -1521,6 +2105,14 @@
         "description": "在回覆與轉寄中插入簽名檔的位置。放在引用文字上方可自然作為回覆結尾；放在下方則能保持原始郵件連續。",
         "above_quote": "引用文字之前",
         "below_quote": "引用文字之後"
+      },
+      "signature_new_mail": {
+        "label": "新郵件簽名",
+        "description": "寫新郵件時自動插入簽名。關閉後每封新郵件都不帶簽名。"
+      },
+      "signature_reply_forward": {
+        "label": "回覆轉寄簽名",
+        "description": "回覆或轉寄時自動附加簽名。關閉後回覆和轉寄不帶簽名。"
       },
       "signature_separator": {
         "label": "簽名檔分隔線",
@@ -1538,12 +2130,6 @@
         "description": "選擇點選附件時是預覽還是直接下載",
         "preview": "儘可能預覽",
         "download": "立即下載"
-      },
-      "attachment_position": {
-        "label": "附件位置",
-        "description": "選擇在郵件標頭的哪個位置顯示附件",
-        "beside-sender": "寄件者旁",
-        "below-header": "標頭下方"
       },
       "emails_per_page": {
         "10": "10 封郵件",
@@ -1579,6 +2165,8 @@
         "search_placeholder": "搜尋寄件者…",
         "no_results": "找不到相符的寄件者",
         "remove": "移除",
+        "removed": "已從信任的寄件者中移除",
+        "remove_error": "無法移除寄件者",
         "close": "關閉",
         "invalid_email": "請輸入有效的電子郵件地址",
         "already_added": "該寄件者已被信任",
@@ -1626,6 +2214,10 @@
         "label": "空主題提醒",
         "description": "傳送沒有主題的郵件前請求確認。"
       },
+      "placeholder_warning": {
+        "label": "預留位置提醒",
+        "description": "傳送仍含有預留位置（如 [TIME] 或 [您的姓名]）、空白範本欄位或未完成文字（如 TODO 或 TBD）的郵件前請求確認。"
+      },
       "recipient_mentions": {
         "label": "使用 @ 提及收件者",
         "description": "在內文輸入 @ 會列出收件者，並插入所選收件者的名字。按 Enter 或 Tab 選擇醒目標示的名字。"
@@ -1653,8 +2245,8 @@
         "unsupported": "目前帳號未宣告支援延遲傳送。該設定仍會為其他帳號儲存。"
       },
       "return_to_list_after_action": {
-        "label": "刪除或標示為未讀後回到清單",
-        "description": "刪除開啟的郵件或標示為未讀後，回到郵件清單，而不是開啟下一封郵件。"
+        "label": "刪除、封存、移動或標示為未讀後回到清單",
+        "description": "刪除、封存、移動開啟的郵件、回報為垃圾郵件或標示為未讀後，回到郵件清單，而不是開啟下一封郵件。"
       },
       "swipe_right_action": {
         "label": "向右滑動動作（行動裝置）",
@@ -1696,6 +2288,7 @@
       "auth_method_oauth": "單一登入（OAuth/OIDC）",
       "auth_method_basic": "密碼",
       "auth_method_token": "存取權杖",
+      "account_management_link": "管理帳號安全性（雙重驗證、應用程式密碼）",
       "demo_account": "示範帳號",
       "email": {
         "label": "電子郵件地址",
@@ -1718,8 +2311,8 @@
         "title": "已登入帳號",
         "description": "拖曳以重新排序帳號在帳號下拉選單中的顯示順序",
         "active": "使用中的帳號",
-        "default_badge": "預設帳號",
-        "set_default": "設為預設",
+        "default_badge": "啟動時開啟",
+        "set_default": "啟動時開啟此帳號",
         "switch_to": "切換到此帳號",
         "move_up": "上移",
         "move_down": "下移",
@@ -1737,6 +2330,7 @@
         "delete": "Delete saved list",
         "cancel": "Cancel",
         "delete_confirm": "Delete the saved account list from the server?",
+        "delete_message": "其他裝置將無法再從中還原帳號。",
         "password": "Backup password",
         "password_hint": "At least 10 characters. It cannot be recovered: if you forget it, save the list again with a new one.",
         "restore_hint": "The password chosen when the list was saved.",
@@ -1751,6 +2345,10 @@
         "signed_in": "Signed in to {count, plural, one {# account} other {# accounts}} with the saved password.",
         "sign_in_failed": "{count, plural, one {# saved password was} other {# saved passwords were}} refused: sign in to those accounts from the account list.",
         "deleted": "Saved list deleted.",
+        "prompt_title": "Restore your other accounts?",
+        "prompt_description": "A list of accounts is saved for {account}. Enter its backup password to add them to this browser, or do it later from Settings.",
+        "prompt_not_now": "Not now",
+        "prompt_done": "Done",
         "errors": {
           "mismatch": "The passwords do not match.",
           "password_length": "Use at least 10 characters.",
@@ -1777,7 +2375,7 @@
       "title": "帳號安全",
       "description": "管理您的密碼、雙因素驗證與安全設定",
       "detecting": "正在偵測伺服器功能…",
-      "not_available": "此郵件伺服器無法管理帳號安全性。可能已停用必要權限。如需詳細資料，請參閱<a href=\"/docs/guides/account-security\" class=\"underline hover:opacity-80\" target=\"_blank\">說明文件</a>。",
+      "not_available": "此郵件伺服器無法管理帳號安全性。可能已停用必要權限。如需詳細資料，請參閱<a href=\"https://bulwarkmail.org/docs/guides/account-security\" class=\"underline hover:opacity-80\" target=\"_blank\">說明文件</a>。",
       "password": {
         "title": "變更密碼",
         "current": "目前密碼",
@@ -1785,6 +2383,7 @@
         "confirm": "確認新密碼",
         "submit": "變更密碼",
         "success": "已成功變更密碼",
+        "sign_in_again": "請使用新密碼重新登入。",
         "error_title": "變更密碼失敗",
         "error_mismatch": "兩次輸入的新密碼不相符",
         "error_min_length": "密碼必須至少為 8 個字元",
@@ -1800,7 +2399,7 @@
       },
       "totp": {
         "section_title": "雙因素驗證",
-        "label": "TOTP 驗證",
+        "label": "兩步驟登入",
         "description": "透過基於時間的一次性密碼，增加一層安全保護",
         "active": "已啟用",
         "inactive": "未啟用",
@@ -1820,7 +2419,7 @@
       "app_passwords": {
         "title": "應用程式密碼",
         "description": "為不支援雙因素驗證的應用程式建立密碼",
-        "add": "新增",
+        "new": "新增應用程式密碼",
         "create": "建立",
         "cancel": "取消",
         "done": "完成",
@@ -1838,11 +2437,14 @@
         "removed": "已移除應用程式密碼",
         "add_error": "無法建立應用程式密碼",
         "remove_error": "無法移除應用程式密碼",
+        "delete_title": "刪除應用程式密碼?",
+        "delete_message": "使用 {name} 登入的應用程式將無法再登入。",
         "none": "尚未設定應用程式密碼"
       },
       "api_keys": {
         "title": "API 金鑰",
         "description": "為直接與伺服器通訊的指令碼和整合建立 API 金鑰",
+        "new": "新增 API 金鑰",
         "name_label": "金鑰名稱",
         "name_placeholder": "例如：備份指令碼、CI 執行器",
         "copy_now_warning": "請立即複製此 API 金鑰 — 之後將不再顯示。",
@@ -1850,6 +2452,8 @@
         "removed": "API 金鑰已刪除",
         "add_error": "建立 API 金鑰失敗",
         "remove_error": "刪除 API 金鑰失敗",
+        "delete_title": "刪除 API 金鑰?",
+        "delete_message": "使用 {name} 的指令碼和整合將失去存取權。",
         "none": "未設定 API 金鑰"
       },
       "encryption": {
@@ -1869,6 +2473,9 @@
         "configure_title": "使用此金鑰啟用加密",
         "enable_button": "啟用",
         "disable_tooltip": "停用加密",
+        "disable_title": "關閉靜態加密?",
+        "disable_message": "從現在起,新郵件將不加密儲存。",
+        "disable_button": "關閉",
         "enabled_success": "已啟用靜態資料加密"
       },
       "public_keys": {
@@ -1876,15 +2483,24 @@
         "name_placeholder": "例如：我的金鑰",
         "key_label": "公開金鑰（S/MIME 或 PGP ASCII 裝甲格式）",
         "key_placeholder": "在此貼上您的公鑰",
-        "none": "未設定公鑰"
+        "none": "未設定公鑰",
+        "title": "公開金鑰",
+        "add": "新增公開金鑰",
+        "add_submit": "新增",
+        "added": "已新增公開金鑰",
+        "removed": "已刪除公開金鑰",
+        "add_error": "無法新增公開金鑰",
+        "remove_error": "無法刪除公開金鑰",
+        "delete_title": "刪除公開金鑰?",
+        "delete_message": "{name} 將從伺服器中移除。"
       },
       "email_client": {
-        "title": "郵件用戶端設定",
-        "description": "使用以下登入資訊設定桌面版或行動裝置電子郵件用戶端（Thunderbird、Apple Mail、Outlook 等）",
-        "jmap_username_label": "JMAP 使用者名稱",
+        "title": "在其他應用程式中使用郵件",
+        "description": "Thunderbird、Apple Mail、Outlook 和手機郵件應用程式可以使用這些設定。",
+        "jmap_username_label": "使用者名稱",
         "copy": "複製",
         "copied": "已複製",
-        "password_instructions": "使用上方的 JMAP 使用者名稱與應用程式密碼登入電子郵件用戶端。如果尚未建立應用程式密碼，請在上方區段建立一組。"
+        "password_instructions": "密碼請使用應用程式密碼，而不是你平常的密碼。可以在本頁下方建立。"
       },
       "link_device": {
         "title": "連結行動應用程式",
@@ -1977,6 +2593,7 @@
       },
       "save": "儲存變更",
       "saving": "正在儲存…",
+      "saved": "已儲存",
       "warnings": {
         "end_before_start": "結束日期必須晚於開始日期",
         "invalid_date": "請輸入含時間的有效開始與結束日期，或將該欄位留空",
@@ -2043,12 +2660,17 @@
       "new_folder_name": "信件匣名稱",
       "rename": "重新命名",
       "change_icon": "變更圖示",
+      "actions": "{name} 的動作",
+      "expand": "展開 {name}",
+      "collapse": "摺疊 {name}",
+      "counter": "計數",
       "count_mode": "{name} 的計數",
       "count_mode_default": "計數：預設",
       "count_mode_unread": "僅未讀",
       "count_mode_all": "未讀與總數",
       "count_mode_none": "不顯示計數",
       "delete": "刪除",
+      "delete_title": "刪除信件匣?",
       "confirm_delete": "您確定要刪除「{name}」嗎？此信件匣中的郵件將移至垃圾桶。",
       "create": "建立",
       "cancel": "取消",
@@ -2068,7 +2690,8 @@
     "advanced": {
       "debug_mode": {
         "label": "除錯模式",
-        "description": "啟用詳細記錄以進行疑難排解"
+        "description": "啟用詳細記錄以進行疑難排解",
+        "toggle": "詳細記錄"
       },
       "debug_categories": {
         "description": "選取要記錄的類別。停用不需要的類別，可減少主控台雜訊。",
@@ -2112,22 +2735,25 @@
       },
       "refresh_cache": {
         "label": "重新整理快取資料",
-        "description": "從伺服器重新載入聯絡人、行事曆與信件匣。保留帳號與工作階段，不需登出即可修正過時或錯誤的畫面。",
-        "button": "重新整理"
+        "description": "從伺服器重新載入聯絡人、行事曆與信件匣。你會保持登入。",
+        "button": "重新整理",
+        "confirm_title": "重新整理快取資料?"
       },
       "reset_settings": {
         "label": "重設設定",
         "description": "將所有設定還原為預設值",
-        "button": "重設為預設值"
+        "button": "重設為預設值",
+        "confirm_title": "重設所有設定?",
+        "done": "設定已重設"
       },
       "export_settings": {
         "label": "匯出設定",
-        "description": "將設定匯出為 JSON 檔案",
+        "description": "下載設定的副本",
         "button": "匯出"
       },
       "import_settings": {
         "label": "匯入設定",
-        "description": "從 JSON 檔案匯入設定",
+        "description": "從檔案還原設定",
         "button": "匯入"
       },
       "about": {
@@ -2178,22 +2804,29 @@
       "manage_description": "在側邊欄新增、編輯或移除自訂應用程式"
     },
     "contacts": {
-      "title": "聯絡人",
-      "description": "匯入與匯出聯絡人",
+      "title": "聯絡人清單",
+      "description": "聯絡人的顯示方式，以及要匯入或匯出的聯絡人檔案",
       "group_by_letter_label": "依首字分組",
       "sort_by_last_name_label": "依姓氏排序",
       "sort_by_last_name_description": "依姓氏排列聯絡人清單，讓家庭成員顯示在一起",
+      "show_directory_label": "顯示通訊錄目錄",
+      "show_directory_description": "在聯絡人的「通訊錄目錄」中列出郵件伺服器上的帳號與群組",
       "group_by_letter_description": "在聯絡人清單中顯示依字母排列的分節標題",
       "import_label": "匯入聯絡人",
       "import_description": "從 vCard（.vcf）檔案匯入聯絡人",
       "export_label": "匯出聯絡人",
       "export_description": "將所有聯絡人匯出為 vCard（.vcf）檔案",
       "manage_title": "通訊錄",
-      "manage_description": "重新命名您的通訊錄",
+      "manage_description": "重新命名或刪除您的通訊錄",
       "no_address_books": "找不到通訊錄",
       "categories_title": "類別",
-      "categories_description": "重新命名聯絡人類別",
+      "categories_description": "重新命名或刪除聯絡人類別",
       "no_categories": "找不到類別"
+    },
+    "calendar_management": {
+      "delete_title": "刪除行事曆?",
+      "clear_title": "清除所有活動?",
+      "unsubscribe_title": "取消訂閱此行事曆?"
     },
     "downloads": {
       "title": "下載",
@@ -2259,9 +2892,9 @@
       "validate": "驗證",
       "validation_success": "指令碼有效",
       "validation_error": "指令碼有錯誤",
-      "save": "儲存規則",
+      "save": "儲存",
       "saving": "正在儲存…",
-      "saved": "篩選規則已成功儲存",
+      "saved": "篩選規則已儲存",
       "save_failed": "無法儲存篩選規則",
       "loading": "正在載入篩選規則…",
       "not_supported": "您的郵件伺服器不支援郵件篩選規則。",
@@ -2273,10 +2906,13 @@
       "add_condition": "新增條件",
       "actions": "動作",
       "add_action": "新增動作",
-      "stop_processing": "停止處理後續規則",
+      "remove_condition": "移除條件",
+      "remove_action": "移除動作",
+      "stop_processing": "不再套用後面的規則",
       "include_spam": "同時移動被標記為垃圾郵件的郵件",
       "attachment_type_placeholder": "例如：pdf、doc、jpg",
       "value_placeholder_multi": "值（多個用逗號分隔）",
+      "regex_placeholder": "正規表示式，例如 ^Cron|mailman",
       "condition_fields": {
         "attachment": "附件",
         "from": "寄件者",
@@ -2298,6 +2934,7 @@
         "starts_with": "以…開頭",
         "ends_with": "以…結尾",
         "matches": "符合模式",
+        "regex": "符合正規表示式",
         "greater_than": "大於",
         "less_than": "小於",
         "address_is": "地址為",
@@ -2313,7 +2950,7 @@
         "discard": "捨棄（直接刪除）",
         "reject": "附上訊息拒絕",
         "keep": "保留在收件匣中",
-        "stop": "停止處理"
+        "stop": "不再套用後面的規則"
       },
       "move_to_folder": "選取信件匣",
       "copy_to_folder": "選取信件匣",
@@ -2327,6 +2964,7 @@
       "label_name": "標籤名稱",
       "label_placeholder": "選取標籤",
       "header_name": "標頭名稱",
+      "condition_value": "條件值",
       "header_placeholder": "例如，X-Mailing-List",
       "size_bytes": "大小（以位元組為單位）",
       "size_placeholder": "例如，1000000",
@@ -2335,6 +2973,7 @@
       "open_sieve_editor": "開啟原始 Sieve 編輯器",
       "fetch_error": "無法載入篩選規則",
       "expanded_view": "展開檢視",
+      "show_rule_details": "顯示每條規則的條件和動作",
       "expanded_view_description": "顯示包含詳細條件與動作區塊的篩選規則",
       "if": "如果",
       "then": "然後",
@@ -2349,10 +2988,17 @@
       "match_type": "比對方式",
       "reset_to_visual": "重設為視覺化建構工具",
       "reset_warning": "這會捨棄目前的指令碼並重新開始。",
+      "reset_title": "重設為視覺化編輯器?",
       "confirm_reset": "重設",
       "validation_empty_name": "規則名稱為必填欄位",
       "validation_empty_conditions": "至少需要一個具有值的條件",
       "validation_empty_actions": "至少需要一個動作",
+      "validation_action_folder": "請為此動作選擇資料夾",
+      "validation_action_tag": "請為此動作選擇標籤",
+      "validation_action_forward": "請輸入要轉寄到的地址",
+      "validation_action_reject": "請輸入退信訊息",
+      "validation_header_name": "標頭名稱只能包含字母 A-Z、數字、連字號和底線",
+      "validation_regex": "此正規表示式無效",
       "templates_section": "從範本開始",
       "template_newsletters": "將訂閱郵件移至信件匣",
       "template_receipts": "自動封存收據",
@@ -2364,12 +3010,12 @@
         "script_content": "Sieve 指令碼",
         "valid": "指令碼有效",
         "invalid": "指令碼有錯誤",
-        "save_warning": "儲存會覆寫所有視覺化規則，且無法復原。請再次點擊「儲存」以確認。",
         "validating": "正在驗證…",
         "validate": "驗證",
         "cancel": "取消",
         "save": "儲存",
-        "confirm_save": "確認儲存",
+        "overwrite_title": "要取代視覺化規則嗎？",
+        "overwrite_message": "此指令碼已不包含您在視覺化編輯器中建立的規則。儲存後這些規則將被取代，且無法復原。",
         "validation_failed": "驗證請求失敗"
       },
       "rule_summary": {
@@ -2406,6 +3052,9 @@
       "validation_period_empty": "請輸入期間的開始日期或結束日期",
       "validation_period_invalid": "請為期間輸入含時間的有效日期，或將該欄位留空",
       "apply_existing_period": "設定了期間的規則只作用於在該期間內收到的郵件，因此無法套用到既有郵件。",
+      "apply_existing_in": "同時套用到{folder}中既有的郵件",
+      "apply_existing_count": "{count, plural, other {同時套用到{folder}中既有的 # 封郵件}}",
+      "apply_existing_none": "{folder}中還沒有符合此規則的郵件。",
       "period_status_scheduled": "尚未開始",
       "period_status_active": "生效中",
       "period_status_expired": "已過期"
@@ -2449,7 +3098,7 @@
         "description": "設定檔案和資料夾的顯示方式"
       },
       "default_view": {
-        "label": "預設檢視",
+        "label": "檔案顯示方式",
         "description": "選擇網格或清單版面配置",
         "list": "清單",
         "grid": "網格"
@@ -2519,6 +3168,11 @@
         "images": "圖片與外部內容",
         "images_description": "遠端圖片可能會讓寄件者知道您已開啟郵件。",
         "attachments": "附件"
+      },
+      "plain_text_font_link": {
+        "label": "純文字郵件字型",
+        "description": "與其他字型一起在「無障礙」頁面中設定。",
+        "button": "無障礙"
       }
     },
     "composing_page": {
@@ -2529,6 +3183,640 @@
         "sending": "傳送前",
         "receipts": "讀取回條"
       }
+    },
+    "accessibility": {
+      "system": "跟隨系統",
+      "on": "開",
+      "off": "關",
+      "presets": {
+        "title": "預設組合",
+        "description": "每個預設組合會一次變更多項設定。之後它們就是一般設定，您可以逐項修改，也可以組合使用多個預設組合。",
+        "applied": "{name}變更了 {count, plural, other {# 項設定}}：",
+        "nothing_changed": "{name}：您的設定已經符合。",
+        "undo": "復原",
+        "show_button": "在導覽列顯示無障礙按鈕",
+        "screen-reader": {
+          "label": "螢幕閱讀器",
+          "description": "清單旁不顯示閱讀窗格，不依對話分組，每封郵件都會朗讀預覽。"
+        },
+        "low-vision": {
+          "label": "低視力",
+          "description": "更大的文字、更高的對比、更粗的焦點外框、有底線的連結和大型游標。"
+        },
+        "dyslexia": {
+          "label": "閱讀障礙",
+          "description": "更易讀的字型，行、字母和字詞之間的間距更大，閱讀欄更窄。"
+        },
+        "focus": {
+          "label": "專注",
+          "description": "簡潔版面，不顯示預覽和寄件者圖片，以圓點取代未讀數，無動態效果。"
+        },
+        "motor": {
+          "label": "鍵盤與肢體操作",
+          "description": "更大的點選目標，選單點選後展開，每封郵件都有動作按鈕，通知停留更久。"
+        },
+        "motion": {
+          "label": "無動態效果，避免誘發癲癇",
+          "description": "無動畫，動態圖片暫停，無半透明面板，無閃爍提醒。"
+        },
+        "hearing": {
+          "label": "聽障",
+          "description": "以視覺提醒取代聲音，通知會保留到您關閉為止。"
+        }
+      },
+      "quick_button": {
+        "label": "導覽列中的無障礙按鈕",
+        "description": "新增一個按鈕，可隨時開啟文字大小、對比、動態效果和預設組合。無論是否顯示該按鈕，Alt+Shift+A 都會開啟同一個面板。"
+      },
+      "sections": {
+        "text": "文字與閱讀",
+        "contrast": "色彩與對比",
+        "motion": "動態效果",
+        "keyboard": "鍵盤與焦點",
+        "pointer": "指標與觸控",
+        "mail": "郵件",
+        "timing": "時間與誤操作",
+        "alerts": "提醒與干擾",
+        "screen_readers": "螢幕閱讀器"
+      },
+      "text_size": {
+        "label": "文字大小",
+        "description": "依比例縮放您在瀏覽器中設定的文字。100% 為瀏覽器的大小。",
+        "small": "87.5%",
+        "medium": "100%",
+        "large": "112.5%",
+        "x-large": "125%",
+        "xx-large": "150%",
+        "xxx-large": "175%",
+        "huge": "200%"
+      },
+      "font": {
+        "label": "字型",
+        "description": "Atkinson Hyperlegible 和 Lexend 的設計讓字母更容易區分；OpenDyslexic 對部分閱讀障礙者有幫助。這些字型支援拉丁字母。",
+        "default": "主題字型"
+      },
+      "plain_text_font": {
+        "label": "純文字郵件字型",
+        "description": "用於未經排版寄出的郵件。",
+        "sans": "與上方相同",
+        "mono": "等寬"
+      },
+      "spacing": {
+        "normal": "正常",
+        "relaxed": "較大",
+        "loose": "最大",
+        "wide": "寬",
+        "wider": "更寬"
+      },
+      "line_spacing": {
+        "label": "行距",
+        "description": "文字行與行之間的距離。"
+      },
+      "letter_spacing": {
+        "label": "字母間距",
+        "description": "字母之間的距離。"
+      },
+      "word_spacing": {
+        "label": "字詞間距",
+        "description": "字詞與字詞之間的距離。"
+      },
+      "paragraph_spacing": {
+        "label": "段落間距",
+        "description": "每個段落之後的距離。"
+      },
+      "reading_width": {
+        "label": "閱讀寬度",
+        "description": "將郵件中的每行限制在約 80 個字元，減少眼睛移動的距離。",
+        "full": "全寬",
+        "comfortable": "約 80 個字元"
+      },
+      "reading_mask": {
+        "label": "閱讀遮罩",
+        "description": "將郵件中指標周圍幾行以外的內容調暗，幫助您不會找不到閱讀位置。"
+      },
+      "contrast": {
+        "label": "對比",
+        "description": "較高的對比會讓任何主題下的文字、邊框和焦點外框更深或更淺，並為連結加上底線。「跟隨系統」會沿用您裝置的設定。",
+        "more": "較高",
+        "normal": "正常"
+      },
+      "transparency": {
+        "label": "減少透明效果",
+        "description": "使用純色背景，取代半透明和模糊的面板。"
+      },
+      "underline_links": {
+        "label": "連結加底線",
+        "description": "為應用程式和郵件中的連結加上底線，這樣不必只靠顏色來辨識。"
+      },
+      "color_names": {
+        "label": "在顏色旁顯示名稱",
+        "description": "在郵件上顯示標籤名稱，在活動上顯示行事曆名稱，而不只是彩色圓點。"
+      },
+      "cvd_palette": {
+        "label": "色盲友善配色",
+        "description": "標籤、資料夾和行事曆使用在紅綠色盲或藍黃色盲下仍能區分的顏色。"
+      },
+      "theme_link": {
+        "label": "主題與色彩模式",
+        "description": "淺色、深色和各主題在「外觀」頁面中。",
+        "button": "外觀"
+      },
+      "reduce_motion": {
+        "label": "減少動態效果",
+        "description": "關閉滑動面板、轉場和平滑捲動，郵件內部也一樣。「跟隨系統」會沿用您裝置的設定。"
+      },
+      "pause_images": {
+        "label": "暫停動態圖片",
+        "description": "郵件中的動態 GIF 只顯示第一格，並提供播放按鈕。「跟隨系統」會在裝置要求減少動態效果時暫停它們。"
+      },
+      "single_key_shortcuts": {
+        "label": "單鍵快速鍵",
+        "description": "只需按一個鍵的快速鍵，如 j、k、e 和 #。如果您使用語音輸入或常誤觸按鍵，請關閉。使用 Ctrl 或 Alt 的快速鍵不受影響。"
+      },
+      "shortcut_list": {
+        "label": "鍵盤快速鍵",
+        "description": "您目前所在應用程式的全部快速鍵。",
+        "button": "顯示快速鍵"
+      },
+      "focus_ring": {
+        "label": "焦點外框",
+        "description": "鍵盤目前所在的按鈕、連結或欄位周圍的外框。",
+        "normal": "正常",
+        "thick": "粗",
+        "extra": "特粗"
+      },
+      "focus_always": {
+        "label": "一律顯示焦點",
+        "description": "點選後也顯示外框，而不只是在使用鍵盤時顯示。"
+      },
+      "large_targets": {
+        "label": "大型點選目標",
+        "description": "讓按鈕、核取方塊和其他控制項至少為 44 像素。「跟隨系統」會在觸控螢幕上開啟此項。"
+      },
+      "large_cursor": {
+        "label": "大型滑鼠指標",
+        "description": "應用程式內使用更大的指標。"
+      },
+      "open_on_hover": {
+        "label": "停留時展開",
+        "description": "指標停在選單、預覽和卡片上時就會展開。關閉後只有點選才會展開。"
+      },
+      "row_action_button": {
+        "label": "每封郵件的動作按鈕",
+        "description": "在每一列顯示一個按鈕，用來開啟該郵件的動作，這樣就不必停留或按滑鼠右鍵。"
+      },
+      "native_scrollbars": {
+        "label": "更寬的捲軸",
+        "description": "使用瀏覽器內建的捲軸，它更寬，也更容易抓取。"
+      },
+      "row_actions_link": {
+        "label": "停留和滑動動作",
+        "description": "郵件列上顯示哪些動作。",
+        "button": "郵件清單"
+      },
+      "mail_view": {
+        "label": "郵件顯示為",
+        "description": "純文字會去掉郵件的版面、顏色和圖片。您可以在閱讀時逐封切換。",
+        "html": "含格式",
+        "plain": "純文字"
+      },
+      "mail_text_size": {
+        "label": "郵件文字大小",
+        "description": "郵件內部的文字大小。所有郵件保持一致。",
+        "follow": "與應用程式相同"
+      },
+      "mail_min_font_size": {
+        "label": "郵件中的最小文字",
+        "description": "放大郵件中設定得比此值更小的文字。",
+        "none": "無下限",
+        "px": "{size} px"
+      },
+      "mail_override": {
+        "label": "在郵件中使用我的字型和顏色",
+        "description": "以您的字型、大小和顏色取代寄件者設定的樣式。這可能會改變電子報的外觀。",
+        "never": "永不",
+        "high_contrast": "高對比時",
+        "always": "一律"
+      },
+      "mail_fit_width": {
+        "label": "讓寬郵件符合視窗",
+        "description": "將比閱讀窗格更寬的郵件縮小，而不是左右捲動。"
+      },
+      "read_aloud_rate": {
+        "label": "朗讀速度",
+        "description": "「朗讀」功能讀郵件的快慢。"
+      },
+      "compose_font": {
+        "label": "新郵件字型",
+        "description": "新郵件起始使用的字型。如果收件者的郵件應用程式有該字型，就能看到。",
+        "default": "預設",
+        "sans": "無襯線",
+        "serif": "襯線",
+        "mono": "等寬"
+      },
+      "compose_size": {
+        "label": "新郵件文字大小",
+        "description": "新郵件起始使用的大小。",
+        "default": "預設"
+      },
+      "toast_duration": {
+        "label": "通知顯示時間",
+        "description": "像「已移至封存」這類附有「復原」按鈕的提示在畫面上停留多久。",
+        "until_closed": "直到我關閉",
+        "seconds": "{seconds} 秒"
+      },
+      "confirm_send": {
+        "label": "寄出前確認",
+        "description": "寄出郵件前先詢問。"
+      },
+      "confirm_delete": {
+        "label": "刪除前確認",
+        "description": "刪除郵件前先詢問，單封郵件也一樣。"
+      },
+      "confirm_archive": {
+        "label": "封存前確認",
+        "description": "封存郵件前先詢問。"
+      },
+      "send_warnings_link": {
+        "label": "寄出前警告",
+        "description": "缺少主旨、忘記附件和預留位置文字。",
+        "button": "撰寫"
+      },
+      "visual_alerts": {
+        "label": "視覺提醒",
+        "description": "有新郵件或提醒時，讓分頁標題緩慢閃爍，並讓提醒一直留在畫面上，直到您關閉。"
+      },
+      "unread_counts": {
+        "label": "未讀數",
+        "description": "資料夾和導覽列如何顯示未讀郵件。",
+        "count": "數字",
+        "dot": "圓點",
+        "hidden": "隱藏"
+      },
+      "do_not_disturb": {
+        "label": "勿擾",
+        "description": "新郵件不發出聲音、不跳出通知、不語音播報，直到您關閉此項。"
+      },
+      "announce_new_mail": {
+        "label": "播報新郵件",
+        "description": "螢幕閱讀器會說出收到了多少封新郵件，但不朗讀內容。"
+      },
+      "announce_preview": {
+        "label": "朗讀清單中的預覽",
+        "description": "螢幕閱讀器會連同寄件者和主旨一起朗讀每封郵件的第一行。"
+      },
+      "simple_mode": {
+        "label": "簡易模式",
+        "description": "單欄、更少的按鈕，沒有側邊面板。"
+      },
+      "simple_mode_paged": {
+        "label": "郵件清單分頁",
+        "description": "清單以每頁 50 封分頁，用「下一頁」和「上一頁」取代無限捲動。搭配螢幕閱讀器更方便。"
+      },
+      "reset": {
+        "title": "重設",
+        "label": "重設無障礙設定",
+        "description": "將此頁面的所有設定還原為預設值，或還原為您所屬組織設定的值。對話檢視等共用設定維持不變。",
+        "button": "重設",
+        "done": "無障礙設定已重設。"
+      },
+      "read_aloud_voice": {
+        "label": "朗讀語音",
+        "description": "朗讀郵件所用的語音。清單顯示瀏覽器為介面語言提供的語音。",
+        "default": "瀏覽器預設"
+      }
+    }
+  },
+  "uxs_structure": {
+    "tabs": {
+      "offline": "離線",
+      "privacy": "隱私",
+      "about": "關於"
+    },
+    "search": {
+      "signature": "簽名 郵件簽名 頁尾",
+      "sign_out": "登出 退出 logout",
+      "app_lock": "PIN 鎖定 密碼鎖 鎖定畫面",
+      "text_size": "字型大小 字級 大字 放大 縮放",
+      "vacation": "自動回覆 不在辦公室 外出 休假 假期 autoreply",
+      "two_factor": "2FA 雙重驗證 兩步驟驗證 MFA OTP 驗證器 一次性驗證碼",
+      "encryption": "S/MIME smime PGP OpenPGP 加密 憑證",
+      "password": "密碼 變更密碼 新密碼",
+      "offline": "離線 offline 無網路 無連線 下載 儲存空間 同步",
+      "wipe": "移除 刪除 清除 裝置 資料",
+      "outbox": "寄件匣 未寄出 等待中 佇列",
+      "remote_content": "遠端圖片 外部內容 追蹤 像素 信任的寄件者",
+      "push": "推播 push 中繼 背景 通知",
+      "version": "版本 更新 關於 原始碼 GitHub 授權"
+    },
+    "privacy": {
+      "push_title": "通知",
+      "push_link": {
+        "label": "通知中繼",
+        "description": "應用程式關閉時的通知會經過推播中繼，中繼永遠看不到你的郵件。可在「通知」頁面選擇。",
+        "button": "通知"
+      }
+    },
+    "privacy_links": {
+      "images_label": "遠端圖片和信任的寄件者",
+      "receipts_label": "讀取回條",
+      "senders_label": "寄件者圖片",
+      "description": "這些設定在「隱私」頁面。",
+      "button": "隱私"
+    },
+    "a11y_links": {
+      "text": {
+        "label": "密度和按鈕標籤",
+        "description": "清單列的疏密以及按鈕是否顯示名稱，在「外觀」頁面設定。"
+      },
+      "light_mode": {
+        "label": "郵件使用淺色背景",
+        "description": "深色模式下郵件是否使用淺色背景，在「閱讀」頁面設定。"
+      },
+      "calendar": {
+        "label": "行事曆中的活動預覽",
+        "description": "指向活動時是否顯示詳細資料，在「行事曆」頁面設定。"
+      },
+      "list": {
+        "label": "對話和預覽列",
+        "description": "依對話分組以及每封郵件下方的預覽列，在「郵件清單」頁面設定。"
+      },
+      "reading": {
+        "label": "標示為已讀",
+        "description": "郵件何時算作已讀，以及刪除或移動後跳到哪裡，在「閱讀」頁面設定。"
+      },
+      "send_warnings_description": "復原傳送，以及缺少主旨、忘記附件或預留文字的提醒。",
+      "bulk_delete": {
+        "label": "刪除多封郵件前詢問",
+        "description": "在「郵件清單」頁面設定。"
+      },
+      "sounds": {
+        "label": "音效和未讀標記",
+        "description": "通知音效和分頁上的未讀數，在「通知」頁面設定。"
+      }
+    },
+    "about": {
+      "title": "關於 {appName}"
+    },
+    "sign_out": {
+      "description": "在此裝置上登出此帳號。"
+    }
+  },
+  "uxp2_settings": {
+    "search": {
+      "tray": "系統匣 通知區域 背景 最小化到系統匣 tray",
+      "autostart": "自動啟動 開機啟動 隨 Windows 啟動 登入時啟動",
+      "default_app": "預設郵件應用程式 預設郵件程式 mailto 郵件連結",
+      "menu_bar": "功能表列 功能表 Alt 鍵 檔案 編輯 檢視",
+      "updates": "更新 新版本 測試版 頻道",
+      "devtools": "開發人員工具 devtools 主控台 檢查 F12 偵錯",
+      "taskbar": "工作列 閃爍 Dock 提醒",
+      "quiet_hours": "安靜時段 勿擾 靜音 夜間",
+      "telemetry": "使用資訊 遙測 統計 分析",
+      "crash": "當機報告 錯誤報告 當機",
+      "threads": "會話 對話 分組 討論串 threads",
+      "block_images": "封鎖圖片 外部圖片 載入圖片",
+      "dark_mode": "深色模式 淺色模式 夜間模式 暗色 dark mode",
+      "timezone": "時區 timezone",
+      "reading_pane": "閱讀窗格 預覽窗格 分割檢視",
+      "week_start": "每週開始 第一天 星期一 星期日",
+      "empty_trash": "清空垃圾桶 垃圾桶 已刪除",
+      "do_not_disturb": "安靜時段 靜音 安靜"
+    },
+    "desktop_notifications": {
+      "title": "在這台電腦上",
+      "closed_label": "關閉視窗後",
+      "closed_description": "{appName} 執行期間會提醒你有新郵件。若要在關閉視窗後繼續在系統匣中執行，請在「{page}」中開啟此項。"
+    },
+    "push_unsupported": "網站關閉時，此瀏覽器無法顯示通知。",
+    "backup_description_app": "在你的其他裝置上使用相同的設定。",
+    "sender_favicons": {
+      "label": "公司網站的圖片",
+      "description": "使用企業寄件者的網站圖示作為頭像"
+    },
+    "privacy_push": {
+      "label": "通知中繼",
+      "description": "{appName} 關閉時的通知會經過推播中繼，中繼永遠看不到你的郵件。可在「{page}」頁面開啟或關閉。"
+    },
+    "reset": {
+      "message": "將所有設定還原為最初的狀態。你的郵件、篩選規則、自動回覆和簽名保持不變。",
+      "sync_on": "你的其他裝置使用相同的設定，因此也會一起變更。",
+      "sync_off": "你的其他裝置會保留各自的設定。"
+    }
+  },
+  "layout_preview": {
+    "default_description": "應用程式和資料夾在左側，搜尋在清單上方",
+    "mountain_view_description": "搜尋列橫跨頂端，郵件以全寬開啟"
+  },
+  "setup": {
+    "title": "Loomix Mail 設定",
+    "subtitle": "在瀏覽器中設定你的網頁郵件執行個體。",
+    "loading": "載入中…",
+    "back": "返回",
+    "next": "下一步",
+    "saving": "儲存中…",
+    "show": "顯示",
+    "hide": "隱藏",
+    "remove": "移除",
+    "on": "開",
+    "off": "關",
+    "dismiss": "關閉",
+    "unknown_error": "未知的錯誤",
+    "steps": {
+      "welcome": "歡迎",
+      "server": "伺服器",
+      "auth": "驗證",
+      "security": "安全性",
+      "logging": "記錄",
+      "branding": "品牌",
+      "review": "檢查"
+    },
+    "read_only": {
+      "title": "設定為唯讀",
+      "body": "設定磁碟區以唯讀方式掛載，或設定了 <code>{variable}</code>。請以可寫入方式重新掛載或取消該變數，然後重新啟動容器。"
+    },
+    "done": {
+      "title": "一切就緒",
+      "body": "{appName} 已設定完成，可以使用了。",
+      "admin_sign_in": "登入管理儀表板",
+      "webmail_login": "開啟網頁郵件登入頁",
+      "redirecting": "正在前往管理儀表板…"
+    },
+    "already": {
+      "title": "設定已完成",
+      "body": "{appName} 已設定。請登入以繼續。"
+    },
+    "insecure": {
+      "title": "你正透過未加密的 HTTP 執行設定",
+      "body": "你在此輸入的設定權杖和管理員密碼將以明文傳送。請盡可能使用 HTTPS：在容器或其前方的反向代理伺服器上終止 TLS。",
+      "try_https": "嘗試 HTTPS",
+      "continue_http": "繼續使用 HTTP"
+    },
+    "errors": {
+      "token_expired": "此設定權杖已失效。重新啟動容器即可在記錄中取得新權杖。",
+      "session_expired": "設定工作階段已過期。請重新貼上設定權杖以繼續。",
+      "token_required": "請貼上容器記錄中顯示的設定權杖以繼續。",
+      "already_finished": "設定已結束。請重新整理頁面以登入。",
+      "token_rejected": "權杖遭拒 (HTTP {status})",
+      "step_failed": "無法儲存此步驟 (HTTP {status})",
+      "upload_failed": "上傳失敗 (HTTP {status})",
+      "finish_failed": "無法完成設定 (HTTP {status})"
+    },
+    "welcome": {
+      "title": "歡迎",
+      "body": "請貼上容器記錄中顯示的設定權杖以繼續。權杖會在 1 小時後過期。",
+      "token_label": "設定權杖",
+      "token_placeholder": "32 位元組十六進位權杖",
+      "verifying": "驗證中…",
+      "continue": "繼續"
+    },
+    "server": {
+      "title": "伺服器",
+      "subtitle": "你的郵件所在之處。",
+      "app_name": "應用程式名稱",
+      "url_label": "JMAP 伺服器 URL",
+      "url_hint": "使用者預設連線的伺服器。例如：https://mail.example.com",
+      "test": "測試",
+      "testing": "測試中…",
+      "probe_ok": "已連線：這看起來是 JMAP 伺服器。",
+      "probe_not_jmap": "已連上伺服器，但它看起來不是 JMAP 端點。",
+      "probe_invalid": "此 URL 無效。必須以 http:// 或 https:// 開頭。",
+      "probe_unreachable": "無法連線到此位址。請檢查 URL 以及伺服器是否在線上。",
+      "not_jmap_hint": "當反向代理伺服器在同一網域下另外路由 JMAP 時可能發生這種情況。否則通常是 URL 有誤。",
+      "not_jmap_confirm": "我確定此 URL 正確，仍要繼續。",
+      "http_title": "此 URL 使用未加密的 HTTP。",
+      "http_body": "密碼和郵件內容將在使用者與伺服器之間以未加密方式傳送。正式環境請使用 <code>{https}</code>：在郵件伺服器或其前方的反向代理伺服器上終止 TLS。",
+      "local_title": "此 URL 只能在本機存取。",
+      "local_body": "郵件直接由使用者的瀏覽器擷取，因此 JMAP URL 必須能從使用者登入的任何地方存取，而不僅是本機或區域網路。正式環境請使用公開的主機名稱（例如 <code>{example}</code>）。",
+      "additional_title": "其他 JMAP 伺服器",
+      "additional_hint": "選用。在登入清單中提供多台伺服器，適合執行多個 Stalwart 執行個體的託管業者。",
+      "additional_show": "顯示 ({count})",
+      "add": "新增",
+      "row_title": "伺服器 {index}",
+      "id_label": "ID",
+      "id_hint": "唯一的簡短名稱，例如 eu-1",
+      "label_label": "標籤",
+      "label_hint": "向使用者顯示",
+      "row_url": "URL",
+      "domains_label": "網域",
+      "domains_hint": "以逗號分隔。用於登入時依電子郵件網域選擇此伺服器。",
+      "add_server": "新增伺服器",
+      "auto_pick": "依電子郵件網域選擇伺服器",
+      "auto_pick_hint": "使用者輸入電子郵件地址時，會從上方清單中選擇對應的伺服器。",
+      "row_id_required": "伺服器 {index}：ID 為必填",
+      "row_id_invalid": "伺服器 {index}：ID 只能包含字母、數字、- 和 _，且必須以字母或數字開頭",
+      "row_id_duplicate": "伺服器 {index}：ID「{id}」重複",
+      "row_url_required": "伺服器 {index}：URL 為必填",
+      "row_url_scheme": "伺服器 {index}：URL 必須以 http:// 或 https:// 開頭",
+      "stalwart": "啟用 Stalwart 專屬功能",
+      "stalwart_hint": "新增「安全」頁面（密碼、雙重驗證與應用程式密碼）及復原已刪除項目。在其他伺服器上啟用也沒有問題。"
+    },
+    "auth": {
+      "title": "驗證",
+      "subtitle": "密碼登入隨時可用。OAuth/OIDC 為選用。",
+      "oauth": "啟用 OAuth2 / OpenID Connect",
+      "oauth_only": "僅限 OAuth（隱藏密碼表單）",
+      "client_id": "OAuth 用戶端 ID",
+      "client_secret": "OAuth 用戶端密鑰",
+      "client_secret_hint": "對於只使用 PKCE 的公開用戶端，請留空。",
+      "client_secret_placeholder": "貼上密鑰",
+      "issuer": "OAuth 簽發者 URL",
+      "issuer_hint": "用於外部身分識別提供者（Keycloak、Authentik、Entra ID 等）。"
+    },
+    "security": {
+      "title": "安全性與工作階段",
+      "subtitle": "工作階段密鑰可啟用「記住我」和設定同步。",
+      "generated": "已產生工作階段密鑰",
+      "customize": "自訂",
+      "generated_hint": "已為你建立 32 位元組的密鑰。除非有特定原因，否則不需變更。",
+      "secret_label": "工作階段密鑰",
+      "secret_hint": "貼上你自己的值，或重新產生。",
+      "regenerate": "重新產生",
+      "sync": "在裝置之間同步使用者設定",
+      "sync_hint": "將使用者偏好設定儲存在伺服器上，並以工作階段密鑰加密。",
+      "telemetry": "傳送匿名使用統計資料以協助改善 Loomix",
+      "telemetry_hint": "預設關閉。每天傳送一次匿名訊號，包含版本、平台和已啟用的功能；絕不包含電子郵件地址、主機名稱或 IP。你可以隨時在管理設定中變更。"
+    },
+    "logging": {
+      "title": "記錄",
+      "subtitle": "應用程式記錄的格式和詳細程度。",
+      "format": "格式",
+      "format_text": "text：彩色，容易閱讀",
+      "format_json": "json：結構化，便於彙整記錄",
+      "level": "層級",
+      "level_info": "info（建議）"
+    },
+    "branding": {
+      "title": "品牌",
+      "subtitle": "所有欄位皆為選用。上傳檔案或貼上 URL；略過的部分將使用預設值。",
+      "company": "公司或組織名稱",
+      "favicon": "網站圖示",
+      "favicon_hint": "瀏覽器分頁圖示。建議使用 SVG。",
+      "login_light": "登入標誌（淺色模式）",
+      "login_light_hint": "顯示在登入頁的淺色背景上。",
+      "login_dark": "登入標誌（深色模式）",
+      "login_dark_hint": "顯示在登入頁的深色背景上。",
+      "sidebar_light": "側邊欄標誌（淺色模式）",
+      "sidebar_light_hint": "登入後顯示。留空則不顯示。",
+      "sidebar_dark": "側邊欄標誌（深色模式）",
+      "sidebar_dark_hint": "側邊欄標誌的深色模式版本。",
+      "website": "網站 URL",
+      "imprint": "法律資訊 URL",
+      "privacy": "隱私權政策 URL",
+      "drop": "按一下或拖放到此處",
+      "uploading": "上傳中…",
+      "uploaded": "已上傳的檔案",
+      "formats": "SVG、PNG、JPEG、WebP 或 ICO · 最大 2 MB",
+      "use_url": "使用 URL",
+      "hide_url": "隱藏 URL",
+      "url_placeholder": "https://… 或 /branding/file.svg"
+    },
+    "review": {
+      "title": "快完成了",
+      "subtitle": "檢查設定，選擇管理員密碼並套用。",
+      "server": "伺服器",
+      "app_name": "應用程式名稱",
+      "jmap_server": "JMAP 伺服器",
+      "additional": "其他伺服器",
+      "additional_count": "已設定 {count} 台",
+      "additional_auto_pick": "已設定 {count} 台 · 依網域選擇",
+      "stalwart": "Stalwart 功能",
+      "auth": "驗證",
+      "method": "方式",
+      "oauth_only": "僅 OAuth",
+      "password_oauth": "密碼 + OAuth",
+      "password_only": "僅密碼",
+      "client_id": "OAuth 用戶端 ID",
+      "security": "安全性",
+      "secret": "工作階段密鑰",
+      "configured": "已設定",
+      "not_set": "未設定",
+      "remember_me": "記住我",
+      "available": "可用",
+      "disabled": "已停用",
+      "sync": "設定同步",
+      "needs_secret": "需要工作階段密鑰",
+      "telemetry": "匿名遙測",
+      "logging": "記錄",
+      "format": "格式",
+      "level": "層級",
+      "branding": "品牌",
+      "customizations": "自訂項目",
+      "custom_assets": "已設定自訂檔案",
+      "defaults": "使用預設值",
+      "company": "公司名稱",
+      "password_title": "選擇管理員密碼",
+      "password_hint": "你將用它在 <code>{path}</code> 登入。至少 8 個字元。",
+      "new_password": "新密碼",
+      "confirm": "確認",
+      "too_short": "至少 8 個字元。",
+      "mismatch": "兩次輸入的密碼不一致。",
+      "looks_good": "沒問題。",
+      "advanced": "進階",
+      "lock": "設定後鎖定設定",
+      "lock_hint": "建立一個標記檔案。完成後請以唯讀方式重新掛載設定磁碟區，應用程式將拒絕之後的設定寫入。稽核記錄和登入狀態在狀態磁碟區中仍可寫入。",
+      "applying": "套用中…",
+      "finish": "套用並完成"
     }
   },
   "errors": {
@@ -2548,6 +3836,10 @@
     "retry": "重試",
     "go_home": "前往收件匣"
   },
+  "not_found": {
+    "title": "找不到頁面",
+    "description": "此頁面不存在或已移動。請檢查網址，或返回收件匣。"
+  },
   "context_menu": {
     "reply": "回覆",
     "reply_all": "全部回覆",
@@ -2558,8 +3850,10 @@
     "unstar": "移除星號",
     "pin": "固定",
     "unpin": "取消固定",
-    "move_to": "移至…",
-    "copy_to_account": "複製到帳戶…",
+    "move_to": "移至",
+    "move_to_dialog": "移動到…",
+    "go_to_folder": "前往{folder}",
+    "copy_to_account": "複製到帳戶",
     "remove_from_folder": "從此資料夾移除",
     "archive": "封存",
     "delete": "刪除",
@@ -2595,6 +3889,13 @@
     },
     "find_emails_from": "尋找來自 {name} 的郵件"
   },
+  "menuMove": {
+    "filter_placeholder": "尋找資料夾",
+    "recent": "最近使用",
+    "no_match": "沒有符合的資料夾",
+    "choose_folder": "選擇資料夾…",
+    "current_folder": "已在「{folder}」中"
+  },
   "mailbox_context_menu": {
     "mark_folder_read": "將信件匣標示為已讀",
     "mark_folder_tree_read": "將信件匣與子信件匣標示為已讀",
@@ -2602,10 +3903,10 @@
     "new_subfolder": "新增子信件匣…",
     "new_folder": "新增信件匣…",
     "rename": "重新命名…",
-    "share": "共用...",
-    "import_email": "匯入 .eml 或 .zip…",
+    "share": "共用…",
     "empty_folder": "清空信件匣",
     "empty_folder_generic": "清空信件匣",
+    "empty_folder_all_accounts": "清空垃圾桶（所有帳號）",
     "delete_folder": "刪除信件匣",
     "refresh": "重新整理",
     "hide_shared_account": "從側邊欄隱藏",
@@ -2616,6 +3917,11 @@
     "reset_folder_notifications": "重設資料夾通知設定",
     "mark_all_confirm_title": "將所有信件匣標示為已讀",
     "mark_all_confirm_message": "要將您個人帳號中的所有未讀郵件標示為已讀嗎？",
+    "empty_all_confirm_title": "清空所有帳號的垃圾桶",
+    "empty_all_confirm_message": "要永久刪除你所有帳號垃圾桶中的{count, plural, other {全部 # 封郵件}}嗎？此動作無法復原。",
+    "toast_emptied_all": "已清空所有帳號的垃圾桶",
+    "toast_error_empty_all_partial": "垃圾桶已清空，但部分帳號失敗",
+    "toast_error_empty_all": "清空垃圾桶失敗",
     "delete_confirm_title": "刪除信件匣",
     "delete_confirm_message": "要永久刪除信件匣「{name}」嗎？此動作無法復原。",
     "prompt_new_subfolder": "請輸入新子信件匣的名稱。",
@@ -2643,9 +3949,29 @@
     "delete_with_contents_message": "資料夾「{name}」中仍有 {count} 封郵件。要刪除該資料夾及其所有郵件嗎？此操作無法復原。",
     "delete_with_contents_confirm": "刪除資料夾和郵件"
   },
+  "mail_p2_folders": {
+    "all_folders": "所有信件匣",
+    "empty_trash": "清空垃圾桶",
+    "empty_spam": "清空垃圾郵件",
+    "empty_trash_confirm": "要永久刪除垃圾桶中的{count, plural, other {全部 # 封郵件}}嗎？此動作無法復原。",
+    "empty_spam_confirm": "要永久刪除垃圾郵件中的{count, plural, other {全部 # 封郵件}}嗎？此動作無法復原。",
+    "title_all_accounts": "{name} ({count}、所有帳號共 {total})",
+    "title_all_accounts_only": "{name} (所有帳號共 {total})"
+  },
+  "mail_p3_list": {
+    "conversations_found": "{count, plural, =0 {找不到結果} other {找到 # 個對話串}}",
+    "name_unread_sub": "{name}，{count} 封未讀，子資料夾中另有 {sub} 封",
+    "name_unread_only_sub": "{name}，子資料夾中有 {sub} 封未讀",
+    "sub_unread": "子資料夾中有 {sub} 封未讀"
+  },
+  "uxs_folders": {
+    "manage_accounts": "管理帳號…",
+    "apply_to_existing": "{count, plural, other {套用到{folder}中的 # 封既有郵件}}"
+  },
   "shortcuts": {
     "title": "鍵盤快速鍵",
     "tip": "隨時按下 ? 即可顯示此說明",
+    "or": "或",
     "sections": {
       "navigation": "導覽",
       "actions": "郵件動作",
@@ -2671,16 +3997,19 @@
       "delete": "刪除",
       "mark_unread": "標示為未讀",
       "mark_read": "標示為已讀",
-      "toggle_spam": "回報垃圾郵件／非垃圾郵件"
+      "toggle_spam": "回報垃圾郵件／非垃圾郵件",
+      "undo": "復原上一個動作"
     },
     "global": {
-      "compose": "撰寫新郵件",
+      "compose": "寫新郵件",
       "search": "將焦點移至搜尋框",
       "help": "顯示快速鍵",
       "refresh": "重新整理郵件",
       "select_all": "全部選取",
       "global_search": "全域搜尋",
-      "extend_selection": "向下 / 向上擴展選取"
+      "extend_selection": "向下 / 向上擴展選取",
+      "accessibility_panel": "開啟無障礙選項",
+      "focus_notification": "前往最新通知"
     },
     "threads": {
       "expand_collapse": "展開／收合對話串",
@@ -2690,11 +4019,11 @@
       "send": "傳送郵件",
       "schedule_send": "排程寄送",
       "template_picker": "開啟範本選取器"
-    }
+    },
+    "single_keys_off": "單鍵快速鍵已關閉。搭配 Ctrl、Alt 或 ⌘ 的快速鍵仍可使用，Delete、Enter、Esc 和方向鍵也一樣。",
+    "tip_single_keys_off": "可以在 設定 > 無障礙 中重新開啟。"
   },
   "threads": {
-    "messages_one": "{count} 封郵件",
-    "messages_other": "{count} 封郵件",
     "messages_tooltip": "{count, plural, one {此對話串有 # 封郵件} other {此對話串有 # 封郵件}}",
     "expand": "展開對話串",
     "collapse": "收合對話串",
@@ -2705,7 +4034,21 @@
     "delete": "刪除對話串",
     "star": "為對話串加上星號",
     "unstar": "移除對話串星號",
-    "toggle_thread": "展開／收合對話串"
+    "toggle_thread": "展開／收合對話串",
+    "messages_count": "{count, plural, other {# 封郵件}}",
+    "expand_named": "展開對話串: {subject}",
+    "collapse_named": "收合對話串: {subject}"
+  },
+  "conversation_pane": {
+    "show_older": "{count, plural, other {顯示 # 封較早的郵件}}",
+    "return_to_list_follows_layout": "在您變更之前，此項會依版面配置而定：清單與郵件並排顯示時關閉，其他情況下開啟。"
+  },
+  "mail_p3_conv": {
+    "sidebar_account_switcher_description": "在信件匣上方顯示帳號切換器，下方是「寫郵件」。關閉後，「寫郵件」會顯示在帳號切換器的位置。"
+  },
+  "mail_p2_conv": {
+    "show_message": "顯示郵件",
+    "back_to_reply": "返回回覆"
   },
   "identities": {
     "modal_title": "管理寄件身分",
@@ -2775,8 +4118,26 @@
     "delete_button": "刪除",
     "delete_confirm_title": "刪除寄件身分"
   },
+  "org_signature": {
+    "disclaimer_added_on_send": "傳送時加入",
+    "identity_signature_label": "簽名",
+    "identity_no_signature": "無簽名",
+    "identity_default": "將兩個簽名都留白，即可從此地址傳送您組織的簽名。",
+    "details": {
+      "title": "您的資料",
+      "description": "您組織的簽名會顯示這些資料。只需填寫一次，您用來傳送的每個地址都會使用它們。",
+      "preview": "您的簽名",
+      "fields": {
+        "title": "職稱",
+        "department": "部門",
+        "phone": "電話",
+        "mobile": "行動電話"
+      }
+    }
+  },
   "templates": {
     "picker_title": "選擇範本",
+    "manage": "管理範本",
     "search_placeholder": "搜尋範本…",
     "section_favorites": "我的最愛",
     "section_recent": "最近使用",
@@ -2789,6 +4150,9 @@
     "insert_with_values": "填入值後插入",
     "insert_raw": "直接插入範本",
     "copy_suffix": "（複製）",
+    "duplicate": "建立副本",
+    "delete_title": "刪除範本?",
+    "delete_message": "範本「{name}」將被永久刪除。",
     "placeholder": "變數",
     "placeholders": {
       "recipient_name": "收件者姓名",
@@ -2800,9 +4164,77 @@
       "year": "年",
       "day_of_week": "星期幾",
       "sender_name": "您的姓名"
+    },
+    "section_examples": "範例",
+    "builtin": {
+      "accessible": {
+        "name": "無障礙郵件",
+        "heading": "這封郵件在講什麼",
+        "intro": "先用一兩句簡短的話說出重點。",
+        "details_heading": "詳細資訊",
+        "tip_structure": "使用工具列中的標題和清單，不要用粗體或空行代替。",
+        "tip_links": "連結文字要說明連結通往哪裡，不要寫「按這裡」。",
+        "tip_images": "為每張圖片寫描述，或將其標示為裝飾性圖片。",
+        "next_heading": "後續步驟",
+        "next": "說明你需要讀者做什麼，以及期限。"
+      }
     }
   },
+  "compose_send": {
+    "back": "繼續編輯",
+    "send_anyway": "仍然傳送",
+    "warnings_title": "仍然傳送這封郵件？",
+    "warning_subject": "沒有主旨",
+    "warning_text": "沒有內文",
+    "warning_attachment": "提到了「{keyword}」，但沒有附加檔案",
+    "warning_placeholders": "收件者會看到的預留位置文字：",
+    "warning_proofreading": "未處理的拼字或文法問題：{count}",
+    "empty_text_title": "不寫內文就傳送？",
+    "empty_text_message": "這封郵件沒有內文，也沒有附件。仍然傳送？",
+    "scheduled_for": "已排定於 {when} 傳送",
+    "sending": "正在傳送…",
+    "sent": "已傳送",
+    "view": "檢視",
+    "template_saved": "範本已儲存",
+    "schedule_anyway": "仍然排程",
+    "schedule_warnings_title": "仍然排程這封郵件？",
+    "picker_button": "從聯絡人新增",
+    "picker_title": "新增收件者",
+    "tab_contacts": "聯絡人",
+    "tab_directory": "通訊錄目錄",
+    "contacts_empty_title": "還沒有聯絡人",
+    "contacts_empty_hint": "你在聯絡人中儲存的人會顯示在這裡。",
+    "contacts_no_match": "沒有符合搜尋的聯絡人",
+    "template_name": "範本名稱",
+    "template_edit_details": "編輯詳細資料…"
+  },
+  "org_templates": {
+    "section_personal": "我的範本",
+    "section_organisation": "組織",
+    "sources_label": "範本清單",
+    "organisation_note": "來自您的組織。您無法變更這些範本，但可以將其複製到您自己的範本中。",
+    "copy_to_personal": "複製到我的範本",
+    "duplicate": "建立副本",
+    "save_failed": "無法儲存範本。請再試一次。",
+    "save_failed_forbidden": "您無法變更這些範本。",
+    "save_failed_too_large": "此範本超過伺服器為每個範本保存的 8 KB 上限。請縮短後再儲存一次。",
+    "save_failed_no_room": "信箱中沒有空間保存更多範本。請刪除一個後再試一次。",
+    "local_only_too_large": "僅在此瀏覽器中：超過伺服器為每個範本保存的 8 KB 上限。",
+    "local_only_no_room": "僅在此瀏覽器中：您的帳號沒有空間保存更多範本。",
+    "personal_in_account": "您的範本保存在您的帳號中，因此您登入的每部裝置上都能使用。與您共用收件匣的任何人都可以閱讀這些範本。",
+    "team_note": "{name} 中的所有人都能看到並變更這些範本。",
+    "team_read_only": "您可以使用這些範本，但無法變更。",
+    "save_failed_conflict": "已被其他人變更。請重新載入後再試一次。",
+    "preview_to": "收件者：{list}",
+    "preview_cc": "副本：{list}"
+  },
   "contacts": {
+    "print": {
+      "name": "姓名",
+      "count": "{count, plural, other {# 位聯絡人}}",
+      "entries": "{count, plural, other {# 個項目}}",
+      "search": "搜尋：{query}"
+    },
     "directory": {
       "title": "通訊錄目錄",
       "search_placeholder": "搜尋姓名或電子郵件地址",
@@ -2833,7 +4265,7 @@
       "add_cc": "加入副本",
       "add_bcc": "加入密件副本",
       "select_hint": "選取一個人以查看詳細資料",
-      "write_email": "撰寫郵件",
+      "write_email": "傳送郵件",
       "add_to_contacts": "加入聯絡人",
       "email": "電子郵件",
       "read_only_note": "目錄項目來自你的郵件伺服器，無法在此編輯。",
@@ -2846,6 +4278,11 @@
       }
     },
     "title": "聯絡人",
+    "disabled_title": "管理員已關閉聯絡人",
+    "disabled_description": "如需使用，請聯絡管理員。",
+    "drag_count": "{count, plural, other {# 位聯絡人}}",
+    "select_contact": "選取 {name}",
+    "new": "新增",
     "search_placeholder": "搜尋聯絡人…",
     "create_new": "新增聯絡人",
     "no_category": "無類別",
@@ -2853,23 +4290,30 @@
     "category_name_label": "類別名稱",
     "category_renamed": "類別已重新命名",
     "category_rename_failed": "重新命名類別失敗",
+    "delete_category": "刪除類別",
+    "category_deleted": "已刪除類別「{name}」",
+    "category_delete_failed": "無法刪除類別",
+    "undo": "復原",
     "category_added": "聯絡人已新增至 {name}",
     "category_added_plural": "{count} 位聯絡人已新增至 {name}",
     "empty_state": "尚無聯絡人",
     "empty_state_title": "尚無聯絡人",
     "empty_state_subtitle": "建立第一位聯絡人，或從 vCard 檔案匯入",
+    "empty_view_title": "這裡沒有聯絡人",
+    "empty_view_hint": "新增聯絡人或匯入 vCard 檔案。",
     "empty_search": "沒有符合您搜尋條件的聯絡人",
     "empty_search_hint": "嘗試其他搜尋字詞",
     "empty_filtered": "沒有符合您篩選條件的聯絡人",
     "empty_filtered_hint": "請調整或清除篩選條件",
     "clear_search": "清除搜尋",
     "import_vcard": "匯入 vCard",
-    "delete_confirm_title": "刪除聯絡人",
-    "delete_confirm": "您確定要刪除此聯絡人嗎？",
+    "delete_named_title": "刪除「{name}」？",
+    "delete_details_message": "電子郵件地址、電話號碼、備註及所有其他資訊都將被刪除。此動作無法復原。",
     "local_mode": "聯絡人儲存在本機（伺服器不支援 JMAP 聯絡人）",
     "back_to_contacts": "回到聯絡人",
     "back_to_email": "回到郵件",
     "open_categories": "開啟類別",
+    "row_actions": "{name} 的動作",
     "tabs": {
       "all": "全部",
       "groups": "群組"
@@ -2879,6 +4323,7 @@
     },
     "address_books": {
       "create": "新增通訊錄",
+      "create_confirm": "建立",
       "created": "通訊錄已建立",
       "create_failed": "建立通訊錄失敗",
       "title": "我的通訊錄",
@@ -2899,9 +4344,13 @@
       "share": "分享通訊錄",
       "new_contact_in_book": "在此通訊錄中新增聯絡人",
       "delete": "刪除通訊錄",
+      "delete_title": "要刪除通訊錄嗎？",
       "confirm_delete": "要刪除「{name}」嗎？此通訊錄中的所有聯絡人都會移除。",
       "deleted": "通訊錄已刪除",
-      "delete_failed": "刪除通訊錄失敗"
+      "delete_failed": "刪除通訊錄失敗",
+      "move_to": "移至…",
+      "move_title": "移至通訊錄",
+      "move_here": "移到這裡"
     },
     "detail": {
       "emails": "電子郵件地址",
@@ -2927,7 +4376,7 @@
       "cert_imported": "憑證已匯入 S/MIME 憑證庫",
       "cert_import_failed": "匯入憑證失敗",
       "no_contact_selected": "選取一位聯絡人以檢視詳細資料",
-      "compose_email": "撰寫郵件",
+      "compose_email": "傳送郵件",
       "copy_email": "複製電子郵件地址",
       "copy_phone": "複製電話號碼",
       "copy_url": "複製 URL",
@@ -2985,7 +4434,7 @@
       "create_title": "新聯絡人",
       "edit_title": "編輯聯絡人",
       "section_address_book": "通訊錄",
-      "select_address_book": "選擇通訊錄…",
+      "select_address_book": "通訊錄",
       "section_identity": "姓名與身分",
       "contact_type": "聯絡人類型",
       "type_person": "個人",
@@ -3072,6 +4521,13 @@
       "add_phone": "新增電話",
       "save": "儲存",
       "cancel": "取消",
+      "discard_title": "要捨棄變更嗎？",
+      "discard_message": "你的變更尚未儲存。",
+      "discard": "捨棄",
+      "keep_editing": "繼續編輯",
+      "remove_entry": "移除",
+      "close": "關閉",
+      "remove_category": "移除 {name}",
       "creating": "正在建立…",
       "updating": "正在更新…",
       "name_required": "請輸入名、姓或組織名稱",
@@ -3084,14 +4540,21 @@
       "photo_hint": "JPG 或 PNG，最大 10 MB。圖片會自動調整大小。",
       "photo_too_large": "圖片太大（上限 10 MB）",
       "photo_invalid": "圖片檔案無效",
-      "change_photo": "變更"
+      "change_photo": "變更",
+      "context_label": "工作或私人",
+      "online_service_url": "地址",
+      "anniversary_date": "日期",
+      "anniversary_kind": "場合",
+      "personal_info_kind": "類型"
     },
     "groups": {
       "create": "新增群組",
+      "delete": "刪除群組",
+      "remove_member": "將 {name} 移出群組",
       "edit": "編輯群組",
       "empty": "尚無群組",
       "delete_confirm_title": "刪除群組",
-      "delete_confirm": "您確定要刪除該群組嗎？",
+      "delete_message": "此群組將被刪除。其中的聯絡人會保留。",
       "name_label": "群組名稱",
       "name_placeholder": "例如，團隊、家庭",
       "name_required": "群組名稱為必填欄位",
@@ -3100,7 +4563,7 @@
       "search_members": "搜尋要新增的聯絡人…",
       "no_members": "該群組中沒有成員",
       "member_count": "{count, plural, =0 {無成員} one {1 位成員} other {# 位成員}}",
-      "send_email": "傳送郵件給群組",
+      "send_email": "傳送郵件",
       "send_email_to": "收件者",
       "send_email_cc": "副本",
       "send_email_bcc": "密件副本",
@@ -3126,18 +4589,20 @@
     },
     "export": {
       "title": "匯出聯絡人",
-      "success": "{count, plural, one {已匯出 1 位聯絡人} other {已匯出 # 位聯絡人}}"
+      "success": "{count, plural, one {已匯出 1 位聯絡人} other {已匯出 # 位聯絡人}}",
+      "exporting": "正在匯出…"
     },
     "bulk": {
       "selected": "{count, plural, one {已選取 1 項} other {已選取 # 項}}",
       "select_all": "全部選取",
       "delete": "刪除",
-      "delete_confirm_title": "刪除聯絡人",
       "delete_confirm": "刪除{count, plural, one {1 位聯絡人} other {# 位聯絡人}}？",
       "deleted": "{count, plural, one {已刪除 1 位聯絡人} other {已刪除 # 位聯絡人}}",
       "add_to_group": "新增至群組",
       "choose_group": "選擇群組",
+      "new_group": "新增群組…",
       "adding_contacts": "正在新增{count, plural, one {1 位聯絡人} other {# 位聯絡人}}",
+      "moving_contacts": "正在移動{count, plural, one {1 位聯絡人} other {# 位聯絡人}}",
       "added_to_group": "聯絡人已新增至群組",
       "export": "匯出",
       "clear": "清除選取"
@@ -3183,15 +4648,73 @@
       "sort_by": "排序方式",
       "sort_first_name": "名",
       "sort_last_name": "姓"
+    },
+    "shortcuts": {
+      "list": "清單",
+      "actions": "動作",
+      "first_last": "第一個或最後一個",
+      "extend": "擴充選取範圍",
+      "toggle": "選取或取消選取",
+      "select_all": "全選",
+      "clear": "清除選取或搜尋",
+      "delete": "刪除",
+      "search": "搜尋",
+      "move": "下一個或上一個聯絡人",
+      "open": "開啟聯絡人",
+      "menu": "開啟聯絡人選單"
+    }
+  },
+  "ux_pim_contact": {
+    "context_private": "住家",
+    "phone_voice": "電話",
+    "more_fields": "更多欄位",
+    "import_menu": "匯入聯絡人…",
+    "new_address_book_menu": "新增通訊錄…"
+  },
+  "uxs_wording": {
+    "more_options": "更多選項",
+    "use_in_other_apps": "在其他應用程式中使用",
+    "default_address_book": "聯絡人",
+    "default_calendar": "行事曆",
+    "preview_documents": "文件",
+    "preview_photos": "相片",
+    "sample_subject": "咖啡廳會議筆記",
+    "mail_apps": {
+      "imap": "內送郵件 (IMAP)",
+      "smtp": "外寄郵件 (SMTP)",
+      "caldav": "行事曆 (CalDAV)",
+      "carddav": "聯絡人 (CardDAV)",
+      "port_security": "連接埠 {port}，{security}",
+      "security_ssl": "SSL/TLS",
+      "security_starttls": "STARTTLS",
+      "security_none": "不加密",
+      "copy_label": "複製{name}",
+      "loading": "正在從郵件伺服器讀取設定…",
+      "not_found": "你的郵件伺服器沒有提供其他應用程式所需的伺服器名稱。請洽詢管理員。"
     }
   },
   "calendar": {
+    "print": {
+      "calendars": "行事曆：{names}",
+      "time_zone": "時區：{zone}",
+      "time_zone_label": "時區",
+      "search": "搜尋：{query}",
+      "when": "時間",
+      "meeting": "線上會議",
+      "repeats": "重複"
+    },
     "title": "行事曆",
     "back_to_email": "回到郵件",
     "back_to_month": "回到月檢視",
     "my_calendars": "行事曆",
     "birthday_calendar": "生日",
     "mini_calendar_change": "點選更改月份",
+    "mini_prev_month": "上個月",
+    "mini_next_month": "下個月",
+    "mini_prev_year": "上一年",
+    "mini_next_year": "下一年",
+    "mini_prev_years": "更早的年份",
+    "mini_next_years": "更晚的年份",
     "views": {
       "month": "月",
       "week": "週",
@@ -3221,6 +4744,7 @@
       "show_less": "顯示較少",
       "no_title": "（無標題）",
       "resize": "調整活動大小",
+      "draggable_role": "可移動的活動",
       "duplicate": "建立副本",
       "today_header": "今天",
       "tomorrow_header": "明天",
@@ -3244,8 +4768,7 @@
       "copy_location": "複製地點",
       "meeting_link": "會議連結",
       "tentative": "暫定",
-      "cancelled": "已取消",
-      "delete_confirm": "刪除這個活動嗎？"
+      "cancelled": "已取消"
     },
     "form": {
       "title": "標題",
@@ -3260,7 +4783,6 @@
       "calendar_select": "行事曆",
       "save": "儲存",
       "cancel": "取消",
-      "delete_confirm": "您確定要刪除此活動嗎？",
       "color": "顏色"
     },
     "participants": {
@@ -3269,15 +4791,22 @@
         "free": "有空",
         "busy": "忙碌",
         "tentative": "暫定",
+        "no_busy_times": "未分享忙碌時段",
         "unknown": "不是此伺服器上的使用者",
-        "checking": "檢查中…"
+        "error": "無法檢查",
+        "checking": "檢查中…",
+        "unavailable_on_server": "此伺服器不提供空閒／忙碌資訊"
       },
       "title": "參與者",
       "add": "新增參與者",
       "organizer": "主辦人",
+      "organizer_role": "主辦人",
       "attendee": "與會者",
       "accepted": "已接受",
       "declined": "已拒絕",
+      "accept": "接受",
+      "maybe": "暫定",
+      "decline": "拒絕",
       "tentative": "暫定",
       "needs_action": "待處理",
       "remove": "移除",
@@ -3292,6 +4821,7 @@
       "you_organizer": "您是主辦人",
       "you_attendee": "您是與會者",
       "no_participants": "沒有參與者",
+      "limit_warning": "參與者（含主辦人）超過 {max, plural, other {# 位}}：伺服器可能會拒絕儲存此活動。管理員可以提高此限制。",
       "count": "{count, plural, one {# 位參與者} other {# 位參與者}}"
     },
     "recurrence": {
@@ -3340,6 +4870,10 @@
     "recurrence_scope": {
       "edit_title": "編輯重複活動",
       "delete_title": "刪除重複活動",
+      "delete_question": "要刪除重複活動嗎？",
+      "delete_this_message": "僅刪除「{title}」的這一次，且無法復原。",
+      "delete_following_message": "將刪除「{title}」的這一次及之後的所有重複，且無法復原。",
+      "delete_all_message": "將刪除「{title}」的所有重複，且無法復原。",
       "description": "這是重複活動。您要修改哪些活動？",
       "this_event": "僅限本次活動",
       "this_and_future": "本次及後續活動",
@@ -3350,6 +4884,21 @@
       "rsvp_title": "回覆重複活動",
       "rsvp_description": "這是重複活動。您的回覆適用於哪些活動？",
       "respond": "回覆"
+    },
+    "discard": {
+      "title": "要捨棄變更嗎？",
+      "message": "你的變更尚未儲存。",
+      "keep": "繼續編輯",
+      "confirm": "捨棄"
+    },
+    "delete_dialog": {
+      "event_title": "要刪除活動嗎？",
+      "event_message": "「{title}」將被刪除，且無法復原。",
+      "event_message_attendees": "「{title}」將被刪除，參與者會收到取消通知。",
+      "task_title": "要刪除任務嗎？",
+      "task_message": "「{title}」將被刪除，且無法復原。",
+      "subscription_title": "要取消訂閱行事曆嗎？",
+      "confirm": "刪除"
     },
     "alerts": {
       "title": "提醒",
@@ -3387,7 +4936,7 @@
       "hide_non_working_days_desc": "在週檢視中省略你不工作的日子。這些日子的活動仍會顯示在月、日和行程檢視中。",
       "working_days": "工作日",
       "title": "行事曆設定",
-      "default_view": "預設檢視",
+      "default_view": "行事曆開啟時顯示",
       "week_starts_on": "一週開始於",
       "time_format": "時間格式",
       "default_calendar": "預設行事曆",
@@ -3398,15 +4947,22 @@
       "notifications_enabled_desc": "顯示即將開始的行事曆活動提醒",
       "notification_sound": "通知聲音",
       "notification_sound_desc": "播放行事曆提醒聲音",
-      "invitation_parsing": "解析郵件邀請",
+      "invitation_parsing": "顯示郵件中的邀請",
       "invitation_parsing_desc": "偵測郵件附件中的行事曆邀請，並顯示行事曆動作",
       "show_time_in_month_view": "在月檢視中顯示時間",
       "show_time_in_month_view_desc": "在月檢視中顯示活動時間。小螢幕會顯示完整活動項目，而不只是圓點。",
+      "tinted_events": "淺色活動顏色",
+      "tinted_events_desc": "像 Outlook 和列印版本一樣，以行事曆顏色的淺色調加開頭的彩色直條顯示活動，而非實心色塊。",
+      "month_timed_events": "月檢視中的定時活動",
+      "month_timed_events_desc": "有開始時間的活動在月檢視中的顯示方式。全天和多天活動仍顯示為色條。",
+      "month_timed_events_bar": "色條",
+      "month_timed_events_text": "彩色文字",
+      "month_timed_events_dot": "圓點和文字",
       "show_week_numbers": "顯示週數",
       "show_week_numbers_desc": "在迷你行事曆中顯示週數",
       "calendar_free_scroll": "自由捲動",
       "calendar_free_scroll_desc": "連續捲動瀏覽月、週和日，而不是一次只顯示一個時段",
-      "enable_tasks": "啟用任務",
+      "enable_tasks": "工作",
       "enable_tasks_desc": "在行事曆中顯示任務檢視以管理待辦事項",
       "show_tasks_on_calendar": "在行事曆上顯示任務",
       "show_tasks_on_calendar_desc": "在行事曆的月／週／日檢視中顯示任務",
@@ -3468,7 +5024,16 @@
     "notifications": {
       "event_created": "活動已建立",
       "event_updated": "活動已更新",
+      "event_moved": "活動已移動",
+      "undo": "復原",
       "event_deleted": "活動已刪除",
+      "event_delete_error": "無法刪除活動",
+      "task_deleted": "任務已刪除",
+      "task_delete_error": "無法刪除任務",
+      "task_created": "任務已建立",
+      "task_updated": "任務已更新",
+      "task_save_error": "無法儲存任務",
+      "task_update_error": "無法更新任務",
       "calendar_created": "已建立行事曆",
       "calendar_deleted": "行事曆已刪除",
       "event_move_error": "無法移動活動",
@@ -3482,16 +5047,21 @@
       "save_without_invitations": "不傳送邀請並儲存",
       "rsvp_updated": "回覆已更新",
       "rsvp_error": "無法更新回覆",
+      "participant_limit": "伺服器每個活動最多允許 {max, plural, other {# 位}}參與者（含主辦人），因此拒絕了這項變更。管理員可以提高此限制。",
       "event_duplicated": "已建立活動副本",
       "event_error": "無法儲存活動",
       "task_due": "任務到期",
       "event_exported": "活動已匯出",
       "title_copied": "標題已複製",
-      "link_copied": "連結已複製"
+      "link_copied": "連結已複製",
+      "title_alert": "提醒：{title}"
     },
     "status": {
       "loading_calendars": "正在載入行事曆…",
-      "loading_events": "正在載入活動…"
+      "loading_events": "正在載入活動…",
+      "events_load_failed": "無法載入活動。行事曆可能不是最新狀態。",
+      "tasks_load_failed": "無法載入工作。清單可能不是最新狀態。",
+      "retry": "再試一次"
     },
     "quick_create": {
       "placeholder": "新活動標題",
@@ -3502,6 +5072,8 @@
     "nav_prev": "上一項",
     "nav_next": "下一項",
     "nav_open_menu": "開啟選單",
+    "nav_hide_sidebar": "隱藏側邊欄",
+    "nav_show_sidebar": "顯示側邊欄",
     "import": {
       "title": "匯入行事曆",
       "tab_file": "檔案",
@@ -3523,7 +5095,7 @@
       "target_calendar": "匯入到行事曆",
       "import_button": "匯入選取項目",
       "importing": "正在匯入活動…",
-      "success": "{count} 個活動已成功匯入",
+      "success": "已匯入 {count} 個活動",
       "error": "匯入行事曆失敗",
       "file_too_large": "檔案超過 10 MB 上限",
       "invalid_format": "行事曆檔案格式無效"
@@ -3540,11 +5112,13 @@
     "management": {
       "title": "行事曆管理",
       "description": "建立、重新命名與自訂您的行事曆。在側邊欄的行事曆上按一下滑鼠右鍵，可快速變更顏色。",
+      "description_touch": "建立、重新命名與自訂您的行事曆。",
       "name": "名稱",
       "name_placeholder": "行事曆名稱",
       "color": "顏色",
       "change_color": "變更顏色",
       "random_color": "隨機新顏色",
+      "reset_color": "重設顏色",
       "add_calendar": "新增行事曆",
       "edit": "編輯",
       "delete": "刪除",
@@ -3552,6 +5126,7 @@
       "create": "建立",
       "cancel": "取消",
       "default": "預設",
+      "row_actions": "{name} 的動作",
       "confirm_delete": "要刪除「{name}」嗎？此行事曆中的所有活動都會移除。",
       "confirm_clear": "要清除「{name}」中的所有活動嗎？此動作無法復原。",
       "set_default": "設為預設",
@@ -3568,9 +5143,9 @@
       "error_update": "更新行事曆失敗",
       "error_delete": "刪除行事曆失敗",
       "caldav_url": "CalDAV URL",
-      "copy_url": "複製 CalDAV URL",
-      "url_copied": "CalDAV URL 已複製到剪貼簿",
-      "share": "分享行事曆",
+      "copy_url": "複製供其他應用程式使用的位址",
+      "url_copied": "位址已複製",
+      "share": "分享行事曆…",
       "new_event_in_calendar": "在此行事曆中新增活動",
       "shared_with": "已與 {names} 共用",
       "shared_with_count": "{count, plural, other {已與 # 人共用}}",
@@ -3589,8 +5164,8 @@
       "default_alerts_updated": "預設提醒已更新"
     },
     "subscription": {
-      "title": "iCal 訂閱",
-      "section_title": "iCal 訂閱",
+      "title": "訂閱行事曆",
+      "section_title": "已訂閱的行事曆",
       "description": "訂閱外部 iCalendar 資料來源。活動會自動同步到獨立的行事曆。支援 https:// 與 webcal:// URL。",
       "url_label": "行事曆 URL",
       "url_placeholder": "https://example.com/calendar.ics 或 webcal://...",
@@ -3633,7 +5208,6 @@
       "filter_pending": "待處理",
       "filter_completed": "已完成",
       "filter_overdue": "逾期",
-      "show_completed": "顯示已完成",
       "create": "新增任務",
       "edit": "編輯任務",
       "title_placeholder": "任務標題",
@@ -3669,23 +5243,252 @@
     },
     "toolbar": {
       "more": "更多動作",
-      "select_view": "切換檢視，目前為{view}"
+      "select_view": "切換檢視，目前為{view}",
+      "import": "匯入行事曆…",
+      "subscribe": "訂閱行事曆…"
+    },
+    "commands": {
+      "day": "日檢視",
+      "week": "週檢視",
+      "month": "月檢視",
+      "agenda": "議程檢視",
+      "tasks": "任務清單"
+    },
+    "shortcuts": {
+      "views": "檢視",
+      "actions": "動作",
+      "previous": "上一天、週或月",
+      "next": "下一天、週或月",
+      "new_item": "新增活動（在任務中新增任務）",
+      "move_in_grid": "在格線中按天與小時移動"
     },
     "other_calendars": "其他日曆",
-    "calendar_options": "{name} 的選項"
+    "calendar_options": "{name} 的選項",
+    "search": {
+      "title": "搜尋活動",
+      "clear": "清除搜尋",
+      "close": "關閉搜尋",
+      "upcoming": "即將到來",
+      "past": "已過去",
+      "no_results": "沒有符合「{query}」的活動",
+      "no_results_hint": "搜尋範圍包括標題、地點、說明和邀請對象。",
+      "repeats": "重複",
+      "results": "{count, plural, other {找到 # 個活動}}"
+    },
+    "mini_has_events": "有活動",
+    "mini_week_number": "第 {week} 週"
+  },
+  "ux_pim_calendar": {
+    "task_lists": "任務清單",
+    "task_status_not_started": "未開始",
+    "task_status_in_progress": "進行中",
+    "quick_task_due": "截止 {date}",
+    "quick_task_due_remove": "在標題中保留「{words}」",
+    "rename_calendar": "重新命名…",
+    "rename_title": "重新命名行事曆",
+    "rename_confirm": "重新命名",
+    "rename_empty": "請輸入名稱。",
+    "edit_calendar": "編輯…",
+    "default_alerts_open": "預設提醒…",
+    "share_open": "分享…",
+    "clear_all_events": "清除所有活動…",
+    "delete_calendar": "刪除…",
+    "caldav_title": "其他應用程式使用的地址 (CalDAV)",
+    "caldav_hint": "在 Thunderbird、Apple 行事曆或 DAVx⁵ 中加入此地址即可同步行事曆。",
+    "caldav_shared_by": "{name} 分享：",
+    "freebusy_description": "分享對象能看到你何時忙碌，看不到活動內容。「建議時間」會用到它。"
+  },
+  "ux_p2_pim_cal": {
+    "task_list_label": "清單",
+    "task_list_not_in_calendar": "{name}（工作清單，不會顯示在行事曆中）",
+    "copy_to_account": "複製到 {address}",
+    "copied_to_account": "已複製到 {address}",
+    "delete_original": "刪除原始活動"
+  },
+  "calendar_offline": {
+    "split_needs_server": "此變更需要連線到伺服器。請暫時只變更此活動，或在恢復連線後再試一次。"
+  },
+  "ux_pim_event": {
+    "time_zone": "時區",
+    "time_zone_line": "時區：{zone}",
+    "your_time": "你的時間 {times}",
+    "zone_times": "{times} {zone}（你的時間 {local}）",
+    "zone_only": "{times} {zone}",
+    "status_accepted": "已接受",
+    "status_declined": "已拒絕",
+    "status_tentative": "暫定",
+    "status_needs_action": "尚未回覆",
+    "status_delegated": "已委派",
+    "answered_accepted": "你已於 {date} 接受。",
+    "answered_declined": "你已於 {date} 拒絕。",
+    "answered_tentative": "你已於 {date} 回覆暫定。",
+    "answered_accepted_nodate": "你已接受。",
+    "answered_declined_nodate": "你已拒絕。",
+    "answered_tentative_nodate": "你已回覆暫定。"
+  },
+  "ux_p2_pim_calx": {
+    "repeats": "重複：{rule}",
+    "declined_dates": "您已拒絕 {dates} 的會議。",
+    "declined_many": "您已拒絕此系列中的 {count} 場會議。",
+    "answers_series": "您的回覆適用於此系列的所有會議。"
+  },
+  "ux_p3_pim_cal": {
+    "agenda_until": "至 {time}",
+    "week_all_days": "顯示整週",
+    "week_days_short": "{count, plural, other {#天}}",
+    "print": "列印…"
   },
   "calendar_event_notifications": {
     "someone": "有人",
     "invited": "{name} 邀請您參加「{title}」",
     "updated": "{name} 更新了「{title}」",
     "cancelled": "{name} 取消了「{title}」",
-    "untitled": "未命名活動"
+    "untitled": "未命名活動",
+    "summary": "你參與的活動有變更：{count} 項"
+  },
+  "calendar_month_select": {
+    "selected_range": "已選取 {start} 至 {end}。",
+    "selected_day": "已選取 {day}。",
+    "enter_hint": "按 Enter 鍵建立活動。"
+  },
+  "company_calendars": {
+    "section": "組織"
+  },
+  "ux_pim_grid": {
+    "search_short": "搜尋",
+    "reply": "回覆",
+    "reply_to_invitation": "回覆邀請"
+  },
+  "vacation_calendar": {
+    "label": "佔用我的行事曆",
+    "description": "在你外出期間新增一個忙碌活動，這樣別人不會在這段時間約你開會。",
+    "no_access_managed": "無法佔用此帳號的行事曆：你沒有寫入權限。",
+    "no_calendar": "無法佔用你的行事曆：Loomix 找不到可以新增活動的行事曆。",
+    "filter_warning": "開啟後，在自動回覆生效期間你自己的過濾指令碼會被關閉。"
+  },
+  "calendar_delegate": {
+    "answer_for": "代表 {name} 回覆",
+    "no_write": "你能看到 {name} 的邀請，但不能代為回覆。請向對方申請編輯權限。",
+    "also_invited": "你也被邀請了，此伺服器無法區分你和 {name} 的回覆。這一項需要 {name} 自己回覆。",
+    "answered_by": "由 {who} 回覆"
+  },
+  "free_busy_share": {
+    "button": "與 {group} 共用我的忙碌/空閒時間",
+    "already": "你的忙碌/空閒時間已與 {group} 共用",
+    "done": "你的忙碌/空閒時間現已與 {group} 共用。",
+    "error": "無法共用你的忙碌/空閒時間，請再試一次。",
+    "group_label": "群組",
+    "title": "忙碌/空閒",
+    "description": "群組中的同事能看到你何時忙碌，看不到活動內容。「建議時間」會用到它。"
+  },
+  "ux_pim_cimport": {
+    "file_hint": "按一下以選取 vCard 或 CSV 檔案",
+    "file_types": ".vcf 或 .csv 檔案，例如來自 Outlook 或 Google 聯絡人",
+    "parse_error": "無法讀取檔案",
+    "columns_title": "對應欄位",
+    "columns_hint": "選擇 {file} 中每一欄的去處。設為「不匯入」的欄會略過。",
+    "column": "欄",
+    "sample": "範例",
+    "field": "聯絡人欄位",
+    "skip": "不匯入",
+    "no_columns": "請至少為一欄選擇欄位。",
+    "continue": "繼續",
+    "back": "返回",
+    "import_into": "匯入至",
+    "group_name": "姓名",
+    "group_email": "電子郵件",
+    "group_phone": "電話",
+    "group_org": "組織",
+    "group_adr_any": "地址",
+    "group_adr_home": "住家地址",
+    "group_adr_work": "公司地址",
+    "group_adr_other": "其他地址",
+    "group_more": "更多",
+    "address_field": "{group}：{part}",
+    "t_name_full": "全名",
+    "t_name_given": "名字",
+    "t_name_middle": "中間名",
+    "t_name_surname": "姓氏",
+    "t_name_prefix": "稱謂（博士、女士）",
+    "t_name_suffix": "後綴（Jr.）",
+    "t_nickname": "暱稱",
+    "t_email": "電子郵件",
+    "t_email_home": "電子郵件（住家）",
+    "t_email_work": "電子郵件（公司）",
+    "t_phone": "電話",
+    "t_phone_mobile": "行動電話",
+    "t_phone_home": "電話（住家）",
+    "t_phone_work": "電話（公司）",
+    "t_phone_fax": "傳真",
+    "t_phone_fax_home": "傳真（住家）",
+    "t_phone_fax_work": "傳真（公司）",
+    "t_phone_pager": "呼叫器",
+    "t_org_name": "公司",
+    "t_org_unit": "部門",
+    "t_org_title": "職稱",
+    "t_street": "街道",
+    "t_pobox": "郵政信箱",
+    "t_locality": "城市",
+    "t_region": "州/省或地區",
+    "t_postcode": "郵遞區號",
+    "t_country": "國家/地區",
+    "t_web": "網站",
+    "t_birthday": "生日",
+    "t_anniversary": "紀念日",
+    "t_notes": "備註",
+    "t_categories": "類別",
+    "t_type": "值的類型（住家、公司…）",
+    "merge_with": "合併至…",
+    "merge_selected": "合併…",
+    "find_duplicates": "尋找重複項目",
+    "possible_duplicates": "可能重複（{count}）",
+    "duplicates_title": "可能重複",
+    "duplicates_hint": "姓名、電子郵件地址或電話號碼相同的聯絡人。",
+    "duplicates_none": "找不到可能重複的聯絡人。",
+    "pick_title": "將 {name} 合併至…",
+    "pick_search": "搜尋聯絡人",
+    "pick_suggested": "可能重複",
+    "pick_all": "所有聯絡人",
+    "pick_none": "沒有其他可合併的聯絡人。",
+    "preview_title": "合併聯絡人（{count}）",
+    "preview_hint": "這些聯絡人會合為一張名片，包含下方所有內容。",
+    "preview_deleted": "併入後刪除：{names}",
+    "groups": "群組",
+    "merge": "合併",
+    "merging": "正在合併…",
+    "merged": "聯絡人已合併",
+    "merge_failed": "無法合併這些聯絡人。",
+    "merge_not_possible": "這些聯絡人無法合併：它們位於不同帳戶，或位於您無法變更的通訊錄中。",
+    "undo": "復原",
+    "undone": "已復原合併",
+    "undo_failed": "無法完全復原合併。"
+  },
+  "find_time": {
+    "suggest": "建議時間",
+    "searching": "正在尋找空閒時間",
+    "slots_title": "Loomix 能查到的所有人都有空",
+    "slot": "{day} {start} 至 {end}",
+    "none": "未來 10 個工作天內沒有空閒時間。",
+    "picked": "活動已移到 {slot}",
+    "rate_limited": "過去一分鐘內查詢過多，請一分鐘後再試。",
+    "unavailable": "此伺服器不提供忙碌/空閒資訊，Loomix 無法建議時間。",
+    "not_checked": "未檢查：",
+    "not_checked_item": "{who}：{reason}",
+    "reason_external": "組織外部",
+    "reason_unknown": "忙碌時間未知",
+    "reason_not_found": "在此伺服器上找不到",
+    "reason_error": "無法檢查",
+    "unknown_note": "Loomix 只能看到與你共用的行事曆中的忙碌時間。對這些人，它無法區分有空和未共用。",
+    "directory_off": "Loomix 無法在此伺服器上查詢使用者。管理員可以在 Stalwart 中開啟目錄查詢。",
+    "not_looked_up": "無法查詢此地址",
+    "found": "找到的空閒時間：{count}"
   },
   "share_notifications": {
     "someone": "有人",
     "shared": "{name} 與您共用了{kind}「{object}」",
     "changed": "{name} 變更了您對{kind}「{object}」的存取權限",
     "revoked": "{name} 移除了您對{kind}「{object}」的存取權限",
+    "summary": "{name} 變更了您對 {count, plural, other {# 個共用項目}}的存取權限",
     "object": {
       "folder": "資料夾",
       "calendar": "行事曆",
@@ -3702,8 +5505,12 @@
     "loading_principals": "正在載入使用者…",
     "no_principals": "找不到其他使用者或群組。",
     "no_match": "找不到相符項目。",
+    "directory_restricted": "您的伺服器不允許瀏覽使用者目錄，因此只會列出您所屬的群組，以及曾與您分享內容的使用者。管理員可以在 Stalwart 的分享設定中啟用目錄查詢。",
+    "directory_not_browsable": "您的伺服器不允許您瀏覽使用者目錄。",
+    "directory_failed": "無法載入使用者和群組清單。",
     "remove": "移除存取權",
     "group": "群組",
+    "unknown_user": "未知的使用者",
     "share_added": "已授予存取權",
     "share_updated": "已更新存取權",
     "share_removed": "已移除存取權",
@@ -3714,6 +5521,90 @@
       "readWrite": "讀取與寫入",
       "manager": "管理員",
       "custom": "自訂"
+    },
+    "access_for": "{name} 的存取權限"
+  },
+  "delegates": {
+    "tab": "共用",
+    "title": "代理人",
+    "description": "一次為他人授予您郵件、行事曆和聯絡人的存取權，並查看誰可以存取哪些內容。",
+    "give_access": "授予存取權",
+    "who_has_access": "誰有存取權",
+    "nobody": "沒有人可以存取您的郵件、行事曆、聯絡人或檔案。",
+    "loading": "載入中…",
+    "read_failed": "無法讀取您的部分共用設定，因此「變更」和「移除存取權」需等到可以讀取時才能使用。",
+    "change": "變更",
+    "remove": "移除存取權",
+    "remove_title": "要移除 {name} 的存取權嗎？",
+    "remove_message": "{name} 將無法再存取您從自己帳號共用的所有內容：郵件、行事曆、聯絡人和檔案。",
+    "removed": "已移除存取權",
+    "remove_partial": "以下項目仍有存取權：{items}",
+    "applied": "{name} 現在有存取權了",
+    "updated": "已更新存取權",
+    "unknown_person": "未知的人員",
+    "group": "群組",
+    "has_access": "有存取權",
+    "summary": {
+      "mail_all": "所有郵件信件匣",
+      "mail_inbox": "收件匣",
+      "mail_some": "{count, plural, other {# 個郵件信件匣}}",
+      "calendars": "{count, plural, other {# 個行事曆}}",
+      "address_books": "{count, plural, other {# 個通訊錄}}",
+      "files": "{count, plural, other {# 個檔案或資料夾}}"
+    },
+    "level": {
+      "read": "讀取",
+      "write": "讀取與寫入",
+      "mixed": "權限不同",
+      "none": "僅限空閒／忙碌"
+    },
+    "dialog_title_add": "授予存取權",
+    "dialog_title_change": "變更 {name} 的存取權",
+    "person": "人員",
+    "search_placeholder": "姓名或電子郵件地址",
+    "change_person": "變更",
+    "no_match": "找不到任何人。",
+    "use_address": "使用 {address}",
+    "looking_up": "正在查詢…",
+    "not_found": "此伺服器上沒有人使用地址 {address}。",
+    "lookup_failed": "無法查詢此地址。",
+    "is_you": "這是您自己。",
+    "known_only": "只會列出您所屬的群組，以及曾與您共用內容的人員。",
+    "directory_off_note": "您的管理員必須先在 Stalwart 中啟用目錄查詢，您才能新增其他人員。",
+    "directory_failed": "無法載入人員和群組清單。",
+    "what": "內容",
+    "mail": "郵件",
+    "mail_all": "所有信件匣",
+    "mail_inbox": "僅收件匣",
+    "calendars": "行事曆",
+    "calendars_default": "預設行事曆",
+    "calendars_all": "所有行事曆",
+    "address_books": "聯絡人",
+    "address_books_default": "預設通訊錄",
+    "address_books_all": "所有通訊錄",
+    "none": "無",
+    "keep": "保持不變",
+    "empty_scope": "請選擇郵件、行事曆或聯絡人。",
+    "nothing_to_change": "沒有需要變更的內容。請選擇對方應取得的內容，或使用「移除存取權」。",
+    "change_note": "您未選擇的信件匣、行事曆和通訊錄將失去存取權。共用的檔案維持不變；「移除存取權」會將它們一併移除。",
+    "rights": "權限",
+    "rights_read": "讀取",
+    "rights_read_hint": "查看您的郵件、活動和聯絡人。",
+    "rights_read_hint_flags": "查看您的郵件、活動和聯絡人。此伺服器也允許對方為郵件加上旗標並標示為已讀。",
+    "rights_write": "讀取與寫入",
+    "rights_write_hint": "還可以歸檔、標記和刪除郵件，以及變更活動和聯絡人。",
+    "rights_keep": "保持不變",
+    "rights_keep_hint": "既有的內容保留其權限；新增的內容取得同類其他內容的權限，若沒有則為讀取。",
+    "send_note": "代理人可以閱讀並整理您的郵件和行事曆。Stalwart 不允許他們以您的身分或代表您傳送郵件。如需多人共用一個地址，請向管理員申請共用信箱。",
+    "apply_add": "授予存取權",
+    "apply_change": "儲存",
+    "partial_title": "以下項目無法變更。其餘已完成。",
+    "retry": "重試",
+    "kind": {
+      "mailbox": "郵件信件匣",
+      "calendar": "行事曆",
+      "addressBook": "通訊錄",
+      "file": "檔案"
     }
   },
   "advanced_search": {
@@ -3743,7 +5634,7 @@
     "clear_all": "全部清除",
     "filters_active": "{count} 個篩選條件",
     "filters_active_plural": "{count} 個篩選條件",
-    "toggle_filters": "更多",
+    "toggle_filters": "篩選",
     "search_hint": "使用進階篩選條件進行精確搜尋",
     "advanced_filters_tooltip": "進階搜尋篩選條件",
     "results_found": "{count, plural, =0 {找不到結果} one {找到 # 個結果} other {找到 # 個結果}}",
@@ -3758,16 +5649,27 @@
     "date_within": "日期",
     "search_in": "搜尋範圍",
     "has_attachment_check": "包含附件",
-    "search": "搜尋"
+    "search": "搜尋",
+    "not_starred": "未加星號",
+    "no_attachment": "無附件",
+    "any_time": "任何時間",
+    "past_week": "過去一週",
+    "past_month": "過去一個月",
+    "past_year": "過去一年",
+    "custom_range": "自訂範圍",
+    "any_size": "任意大小",
+    "larger_than_mb": "大於 {size} MB",
+    "custom_size": "自訂大小",
+    "name_or_address": "姓名或地址"
   },
   "welcome": {
     "title": "歡迎使用您的信件匣",
-    "tip_compose": "按 c 撰寫新郵件",
+    "tip_compose": "按 c 寫新郵件",
     "tip_shortcuts": "按 ? 檢視所有鍵盤快速鍵",
-    "tip_sidebar": "可在側邊欄選單找到行事曆、聯絡人與設定",
+    "tip_sidebar_apps": "{apps}位於左側欄",
     "tip_settings": "在「設定」中自訂您的使用體驗",
-    "tip_compose_touch": "點按鉛筆按鈕撰寫新郵件",
-    "tip_sidebar_touch": "行事曆、聯絡人和設定位於底部列",
+    "tip_compose_touch": "點按鉛筆按鈕寫新郵件",
+    "tip_sidebar_apps_touch": "{apps}位於底部列",
     "got_it": "了解",
     "settings": "設定",
     "dismiss": "關閉",
@@ -3799,9 +5701,9 @@
     "new_name": "新名稱",
     "name_forbidden_chars": "伺服器不允許名稱中包含這些字元：{chars}",
     "name_reserved": "此名稱已被伺服器保留。",
+    "name_control_chars": "名稱不能包含控制字元。",
+    "name_too_long": "此名稱對伺服器來說過長。",
     "delete": "刪除",
-    "delete_confirm_title": "刪除項目",
-    "delete_confirm_message": "您確定要刪除「{name}」嗎？此動作無法復原。",
     "download": "下載",
     "name": "名稱",
     "size": "大小",
@@ -3809,26 +5711,75 @@
     "type": "類型",
     "folder": "資料夾",
     "file": "檔案",
+    "symlink": "符號連結",
+    "parent_directory": "上層目錄",
+    "breadcrumb_root": "首頁",
     "no_accounts": "沒有已連線的帳號。",
     "uploading": "正在上傳…",
     "upload_success": "{count, plural, one {已上傳 1 個檔案} other {已上傳 # 個檔案}}",
     "upload_canceled": "已取消上傳",
     "upload_canceled_partial": "取消前已上傳 {count, plural, other {# 個檔案}}",
     "upload_error": "上傳檔案失敗",
+    "upload_failed": "{count, plural, one {1 個檔案無法上傳} other {# 個檔案無法上傳}}",
+    "error_over_quota": "已達到檔案或資料夾數量上限。請刪除一些後再試一次。",
+    "error_too_deep": "資料夾不能巢狀這麼深。",
+    "error_invalid_name": "伺服器不接受此名稱。",
+    "error_forbidden": "你沒有權限在此處執行此操作。",
+    "error_too_large": "此檔案對伺服器來說過大。",
+    "error_partial_copy": "部分副本仍保留在原處。",
     "create_folder_success": "資料夾已建立",
     "create_folder_error": "建立資料夾失敗",
-    "delete_success": "刪除成功",
     "delete_error": "刪除失敗",
+    "trash": "垃圾桶",
+    "restore": "還原",
+    "restored": "{count, plural, other {已還原 # 個項目}}",
+    "restore_error": "無法還原",
+    "moved_to_trash": "{count, plural, other {已將 # 個項目移到垃圾桶}}",
+    "delete_forever": "永久刪除",
+    "delete_forever_title": "{count, plural, other {要永久刪除 # 個項目嗎？}}",
+    "delete_forever_message": "「{name}」將被刪除。此動作無法復原。",
+    "delete_forever_message_count": "{count, plural, other {將刪除 # 個項目}}。此動作無法復原。",
+    "deleted_forever": "{count, plural, other {已永久刪除 # 個項目}}",
+    "empty_trash": "清空垃圾桶",
+    "empty_trash_title": "要清空垃圾桶嗎？",
+    "empty_trash_message": "{count, plural, other {垃圾桶中的 # 個項目將被永久刪除}}。此動作無法復原。",
+    "trash_emptied": "已清空垃圾桶",
+    "empty_trash_error": "無法清空垃圾桶",
+    "trash_empty_title": "垃圾桶是空的",
+    "trash_empty_hint": "刪除的檔案會保留在這裡，直到您清空垃圾桶。",
+    "deleted": "刪除時間",
+    "deleted_from": "從 {folder} 刪除",
+    "shortcuts": {
+      "list": "清單",
+      "actions": "動作",
+      "first_last": "第一個或最後一個",
+      "extend": "擴充選取範圍",
+      "toggle": "選取或取消選取",
+      "select_all": "全選",
+      "clear": "清除選取或搜尋",
+      "delete": "刪除",
+      "search": "搜尋",
+      "move": "下一個或上一個項目",
+      "move_grid": "格狀檢視中的相鄰項目",
+      "open": "開啟",
+      "up": "上一層資料夾",
+      "rename": "重新命名",
+      "copy": "複製",
+      "cut": "剪下",
+      "paste": "貼上"
+    },
     "rename_success": "重新命名成功",
     "rename_error": "重新命名失敗",
     "download_error": "下載失敗",
+    "download_zip": "下載為 ZIP",
+    "zipping": "正在準備 {name}",
+    "download_canceled": "已取消下載",
+    "zip_error": "無法下載 {name}",
     "not_available": "此伺服器無法使用檔案儲存功能",
     "cancel": "取消",
     "create": "建立",
     "save": "儲存",
     "no_results": "找不到符合搜尋條件的檔案",
-    "batch_delete_confirm_message": "您確定要刪除{count, plural, one {1 個項目} other {# 個項目}}嗎？此動作無法復原。",
-    "batch_delete_success": "{count, plural, one {已刪除 1 個項目} other {已刪除 # 個項目}}",
     "grid_view": "網格檢視",
     "list_view": "清單檢視",
     "details": "詳細資料",
@@ -3840,9 +5791,19 @@
     "paste": "貼上",
     "move_success": "{count, plural, one {已移動 1 個項目} other {已移動 # 個項目}}",
     "move_error": "移動失敗",
+    "move_to": "移至…",
+    "move_to_title": "移至",
+    "move_here": "移到這裡",
     "paste_success": "貼上成功",
     "paste_error": "貼上失敗",
     "new_text_file": "新增文字檔案",
+    "new_file": "新增檔案",
+    "file_format": "格式",
+    "format_text": "文字檔案",
+    "format_document": "文件",
+    "format_spreadsheet": "試算表",
+    "format_presentation": "簡報",
+    "format_pdf": "PDF",
     "file_name": "檔名",
     "retry": "重試",
     "refresh": "重新整理",
@@ -3853,6 +5814,7 @@
     "shared": "已分享",
     "shared_with_me": "與我共用",
     "shared_by": "由 {name} 分享",
+    "shared_files_from": "來自 {name} 的檔案",
     "create_file_success": "檔案已建立",
     "create_file_error": "建立檔案失敗",
     "favorites": "我的最愛",
@@ -3871,7 +5833,6 @@
     "settings_ascending": "遞增",
     "settings_descending": "遞減",
     "disabled_title": "檔案功能已被您的管理員停用",
-    "disabled_description": "透過 WebDAV 上傳大檔案可能導致 Stalwart/RocksDB 不穩定，包括記憶體不足當機及無法回收的磁碟空間。刪除檔案後，blob 儲存空間可能不會立即清除。本功能不建議用於正式環境。",
     "migration_title": "正在更新您的檔案…",
     "migration_description": "正在將資料夾與檔案整理成正確結構。這只會執行一次。",
     "new": "新增",
@@ -3918,7 +5879,51 @@
     "zoom_out": "縮小",
     "zoom_reset": "符合螢幕大小",
     "rotate": "旋轉",
-    "close_preview": "關閉"
+    "close_preview": "關閉",
+    "previous_file": "上一個檔案",
+    "next_file": "下一個檔案",
+    "loading": "載入中…"
+  },
+  "ux_pim_files": {
+    "conflict_title": "{name} 已存在。",
+    "conflict_file_hint": "取代會把新內容放進現有檔案，共用設定維持不變。保留兩者會新增一個帶編號的副本。",
+    "conflict_folder_hint": "取代會把檔案加入現有資料夾，並取代同名檔案。保留兩者會建立一個帶編號的資料夾。",
+    "replace": "取代",
+    "keep_both": "保留兩者",
+    "skip": "略過",
+    "apply_to_all": "{count, plural, other {對全部 # 個衝突執行此動作}}",
+    "no_preview": "此類檔案無法預覽。",
+    "open_in_app": "用預設應用程式開啟",
+    "shared_with": "{name} 已與 {person} 共用。",
+    "send_message": "傳送訊息",
+    "share_mail_subject": "我與你共用了 {name}",
+    "share_mail_body": "你好，\n\n我與你共用了「{name}」。可以在這裡開啟：\n{link}"
+  },
+  "ux_p2_pim_files": {
+    "zone_calendar_all": "全部加入行事曆",
+    "zone_contacts_all": "全部加入聯絡人",
+    "save_to_files": "儲存到檔案",
+    "saved": "已將 {name} 儲存到檔案。",
+    "saved_copy": "已以 {name} 儲存到檔案。",
+    "save_failed": "無法將 {name} 儲存到檔案。",
+    "changed_on_server": "你開啟 {name} 後，它在檔案中被變更了。",
+    "gone_on_server": "{name} 已不在檔案中。",
+    "keep_both": "保留兩者",
+    "replace": "取代",
+    "cancel": "取消",
+    "save_as_new": "另存為新檔案",
+    "import_to_mail": "匯入到郵件資料夾…",
+    "import_to_mail_title": "匯入到郵件資料夾",
+    "imported_to_mail": "已匯入到 {folder}。",
+    "import_to_mail_failed": "無法匯入 {name}。",
+    "import_contacts": "匯入到聯絡人…",
+    "add_to_calendar": "加入行事曆…"
+  },
+  "ux_p3_pim_files": {
+    "offers_label": "已編輯的檔案",
+    "hide": "隱藏",
+    "discard_detail_file": "你對此副本的編輯將被刪除。檔案中的檔案不會改變。",
+    "saved_auto": "{name} 已儲存到檔案。之後從其程式儲存時會自動存到那裡。"
   },
   "smime": {
     "your_certificates": "您的憑證",
@@ -4012,8 +6017,8 @@
     "show_on_new_devices_desc": "首次在新裝置登入時，重新顯示歡迎橫幅與功能導覽，即使您已在其他裝置完成",
     "sidebar_title": "您的信件匣",
     "sidebar_desc": "這裡是信件匣側邊欄。點擊任一信件匣即可檢視其中的郵件。您可以建立信件匣、在信件匣之間拖曳郵件，並快速查看未讀數量。",
-    "compose_title": "撰寫郵件",
-    "compose_desc": "點擊這裡即可撰寫新郵件。您可以新增收件者、附件，並使用富文字格式。",
+    "compose_title": "寫郵件",
+    "compose_desc": "點擊這裡即可寫新郵件。您可以新增收件者、附件，並使用富文字格式。",
     "search_title": "搜尋郵件",
     "search_desc": "依寄件者、主題或內容搜尋。點擊篩選圖示，可使用日期範圍、附件與已加星號等進階選項。",
     "email_list_title": "郵件清單",
@@ -4048,10 +6053,191 @@
     "demo_banner_desc": "目前處於示範模式，所有資料都保留在瀏覽器中。隨時點擊「重設示範」即可用全新的範例資料重新開始。",
     "quota_title": "儲存使用情況",
     "quota_desc": "在這裡查看信箱的儲存空間使用量。使用的空間越多，圓形指示器就會填得越滿。",
-    "settings_section": "新手入門"
+    "settings_section": "新手入門",
+    "email_list_desc_phone": "你的郵件會顯示在這裡。點一下郵件即可閱讀，長按可查看更多動作。",
+    "contacts_list_desc_phone": "這裡是你的聯絡人。點一下任一聯絡人即可查看完整詳細資料。你也可以新增聯絡人、匯入 vCard，或將聯絡人整理成群組。"
   },
   "unified_mailbox": {
     "search_unavailable": "整合檢視中無法使用搜尋"
+  },
+  "mail_import": {
+    "menu_import": "匯入郵件…",
+    "settings_label": "匯入郵件",
+    "settings_description": "從 .eml、ZIP、mbox 或 Outlook .pst 和 .ost 檔案匯入郵件。",
+    "settings_button": "匯入…",
+    "title": "匯入郵件",
+    "description": "請選擇 .eml、.zip、.mbox 或 Outlook .pst 和 .ost 檔案。",
+    "choose_files": "選擇檔案…",
+    "chosen_files": "已選檔案",
+    "remove_file": "移除 {name}",
+    "format_eml": "郵件",
+    "format_zip": "ZIP 壓縮檔",
+    "format_mbox": "mbox 檔案",
+    "format_pst": "Outlook 資料檔",
+    "target_label": "匯入到",
+    "target_top": "最上層",
+    "keep_folders": "依檔案重建資料夾",
+    "keep_folders_hint": "同名資料夾會重複使用。",
+    "resume": "從這些檔案上次匯入停止的地方繼續（已處理的郵件：{count}）",
+    "quota_note": "許多伺服器每小時只接受單一使用者約 1000 封郵件或 50 MB。較大的匯入會暫停，然後自動繼續。",
+    "start": "匯入",
+    "cancel": "取消",
+    "running_title": "正在匯入郵件",
+    "progress_label": "匯入進度",
+    "status_imported": "已匯入郵件：{count}",
+    "reading_file": "正在讀取 {name}",
+    "paused": "已暫停至 {time}。伺服器每小時最多接受 {files} 次上傳或 {size}。匯入會自動繼續。",
+    "paused_generic": "已暫停至 {time}。已達伺服器的上傳上限。匯入會自動繼續。",
+    "background": "在背景執行",
+    "cancel_import": "取消匯入",
+    "chip": "正在匯入郵件：{percent}%",
+    "chip_paused": "匯入已暫停至 {time}",
+    "done_title": "匯入完成",
+    "cancelled_title": "匯入已取消",
+    "failed_title": "匯入已停止",
+    "summary_imported": "已匯入郵件：{count}",
+    "summary_folders": "已建立資料夾：{count}",
+    "summary_skipped": "未匯入：",
+    "skip_too_large": "超過伺服器允許的大小：{count}",
+    "skip_deleted": "已在 Thunderbird 中刪除：{count}",
+    "skip_embedded": "附在其他郵件中的郵件：{count}",
+    "skip_contact": "聯絡人：{count}",
+    "skip_calendar": "行事曆項目：{count}",
+    "skip_other": "其他項目：{count}",
+    "summary_failed": "無法匯入：{count}",
+    "failure_invalid": "不是有效的郵件",
+    "untitled": "（無主旨）",
+    "cancelled_hint": "如需稍後繼續，請再次把相同的檔案匯入到同一個資料夾。",
+    "close": "關閉",
+    "pst_note": "Outlook 檔案中只匯入郵件。聯絡人、行事曆項目和工作會被計數並略過。",
+    "pst_error_encrypted": "此 Outlook 檔案使用了 Loomix 無法讀取的高強度加密。請在 Outlook 中把郵件匯出到一個不加密的新 .pst 檔案。",
+    "pst_error_not_pst": "此檔案不是 Loomix 能讀取的 Outlook 資料檔。",
+    "pst_error_unreadable": "Loomix 無法讀取此 Outlook 檔案。",
+    "pst_error_worker": "Outlook 檔案讀取元件未能載入。請重新載入頁面後再試。",
+    "error_over_quota": "信箱已滿，匯入已停止。請騰出空間，然後把相同的檔案再次匯入同一個資料夾即可繼續。",
+    "error_forbidden": "您無權在此資料夾新增郵件，匯入已停止。",
+    "error_failures": "連續失敗的郵件太多，匯入已停止。請稍後把相同的檔案再次匯入同一個資料夾以繼續。",
+    "error_network": "與伺服器的連線多次失敗，匯入已停止。請把相同的檔案再次匯入同一個資料夾以繼續。",
+    "error_busy": "這些檔案已在另一個分頁中匯入。",
+    "retry_hint": "把相同的檔案再次匯入同一個資料夾，即可重試失敗的郵件。",
+    "skip_unreadable": "Outlook 檔案中無法讀取：{count}",
+    "keep_folders_top_hint": "在最上層，收件匣、寄件備份、刪除的郵件等會進入您自己的資料夾。",
+    "toast_done": "匯入完成。已匯入：{imported}，失敗：{failed}。",
+    "toast_stopped": "匯入已停止。",
+    "toast_show": "顯示",
+    "section_title": "郵件檔案",
+    "section_description": "從檔案匯入郵件，或把郵件儲存為檔案。"
+  },
+  "mail_export": {
+    "menu_export": "匯出資料夾…",
+    "settings_label": "匯出所有郵件",
+    "settings_description": "把此帳戶的所有資料夾以 mbox 或 .eml 檔案儲存到一個 ZIP 檔案中。",
+    "settings_button": "匯出…",
+    "title_folder": "匯出「{name}」",
+    "title_account": "匯出所有郵件",
+    "description_folder": "把此資料夾中的郵件儲存為檔案。",
+    "description_account": "把此帳戶的所有資料夾儲存到一個 ZIP 檔案中。",
+    "format_label": "格式",
+    "format_mbox_folder": "mbox 檔案",
+    "format_eml_folder": ".eml 檔案的 ZIP",
+    "format_mbox_account": "每個資料夾一個 mbox 檔案的 ZIP",
+    "format_eml_account": ".eml 檔案的 ZIP，每個郵件資料夾一個資料夾",
+    "hint_mbox": "Thunderbird、Apple Mail 和大多數郵件程式都能開啟 mbox 檔案。",
+    "hint_eml": "每封郵件一個檔案，任何郵件程式都能開啟。",
+    "save_picker": "由您選擇檔案儲存位置。",
+    "save_download": "匯出完成後會下載檔案。",
+    "save_memory": "此瀏覽器會把整個匯出保存在記憶體中，因此最多只能儲存 200 MB。更大的匯出請使用 Chrome 或 Edge，或逐一匯出資料夾。",
+    "start": "匯出",
+    "cancel": "取消",
+    "running_title": "正在匯出郵件",
+    "progress_label": "匯出進度",
+    "status_exported": "已匯出郵件：{count} / {total}",
+    "paused": "已暫停至 {time}：伺服器要求暫停。匯出會自動繼續。",
+    "background": "在背景執行",
+    "cancel_export": "取消匯出",
+    "chip": "正在匯出郵件：{percent}%",
+    "chip_paused": "匯出已暫停至 {time}",
+    "done_title": "匯出完成",
+    "cancelled_title": "匯出已取消",
+    "failed_title": "匯出已停止",
+    "summary_exported": "已匯出郵件：{count}",
+    "summary_file": "已儲存為 {name}（{size}）。",
+    "summary_failed": "無法匯出：{count}",
+    "download_again": "重新下載",
+    "too_large": "匯出內容超過此瀏覽器能放在記憶體中的大小。請使用 Chrome 或 Edge，或逐一匯出資料夾。",
+    "close": "關閉",
+    "untitled": "（無主旨）",
+    "toast_done": "匯出完成：{name}",
+    "toast_stopped": "匯出已停止。",
+    "toast_show": "顯示"
+  },
+  "desktopImport": {
+    "find": "尋找 Thunderbird 和 Outlook 資料…",
+    "find_hint": "在這台電腦的常用位置尋找。Loomix 會先詢問你。",
+    "scan_declined": "你沒有允許,所以沒有尋找。",
+    "scan_failed": "尋找失敗。請再試一次。",
+    "read_declined": "你沒有允許,所以沒有讀取任何檔案。",
+    "read_failed": "這些檔案已無法讀取。請重新尋找。",
+    "nothing_found": "常用位置沒有 Thunderbird 設定檔或 Outlook 資料檔。要匯入其他位置的檔案,請使用「選擇檔案」。",
+    "found_list": "在這台電腦上找到的郵件資料",
+    "outlook_files": "Outlook 資料檔",
+    "thunderbird_profile": "Thunderbird 設定檔 {name}",
+    "address_book": "{name} 的通訊錄",
+    "message_count": "{count, plural, other {# 封郵件}}",
+    "contact_count": "{count, plural, other {# 位聯絡人}}",
+    "confirm": "{count, plural, other {使用這 # 項…}}",
+    "back": "返回",
+    "estimate": "已選擇 {size}。包括 Stalwart 在內的許多伺服器每小時只接收一位使用者約 1000 封郵件或 50 MB,因此至少需要 {time}。達到上限時匯入會暫停,然後自動繼續。它在背景執行,重新啟動後也會繼續。",
+    "duration_hours": "{count, plural, other {# 小時}}",
+    "duration_days": "{count, plural, other {# 天}}",
+    "time_left": "依伺服器的上傳限制,至少還需要 {time}。在此期間你可以繼續工作。",
+    "thunderbird_running": "Thunderbird 正在執行。請先關閉它。如果它在匯入期間變更了資料夾,該資料夾會重新開始,已匯入的郵件會被略過。",
+    "ost_refused": "未提供:{names}。Outlook .ost 檔案只是信箱的本機副本,無法在這裡匯入。請在 Outlook 中將郵件匯出為 .pst 檔案。",
+    "calendars_left_out": "不會匯入 Thunderbird 行事曆。請從 Thunderbird 匯出為 .ics 檔案,再匯入行事曆。",
+    "pst_items_left_out": "從 Outlook 檔案只匯入郵件,不匯入聯絡人和行事曆。",
+    "picked": "{count, plural, other {來自這台電腦的 # 個資料夾和檔案}}",
+    "remove_picked": "移除這些檔案",
+    "contacts_picked": "{count, plural, other {來自 Thunderbird 的 # 位聯絡人將加入你的聯絡人。}}",
+    "contacts_added": "{count, plural, other {已新增來自 Thunderbird 的 # 位聯絡人。}}",
+    "contacts_failed": "部分 Thunderbird 聯絡人無法新增。",
+    "files_refused": "已略過,因為它們已無法讀取:{names}",
+    "skip_seen": "略過之前的匯入已放入同一資料夾的郵件",
+    "skip_duplicate": "{count, plural, other {# 封郵件之前已匯入}}",
+    "file_unavailable": "檔案已變更或已無法讀取。請關閉 Thunderbird 並重新匯入。已匯入的郵件會被略過。",
+    "resume_gone": "這台電腦的匯入無法繼續,因為檔案已不存在。",
+    "pst_in_use": "Outlook 開啟 {names} 時無法讀取。請關閉 Outlook 並重新尋找。",
+    "description": "在這台電腦上尋找郵件,或選擇 .eml、.zip、.mbox 或 Outlook .pst 檔案。",
+    "settings_description": "從 Thunderbird 或 .eml、ZIP、mbox、Outlook .pst 檔案匯入郵件。",
+    "resume_refused": "目前無法讀取:{names}。其餘部分繼續進行,這些將在下次啟動時重試。",
+    "resume_stop_trying": "不再嘗試",
+    "resume_hand_picked": "請重新選擇這些檔案以匯入其餘部分:{names}。已匯入的郵件會被略過。",
+    "scan_incomplete": "尋找耗時過長,已停止。這是到那時為止找到的內容。"
+  },
+  "recover_deleted": {
+    "tab": "復原已刪除的項目",
+    "title": "復原已刪除的項目",
+    "description": "您已永久刪除（例如清空垃圾桶）但伺服器仍保留的郵件。選取郵件即可還原。",
+    "range_days": "顯示{days, plural, other {過去 # 天}}內刪除的郵件。",
+    "range_all": "顯示伺服器仍保留的所有已刪除郵件。",
+    "loading": "正在載入已刪除的郵件…",
+    "load_failed": "無法載入已刪除的郵件。",
+    "retry": "重試",
+    "empty": "沒有可復原的已刪除郵件。",
+    "select_all": "全部選取",
+    "selected": "已選取 {count} 個",
+    "refresh": "重新整理",
+    "restore": "還原",
+    "restored": "{count, plural, other {# 封郵件}}正在回到您的收件匣。",
+    "restore_partial": "{count, plural, other {# 封郵件無法還原。它們仍保持選取，您可以再試一次。}}",
+    "restore_hint": "還原的郵件會以未讀狀態回到收件匣，並依原始日期排序，因此可能位於清單很下方。伺服器會在背景中進行還原。如果伺服器端還原失敗，郵件將會遺失，而 Loomix 無法得知。",
+    "unknown_sender": "未知寄件者",
+    "no_subject": "（無主旨）",
+    "deleted_on": "刪除於 {date}",
+    "trash_hint": "不小心永久刪除了嗎？",
+    "trash_link": "復原已刪除的項目",
+    "empty_hint": "只有當您的管理員在 Stalwart 中啟用已刪除項目的封存後，已刪除的郵件才會顯示在這裡。",
+    "restore_gone": "{count, plural, other {# 封郵件已不在封存中：它們已在其他地方還原，或伺服器已不再保留。}}",
+    "show_older": "顯示較舊的郵件"
   },
   "quote_header": {
     "reply_line": "在 {date}，{from} 寫道：",
@@ -4060,13 +6246,261 @@
     "date_label": "日期",
     "subject_label": "主題"
   },
+  "print_styles": {
+    "title": "列印",
+    "description": "列印的郵件、聯絡人和行事曆的樣式。",
+    "style_label": "列印樣式",
+    "style_description": "附加元件可以新增樣式，例如附有公司地址的信頭。",
+    "standard": "標準",
+    "from_plugin": "{name} ({plugin})"
+  },
   "pwa_install": {
     "title": "安裝 {appName}",
-    "description": "安裝我們的應用程式，以便快速存取並支援離線使用。",
+    "description": "安裝我們的應用程式，以便快速存取。",
     "not_now": "暫不",
     "install": "安裝",
     "dont_remind": "不再提醒",
     "dismiss_aria": "關閉安裝提示"
+  },
+  "app_update": {
+    "ready": "{appName} 新版本已準備就緒。",
+    "reload": "重新載入"
+  },
+  "offline": {
+    "settings": {
+      "title": "離線",
+      "description": "在此裝置上不需連線即可讀寫郵件。",
+      "keep_label": "在此裝置上保留郵件",
+      "keep_description": "在此瀏覽器中加密保留收件匣和你開啟過的資料夾最近 30 天的郵件，最多 250 MB。離線時可以閱讀、標記和移動郵件，寫好的郵件會在寄件匣中等待。登出時會全部刪除。",
+      "warning": "任何能使用此瀏覽器設定檔的人都能讀取這些郵件。請只在自己的裝置上開啟，並使用磁碟加密。",
+      "forbidden": "你的組織不允許在裝置上保留郵件。",
+      "unsupported": "此瀏覽器無法保留郵件供離線使用。",
+      "syncing": "正在將郵件儲存到此裝置…",
+      "usage": "此裝置上 {size}",
+      "usage_updated": "此裝置上 {size}，更新於 {time}",
+      "off_confirm_title": "關閉離線模式？",
+      "off_confirm_message": "{count, plural, other {寄件匣中有 # 封郵件尚未寄出。}}關閉後，這些郵件和此裝置上保留的郵件都會被刪除。",
+      "off_confirm": "關閉"
+    },
+    "outbox": {
+      "title": "寄件匣",
+      "description": "你離線時寫的郵件。此裝置恢復連線後會寄出。",
+      "empty": "沒有等待寄出的郵件。",
+      "no_subject": "（無主旨）",
+      "to": "收件者：{recipients}",
+      "status_waiting": "等待連線",
+      "status_sending": "正在寄出",
+      "status_failed": "無法寄出：{error}",
+      "status_uncertain": "寄出時連線中斷。再次寄出前請先查看「寄件備份」。",
+      "retry": "再次寄出",
+      "delete": "刪除",
+      "delete_confirm_title": "刪除這封郵件？",
+      "delete_confirm_message": "它尚未寄出，刪除後無法復原。",
+      "changes": "{count, plural, other {# 項}}已讀、標記或資料夾的變更將在恢復連線後送出。",
+      "status_held": "等待期間你的組織規則有所變更。請重新撰寫後再寄出。",
+      "retry_label": "再次寄出：{subject}",
+      "delete_label": "刪除：{subject}"
+    },
+    "banner": {
+      "offline": "你已離線。顯示的是此裝置上保留的郵件。你所做的變更或寫的郵件會在恢復連線後送出。",
+      "outbox": "寄件匣中有 {count, plural, other {# 封}}",
+      "server_down": "無法連線到郵件伺服器。顯示的是此裝置上保留的郵件。你所做的變更或寫的郵件會在伺服器恢復回應後寄出。"
+    },
+    "toast": {
+      "queued": "已儲存到寄件匣。恢復連線後會寄出。",
+      "sent": "已從寄件匣寄出：{subject}",
+      "send_failed": "寄件匣中的一封郵件無法寄出：{subject}",
+      "refused_delete": "永久刪除需要網路連線。請在連線後重試。",
+      "refused_other": "此操作需要網路連線。請在連線後重試。",
+      "forbidden": "你的組織關閉了離線模式。此裝置上保留的郵件已被刪除。",
+      "back_online": "已恢復連線。請重新載入以登入並寄出等待中的內容。",
+      "reload": "重新載入",
+      "held": "寄件匣中有一封郵件需要你處理：{subject}",
+      "lost": "這些郵件未寄出，已被刪除：{subjects}"
+    },
+    "signout": {
+      "title": "有未寄出的郵件，仍要登出？",
+      "message": "{count, plural, other {# 封郵件尚未寄出。}}登出會刪除它們。",
+      "confirm": "登出",
+      "lost": "這些郵件未寄出，並在你登出時被刪除：{subjects}"
+    },
+    "errors": {
+      "unavailable": "此操作需要網路連線。請在連線後重試。",
+      "plugins_down": "你的簽署或加密外掛程式在離線時無法執行。請在恢復連線後再寄出。",
+      "file_missing": "離線時附加的檔案已不在此裝置上。請重新附加。",
+      "no_sent_mailbox": "找不到「寄件備份」資料夾。",
+      "no_drafts_mailbox": "找不到「草稿」資料夾。"
+    }
+  },
+  "offlineConflicts": {
+    "title": "未套用的變更",
+    "description": "這些變更是您離線時做的。它們沒有被套用，郵件維持伺服器上的狀態。",
+    "changed": "已在其他裝置上變更，您的變更未被套用",
+    "changed_delete": "已在其他裝置上變更，未被刪除",
+    "gone": "伺服器上已沒有此郵件，您的變更未被套用",
+    "refused": "伺服器拒絕了此變更：{reason}",
+    "dismiss": "關閉",
+    "dismiss_label": "關閉關於 {subject} 的提示",
+    "banner": "未套用的變更：{count}",
+    "toast": "離線時的變更未被套用：{count} 項。可在寄件匣中查看。",
+    "storage_failed": "此裝置已沒有空間存放離線郵件。請釋出空間，或在設定中減少保留的內容。",
+    "signout_changes_title": "要在有未儲存變更時登出嗎？",
+    "signout_changes": "尚未到達伺服器的變更：{count} 項。登出會刪除它們。",
+    "store_unavailable": "目前無法開啟此裝置上的離線郵件。未傳送的郵件仍保留在這裡，應用程式會繼續嘗試。",
+    "store_reset": "無法讀取此裝置上的離線郵件，正在重新下載。未傳送的內容已遺失。",
+    "legacy_stranded": "此瀏覽器無法開啟舊版本保存的未傳送郵件。更新瀏覽器可能會找回它們。",
+    "store_private": "私密視窗無法保留供離線使用的郵件。",
+    "server_not_answering": "郵件伺服器沒有回應。請稍後再試。"
+  },
+  "offlineWipe": {
+    "note": "您的組織已從此裝置移除此帳號的資料。請登入以重新開始。",
+    "note_unsent": "您的組織已從此裝置移除此帳號的資料。已刪除的未傳送郵件:{count} 封。",
+    "settings_title": "從此裝置移除所有內容",
+    "settings_description": "用於將這台電腦送人或不再使用時。伺服器上的郵件會保留。",
+    "settings_button": "移除所有內容…",
+    "settings_wiping": "正在移除…",
+    "confirm_title": "要從此裝置移除所有內容嗎?",
+    "confirm_message": "這會刪除此應用程式為這裡所有帳號儲存在此裝置上的內容。伺服器上的郵件不受影響。",
+    "confirm_mail": "儲存在這裡的郵件、行事曆、聯絡人和檔案",
+    "confirm_unsent": "在這裡等待的未傳送郵件:{count} 封。它們將遺失。",
+    "confirm_keys": "S/MIME 和 OpenPGP 金鑰。要再次使用,需要您自己的備份。",
+    "confirm_plugins": "外掛程式儲存在這裡的資料",
+    "confirm_files": "為編輯而開啟的附件和等待附加的檔案",
+    "confirm_accounts": "所有帳號都將登出",
+    "confirm_button": "移除所有內容",
+    "note_unknown": "您的組織已從此裝置移除此帳戶的資料。未傳送的郵件可能也已被刪除。",
+    "refused_waiting": "等待新密碼的未傳送郵件：{count} 封。保留至 {date}。",
+    "refused_waiting_unknown": "可能有未傳送的郵件正在等待新密碼。保留至 {date}。",
+    "confirm_unsent_unknown": "這裡可能有未傳送的郵件。它們將會遺失。",
+    "confirm_templates": "儲存在此裝置上的郵件範本",
+    "session_waiting": "等待下次登入的未傳送郵件：{count} 封。保留至 {date}。",
+    "session_waiting_unknown": "可能有未傳送的郵件正在等待下次登入。保留至 {date}。",
+    "needs_sign_in": "需要登入",
+    "switcher_waiting": "未傳送郵件：{count} 封。將於 {date} 從此裝置刪除。",
+    "switcher_kept": "此裝置上的郵件將於 {date} 刪除。",
+    "sibling_waiting": "{name} 已登出。未傳送郵件：{count} 封。請在 {date} 前登入，否則將從此裝置刪除。",
+    "sibling_kept": "{name} 已登出。請在 {date} 前登入，否則郵件將從此裝置刪除。"
+  },
+  "offlineStorage": {
+    "keep_description": "在此裝置上加密保留你的郵件、行事曆、聯絡人和你選擇的檔案。離線時可以閱讀、標記和移動郵件，寫好的郵件會在寄件匣中等待。登出時會全部刪除。",
+    "window_label": "保留多久以內的內容",
+    "window_description": "更早的郵件和行事曆活動會從此裝置移除。連線時你仍可以開啟它們。",
+    "window_days": "{days, plural, other {# 天}}",
+    "window_year": "1 年",
+    "window_everything": "全部",
+    "attachments_label": "保留附件",
+    "attachments_description": "已保留郵件的附件和你離線保留的檔案，總共最多 {total}。最舊的先刪除。",
+    "total_locked": "你的組織最多允許 {size} 的附件和檔案。",
+    "attachment_cap_label": "保留的最大附件",
+    "usage_mail": "郵件和搜尋索引",
+    "usage_attachments": "附件",
+    "usage_calendar": "行事曆",
+    "usage_contacts": "聯絡人",
+    "usage_files": "離線保留的檔案",
+    "usage_row": "{size}（{count, plural, other {# 項}}）",
+    "progress_list": "正在列出郵件",
+    "progress_bodies": "正在下載郵件",
+    "progress_threads": "正在整理對話",
+    "progress_files": "正在下載檔案",
+    "progress_other": "正在把資料帶到此裝置",
+    "progress_count": "{done} / {total}",
+    "progress_count_open": "已完成 {done}",
+    "progress_left": "還剩約 {minutes, plural, other {# 分鐘}}",
+    "clear_label": "清除此帳號",
+    "clear_description": "刪除此裝置為該帳號保留的全部內容，然後重新下載。",
+    "clear_button": "清除…",
+    "clear_confirm_title": "在此裝置上清除該帳號？",
+    "clear_confirm_message": "此裝置為 {account} 保留的全部內容會被刪除並重新下載。伺服器上的郵件不受影響。",
+    "clear_confirm_unsent": "{count, plural, other {# 封未寄出的郵件將會遺失。}}",
+    "clear_confirm": "清除",
+    "persist_refused": "儲存空間不足時，此瀏覽器可能會刪除保留的郵件。安裝應用程式通常可以避免這種情況。",
+    "persist_retry": "請瀏覽器保留",
+    "safari_hint": "Safari 會在網站 7 天未造訪後刪除其資料。把 Loomix 加入主畫面或 Dock，郵件就能保留在此裝置上。",
+    "evicted": "瀏覽器刪除了此裝置上保留的郵件。正在重新下載。",
+    "evicted_lost": "{count, plural, other {# 封未寄出的郵件或變更已遺失。}}",
+    "evicted_dismiss": "好",
+    "storage_full_title": "裝置儲存空間已滿。",
+    "storage_full_text": "Loomix 已停止在此儲存郵件。請少保留一些郵件，或清除此帳號來騰出空間。",
+    "open_settings": "開啟設定",
+    "default_on": "Loomix 會把你的郵件保留在此裝置上，這樣沒有網路也能使用。你可以在設定中變更。",
+    "conflict_calendar": "行事曆活動",
+    "conflict_contacts": "聯絡人",
+    "kept_files_title": "離線保留的檔案",
+    "kept_state_kept": "在此裝置上",
+    "kept_state_waiting": "等待下載",
+    "kept_error_tooLarge": "太大，無法保留",
+    "kept_error_overLimit": "超出此裝置的限制",
+    "kept_error_notAllowed": "你的組織不允許保留檔案",
+    "kept_error_download": "無法下載",
+    "keep_offline": "離線保留",
+    "unpin": "不再離線保留",
+    "unpin_label": "不再離線保留 {name}",
+    "warning_desktop": "任何能使用這台電腦使用者帳號的人都可以閱讀這些郵件。請使用磁碟加密。",
+    "off_confirm_text": "這會刪除此裝置為 {account} 保留的全部內容。伺服器上的郵件不受影響。",
+    "unsent_changes": "{count, plural, other {# 項尚未送達伺服器的變更將會遺失。}}",
+    "clear_needs_connection": "需要連線，因為所有內容都會重新下載。",
+    "usage_label": "此裝置保留的內容",
+    "pin_not_ready": "此檔案還不在此裝置的清單中。請稍後再試。"
+  },
+  "keyProtection": {
+    "browser_note": "在瀏覽器中,這些郵件的金鑰與郵件位於同一個瀏覽器設定檔中。任何複製該設定檔的人都能讀取郵件,因此請使用磁碟加密。",
+    "no_secure_storage": "這台電腦沒有應用程式可用的安全金鑰儲存區,因此這些郵件的金鑰在磁碟上只是經過混淆。請使用磁碟加密。",
+    "wrap_failed": "這台電腦的安全金鑰儲存區沒有接受這些郵件的金鑰,因此金鑰沒有得到應有的保護。請重新啟動應用程式,並使用磁碟加密。",
+    "rekey_progress": "正在重新加密此裝置上的郵件:{percent}%。你可以繼續工作。",
+    "rekey_failed": "此裝置上郵件的重新加密沒有完成,因此舊金鑰仍能開啟郵件。應用程式會在下次啟動時重試。",
+    "reenroll_note": "通行密鑰和系統解鎖使用的是舊 PIN 的金鑰,因此已被移除。如果你要使用,請重新設定。"
+  },
+  "offlineDrafts": {
+    "title": "此裝置上的草稿",
+    "description": "這些草稿儲存在此裝置上。一旦能連線到伺服器，就會自動上傳。",
+    "saved_on_device": "已儲存在此裝置上",
+    "status_waiting": "正在等待伺服器",
+    "status_sending": "正在儲存到伺服器",
+    "status_uncertain": "正在檢查是否已到達伺服器",
+    "status_refused": "伺服器拒絕了此草稿：{error}",
+    "file_missing": "附件已不在此裝置上",
+    "open": "開啟",
+    "open_label": "開啟 {subject}",
+    "retry": "重試",
+    "retry_label": "重試 {subject}",
+    "toast_refused": "草稿 {subject} 無法儲存到伺服器。它仍保留在此裝置上。",
+    "toast_conflict": "草稿 {subject} 已在其他裝置上變更。兩個版本都會保留。",
+    "conflict_changed": "已在其他裝置上變更。兩個版本都在草稿中。",
+    "conflict_gone": "已在其他裝置上變更或刪除。您的版本在草稿中。",
+    "banner_refused": "伺服器拒絕的草稿：{count}",
+    "banner_waiting": "等待伺服器的草稿：{count}"
+  },
+  "offlineExport": {
+    "settings_label": "匯出已保存的郵件",
+    "settings_description": "將此裝置上的郵件儲存為 mbox 或 .eml 檔案。離線時也可使用。",
+    "title": "匯出已保存的郵件",
+    "description": "儲存此裝置保留的原件。.eml 檔案是完全相同的副本。mbox 檔案會加上其格式需要的標記,並把已讀和標幟狀態寫入每封郵件的標頭,取代原有內容。早於所選期間的郵件不包含在內。要儲存伺服器上的全部內容,請使用「匯出所有郵件」。",
+    "folders_label": "資料夾",
+    "all_folders": "所有資料夾",
+    "folder_kept": "此處 {kept} / {total}",
+    "loading": "正在讀取此裝置上的內容…",
+    "load_failed": "無法讀取此裝置上的郵件。",
+    "nothing_kept": "此裝置上尚未保存郵件。",
+    "kept": "此裝置上的原件:{kept} / {total} 封郵件",
+    "missing_online": "要從伺服器下載:{count}",
+    "missing_offline": "離線時無法匯出:{count}。連線後可以重試。",
+    "reason_attachments_off": "只有開啟「保留附件」時才會保留原始郵件。",
+    "reason_not_kept": "原始郵件最後下載,且僅在有空間時下載。",
+    "not_kept_attachments_off": "此裝置不保留附件,因此沒有原件:{count}",
+    "not_kept_not_kept": "此裝置上尚無原件:{count}",
+    "retry": "連線後重試",
+    "retry_online": "現在已連線,可以從伺服器取得。",
+    "retry_offline": "連線後可以重試。",
+    "settings_button": "匯出…",
+    "message_failed": "伺服器沒有提供這封郵件。",
+    "failed_generic": "匯出因錯誤而停止。請重試。",
+    "stopped_limit": "匯出在 {limit} 處停止,這是此瀏覽器能容納的上限。請選擇較少的資料夾,或使用 Chromium、Firefox 或桌面應用程式。",
+    "over_limit": "此瀏覽器最多能容納 {limit},而此選擇約為 {size}。請選擇較少的資料夾,或使用 Chromium、Firefox 或桌面應用程式。",
+    "no_room": "此次匯出約需 {size},而此瀏覽器還剩 {free}。請選擇較少的資料夾或釋放空間。",
+    "stopped_no_room": "瀏覽器沒有足夠空間完成匯出。請選擇較少的資料夾或釋放空間。",
+    "stopped_offline_off": "匯出已停止,因為此帳號不再於此裝置上保留郵件。",
+    "policy_unknown": "尚不清楚貴組織對此帳號的規則,因此匯出暫時關閉。",
+    "leftover_file": "無法從儲存位置移除檔案 {name}。它不完整,您可以將其刪除。"
   },
   "deep_link": {
     "message_not_found": "已無法使用此郵件。",
@@ -4080,6 +6514,14 @@
     "copy_event": "複製活動連結",
     "copied": "連結已複製",
     "copy_failed": "無法複製連結"
+  },
+  "connector_link": {
+    "opening": "正在開啟…",
+    "unknown_title": "此連結比目前的 {name} 更新",
+    "unknown_body": "它要開啟的內容是版本 {version} 無法辨識的。更新 {name} 後即可開啟。",
+    "malformed_title": "此連結不太對",
+    "malformed_body": "它要求 {label}，但參數 {param} 遺失或格式錯誤。未開啟任何內容。",
+    "open_app": "開啟 {name}"
   },
   "plugins": {
     "oauth_callback": {
@@ -4142,6 +6584,10 @@
       "accounts_heading": "已連線的帳號",
       "account_on": "{host} 上的 {label}",
       "account_waiting": "{host} 上的 {label}（尚未完成登入）",
+      "forward_heading": "郵件轉寄到",
+      "forward_hint": "這個外掛程式可以不經詢問轉寄郵件的地址。",
+      "forward_remove": "移除",
+      "forward_remove_label": "停止轉寄到 {address}",
       "disconnect": "中斷連線",
       "disconnect_failed": "無法中斷 {label} 的連線"
     },
@@ -4162,7 +6608,7 @@
       },
       "email_write": {
         "title": "變更和整理您的郵件",
-        "body": "為您的郵件新增或移除標籤、旗標和其他關鍵字，在您的信件匣之間移動郵件或將其移至封存，並儲存草稿。"
+        "body": "為您的郵件新增或移除標籤、旗標和其他關鍵字，在您的信件匣之間移動郵件或將其移至封存，並儲存草稿。它也可以儲存一小段資料，讓團隊信箱的每位成員都能讀取。"
       },
       "email_send": {
         "title": "在傳送前變更郵件",
@@ -4172,13 +6618,17 @@
         "title": "完整存取此應用程式",
         "body": "以與網頁郵件本身相同的權限執行。它可以讀取您所有的郵件和已儲存的金鑰，並代表您執行動作。請只對您完全信任的外掛程式允許。"
       },
+      "keystore": {
+        "title": "使用這台電腦上的憑證",
+        "body": "要求使用這台電腦或智慧卡上的憑證為郵件簽署及解密。應用程式會先詢問你。外掛程式絕不會取得私密金鑰，但在你允許期間，它可以用你的名義簽署，並讀取它解密的內容。"
+      },
       "email_raw_send": {
         "title": "傳送它自行建立的郵件",
         "body": "從您的帳號傳送完整的郵件，例如已簽署或已加密的郵件。"
       },
       "email_blob_read": {
-        "title": "讀取郵件的原始內容",
-        "body": "讀取您的郵件和附件的原始資料，以及傳送前您附加的每個檔案。"
+        "title": "讀取附件和郵件原始碼",
+        "body": "讀取附件（包括其中的文字和圖片）、您處理的郵件的完整原始碼，以及傳送前您附加的每個檔案。"
       },
       "email_blob_write": {
         "title": "在傳送前取代附件",
@@ -4196,6 +6646,10 @@
         "title": "變更您的行事曆",
         "body": "建立、變更和刪除活動。"
       },
+      "calendar_respond": {
+        "title": "回覆邀請",
+        "body": "接受或拒絕行事曆邀請。您的回覆會透過電子郵件寄給主辦人。"
+      },
       "contacts_read": {
         "title": "讀取您的聯絡人",
         "body": "搜尋和讀取您的通訊錄。"
@@ -4206,11 +6660,11 @@
       },
       "files_read": {
         "title": "讀取您的檔案",
-        "body": "瀏覽和開啟您帳號中儲存的檔案。"
+        "body": "尋找、開啟並讀取您帳戶中的檔案。"
       },
       "files_write": {
         "title": "變更您的檔案",
-        "body": "上傳、重新命名、移動和刪除您帳號中的檔案。"
+        "body": "在您的帳戶中儲存、建立、重新命名及移動檔案，並可阻止刪除檔案。"
       },
       "identity_read": {
         "title": "查看您的寄件身分",
@@ -4261,8 +6715,12 @@
         "body": "查看您的偏好設定和標籤定義。"
       },
       "settings_write": {
+        "title": "變更您的標籤",
+        "body": "新增、重新命名標籤並調整標籤順序，也可以阻止變更您的設定。"
+      },
+      "settings_change": {
         "title": "變更您的設定",
-        "body": "新增標籤、調整標籤順序，並變更您的偏好設定。"
+        "body": "變更應用程式的外觀和運作方式，例如主題、時間格式或閱讀區域。由您的組織設定的項目會維持不變。"
       },
       "security_read": {
         "title": "查看您的帳號安全性",
@@ -4278,7 +6736,11 @@
       },
       "account_read": {
         "title": "查看您的帳號",
-        "body": "查看您新增的帳號及其地址和伺服器。"
+        "body": "查看您新增的帳號及其地址和伺服器，以及哪些郵件帳號是團隊信箱。"
+      },
+      "directory_read": {
+        "title": "查詢人員",
+        "body": "在您組織的目錄中查詢人員。"
       },
       "http_post": {
         "title": "代表您使用網頁郵件伺服器",
@@ -4319,6 +6781,10 @@
       "ui_email_details": {
         "title": "在郵件詳細資料新增面板",
         "body": "在開啟的郵件旁邊或下方顯示它自己的面板。"
+      },
+      "ui_side_panel": {
+        "title": "在其他檢視中加入面板",
+        "body": "在行事曆、聯絡人、檔案和設定旁顯示自己的面板。"
       },
       "ui_download_file": {
         "title": "將檔案儲存到您的裝置",
@@ -4374,11 +6840,19 @@
       },
       "compose_read": {
         "title": "讀取您正在撰寫的郵件",
-        "body": "在編輯器中使用外掛程式時，讀取您正在撰寫的郵件內文。不包括簽名和引用的郵件。"
+        "body": "在編輯器中使用外掛程式時，讀取您正在撰寫的郵件：內文、主旨、收件者（包括密件副本）以及附件的名稱和大小。不包括簽名和引用的郵件。"
       },
       "compose_write": {
         "title": "修改您正在撰寫的郵件",
         "body": "在編輯器中使用外掛程式時，取代或新增您正在撰寫的郵件中的文字。每次修改都可以復原，是否寄出仍由您決定。"
+      },
+      "compose_check": {
+        "title": "檢查您寫的內容",
+        "body": "在您輸入時讀取您在編輯器中寫的內容，並可能傳送到它使用的服務。僅在校對開啟時進行，且郵件設定為簽署或加密期間不會傳送任何內容。在開啟該設定之前寫的文字可能已經被檢查過。"
+      },
+      "email_forward": {
+        "title": "轉寄您的郵件",
+        "body": "不必開啟撰寫視窗，即可將您帳號中的郵件連同附件一起轉寄。第一次轉寄到每個地址前都會先徵求您的同意。"
       },
       "ui_notifications": {
         "title": "顯示通知",
@@ -4394,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "新增到工作畫面",
-        "body": "在工作詳細資料中顯示它自己的區塊，並在工作清單中顯示按鈕。"
+        "body": "在工作詳細資料中顯示它自己的區塊，在工作清單中顯示按鈕，並可用它自己的工作清單取代 Loomix 的工作清單。"
       },
       "ui_files": {
         "title": "新增到檔案畫面",
@@ -4410,8 +6884,13 @@
       },
       "http_proxy": {
         "title": "使用您連線的帳號",
-        "body": "使用您或管理員設定的帳號或金鑰，透過 Loomix 的伺服器傳送要求。外掛程式永遠看不到密碼，但可以在該帳號所屬的伺服器上執行該帳號能做的任何動作。"
+        "body": "使用您或管理員設定的帳號或金鑰，透過 {appName} 的伺服器傳送要求。外掛程式永遠看不到密碼，但可以在該帳號所屬的伺服器上執行該帳號能做的任何動作。"
       }
+    },
+    "forward_approval": {
+      "title": "允許 {plugin} 將郵件轉寄到 {addresses} 嗎？",
+      "message": "{plugin} 想將「{subject}」連同附件轉寄到 {addresses}。如果允許，它之後可以不經詢問將郵件轉寄到這個地址。您可以在 設定 > 附加元件 中撤銷。",
+      "allow": "允許並轉寄"
     },
     "dialog": {
       "from_plugin": "來自外掛程式 {name}",
@@ -4427,9 +6906,9 @@
     },
     "connect": {
       "title": "連線至 {label}",
-      "intro_password": "{name} 想使用您的 {label} 帳號。Loomix 會將密碼保存在自己的伺服器上，只會傳送給 {host}。外掛程式永遠看不到密碼。",
-      "intro_password_any": "{name} 想使用您的 {label} 帳號。Loomix 會將密碼保存在自己的伺服器上，只會傳送給您在此輸入的伺服器。外掛程式永遠看不到密碼。",
-      "intro_signin": "{name} 想登入您的 {label} 帳號。請在此輸入伺服器，然後在該伺服器自己的頁面上登入。Loomix 會將取得的存取權保存在自己的伺服器上；外掛程式永遠看不到它。",
+      "intro_password": "{name} 想使用您的 {label} 帳號。{appName} 會將密碼保存在自己的伺服器上，只會傳送給 {host}。外掛程式永遠看不到密碼。",
+      "intro_password_any": "{name} 想使用您的 {label} 帳號。{appName} 會將密碼保存在自己的伺服器上，只會傳送給您在此輸入的伺服器。外掛程式永遠看不到密碼。",
+      "intro_signin": "{name} 想登入您的 {label} 帳號。請在此輸入伺服器，然後在該伺服器自己的頁面上登入。{appName} 會將取得的存取權保存在自己的伺服器上；外掛程式永遠看不到它。",
       "server": "伺服器位址",
       "server_hint": "cloud.example.com",
       "username": "使用者名稱",
@@ -4441,6 +6920,32 @@
       "error_server": "請輸入伺服器位址，例如 https://cloud.example.com",
       "error_save": "無法儲存：{error}"
     }
+  },
+  "send_guards": {
+    "not_running": "未傳送。貴組織要求的一項檢查目前未執行。請稍後再試。",
+    "stopped_working": "未傳送。貴組織要求的一項檢查已停止運作。請重新載入頁面。如果仍無法解決，請告知管理員。"
+  },
+  "compose_words": {
+    "undo_send": {
+      "label": "取消傳送",
+      "description": "按下傳送後，給您幾秒鐘撤回郵件。"
+    },
+    "reply_from_received": {
+      "label": "使用收件地址回覆",
+      "description": "從郵件寄達的地址回覆。適合擁有多個地址時使用。"
+    },
+    "require_tls": "僅透過安全連線投遞",
+    "require_tls_hint": "郵件本身不會加密。如果伺服器無法使用 TLS，郵件會被退回。",
+    "encrypt": "加密…",
+    "encrypt_hint": "需要 S/MIME 或 PGP 附加元件。將開啟設定。",
+    "quick_reply_to": "回覆給 {names}…",
+    "open_full_editor": "在完整編輯器中開啟",
+    "forward_to_label": "收件者",
+    "forward_cc_label": "副本"
+  },
+  "plugin_list": {
+    "filters": "篩選",
+    "remove_filter": "移除篩選條件 {label}"
   },
   "global_search": {
     "title": "全域搜尋",
@@ -4472,11 +6977,35 @@
   "top_bar": {
     "more": "更多選項"
   },
+  "windowChrome": {
+    "hide_offline_notice": "隱藏離線提示"
+  },
+  "shell": {
+    "resize": "調整大小",
+    "update_available": "有可用的更新",
+    "update_important": "有重要更新",
+    "folder_unread": "{count} 封未讀",
+    "folder_counts": "{unread} 封未讀，共 {total} 封",
+    "skip_to_content": "跳到內容",
+    "heading": "{place} – {app}",
+    "message_list": "郵件清單",
+    "reading_pane": "閱讀窗格",
+    "name_unread": "{name}，{count} 封未讀",
+    "expand_folder": "展開 {name}",
+    "collapse_folder": "收合 {name}",
+    "resize_sidebar": "調整側邊欄大小",
+    "resize_message_list": "調整郵件清單大小",
+    "resize_contact_list": "調整聯絡人清單大小",
+    "resize_side_panel": "調整側面板大小",
+    "admin_pages": "管理頁面",
+    "admin_search": "搜尋管理頁面",
+    "back": "返回"
+  },
   "plugin_pages": {
     "loading": "正在載入頁面",
     "not_available_title": "此頁面無法使用",
     "not_available_description": "新增此頁面的外掛程式已關閉或已不再安裝。",
-    "back_to_mail": "返回郵件"
+    "back_to_mail": "回到郵件"
   },
   "command_palette": {
     "title": "命令面板",
@@ -4484,14 +7013,30 @@
     "placeholder": "輸入命令",
     "no_results": "沒有相符的命令",
     "go_to": "前往{name}",
-    "compose": "新郵件",
+    "go_to_settings_page": "前往{name}設定",
+    "compose": "寫郵件",
     "search": "搜尋郵件",
     "theme_dark": "切換為深色主題",
     "theme_light": "切換為淺色主題",
     "shortcuts": "顯示鍵盤快速鍵",
     "group_navigation": "前往",
     "group_actions": "動作",
-    "group_plugins": "外掛程式"
+    "group_plugins": "外掛程式",
+    "group_account": "帳戶",
+    "switch_to": "切換到 {account}"
+  },
+  "menuAudit": {
+    "offline_header": "您已離線。部分操作需要連線。",
+    "files_new_folder": "新增資料夾…",
+    "files_new_file": "新增檔案…",
+    "files_new_text_file": "新增文字檔案…",
+    "files_upload_files": "上傳檔案…",
+    "files_upload_folder": "上傳資料夾…",
+    "files_share": "分享…",
+    "files_share_button": "分享",
+    "contacts_add_to_group": "新增至群組…",
+    "contacts_bulk_add_to_group": "新增至群組…",
+    "schedule_send": "排程寄送…"
   },
   "notification_center": {
     "title": "通知",
@@ -4503,5 +7048,1164 @@
     "unread_count": "{count} 則未讀",
     "level_error": "錯誤",
     "level_warning": "警告"
+  },
+  "accessibility_panel": {
+    "title": "無障礙",
+    "description": "文字大小、對比和動態效果。按 Alt+Shift+A 可隨時開啟。",
+    "button": "無障礙",
+    "all_settings": "全部無障礙設定",
+    "preset_applied": "{name}變更了 {count, plural, other {# 項設定}}。",
+    "command": "無障礙選項",
+    "command_keywords": "a11y 無障礙 輔助功能 文字大小 對比 動態效果 縮放"
+  },
+  "glossary": {
+    "what_is": "「{term}」是什麼意思？",
+    "terms": {
+      "jmap": {
+        "term": "JMAP",
+        "text": "JMAP 是這個網頁郵件與您的郵件伺服器溝通的新方式。您的郵件、行事曆和聯絡人都透過它載入。"
+      },
+      "imap": {
+        "term": "IMAP",
+        "text": "IMAP 是 Thunderbird、Apple Mail 等郵件應用程式從伺服器讀取郵件的常見方式。郵件會留在伺服器上。"
+      },
+      "smtp": {
+        "term": "SMTP",
+        "text": "SMTP 是郵件應用程式透過郵件伺服器寄出郵件的常見方式。"
+      },
+      "caldav": {
+        "term": "CalDAV",
+        "text": "CalDAV 讓其他應用程式（例如手機上的行事曆）可以顯示和修改您郵件伺服器上的行事曆。"
+      },
+      "carddav": {
+        "term": "CardDAV",
+        "text": "CardDAV 讓其他應用程式（例如手機上的聯絡人）可以顯示和修改您郵件伺服器上的通訊錄。"
+      },
+      "webdav": {
+        "term": "WebDAV",
+        "text": "WebDAV 讓其他應用程式和您電腦上的檔案管理員可以開啟您郵件伺服器上的檔案。"
+      },
+      "sieve": {
+        "term": "Sieve",
+        "text": "Sieve 是您的郵件伺服器用來撰寫篩選規則的語言。新郵件送達時，伺服器會執行這些規則，即使這個網頁郵件已關閉。"
+      },
+      "smime": {
+        "term": "S/MIME",
+        "text": "S/MIME 使用憑證為您的郵件簽章，讓別人知道郵件確實來自您；也能加密郵件，讓只有收件人能閱讀。"
+      },
+      "pgp": {
+        "term": "PGP",
+        "text": "PGP（OpenPGP）是另一種簽章和加密郵件的方式。它不使用憑證，而是使用您自己產生的一組金鑰。"
+      },
+      "public_key": {
+        "term": "公開金鑰",
+        "text": "公開金鑰是您的金鑰中可以分享給別人的部分。別人用它寄加密郵件給您，並驗證您的簽章。您的私密金鑰要保密。"
+      },
+      "two_factor": {
+        "term": "雙因素驗證",
+        "text": "雙因素驗證會在登入時要求第二道驗證，通常是手機應用程式上的驗證碼。只知道您密碼的人無法登入。"
+      },
+      "totp": {
+        "term": "TOTP",
+        "text": "TOTP 驗證碼是手機上驗證器應用程式顯示的 6 位數字，每 30 秒更換一次。"
+      },
+      "app_password": {
+        "term": "應用程式密碼",
+        "text": "應用程式密碼是專門給某一個郵件應用程式（例如 Thunderbird 或手機上的郵件應用程式）使用的額外密碼。您可以隨時刪除它，不必變更主要密碼。"
+      },
+      "access_token": {
+        "term": "存取權杖",
+        "text": "存取權杖是一串很長的代碼，讓應用程式代替密碼進入您的帳號。您可以在郵件服務供應商的設定中建立它。"
+      },
+      "oauth": {
+        "term": "OAuth",
+        "text": "使用 OAuth（單一登入）時，您會在所屬組織自己的登入頁面上登入。這個網頁郵件永遠看不到您的密碼。"
+      },
+      "identity": {
+        "term": "寄件身分",
+        "text": "寄件身分是您可以用來寄信的名稱和地址。每個寄件身分都可以有自己的簽名。"
+      },
+      "delegation": {
+        "term": "代理人",
+        "text": "設定代理人後，其他人（例如助理）可以代替您閱讀和整理郵件或行事曆。"
+      },
+      "push": {
+        "term": "推送通知",
+        "text": "即使這個網站已關閉，推送通知也會提醒您有新郵件。推送中繼會把提醒轉送到您的瀏覽器或手機，但它永遠看不到您的郵件。"
+      },
+      "sync": {
+        "term": "同步",
+        "text": "同步讓您所有裝置上的資料保持一致。在一台裝置上所做的變更會出現在其他裝置上。"
+      },
+      "cache": {
+        "term": "快取",
+        "text": "快取是您的資料在這個瀏覽器中的副本，能讓網頁郵件載入得更快。重新整理快取會從伺服器重新載入資料，伺服器上的內容不會被刪除。"
+      },
+      "sub_addressing": {
+        "term": "子地址功能",
+        "text": "子地址功能就是在地址中加上一個標籤，例如 name+shop@example.com。寄到這個地址的郵件仍會送到您這裡，您還可以依標籤分類。"
+      },
+      "encryption_at_rest": {
+        "term": "靜態資料加密",
+        "text": "靜態資料加密是指伺服器以加密形式儲存您的郵件。即使有人複製了伺服器的硬碟，也無法讀取郵件。"
+      },
+      "vcard": {
+        "term": "vCard",
+        "text": "vCard（.vcf）是聯絡人的常見檔案格式。大多數通訊錄都能匯入和匯出它。"
+      },
+      "icalendar": {
+        "term": "iCalendar",
+        "text": "iCalendar（.ics）是行事曆和活動的常見檔案格式。大多數行事曆應用程式都能匯入或訂閱它。"
+      },
+      "cors": {
+        "term": "CORS",
+        "text": "CORS 是瀏覽器的一條規則。伺服器必須先允許某個網站，瀏覽器才會讓這個網站與伺服器溝通。"
+      }
+    }
+  },
+  "help_links": {
+    "label": "無障礙與說明",
+    "statement": "無障礙聲明",
+    "feedback": "回報障礙",
+    "help": "說明",
+    "easy_read": "易讀版",
+    "sign_language": "手語",
+    "new_tab": "在新分頁中開啟"
+  },
+  "pwaNotify": {
+    "action_archive": "封存",
+    "action_mark_read": "標示為已讀",
+    "action_reply": "回覆",
+    "reply_placeholder": "撰寫回覆"
+  },
+  "structured_mail_calendar": {
+    "add_to_calendar": "新增到行事曆",
+    "update_in_calendar": "在行事曆中更新",
+    "remove_from_calendar": "從行事曆移除",
+    "in_calendar": "已在您的行事曆中",
+    "view_in_calendar": "在行事曆中檢視",
+    "select_calendar": "選取行事曆",
+    "added": "已新增到您的行事曆",
+    "updated": "行事曆已更新",
+    "removed": "已從您的行事曆移除",
+    "action_failed": "無法變更您的行事曆，請再試一次。",
+    "blocked": "某個外掛程式阻止了此行事曆變更。",
+    "title": {
+      "rental_car": "租車",
+      "rental_car_company": "租車：{company}"
+    },
+    "description": {
+      "reference": "訂位代號：{reference}",
+      "passengers": "乘客：{names}",
+      "seats": "座位：{seats}",
+      "checkin": "報到：{url}",
+      "manage": "管理訂位：{url}",
+      "ticket": "電子票：{url}",
+      "phone": "電話：{phone}",
+      "car": "車輛：{car}",
+      "tickets": "票號：{numbers}",
+      "party_size": "人數：{count}",
+      "added_from": "新增自 {domain} 寄來的郵件",
+      "added_from_subject": "新增自 {domain} 寄來的郵件「{subject}」"
+    }
+  },
+  "proofreading": {
+    "kind": {
+      "spelling": "拼字",
+      "grammar": "文法",
+      "style": "文風",
+      "other": "建議"
+    },
+    "popup": {
+      "label": "{kind}：{word}",
+      "no_suggestions": "沒有建議",
+      "suggestions": "建議",
+      "replace_with": "取代為 {text}",
+      "also": "{checker} 也指出了此問題",
+      "ignore": "忽略",
+      "add_to_dictionary": "加入字典",
+      "disable_rule": "關閉此規則",
+      "changed": "文字已變更。請等候下一次檢查。"
+    },
+    "list_item": "{word}：{message} 建議：{suggestion}",
+    "list_item_no_suggestion": "{word}：{message}",
+    "announce_count": "{count, plural, =0 {沒有拼字或文法問題} other {# 個拼字或文法問題}}",
+    "status": {
+      "title": "校對",
+      "off": "校對已關閉",
+      "paused": "校對已暫停",
+      "rate_limited": "檢查已暫停",
+      "unavailable": "無法使用檢查",
+      "checking": "正在檢查…",
+      "issues": "{count, plural, =0 {沒有問題} other {# 個問題}}"
+    },
+    "panel": {
+      "title": "校對",
+      "required": "您的組織要求開啟",
+      "check_message": "檢查此郵件",
+      "notice": "在您輸入時，您寫的文字會傳送到 {checkers} 進行檢查。您的簽名和引用的郵件不會傳送。郵件設定為簽署或加密期間不會傳送任何內容；但在開啟該設定之前寫的內容可能已經被檢查過。",
+      "turn_on": "開啟校對",
+      "paused_protected": "此郵件設定為簽署或加密期間，不會檢查任何內容。",
+      "paused_unknown": "{plugin} 可以在此處不顯示的情況下簽署或加密郵件，因此在它開啟期間不會檢查任何內容。",
+      "rate_limited": "{checker} 要求稍候。檢查將在一分鐘後恢復。",
+      "unavailable": "{checker} 目前無法檢查。您繼續輸入時它會重試。",
+      "no_issues": "未發現問題。",
+      "list_label": "此郵件中的問題",
+      "shortcuts": "下一個問題：{next}。上一個：{previous}。"
+    },
+    "notice": {
+      "on": "校對已開啟。在您輸入時，您寫的文字會傳送到 {checkers} 進行檢查，不包括您的簽名和引用的郵件。郵件設定為簽署或加密期間不會傳送任何內容；但在此之前寫的內容可能已經被檢查過。",
+      "forced": "您的組織已開啟校對。在您輸入時，您寫的文字會傳送到 {checkers} 進行檢查，不包括您的簽名和引用的郵件。郵件設定為簽署或加密期間不會傳送任何內容；但在此之前寫的內容可能已經被檢查過。",
+      "ok": "確定"
+    },
+    "send_warning": {
+      "title": "仍有未解決的問題，確定傳送嗎？",
+      "body": "此郵件中還有 {count, plural, other {# 個拼字或文法問題}}未解決。",
+      "review": "查看",
+      "send": "仍然傳送"
+    },
+    "settings": {
+      "title": "校對",
+      "description": "在您書寫時為拼字和文法錯誤加上底線，並提供修改建議。",
+      "enable": "輸入時檢查拼字和文法",
+      "enable_description": "您寫的文字會傳送到校對附加元件及其使用的服務，不包括您的簽名和引用的郵件。郵件設定為簽署或加密期間不會傳送任何內容。",
+      "no_checker": "未安裝校對附加元件。請聯絡管理員新增。",
+      "plugin_description": "將您寫的內容傳送到 {plugin}。",
+      "writing_language": "書寫語言",
+      "writing_language_description": "您通常使用的書寫語言。校對和瀏覽器的拼字檢查會使用它。",
+      "auto": "自動偵測"
+    },
+    "shortcuts": {
+      "next_issue": "下一個拼字或文法問題",
+      "previous_issue": "上一個拼字或文法問題"
+    }
+  },
+  "pwaWindows": {
+    "open_in_window": "在新視窗中開啟",
+    "save_all_to_folder": "全部儲存到資料夾…",
+    "saved_all": "{count, plural, other {已將 # 個附件儲存到 {folder}。}}",
+    "saved_partial": "已將 {total} 個附件中的 {saved} 個儲存到 {folder}。",
+    "save_failed": "無法將附件儲存到 {folder}。",
+    "popup_blocked": "瀏覽器封鎖了新視窗。請允許此網站顯示彈出式視窗，然後再試一次。",
+    "opening": "正在開啟…",
+    "session_ended_title": "你已在此視窗中登出",
+    "session_ended_body": "請開啟應用程式並登入，然後重新開啟此視窗。",
+    "open_app": "開啟應用程式",
+    "close_window": "關閉視窗",
+    "message_gone_title": "這封郵件已不存在",
+    "message_gone_body": "它已被刪除或移到其他帳戶。",
+    "message_moved": "這封郵件已移到其他資料夾。",
+    "message_moved_to": "這封郵件已移到 {folder}。",
+    "window_not_ready": "新視窗未能及時開啟。你的草稿仍保留在這裡。"
+  },
+  "desktopUi": {
+    "settings": {
+      "title": "應用程式視窗",
+      "double_click_label": "按兩下時在新視窗中開啟郵件",
+      "double_click_description": "按一下仍會在清單旁開啟郵件。",
+      "restore_label": "啟動時重新開啟視窗",
+      "restore_description": "結束時開啟的郵件和草稿視窗會恢復。"
+    },
+    "attachment": {
+      "open": "開啟",
+      "save_as": "另存新檔…",
+      "copy": "複製",
+      "copy_failed": "無法複製檔案。"
+    },
+    "menu": {
+      "file": "檔案",
+      "edit": "編輯",
+      "view": "檢視",
+      "message": "郵件",
+      "go": "前往",
+      "window": "視窗",
+      "help": "說明",
+      "new_window": "新增視窗",
+      "print": "列印…",
+      "save_pdf": "儲存為 PDF…",
+      "switch_connection": "變更連線…",
+      "close": "關閉",
+      "quit": "結束",
+      "undo": "還原",
+      "redo": "重做",
+      "cut": "剪下",
+      "copy": "拷貝",
+      "paste": "貼上",
+      "select_all": "全選",
+      "search": "搜尋郵件",
+      "refresh": "檢查新郵件",
+      "reading_pane": "閱讀窗格",
+      "pane_right": "在右側",
+      "pane_below": "在清單下方",
+      "pane_off": "關閉",
+      "zoom_in": "放大",
+      "zoom_out": "縮小",
+      "zoom_reset": "實際大小",
+      "full_screen": "全螢幕",
+      "open_in_window": "在新視窗中開啟",
+      "next_message": "下一封郵件",
+      "previous_message": "上一封郵件",
+      "next_unread": "下一封未讀郵件",
+      "mail": "郵件",
+      "files": "檔案",
+      "back": "返回",
+      "forward": "下一頁",
+      "minimize": "最小化",
+      "next_window": "下一個視窗",
+      "shortcuts": "鍵盤快速鍵",
+      "docs": "說明文件",
+      "settings": "設定…",
+      "about": "關於 Loomix",
+      "from_plugins": "更多外掛程式選項…",
+      "pick_gone": "此選單已過期。請重新開啟後再試一次。",
+      "bar_label": "選單"
+    },
+    "context": {
+      "add_to_dictionary": "將「{word}」加入字典",
+      "no_suggestions": "沒有建議",
+      "open_link": "開啟連結",
+      "copy_link": "拷貝連結",
+      "copy_address": "拷貝位址",
+      "save_image": "儲存圖片…",
+      "copy_image": "拷貝圖片"
+    },
+    "closing": {
+      "unsaved_title": "草稿無法儲存",
+      "unsaved_detail": "如果現在關閉，自上次儲存以來所寫的內容將會遺失。",
+      "close_anyway": "仍要關閉",
+      "unsent_title": "有郵件尚未寄出",
+      "unsent_one": "有 1 封郵件正在等待寄出，將在您下次開啟 Loomix 時寄出。",
+      "unsent_many": "有 {count} 封郵件正在等待寄出，將在您下次開啟 Loomix 時寄出。",
+      "quit": "結束",
+      "leave_title": "有未儲存的變更，確定要離開嗎？",
+      "leave_detail": "您在此頁面所做的變更尚未儲存。",
+      "leave": "離開",
+      "stay": "留下"
+    },
+    "spellcheck": {
+      "offer": "{language}拼字檢查需要字典。Loomix 可以從 Google 下載。您的文字不會被傳送。",
+      "download": "下載"
+    },
+    "restore": {
+      "unavailable_title": "目前無法開啟此草稿",
+      "unavailable_body": "草稿安全地保存在伺服器的「草稿」中。連線恢復後請再試一次。",
+      "try_again": "重試",
+      "close": "關閉"
+    }
+  },
+  "desktop_mail": {
+    "context_search_mail": "在郵件中搜尋「{text}」"
+  },
+  "mail_p2_desk": {
+    "reader_offline": "您已離線。開啟這封郵件需要網路連線。",
+    "reader_failed": "無法載入這封郵件。",
+    "retry": "重試",
+    "action_offline": "您已離線。此操作需要網路連線。",
+    "offline_bar": "您已離線。閱讀和變更郵件需要網路連線。",
+    "offline_default_on": "您的郵件保存在此裝置上，離線時也能閱讀。"
+  },
+  "desktopMenuBar": {
+    "always_show_label": "永遠顯示選單列",
+    "always_show_description": "否則按 Alt 鍵時顯示。",
+    "exit": "結束",
+    "tray_pause": "暫停通知",
+    "tray_pause_hour": "1 小時",
+    "tray_pause_tomorrow": "直到明天",
+    "tray_resume": "重新開啟通知",
+    "tray_open": "開啟 Loomix",
+    "tray_quit": "結束 Loomix",
+    "tray_exit": "結束 Loomix"
+  },
+  "desktopMenus": {
+    "save_draft": "儲存草稿",
+    "attach_files": "附加檔案…",
+    "shortcut_apps": "前往郵件、行事曆、聯絡人或檔案"
+  },
+  "desktopSaveOpen": {
+    "menu_open": "開啟…",
+    "menu_save_as": "另存新檔…",
+    "open_filter": "郵件、行程和聯絡人",
+    "save_filter": "電子郵件",
+    "folder_title": "選擇儲存郵件的資料夾",
+    "folder_button": "儲存到這裡",
+    "saved_many": "已儲存 {count} 封郵件。",
+    "save_failed": "有 {count} 封郵件無法儲存。",
+    "shortcut_open": "開啟已儲存的郵件、行程或聯絡人",
+    "shortcut_save_as": "將郵件另存為檔案"
+  },
+  "appLock": {
+    "section_title": "應用程式鎖定",
+    "section_desc": "在一段時間未使用後,在每個視窗和分頁中要求輸入 PIN。鎖定期間,在有人輸入 PIN 之前,應用程式無法讀取儲存在此裝置上的郵件。",
+    "enable_label": "使用 PIN 鎖定",
+    "enable_desc": "PIN 只保存在此裝置上。",
+    "protects_desc": "它能防範什麼:PIN 讓此裝置旁的人無法進入應用程式。當你開啟鎖定或變更 PIN 時,這裡儲存的郵件會取得新金鑰,這可能需要一點時間。它無法阻止在這台電腦上執行的程式、你安裝的瀏覽器擴充功能,也無法阻止複製應用程式檔案並有時間嘗試大量 PIN 的人,因此較長的 PIN 是值得的。在桌面應用程式中,嘗試 PIN 還需要你在這台電腦上的登入。你在伺服器上的帳戶不受影響。",
+    "enable_body": "每次應用程式鎖定時以及重新啟動後都需要它。",
+    "set_pin_title": "選擇 PIN",
+    "change_pin": "變更 PIN…",
+    "change_pin_title": "變更 PIN",
+    "pin_label": "PIN",
+    "pin_current": "目前的 PIN",
+    "pin_new": "新 PIN",
+    "pin_repeat": "重複 PIN",
+    "pin_hint": "至少 5 個字元。也可以使用字母,較長的 PIN 更難猜到。",
+    "pin_hint_policy": "您的組織要求至少 {count, plural, other {# 個字元}}。也可以使用字母。",
+    "pin_obvious": "這個 PIN 太容易被猜到。請避免重複、連續數字和常見組合。",
+    "pin_mismatch": "兩個 PIN 不一致。",
+    "pin_recovery": "如果忘記了,唯一的辦法是移除此裝置上的資料並重新登入。伺服器上的郵件會保留。此裝置上仍在等待傳送的郵件將遺失。",
+    "save": "儲存",
+    "cancel": "取消",
+    "save_failed": "未成功。請再試一次。",
+    "timeout_label": "鎖定時間",
+    "timeout_desc": "任一視窗或分頁未使用的時間。",
+    "lock_now": "立即鎖定",
+    "lock_now_desc": "立即鎖定所有視窗和分頁。",
+    "disable_title": "關閉應用程式鎖定?",
+    "disable_body": "輸入 PIN 以將其關閉。",
+    "disable_confirm": "關閉",
+    "passkey_label": "密碼金鑰",
+    "passkey_desc": "使用能夠保護金鑰的密碼金鑰或安全金鑰解鎖。並非全部都支援,PIN 仍然可用。",
+    "passkey_add": "新增密碼金鑰…",
+    "passkey_add_title": "新增密碼金鑰",
+    "passkey_remove": "移除",
+    "passkey_added": "已新增密碼金鑰。",
+    "passkey_no_prf": "此密碼金鑰無法保護金鑰。PIN 仍然可用。",
+    "passkey_failed": "密碼金鑰無法運作。請輸入 PIN。",
+    "use_passkey": "使用密碼金鑰",
+    "use_hello": "使用 Windows Hello",
+    "use_touchid": "使用 Touch ID",
+    "os_add": "開啟…",
+    "os_add_title": "使用 {method}",
+    "os_remove": "關閉",
+    "os_desc": "{method} 是應用程式進行的檢查。確認後,應用程式從此電腦的加密儲存空間讀取金鑰。在您的使用者帳戶下執行的程式不需 {method} 也能讀取,因此 PIN 的保護更強。PIN 仍然可用。",
+    "os_failed": "未成功。請輸入 PIN。",
+    "lock_title": "{app} 已鎖定",
+    "locking": "正在鎖定…",
+    "pin_prompt": "輸入 PIN 以繼續。",
+    "unlock": "解鎖",
+    "unlocking": "正在解鎖…",
+    "wrong_pin": "此 PIN 不正確。",
+    "unlock_failed": "解鎖未成功。請再試一次。",
+    "blocked_later": "嘗試次數過多。請稍後再試。",
+    "forgot": "忘記了 PIN?",
+    "forgot_title": "移除本機資料並登出?",
+    "forgot_body": "忘記的 PIN 無法復原。這會移除此裝置上保存的郵件並登出所有帳戶,讓您可以重新登入。伺服器上的郵件會保留。此裝置上仍在等待傳送的郵件將遺失。",
+    "forgot_provider": "如果你透過組織的登入頁面登入，該登入會在那裡保持開啟。下次在此登入時，會在允許的情況下要求該頁面重新登入。",
+    "forgot_confirm": "移除並登出",
+    "unlock_in_main": "請在主視窗中解鎖。",
+    "open_main": "前往主視窗",
+    "setup_required_title": "您的組織要求使用應用程式鎖定",
+    "setup_required_body": "請選擇一個 PIN。鎖定後開啟 {app} 時需要它。",
+    "draft_saved_notice": "您正在撰寫的內容已在鎖定前儲存到草稿。",
+    "use_hello_name": "Windows Hello",
+    "use_touchid_name": "Touch ID",
+    "timeout_option": "{count, plural, other {# 分鐘}}",
+    "blocked_seconds": "嘗試次數過多。請在 {count, plural, other {# 秒}}後再試。",
+    "blocked_minutes": "嘗試次數過多。請在 {count, plural, other {# 分鐘}}後再試。"
+  },
+  "appLockHello": {
+    "switch_label": "使用 Windows Hello 解鎖",
+    "switch_desc": "使用臉部、指紋或 Windows PIN。應用程式的 PIN 仍可使用。",
+    "protects": "開啟 Windows Hello 後，Windows 會為此應用程式保管一把金鑰，只有在 Windows Hello 確認是你本人之後才能使用。應用程式的金鑰也會用它鎖住，因此解鎖需要你的臉部、指紋或 Windows PIN，這台電腦上的其他程式不經 Windows 先詢問你就無法使用這把金鑰。應用程式的 PIN 仍可使用，若 Windows Hello 被重設或關閉，你需要用它解鎖。",
+    "enable_title": "開啟 Windows Hello",
+    "enable_body": "輸入應用程式的 PIN。之後 Windows 會請你用 Windows Hello 確認。",
+    "enable_failed": "無法開啟 Windows Hello。請再試一次。",
+    "cancelled": "Windows Hello 已取消。",
+    "unsupported": "這台電腦上的 Windows Hello 無法保護金鑰。你的 PIN 仍可使用。",
+    "unavailable": "這台電腦上沒有可用的 Windows Hello。",
+    "busy": "Windows Hello 忙碌中或已被鎖定。請稍後再試。",
+    "off_after_pin_change": "變更 PIN 後 Windows Hello 沒有確認，所以它現在已關閉。如果你使用它，請重新開啟。",
+    "prompt": "請用 Windows Hello 確認是你本人。",
+    "waiting": "正在等待 Windows Hello…",
+    "use_hello": "使用 Windows Hello 解鎖",
+    "use_pin": "改用 PIN",
+    "failed": "Windows Hello 沒有解鎖應用程式。請輸入 PIN。",
+    "gone": "Windows Hello 在這台電腦上已無法解鎖應用程式。請輸入 PIN。"
+  },
+  "uxs_general": {
+    "time_zone_common": "常用時區",
+    "time_zone_all": "所有時區",
+    "time_zone_search": "搜尋時區",
+    "time_zone_no_match": "找不到時區",
+    "time_zone_desktop_description": "以此時區顯示郵件和行程的時間。如果不選擇，則使用電腦的時區。",
+    "app_lock_desc_desktop": "在一段時間未使用後，在每個視窗中要求輸入 PIN。鎖定期間，在有人輸入 PIN 之前，應用程式無法讀取儲存在此裝置上的郵件。",
+    "app_lock_timeout_desc_desktop": "任一視窗未使用的時間。",
+    "app_lock_now_desc_desktop": "立即鎖定所有視窗。",
+    "app_lock_protects_toggle": "這能防範什麼？",
+    "app_lock_timeout_hours": "{count, plural, other {# 小時}}",
+    "app_lock_until_screen": "螢幕鎖定時",
+    "app_lock_until_session": "登出或重新啟動時",
+    "desktop_attention_title": "在這台電腦上"
+  },
+  "uxs2_ident": {
+    "your_name": {
+      "label": "你的名稱",
+      "description": "你寄信給別人時,對方會在你的地址旁看到這個名稱。",
+      "saved": "你的名稱已儲存。",
+      "error": "無法儲存你的名稱。請再試一次。"
+    },
+    "addresses": {
+      "description": "你可以用來寄信的地址,每個地址都有自己的名稱和簽名。",
+      "label": "你的地址",
+      "count": "{count, plural, =0 {還沒有地址} other {# 個地址}}",
+      "manage": "編輯地址…",
+      "modal_title": "你的電子郵件地址",
+      "add": "新增地址",
+      "edit": "編輯地址",
+      "added": "已新增地址。",
+      "saved": "已儲存地址。",
+      "deleted": "已刪除地址。",
+      "delete_title": "要刪除這個地址嗎?"
+    },
+    "signatures": {
+      "title": "簽名",
+      "description": "加在你所寫郵件的結尾。每個地址都有自己的簽名。",
+      "saved": "已儲存簽名。",
+      "error": "無法儲存簽名。請再試一次。",
+      "no_addresses": "還沒有可以寄信的地址。"
+    },
+    "search": {
+      "addresses": "身分 別名 寄件者 寄件者地址 寄件地址 identity alias sender",
+      "signatures": "簽名 郵件簽名 頁尾 身分 寄件者 寄件地址 signature",
+      "your_name": "顯示名稱 全名 寄件者名稱 display name"
+    }
+  },
+  "desktop_sign_in": {
+    "server_needed": "請先輸入伺服器位址。",
+    "server_declined": "你沒有允許此伺服器,因此沒有傳送任何內容給它。",
+    "server_invalid": "此伺服器位址無效。"
+  },
+  "desktop_browser_sign_in": {
+    "button": "使用瀏覽器登入…",
+    "waiting": "正在等候瀏覽器…",
+    "waiting_hint": "請在瀏覽器中完成登入。你的密碼管理工具可以在瀏覽器中使用。",
+    "cancel": "取消",
+    "or_here": "或在此登入",
+    "timed_out": "瀏覽器登入耗時過長。請再試一次。",
+    "no_browser": "Loomix 無法開啟瀏覽器。請再試一次,或在此登入。",
+    "failed": "透過瀏覽器登入失敗。請再試一次。",
+    "handoff_banner": "這台電腦上的一個程式為 Loomix 應用程式要求了這次登入。此瀏覽器不會登入 Loomix。如果不是你發起的,請關閉此分頁。",
+    "consent_title": "要登入 Loomix 應用程式嗎?",
+    "consent_description": "這台電腦上連接埠 {port} 的一個程式正在要求 {username} 的登入資訊。只有在你剛剛按下這裡 Loomix 應用程式中的「使用瀏覽器登入…」時才繼續。否則可能有人想進入你的帳戶:請選擇「暫不」。",
+    "consent_confirm": "登入應用程式",
+    "consent_cancel": "暫不",
+    "page_done": "你可以關閉此分頁並返回 Loomix。",
+    "page_failed": "登入失敗。請返回 Loomix 並再試一次。",
+    "page_link_used": "此連結只能使用一次。請返回 Loomix 重新開始。",
+    "page_title": "登入 {server}",
+    "page_intro": "此頁面來自這台電腦上的 Loomix 應用程式。你的密碼只會傳送到 {server}。",
+    "page_username": "電子郵件地址或使用者名稱",
+    "page_password": "密碼",
+    "page_code": "雙重驗證碼",
+    "page_submit": "登入",
+    "page_wrong_password": "伺服器不接受此使用者名稱和密碼。",
+    "page_code_needed": "此帳戶還需要雙重驗證碼。請重新輸入密碼和驗證碼。",
+    "page_no_answer": "Loomix 無法登入。請檢查伺服器是否可連線,然後再試一次。",
+    "declined": "你在瀏覽器中拒絕了,因此沒有登入。",
+    "too_many": "來自此網路的登入嘗試過多。請等幾分鐘後再試一次。",
+    "page_declined": "沒有交出任何內容。你可以關閉此分頁。"
+  },
+  "uxs_login": {
+    "theme_button": "淺色或深色",
+    "server_label": "郵件伺服器",
+    "server_placeholder": "mail.example.com",
+    "server_looking": "正在尋找你的郵件伺服器…",
+    "server_found": "郵件伺服器：{server}",
+    "server_change": "變更",
+    "server_change_hint": "請輸入另一個伺服器位址。",
+    "server_not_found": "找不到這個地址的郵件伺服器。請在這裡輸入，例如 mail.example.com。",
+    "server_needed": "請輸入你的郵件伺服器位址。",
+    "server_invalid": "這不是伺服器位址。請依 mail.example.com 的格式輸入。",
+    "email_needed": "請先輸入你的電子郵件地址。",
+    "other_ways": "其他登入方式",
+    "trouble": "遇到問題？",
+    "trouble_cors": "你的郵件伺服器必須允許從這個網站登入。如果無法登入，請負責郵件伺服器的人允許。",
+    "provider_unsupported": "{provider} 不支援 JMAP（Loomix 與郵件伺服器溝通的方式），所以 Loomix 目前還無法直接連線。"
+  },
+  "login_a11y": {
+    "caps_lock_on": "大寫鎖定已開啟",
+    "language_button": "語言：{language}"
+  },
+  "ux_p3_settings": {
+    "connection": {
+      "title": "要變更 Loomix 的連線方式嗎？",
+      "message": "Loomix 會重新啟動並詢問連線方式：使用你的電子郵件地址，或透過你所屬組織的 Loomix。這台電腦上的帳戶會保持登入。",
+      "confirm": "變更",
+      "org_link": "改用我所屬組織的 Loomix",
+      "add_account": "新增帳戶…"
+    },
+    "picture": {
+      "button": "圖片",
+      "title": "插入圖片",
+      "address": "圖片的網址",
+      "address_hint": "圖片會留在網路上，並從那裡顯示。",
+      "description": "說明",
+      "invalid": "請輸入以 https:// 開頭的網址。",
+      "insert": "插入"
+    },
+    "sign_in_page": {
+      "open_app": "開啟 Loomix",
+      "done_as": "已以 {address} 登入。你可以關閉此分頁。"
+    }
+  },
+  "desktop_updates": {
+    "title": "更新",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix 會自動檢查更新。",
+    "status_checking": "正在檢查更新…",
+    "status_up_to_date": "已是最新版本。",
+    "status_downloading": "正在下載版本 {version}…",
+    "status_ready": "版本 {version} 已準備好。將在下次結束時安裝，也可以立即重新啟動。",
+    "status_available": "版本 {version} 可用。",
+    "status_available_per_machine": "版本 {version} 可用。Loomix 是為這台電腦的所有使用者安裝的，因此由管理員安裝更新。",
+    "status_older": "你使用的是測試版。穩定版 {version} 較舊，因此 Loomix 會維持目前版本，直到穩定版趕上。",
+    "status_error": "無法檢查更新。Loomix 稍後會再試。",
+    "status_off": "你的組織已關閉應用程式內更新。",
+    "check": "立即檢查",
+    "restart": "重新啟動以更新",
+    "download": "下載",
+    "install_older": "安裝舊版本…",
+    "channel_label": "更新管道",
+    "channel_description": "測試版較早推出，問題可能較多。",
+    "channel_stable": "穩定版",
+    "channel_beta": "測試版",
+    "shell_restart": "重新啟動以更新",
+    "shell_check": "檢查更新…",
+    "shell_available": "Loomix {version} 可用",
+    "shell_ready_title": "Loomix 已準備好更新",
+    "shell_ready_body": "版本 {version} 將在下次結束時安裝。按一下立即重新啟動。草稿會先儲存。",
+    "shell_available_title": "Loomix 有新版本",
+    "shell_none_title": "Loomix 已是最新",
+    "shell_none_detail": "你的版本是 {version}。",
+    "shell_failed_title": "Loomix 無法檢查更新",
+    "shell_failed_detail": "請檢查網路連線，稍後再試。沒有任何變更。",
+    "shell_beta_title": "切換到測試版？",
+    "shell_beta_detail": "你會更早收到新版本，但問題可能較多。要切回，請安裝較舊的穩定版，或等待穩定版趕上。",
+    "shell_beta_confirm": "切換到測試版",
+    "shell_older_title": "回到 Loomix {version}？",
+    "shell_older_detail": "你使用的是測試版 {current}。穩定版 {target} 較舊，可能讀不了測試版在這台電腦上儲存的內容。郵件仍在伺服器上，但離線儲存的郵件可能會重新下載，未傳送的變更可能遺失。如果等待，穩定版趕上後你可以無需此步驟切換。",
+    "shell_older_confirm": "安裝舊版本"
+  },
+  "desktop_keystore": {
+    "title": "這台電腦上的憑證",
+    "description": "此伺服器可以要求使用你的憑證和智慧卡。每次使用憑證前仍會詢問你。",
+    "label": "此伺服器的存取權",
+    "label_description": "收回你的許可。伺服器需要重新詢問。",
+    "revoke": "收回",
+    "revoked": "已收回許可"
+  },
+  "desktop_certificates": {
+    "picker_title": "{host} 要求提供憑證",
+    "picker_detail": "伺服器想確認你的身分。你選擇的憑證只會傳送到此伺服器。如果你不認識此伺服器，請不要傳送。",
+    "picker_issued": "發行者：{issuer}，有效期限至 {date}",
+    "picker_remember": "為 {host} 記住此選擇",
+    "picker_none": "不傳送憑證",
+    "picker_more": "更多憑證…"
+  },
+  "desktopOs": {
+    "section_title": "桌面應用程式",
+    "section_description": "應用程式如何與您的電腦配合。",
+    "close_to_tray_label": "關閉時繼續在系統匣中執行",
+    "close_to_tray_description": "關閉視窗後，新郵件和提醒仍會送達。",
+    "start_at_login_label": "登入電腦時啟動",
+    "start_at_login_description": "您登入時應用程式會自動啟動。",
+    "start_minimized_label": "在系統匣中啟動",
+    "start_minimized_description": "登入時不開啟視窗。請透過系統匣圖示開啟。",
+    "attention_label": "有新郵件時閃爍工作列",
+    "attention_mac_label": "有新郵件時讓 Dock 圖示跳動",
+    "attention_description": "僅在應用程式不在前景時。",
+    "quiet_hours_label": "勿擾時段",
+    "quiet_hours_description": "此時段沒有通知和聲音。郵件仍會送達。",
+    "quiet_hours_from": "從",
+    "quiet_hours_to": "到",
+    "show_shortcut_label": "使用鍵盤快速鍵顯示應用程式",
+    "show_shortcut_description": "{keys} 可從任何其他應用程式將此應用程式帶到前景。",
+    "show_shortcut_taken": "其他應用程式正在使用 {keys}。請關閉該應用程式，或關閉此選項後再開啟。",
+    "default_app_label": "預設郵件應用程式",
+    "default_app_description": "使用此應用程式開啟郵件連結以及 .eml、.ics 和 .vcf 檔案。",
+    "default_app_is_default": "此應用程式會開啟您的郵件連結。",
+    "default_app_button": "選擇預設應用程式…",
+    "new_mail": "新郵件",
+    "no_subject": "（無主旨）",
+    "action_delete": "刪除",
+    "copy_as_file": "複製為檔案",
+    "copied": "檔案已複製。您可以將其貼到資料夾中。",
+    "copy_failed": "無法複製檔案。",
+    "reply_lost": "無法保留您輸入的回覆。請開啟郵件並在其中回覆。"
+  },
+  "ux_pim_menu": {
+    "search_contacts": "搜尋聯絡人",
+    "search_files": "搜尋檔案",
+    "import": "匯入",
+    "import_mail": "郵件…",
+    "import_calendar": "行事曆…",
+    "import_contacts": "聯絡人…"
+  },
+  "ux_p2_pim_cm": {
+    "menu_refresh": "重新整理",
+    "menu_today": "今天",
+    "menu_next_period": "下一個期間",
+    "menu_previous_period": "上一個期間",
+    "account_scope_label": "正在顯示 {address}。切換帳號",
+    "account_scope_menu": "切換帳號",
+    "merge_links": "連結",
+    "merge_photo": "相片",
+    "merge_kept": "保留",
+    "import_show": "顯示"
+  },
+  "ux_p3_pim_pc": {
+    "selection_title": "{count, plural, other {已選取 # 位聯絡人}}",
+    "selection_more": "以及另外 {count} 位",
+    "no_addresses": "所選聯絡人都沒有電子郵件地址。",
+    "task_open": "開啟",
+    "due_next_week": "下週",
+    "due_none": "無截止日期",
+    "due_pick": "選擇日期…",
+    "move_to_list": "移到清單",
+    "dupes_legend": "{count, plural, other {# 位已在聯絡人中：}}",
+    "dupes_skip": "略過",
+    "dupes_update": "更新現有聯絡人",
+    "dupes_updates": "更新聯絡人",
+    "upload_cancelled": "已取消上傳",
+    "upload_cancelled_partial": "取消前已上傳 {count, plural, other {# 個檔案}}",
+    "download_cancelled": "已取消下載"
+  },
+  "desktopEdit": {
+    "edit": "編輯",
+    "edit_named": "編輯 {name}",
+    "opened": "{name} 已在其程式中開啟。請在那裡儲存變更,之後會詢問你要如何處理這些變更。",
+    "offers_label": "已編輯的附件",
+    "changed_title": "{name} 已變更",
+    "changed_body": "你在其他程式中儲存了變更。要如何處理?",
+    "reply": "附加到回覆",
+    "new_message": "附加到新郵件",
+    "open_draft": "開啟草稿",
+    "save_copy": "儲存複本…",
+    "discard": "捨棄編輯…",
+    "discard_title": "要捨棄對 {name} 的編輯嗎?",
+    "discard_detail": "編輯後的複本會被刪除。原始附件不會改變。",
+    "discard_confirm": "捨棄",
+    "cancel": "取消",
+    "update": "更新附件",
+    "no_app": "這部電腦上沒有程式能開啟此檔案。",
+    "blocked_type": "此類檔案可能以程式方式執行,因此無法開啟進行編輯。",
+    "blocked_policy": "你的組織不允許在此裝置上儲存附件。",
+    "removed_policy": "你的組織已不再允許此操作,因此 {name} 的編輯複本已被刪除。",
+    "too_large": "此檔案太大,無法開啟進行編輯。",
+    "too_many": "開啟編輯的檔案太多。請先處理完其中一些。",
+    "failed": "無法開啟檔案進行編輯。",
+    "read_busy": "其他程式仍在使用 {name}。請在那裡關閉後再試一次。",
+    "read_failed": "無法讀取 {name} 的編輯複本。",
+    "send_stale_title": "{name} 有未包含在此郵件中的編輯",
+    "send_stale_detail": "如果現在傳送,郵件將使用舊版本。你的編輯最多在這部電腦上保留 30 天,直到你決定如何處理。",
+    "send_stale_send": "仍要傳送",
+    "send_stale_back": "返回",
+    "signout_title": "要登出並刪除你的編輯嗎?",
+    "signout_confirm": "登出",
+    "lock_note": "應用程式鎖定期間,透過「編輯」開啟的檔案仍在其程式中保持開啟,並且在這部電腦上仍可讀取。解鎖前無法開啟新檔案。",
+    "changed_title_hidden": "已儲存編輯過的附件",
+    "last_chance": "30 天未使用。此複本將於明天刪除。",
+    "held_named": "{names}:仍在其他程式中開啟,因此複本暫時無法刪除。在那裡關閉後就會刪除。",
+    "held_unnamed": "某個附件的複本仍在其他程式中開啟,暫時無法刪除。在那裡關閉後就會刪除。",
+    "removed_policy_held": "你的組織已不再允許此操作。{name} 仍在其他程式中開啟,因此要在那裡關閉後才能刪除複本。",
+    "removed_policy_hidden": "你的組織已不再允許編輯附件,因此已移除一個編輯複本。",
+    "outside_note": "該程式本身的復原檔案和最近使用的檔案清單不在此應用程式可清除的範圍內。",
+    "clear_title": "要刪除編輯過的附件嗎?",
+    "clear_confirm": "刪除",
+    "signout_changed": "尚未附加或儲存,現在將刪除:{names}。",
+    "signout_held": "仍在其他程式中開啟,因此要在那裡關閉後才會刪除:{names}。"
+  },
+  "desktopPrint": {
+    "title": "列印",
+    "pages_one": "1 頁",
+    "pages_many": "{count} 頁",
+    "preparing": "正在準備預覽…",
+    "preview_failed": "無法產生預覽。",
+    "preview_label": "預覽",
+    "destination": "目的地",
+    "save_as_pdf": "另存為 PDF",
+    "pages": "頁面",
+    "pages_all": "全部",
+    "pages_custom": "自訂",
+    "pages_example": "例如 1-3, 5",
+    "pages_invalid": "請輸入 1 到 {count} 之間的頁面，例如 1-3, 5。",
+    "copies": "份數",
+    "layout": "版面配置",
+    "portrait": "直向",
+    "landscape": "橫向",
+    "color": "色彩",
+    "color_color": "彩色",
+    "color_mono": "黑白",
+    "more": "更多設定",
+    "paper": "紙張大小",
+    "paper_printer": "印表機預設值",
+    "margins": "邊界",
+    "margins_default": "預設",
+    "margins_none": "無",
+    "margins_minimum": "最小",
+    "scale": "縮放比例 (%)",
+    "options": "選項",
+    "header_footer": "頁首和頁尾",
+    "background": "背景圖形",
+    "print": "列印",
+    "save": "儲存",
+    "cancel": "取消",
+    "system_dialog": "使用系統對話方塊列印…",
+    "failed_title": "無法列印",
+    "failed_detail": "印表機未接受這項工作。請確認印表機已開啟，然後再試一次。"
+  },
+  "files_sync": {
+    "title": "這部電腦上的檔案",
+    "drive": {
+      "title": "檔案磁碟機",
+      "label": "將檔案顯示為磁碟機",
+      "description": "您的檔案會像磁碟機一樣顯示在檔案總管中。檔案在開啟時才會下載。",
+      "unsupported": "需要 Windows 10 版本 1809 或更新版本。",
+      "root_name": "檔案磁碟機",
+      "letter_label": "磁碟機代號",
+      "letter_description": "在檔案總管中為磁碟機指定專屬的代號。",
+      "letter_none": "無代號"
+    },
+    "folders": {
+      "title": "已同步的資料夾",
+      "description": "這部電腦上的一個資料夾和檔案中的一個資料夾會雙向保持一致。",
+      "empty": "尚未同步任何資料夾。",
+      "forced_off": "您的組織已關閉資料夾同步。其中的檔案會保留在這部電腦上。",
+      "add": "新增資料夾…",
+      "loading": "正在載入您的資料夾…",
+      "load_failed": "無法載入您在檔案中的資料夾。請再試一次。",
+      "pick_title": "要與檔案中的哪個資料夾同步？",
+      "pick_confirm": "選擇這部電腦上的資料夾…",
+      "paired_with": "與檔案中的 {folder} 同步",
+      "pause": "暫停",
+      "resume": "繼續",
+      "remove": "移除…",
+      "remove_title": "要停止同步此資料夾嗎？",
+      "remove_message": "這部電腦上的檔案和檔案中的檔案都會保持原樣。變更將不再於兩者之間同步。",
+      "remove_confirm": "停止同步",
+      "add_failed": {
+        "overlap": "此資料夾位於已同步的資料夾中、包含已同步的資料夾，或者是系統資料夾。請選擇其他資料夾。",
+        "denied": "應用程式無法使用此資料夾。請選擇其他資料夾。",
+        "policy": "您的組織不允許此操作。",
+        "failed": "無法新增資料夾。請再試一次。"
+      }
+    },
+    "status": {
+      "starting": "正在啟動…",
+      "idle": "已是最新狀態。上次同步於 {time}",
+      "idle_never": "已是最新狀態",
+      "syncing": "正在同步：已完成 {done} 個，還剩 {pending} 個",
+      "paused": "已暫停",
+      "offline": "離線。{count, plural, =0 {變更正在等待伺服器} other {# 項變更正在等待伺服器}}",
+      "error": "已停止：{reason}",
+      "confirm_delete": "已暫停，請先回答下方的問題",
+      "blocked": "已被您的組織關閉"
+    },
+    "mass_delete": {
+      "title": "要刪除 {count, plural, other {# 個項目}}嗎？",
+      "local": "已從這部電腦上的 {folder} 中刪除 {count, plural, other {# 個項目}}。也要在檔案中刪除嗎？",
+      "remote": "已從檔案中的 {folder} 刪除 {count, plural, other {# 個項目}}。也要在這部電腦上刪除嗎？",
+      "allow": "{count, plural, other {刪除}}",
+      "restore": "{count, plural, other {復原}}",
+      "later": "稍後決定"
+    },
+    "activity": {
+      "title": "最近活動",
+      "empty": "目前還沒有任何活動。",
+      "clear": "清除",
+      "to_files": "到檔案",
+      "to_computer": "到這部電腦",
+      "mark_conflict": "衝突",
+      "mark_error": "錯誤",
+      "mark_question": "需要您回答",
+      "uploaded": "已上傳 {path}",
+      "downloaded": "已下載 {path}",
+      "folder-created": "已建立資料夾 {path}",
+      "renamed": "已將 {detail} 重新命名為 {path}",
+      "moved": "已將 {detail} 移至 {path}",
+      "deleted": "已刪除 {path}",
+      "trashed": "已將 {path} 移至垃圾桶",
+      "conflict": "{path} 在兩處都被變更。另一個版本已保留為 {detail}",
+      "renamed-for-disk": "{path} 的名稱在此處不允許使用，因此在這部電腦上名為 {detail}",
+      "too-large": "{path} 超出了檔案允許的大小（{detail}）。它只會保留在這部電腦上",
+      "waiting": "{path} 正在等待伺服器",
+      "mass-delete": "在刪除大量項目前已暫停",
+      "error": "無法同步 {path}"
+    },
+    "errors": {
+      "offline": "無法連線到伺服器",
+      "server_refused": "伺服器拒絕了此變更",
+      "too_large": "此檔案超出了檔案允許的大小",
+      "name_invalid": "不允許使用此名稱",
+      "disk_full": "磁碟已滿",
+      "denied": "不允許",
+      "busy": "另一個程式正在使用它",
+      "quota": "您在檔案中的儲存空間已滿",
+      "not_found": "它已不存在",
+      "policy": "您的組織不允許此操作",
+      "failed": "發生錯誤"
+    },
+    "item": {
+      "label": "在這部電腦上",
+      "synced": "已同步",
+      "syncing": "正在同步",
+      "pending": "等待同步",
+      "error": "無法同步",
+      "online-only": "僅在檔案中，開啟時下載"
+    },
+    "show_in": {
+      "explorer": "在檔案總管中顯示",
+      "finder": "在 Finder 中顯示",
+      "file_manager": "在檔案管理員中顯示",
+      "failed": "無法開啟資料夾。"
+    }
+  },
+  "files_storage": {
+    "title": "檔案中的儲存空間",
+    "used_of": "已使用 {used}，共 {total}",
+    "used": "已使用 {used}",
+    "no_limit": "伺服器未設定上限。這是您的檔案所佔用的空間。",
+    "almost_full": "您在檔案中的儲存空間快滿了",
+    "full": "您在檔案中的儲存空間已滿",
+    "state_synced": "已是最新",
+    "state_syncing": "正在同步",
+    "state_paused": "已暫停",
+    "state_offline": "離線",
+    "state_error": "已停止"
+  },
+  "files_sync_extra": {
+    "flush": {
+      "title_turn_off": "正在上傳變更，然後關閉磁碟機",
+      "title_sign_out": "正在上傳變更，然後登出",
+      "title_stop_folder": "正在上傳變更，然後停止同步資料夾",
+      "cannot_title": "部分變更現在無法上傳",
+      "waiting": "待上傳：{names}",
+      "progress": "已上傳 {done}/{total}",
+      "cannot_offline": "無法連線到伺服器。尚未上傳：{names}",
+      "cannot_other": "無法上傳：{names}。原因請見設定中的最近活動。",
+      "go_note_drive": "如果現在繼續，未上傳的內容會複製到 文件\\Loomix – not uploaded，不會遺失。",
+      "go_note_folder": "如果現在繼續，未上傳的內容會留在這部電腦上的資料夾中。",
+      "keep_turn_off": "保留磁碟機",
+      "keep_sign_out": "保持登入",
+      "keep_stop_folder": "繼續同步",
+      "go_turn_off": "立即關閉",
+      "go_sign_out": "立即登出",
+      "go_stop_folder": "立即停止同步"
+    },
+    "drive": {
+      "off_note": "關閉後，磁碟機會從檔案總管中移除。你的檔案仍在檔案中。",
+      "rescued": "未上傳的檔案（{count}）現在位於 {folder}。",
+      "rescued_open": "開啟資料夾",
+      "rescued_dismiss": "關閉",
+      "start_at_login": "登入 Windows 時啟動 Loomix",
+      "start_at_login_why": "和 OneDrive 一樣，磁碟機需要 Loomix 在執行。",
+      "closed_warning": "Loomix 關閉時，無法開啟磁碟機中的檔案。",
+      "where": "在檔案總管中顯示為 Loomix Files",
+      "where_letter": "在檔案總管中顯示為 Loomix Files ({letter}:)",
+      "open": "開啟",
+      "letter_note": "透過磁碟機代號存取時，檔案總管不會顯示同步狀態和「永遠保留在此裝置上」。它們會顯示在檔案總管的 Loomix Files 下。",
+      "letter_failed": "無法設定磁碟機代號。請再試一次。"
+    },
+    "tray": {
+      "idle": "Loomix Files: 已是最新",
+      "syncing": "Loomix Files: 正在同步。剩餘：{count}",
+      "paused": "Loomix Files: 已暫停",
+      "offline": "Loomix Files: 離線。等待中：{count}",
+      "question": "Loomix Files: 需要你的回答",
+      "error": "Loomix Files: 錯誤"
+    },
+    "notify": {
+      "conflict_title": "一個檔案在兩處被變更",
+      "problem_title": "有檔案無法同步"
+    },
+    "activity": {
+      "waiting_count": "等待伺服器的變更：{count}",
+      "disk_name": "檔案中的 {path} 在這部電腦上名為 {detail}，因為其中一些字元在這裡不允許使用",
+      "disk_case": "檔案中的 {path} 在這部電腦上名為 {detail}，因為這裡已有一個僅大小寫不同的名稱",
+      "disk_group": "這部電腦不允許的檔案名稱：{count}。它們在這裡的名稱略有不同。",
+      "show": "顯示",
+      "hide": "隱藏"
+    },
+    "cant_sync": {
+      "title": "無法同步"
+    },
+    "folders": {
+      "stop": "停止同步…",
+      "pick_title_known": "要讓 {name} 與檔案中的哪個資料夾保持一致？",
+      "pick_confirm_known": "保持一致"
+    },
+    "pin": {
+      "keep": "永遠保留在此裝置上",
+      "free": "釋放空間",
+      "failed": "操作未成功。請在檔案總管中再試一次。"
+    },
+    "account": {
+      "of": "{address} 的檔案",
+      "choose": "檔案："
+    }
+  },
+  "desktopQuickCompose": {
+    "label": "快速撰寫",
+    "menu": "快速撰寫",
+    "description": "{keys} 可從任何其他應用程式開啟用於新郵件的小視窗。",
+    "description_off": "從任何其他應用程式開啟用於新郵件的小視窗。",
+    "taken": "另一個應用程式正在使用 {keys}，所以在這裡沒有作用。請選擇其他按鍵，或關閉該應用程式。",
+    "change": "變更按鍵：{keys}",
+    "recording": "請按下按鍵…",
+    "recording_hint": "按住 Ctrl（Mac 上為 Cmd）和 Alt 或 Shift，再按一個字母、數字、Enter 或功能鍵。按 Esc 取消。",
+    "back_to_main": "移到主視窗",
+    "back_busy": "主視窗已有開啟的郵件。請先關閉它，然後再試一次。",
+    "back_no_answer": "主視窗沒有回應。您的郵件仍在這裡。",
+    "types_character": "這些鍵在您的鍵盤上會輸入一個字元，占用後該字元在所有應用程式中都無法輸入。請試試其他按鍵。",
+    "reserved": "系統或大多數應用程式正在使用這些鍵。請試試其他按鍵。"
+  },
+  "desktopAttachRecent": {
+    "heading": "最近的檔案",
+    "browse": "瀏覽這部電腦…",
+    "from_files": "從檔案…",
+    "missing": "「{name}」已不存在。",
+    "too_large": "「{name}」超過 {max}，無法附加。",
+    "failed": "無法附加「{name}」。請再試一次。"
+  },
+  "composeRecentLimit": {
+    "too_large": "太大",
+    "too_large_hint": "超過伺服器允許的大小（{max}）"
+  },
+  "compose_windows": {
+    "more_formatting": "更多格式",
+    "offline": "離線",
+    "offline_hint": "寄出需要連線。",
+    "offline_hint_outbox": "你現在寄出的郵件會在寄件匣中等待，恢復連線後送出。",
+    "offline_send_saved": "你已離線。郵件已儲存在草稿中。",
+    "offline_send_unsaved": "你已離線。郵件會留在這裡，恢復連線後儲存到草稿。"
+  },
+  "composer_panel": {
+    "show_panel": "顯示{name}",
+    "hide_panel": "隱藏{name}"
+  },
+  "desktopDevTools": {
+    "section_title": "疑難排解",
+    "label": "開發人員工具（{shortcut}）",
+    "description": "允許 {shortcut} 和 F12 為您所在的視窗開啟開發人員工具。應用程式鎖定時會再次關閉。",
+    "forced_off": "您的組織已關閉此功能。",
+    "locked": "請解除鎖定應用程式以變更此設定。",
+    "menu_toggle": "顯示或隱藏開發人員工具"
+  },
+  "fileDrop": {
+    "overlay_label": "放開檔案",
+    "overlay_title": "要把檔案放到哪裡？",
+    "overlay_hint": "在選項外放開或按 Esc 取消。",
+    "files_unknown": "檔案",
+    "files_summary": "{count, plural, other {# 個檔案}}",
+    "files_summary_size": "{count, plural, other {# 個檔案}}, {size}",
+    "zone_attach_here": "附加到此郵件",
+    "zone_insert_inline": "插入到郵件內文",
+    "zone_new_message": "附加到新郵件",
+    "zone_upload_files": "上傳到檔案",
+    "zone_upload_folder": "上傳到 {folder}",
+    "zone_calendar": "加入行事曆",
+    "zone_contacts": "加入聯絡人",
+    "zone_open_eml": "開啟郵件",
+    "zone_import_eml": "匯入到 {folder}",
+    "note_limit_message": "每封郵件最多 {size}",
+    "note_limit_file": "每個檔案最多 {size}",
+    "note_kept_offline": "在您重新連線前保留在此裝置上",
+    "note_needs_connection": "需要連線",
+    "announce": "{files, plural, =0 {已拖入檔案} other {已拖入 # 個檔案}}。選項：{choices}。",
+    "choose_title": "{count, plural, other {要把這些檔案放到哪裡？}}",
+    "save_first_failed": "無法儲存開啟的郵件，因此應用程式停留在原處。",
+    "import_done": "{count, plural, other {已將 # 封郵件匯入到 {folder}。}}",
+    "import_failed": "無法匯入 {name}。",
+    "too_large_file": "{name} 太大。每個檔案的上限為 {max}。",
+    "too_large_message": "這些檔案對一封郵件來說太大。上限為 {max}。",
+    "folders_left_out": "資料夾只能放到檔案中，因此已略過。",
+    "nothing_here": "這些檔案無法在此使用。"
+  },
+  "desktopReminders": {
+    "generic_title": "提醒",
+    "snooze": "{count} 分鐘後再提醒",
+    "snooze_short": "{count} 分鐘",
+    "open": "開啟",
+    "join": "加入",
+    "missed_title": "{count, plural, other {# 則錯過的提醒}}",
+    "missed_more": "還有 {count} 則",
+    "missed_show": "顯示",
+    "missed_dialog_title": "錯過的提醒",
+    "missed_dialog_description": "這些提醒在應用程式關閉、電腦睡眠或通知暫停時到期。",
+    "open_calendar": "開啟日曆",
+    "done": "完成",
+    "join_host": "加入 ({host})",
+    "join_named": "加入: {title}"
+  },
+  "ux_p3_search": {
+    "devtools_label": "開發人員工具",
+    "updates_label": "檢查更新",
+    "search": {
+      "quick_compose": "快速撰寫 隨處新增郵件 全域快速鍵",
+      "files_drive": "釋放空間 OneDrive Dropbox 檔案總管 Finder 磁碟機代號 隨選檔案",
+      "offline_space": "釋放空間 磁碟空間 儲存空間",
+      "mail_import": "pst ost Outlook mbox eml Thunderbird",
+      "app_lock_hello": "Windows Hello Touch ID 指紋 臉部 密碼金鑰 passkey"
+    }
+  },
+  "settings_reorg": {
+    "tabs": {
+      "privacy": "隱私與安全",
+      "security": "密碼與登入",
+      "about_updates": "關於與更新",
+      "backup": "備份與匯入"
+    },
+    "sections": {
+      "start": "啟動與關閉",
+      "shortcuts": "在其他應用程式中使用的快速鍵",
+      "mail_links": "郵件連結與檔案"
+    },
+    "privacy_link_description": "這些設定在「隱私與安全」頁面。"
+  },
+  "desktop_policy": {
+    "server_refused": "您的組織不允許在此裝置上使用此伺服器。",
+    "plugin_refused": "您的組織不允許在此裝置上使用此外掛程式，因此不會執行。其設定和資料會保留。",
+    "install_refused": "您的組織不允許在此裝置上使用此外掛程式。",
+    "plugins_label": "外掛程式",
+    "plugins_off": "您的組織已在此裝置上關閉外掛程式。",
+    "plugins_allowlist": "您的組織在此裝置上只允許使用部分外掛程式。",
+    "off": "關閉"
+  },
+  "desktopTelemetry": {
+    "section_title": "使用資訊與當機報告",
+    "section_description": "兩者在您開啟前都維持關閉，且各有獨立的開關。",
+    "telemetry_label": "傳送使用資訊",
+    "telemetry_description": "每天一次：一個隨機 ID、應用程式的版本號、您的作業系統、應用程式已執行多久以及連線方式。使用自己的郵件伺服器時，還包括已開啟的功能、大致的帳號數量以及外掛和主題的數量。絕不傳送郵件、地址或伺服器名稱。",
+    "crash_label": "傳送當機報告",
+    "crash_description": "應用程式中的錯誤會連同一個隨機 ID、應用程式本身程式碼的檔案名稱和經過清理的簡短訊息一起傳送。如果應用程式本身當機，當機檔案會留在這台電腦上，只有您傳送時才會離開。",
+    "crash_memory": "當機檔案是當機時應用程式部分記憶體的副本。Loomix 會移除它找到的使用者名稱、地址和登入權杖，但當機檔案仍可能包含您郵件的文字。",
+    "instance_note": "在 Loomix 伺服器上，頁面向伺服器回報哪些內容由該伺服器的管理員另行決定。",
+    "forced_off": "您的組織已關閉此功能。",
+    "url_label": "當機檔案的去向",
+    "url_description": "接收當機檔案的 https 地址。Loomix 沒有預設地址。",
+    "url_invalid": "請輸入完整的 https 地址。",
+    "url_save": "儲存",
+    "files_label": "這台電腦上的當機檔案",
+    "files_description": "Loomix 保留最新的檔案，並刪除超過一個月的檔案。",
+    "files_empty": "沒有當機檔案。",
+    "file_size": "{size} KB",
+    "send": "傳送當機報告…",
+    "delete_all": "全部刪除",
+    "sent": "當機報告已傳送。",
+    "send_no_consent": "請先開啟當機報告。",
+    "send_no_url": "未設定地址，因此無處傳送。請在上方輸入一個。",
+    "send_failed": "無法傳送當機報告。"
+  },
+  "uxp2_desktop": {
+    "unread_badge_label": "在工作列圖示上顯示未讀數",
+    "unread_badge_description": "這樣您在其他應用程式中工作時也能看到新郵件。",
+    "tip_compose_keys": "按 {keys} 寫新郵件",
+    "tip_palette_keys": "按 {keys} 尋找任何指令"
+  },
+  "uxp3_desktop": {
+    "web_address": "網址"
+  },
+  "selectionView": {
+    "starred": "已加星號",
+    "unstarred": "已移除星號"
   }
 }

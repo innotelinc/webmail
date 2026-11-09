@@ -18,8 +18,8 @@ async function loadNav(basePath?: string) {
 
 // The fallback values from CONFIG_ENV_MAP that ship in the box.
 const DEFAULT_FAVICON = '/branding/Loomix_Favicon.svg';
-const DEFAULT_LOGIN_LOGO_LIGHT = '/branding/Loomix_Mark.svg';
-const DEFAULT_LOGIN_LOGO_DARK = '/branding/Loomix_Mark.svg';
+const DEFAULT_LOGIN_LOGO_LIGHT = '/branding/Loomix_Logo_Color.svg';
+const DEFAULT_LOGIN_LOGO_DARK = '/branding/Loomix_Logo_White.svg';
 
 afterEach(() => {
   delete process.env.NEXT_PUBLIC_BASE_PATH;
@@ -39,8 +39,8 @@ describe('withBasePath — asset-URL fallbacks under a subpath', () => {
   it('prefixes the built-in favicon and login-logo defaults', async () => {
     const { withBasePath } = await loadNav('/webmail');
     expect(withBasePath(DEFAULT_FAVICON)).toBe('/webmail/branding/Loomix_Favicon.svg');
-    expect(withBasePath(DEFAULT_LOGIN_LOGO_LIGHT)).toBe('/webmail/branding/Loomix_Mark.svg');
-    expect(withBasePath(DEFAULT_LOGIN_LOGO_DARK)).toBe('/webmail/branding/Loomix_Mark.svg');
+    expect(withBasePath(DEFAULT_LOGIN_LOGO_LIGHT)).toBe('/webmail/branding/Loomix_Logo_Color.svg');
+    expect(withBasePath(DEFAULT_LOGIN_LOGO_DARK)).toBe('/webmail/branding/Loomix_Logo_White.svg');
   });
 
   it('is idempotent for an already-prefixed value (no double prefix)', async () => {

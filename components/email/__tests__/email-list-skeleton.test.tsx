@@ -15,7 +15,7 @@ vi.mock('@/stores/auth-store', async () => {
   };
 });
 vi.mock('@/stores/account-store', () => {
-  const state = { getAccountById: () => undefined };
+  const state = { accounts: [], getAccountById: () => undefined };
   return {
     useAccountStore: Object.assign(
       (selector?: (s: typeof state) => unknown) => (selector ? selector(state) : state),
@@ -39,7 +39,7 @@ describe('email list loading skeleton', () => {
     const skeleton = screen.getByTestId('email-list-skeleton');
 
     act(() => { useEmailStore.setState({ mailboxes: [], isLoadingMore: false, hasMoreEmails: true }); });
-    view.rerender(<EmailList emails={[]} isLoading selectedEmailId="x" />);
+    view.rerender(<EmailList emails={[]} isLoading selectedEmailKey="x" />);
 
     expect(screen.getByTestId('email-list-skeleton')).toBe(skeleton);
   });

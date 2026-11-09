@@ -19,6 +19,19 @@ export interface SharedAccount {
   };
 }
 
+/**
+ * One account as the JMAP session describes it (RFC 8620 §2), unflattened:
+ * the raw per-account capability objects rather than SharedAccount's
+ * booleans, for callers that need a capability's fields.
+ */
+export interface AccountInfo {
+  /** Stalwart names an account after its principal's address, a group's too. */
+  name: string;
+  isPersonal: boolean;
+  isReadOnly: boolean;
+  accountCapabilities: Record<string, unknown>;
+}
+
 export interface Email {
   id: string;
   threadId: string;
@@ -38,6 +51,8 @@ export interface Email {
   // subject / body excerpt with the matched terms in <mark>, set on search
   // hits only. See lib/search-snippet.ts.
   searchSnippet?: { subject: string | null; preview: string | null };
+  /** A search row only the local store found. It's no sign of new mail, whatever its date (lib/jmap/search-merge.ts). */
+  foundLocally?: boolean;
   textBody?: EmailBodyPart[];
   htmlBody?: EmailBodyPart[];
   bodyValues?: Record<string, EmailBodyValue>;
@@ -50,6 +65,8 @@ export interface Email {
   headers?: Record<string, string | string[]>;
   // Security headers parsed
   authenticationResults?: AuthenticationResults;
+  /** See authenticationResultsOnReceipt (lib/email-headers.ts); set by the full message fetch. */
+  authenticationResultsOnReceipt?: boolean;
   spamScore?: number;
   spamStatus?: string;
   spamLLM?: {
@@ -80,6 +97,8 @@ export interface Email {
   // views (All Mail, unified, cross-account) so the list can show where each
   // message lives. Transient/client-only, not part of the JMAP object.
   sourceFolder?: string;
+  // Role of that folder, so the list names it as the sidebar does ("Sent", not "Sent Items").
+  sourceFolderRole?: string;
   // Client-only scheduled-send metadata, populated from EmailSubmission/query.
   scheduledSendAt?: string;
   emailSubmissionId?: string;
@@ -94,10 +113,22 @@ export interface Email {
   scheduledAccountId?: string;
   isScheduled?: boolean;
   isSmimeScheduled?: boolean;
+  /**
+   * Client-only: a reply just sent, shown in the open conversation before the
+   * server's copy is read back (lib/held-send.ts).
+   */
+  sentEcho?: boolean;
 }
 
 export interface SendEmailResult {
   scheduled: boolean;
+  /**
+   * Kept in the offline outbox (#523), not sent yet: it goes out once the
+   * server can be reached again. Nothing else is set then.
+   */
+  queued?: boolean;
+  /** The outbox entry, when queued (see lib/offline/offline-mode.ts afterOutboxSend). */
+  outboxId?: number;
   emailId?: string;
   emailSubmissionId?: string;
   sendAt?: string;
@@ -110,6 +141,12 @@ export interface SendEmailResult {
    */
   submissionAccountId?: string;
   /**
+   * JMAP account the sent message (`emailId`) lies in: a shared or group
+   * account when sent from its identity. Ids repeat across accounts, so the
+   * id alone does not name the message.
+   */
+  emailAccountId?: string;
+  /**
    * Set when the submission succeeded but a post-send step was rejected
    * (the implicit onSuccessUpdateEmail filing patch, or destroying the
    * old draft). The mail left the server - callers should warn, not fail.
@@ -119,6 +156,8 @@ export interface SendEmailResult {
    * Recipients the server refused while accepting the submission (its
    * deliveryStatus says delivered "no"). The message went out to the others
    * only - callers should name these instead of reporting a plain success.
+   * When it refused every one, the send throws RecipientsRejectedError
+   * instead.
    */
   rejectedRecipients?: RejectedRecipient[];
 }
@@ -126,6 +165,7 @@ export interface SendEmailResult {
 /** A recipient refused at submission, with the SMTP reply the server gave. */
 export interface RejectedRecipient {
   email: string;
+  /** The server's SMTP reply, e.g. "550 5.1.2 Relay not allowed."; empty when it gave none. */
   smtpReply: string;
 }
 
@@ -252,6 +292,8 @@ export interface MailboxRights {
   mayDelete: boolean;
   maySubmit: boolean;
   mayShare?: boolean;
+  /** Stalwart 1.0: may change the mailbox's shared metadata (urn:ietf:params:jmap:metadata). */
+  maySetMetadata?: boolean;
 }
 
 export interface Thread {
@@ -437,10 +479,17 @@ export interface ContactNote {
   author?: { name?: string; uri?: string };
 }
 
+// RFC 9553 Media. The bytes are either at `uri` (an https or data: URI) or in
+// a blob: Stalwart 1.0 returns every embedded PHOTO, LOGO and SOUND as a
+// `blobId` without `uri`, while 0.16 returns them as data: URIs.
 export interface ContactMedia {
   kind: 'photo' | 'sound' | 'logo';
-  uri: string;
+  uri?: string;
+  blobId?: string;
   mediaType?: string;
+  label?: string;
+  pref?: number;
+  contexts?: Record<string, boolean>;
 }
 
 // RFC 9553 PartialDate
@@ -535,6 +584,28 @@ export interface Principal {
 }
 
 /**
+ * How complete a principal listing is:
+ * - `ok`: the whole directory;
+ * - `restricted`: the server refused to list its directory (Stalwart 1.0 with
+ *   directory queries off, or a role without the permission). The principals
+ *   are what Principal/get without ids still returns, on 1.0 the user's own
+ *   account, their groups and the accounts that shared something with them;
+ * - `error`: the listing failed part-way; the principals are what arrived.
+ */
+export type PrincipalDirectoryStatus = 'ok' | 'restricted' | 'error';
+
+export interface PrincipalListing {
+  principals: Principal[];
+  status: PrincipalDirectoryStatus;
+  /**
+   * With `restricted`: the administrator turned directory queries off, as
+   * Stalwart 1.0 says in its refusal, rather than the user's role lacking
+   * the permission. 0.16 has no such refusal over JMAP.
+   */
+  directoryQueriesOff?: boolean;
+}
+
+/**
  * One busy interval from Principal/getAvailability (RFC 9670 §2.5 /
  * draft-ietf-jmap-calendars). `busyStatus` null means the server did not
  * classify the period (treated as busy).
@@ -544,6 +615,13 @@ export interface BusyPeriod {
   utcEnd: string;
   busyStatus: 'confirmed' | 'tentative' | 'unavailable' | null;
 }
+
+/**
+ * One principal's answer to Principal/getAvailability: its busy periods, or
+ * the JMAP error type the call was refused with (`forbidden`, `rateLimit`,
+ * `notFound`, ...).
+ */
+export type PrincipalAvailability = { periods: BusyPeriod[] } | { error: string };
 
 export interface VacationResponse {
   id: string;
@@ -607,10 +685,16 @@ export interface Calendar {
   // shared calendar (see lib/shared-calendar-colors). When true, the override
   // wins over per-event colors so the whole shared calendar paints uniformly.
   colorIsLocalOverride?: boolean;
+  // The server's own color, kept next to a local override so the sidebar can
+  // tell whether dropping the override brings it back or picks a new one.
+  serverColor?: string | null;
   // True when the calendar holds only tasks (VTODO) and no events, so it is
   // hidden from the event calendar UI while remaining available to the tasks
   // view (#761). Undefined means "not determined" (treated as not tasks-only).
   isTasksOnly?: boolean;
+  // A company calendar the admin set (lib/company-calendars.ts): a read-only
+  // calendar that exists only in the browser.
+  isCompany?: boolean;
 }
 
 /**
@@ -713,6 +797,11 @@ export interface CalendarParticipant {
   scheduleStatus: string[] | null;
   scheduleUpdated: string | null;
   invitedBy: string | null;
+  /**
+   * Who answered for this participant (RFC 5545 SENT-BY), as a
+   * `mailto:` address. Set when a delegate answers for the calendar's owner.
+   */
+  sentBy?: string | null;
   delegatedTo: Record<string, boolean> | null;
   delegatedFrom: Record<string, boolean> | null;
   memberOf: Record<string, boolean> | null;
@@ -825,13 +914,18 @@ export interface CalendarTask {
   created: string | null;
   updated: string;
   recurrenceRules: CalendarRecurrenceRule[] | null;
+  // While on, Stalwart 1.0 fills the calendar's default alerts into `alerts`.
+  useDefaultAlerts?: boolean;
   alerts: Record<string, CalendarEventAlert> | null;
   relatedTo: Record<string, CalendarRelation> | null;
+  links?: Record<string, CalendarLink> | null;
   // Client-only, set on tasks from a shared calendar account. Their `id` and
   // `calendarIds` are namespaced `accountId:id` like shared events.
   originalId?: string;
   accountId?: string;
   isShared?: boolean;
+  /** Client-only: the login the task belongs to while the calendar shows several (pim-12). */
+  localAccountId?: string;
 }
 
 /**
@@ -866,7 +960,15 @@ export interface CalendarEventNotification {
 }
 
 export interface CalendarEventFilter {
+  /**
+   * A FilterOperator (RFC 8620 §5.5) sets these and no property keys:
+   * Stalwart rejects a filter that mixes the two.
+   */
+  operator?: 'AND' | 'OR' | 'NOT';
+  conditions?: CalendarEventFilter[];
   inCalendars?: string[];
+  /** One calendar: what Stalwart (0.16 and 1.0) takes; 0.16 refuses `inCalendars`. */
+  inCalendar?: string;
   after?: string;
   before?: string;
   text?: string;
@@ -973,11 +1075,16 @@ export interface AccountStates {
 
 // JMAP FileNode types (draft-ietf-jmap-filenode / Stalwart implementation)
 
+export type FileNodeType = 'file' | 'directory' | 'symlink';
+
 export interface FileNode {
   id: string;
   parentId: string | null;
   name: string;
   type: string; // "d" for directory, MIME type for files
+  // Returned by Stalwart 0.16.6+; 1.0 adds symlinks. Read it through
+  // fileNodeKind(), and never send it in FileNode/set.
+  nodeType?: FileNodeType;
   blobId: string | null;
   size: number;
   created: string;
@@ -995,6 +1102,10 @@ export interface FileNode {
   // True when this node was fetched from another principal's account that was
   // shared with the logged-in user (mirrors Calendar.isShared / AddressBook.isShared).
   isShared?: boolean;
+  // A folder of another account that is listed only because something below
+  // it was shared with the user (Stalwart 1.0): name and place in the tree,
+  // no dates, no rights. It leads to the shared node but is not shown itself.
+  discoverableOnly?: boolean;
   // Owning account's JMAP id and display name, set when aggregating nodes
   // across connected/shared accounts so mutations route to the right account.
   accountId?: string;

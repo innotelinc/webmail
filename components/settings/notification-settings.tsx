@@ -1,17 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSettingsStore } from '@/stores/settings-store';
+import { useEmailStore } from '@/stores/email-store';
+import { useIdentityStore } from '@/stores/identity-store';
 import { SettingsSection, SettingItem, ToggleSwitch, Select } from './settings-section';
+import { DesktopOsSettings } from './desktop-os-settings';
 import { playNotificationSound, NOTIFICATION_SOUNDS } from '@/lib/notification-sound';
 import type { NotificationSoundChoice } from '@/lib/notification-sound';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw, Volume2, XCircle } from '@/components/icons';
 import { usePolicyStore } from '@/stores/policy-store';
 import { useAuthStore } from '@/stores/auth-store';
+import { useAccountStore } from '@/stores/account-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { MultiAccountPushSettings } from './multi-account-push';
+import { AccountPushSwitches, usePushAccounts } from './multi-account-push';
+import { isDesktopApp } from '@/lib/desktop/bridge';
+import { wordingFor } from '@/lib/desktop/wording';
+import { productName } from '@/lib/product-name';
+import { useConfig } from '@/hooks/use-config';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
 import {
   WebPushUnsupportedError,
@@ -20,11 +28,14 @@ import {
   isWebPushEnabled,
   isWebPushSupported,
   listPushDevices,
+  mailAccountsWithoutPush,
   revokePushDevice,
   serverSupportsEmailPush,
 } from '@/lib/web-push';
+import { webPushErrorKey } from '@/lib/web-push-errors';
 import type { PushDevice } from '@/lib/web-push';
 import { IS_LITE } from '@/lib/lite';
+import { useNoThirdPartyTraffic } from '@/hooks/use-third-party-mode';
 import {
   resolveActiveRelayUrl,
   resolvePushRelayOptions,
@@ -43,9 +54,29 @@ type DevicesState =
   | { kind: 'loaded'; devices: PushDevice[] }
   | { kind: 'error' };
 
+/** iPhone or iPad, where Safari only pushes for a site on the home screen. iPadOS says it's a Mac with touch. */
+function isAppleMobile(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 export function NotificationSettings() {
   const t = useTranslations('settings.notifications');
   const tAppearance = useTranslations('settings.appearance');
+  const tDesktopP2 = useTranslations('uxp2_desktop');
+  const tUnread = useTranslations('account_unread');
+  const tWords = useTranslations('ux_p3_words');
+  const doNotDisturb = useSettingsStore((s) => s.doNotDisturb);
+  const severalAccounts = useAccountStore((s) => s.accounts.length > 1);
+  const tThirdParty = useTranslations('third_party');
+  const tP2 = useTranslations('uxp2_settings');
+  // The desktop app tells about new mail while it runs, in the tray too; the
+  // browser's push section talks about websites and Safari (settings-p2-4).
+  const inApp = isDesktopApp();
+  const pushAccounts = usePushAccounts();
+  const appName = productName(useConfig().appName);
+  // The relay list depends on it; re-render once the config is known (#903).
+  const noThirdParty = useNoThirdPartyTraffic();
   const {
     emailNotificationsEnabled,
     emailNotificationSound,
@@ -54,6 +85,7 @@ export function NotificationSettings() {
     calendarNotificationsEnabled,
     calendarNotificationSound,
     faviconUnreadBadge,
+    unreadBadgeAllAccounts,
     pushRelayUrl,
     updateSetting,
   } = useSettingsStore();
@@ -64,14 +96,21 @@ export function NotificationSettings() {
   const username = useAuthStore((s) => s.username);
   const { dialogProps: confirmDialogProps, confirm: confirmDialog } = useConfirmDialog();
 
-  const supported = typeof window !== 'undefined' && isWebPushSupported();
+  // The demo client has no mail server to subscribe with. Enabling would get as
+  // far as a relay record and a browser subscription, then fail.
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
+  const supported = typeof window !== 'undefined' && isWebPushSupported() && !isDemoMode;
   // "Inbox only" is enforced by the server's emailPush filter; without that
   // capability (Stalwart < 0.16.16) the toggle would do nothing.
-  const inboxOnlyAvailable = supported && !!client && serverSupportsEmailPush(client);
+  const inboxOnlyAvailable = supported && !inApp && !!client && serverSupportsEmailPush(client);
   const [pushStatus, setPushStatus] = useState<PushStatus>(
     supported ? { kind: 'idle' } : { kind: 'unsupported' },
   );
   const [devices, setDevices] = useState<DevicesState>({ kind: 'idle' });
+  // Bumped when an account's own switch changed push, so this account's state is read again.
+  const [pushRecheck, setPushRecheck] = useState(0);
+  // Several accounts connected: a switch each instead of one for the account on screen (settings-p2-17).
+  const perAccount = supported && pushAccounts.length > 1;
   const [revokingId, setRevokingId] = useState<string | null>(null);
 
   // Relay URLs come from admin policy only - users pick one of the offered
@@ -79,6 +118,8 @@ export function NotificationSettings() {
   const relayOptions = resolvePushRelayOptions(policy);
   const activeRelayUrl = resolveActiveRelayUrl(policy, pushRelayUrl);
   const relayChoiceFixed = pushRelayLocked || relayOptions.length < 2;
+  // Third-party traffic off and no relay of the organisation's own (#903).
+  const noRelay = !activeRelayUrl;
   const activeRelayLabel =
     relayOptions.find((option) => option.url === activeRelayUrl)?.label ?? activeRelayUrl;
 
@@ -112,7 +153,7 @@ export function NotificationSettings() {
       window.removeEventListener('focus', onVisible);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [supported, client, pushStatus.kind]);
+  }, [supported, client, pushStatus.kind, pushRecheck]);
 
   // The device list is worth loading even when push is off on this browser -
   // revoking a stale registration left on another device is exactly what you
@@ -135,12 +176,37 @@ export function NotificationSettings() {
   // In the static Lite build push is off by design (no service worker, see
   // components/service-worker-registration.tsx), not a browser limitation.
   const statusDescription = pushStatus.kind === 'unsupported'
-    ? (IS_LITE ? t('push.status_lite') : `${t('push.status_unsupported')} ${t('push.ios_hint')}`)
+    // Two sentences, and the home-screen hint only where it applies (settings-p2-4).
+    ? (IS_LITE ? t('push.status_lite') : isDemoMode ? t('push.status_demo') : isAppleMobile() ? `${tP2('push_unsupported')} ${t('push.ios_hint')}` : tP2('push_unsupported'))
+    : noRelay && !pushEnabled
+      ? tThirdParty('push_needs_relay')
     : busy
       ? t('push.status_busy')
       : pushEnabled
         ? t('push.status_active')
         : t('push.status_inactive');
+
+  // Stalwart pushes only the user's own mailboxes and their groups', so
+  // mailboxes shared by other users stay silent in the background (they still
+  // update while the app is open). Say so instead of leaving users to wonder.
+  const mailboxes = useEmailStore((s) => s.mailboxes);
+  // On 0.16 the user's identities tell their groups from mailboxes shared by
+  // ACL (see mailAccountsWithoutPush).
+  const identities = useIdentityStore((s) => s.identities);
+  const sharedMailboxesWithoutPush = useMemo(() => {
+    // Re-read after each enable run too: it may have added refused accounts.
+    if (!client || pushStatus.kind === 'unsupported') return false;
+    const accountIds = mailboxes.flatMap((m) => (m.isShared && m.accountId ? [m.accountId] : []));
+    return mailAccountsWithoutPush(client, accountIds, identities.map((identity) => identity.email)).length > 0;
+  }, [client, mailboxes, identities, pushStatus.kind]);
+
+  // The refusals a user can do something about get readable text; anything
+  // else keeps the error's own message.
+  const pushErrorMessage = (err: unknown, fallback: string) => {
+    const key = webPushErrorKey(err);
+    if (key) return t(`push.${key}`);
+    return err instanceof Error ? err.message : fallback;
+  };
 
   // `forceRecreate` is what the Re-register button is for: without it the enable
   // path just refreshes the existing subscription's expiry, so a registration
@@ -166,10 +232,7 @@ export function NotificationSettings() {
         setPushStatus({ kind: 'unsupported' });
         return;
       }
-      setPushStatus({
-        kind: 'error',
-        message: err instanceof Error ? err.message : 'Failed to enable push',
-      });
+      setPushStatus({ kind: 'error', message: pushErrorMessage(err, 'Failed to enable push') });
     } finally {
       await refreshDevices();
     }
@@ -204,10 +267,7 @@ export function NotificationSettings() {
           setPushStatus({ kind: 'unsupported' });
           return;
         }
-        setPushStatus({
-          kind: 'error',
-          message: err instanceof Error ? err.message : 'Failed to update push filter',
-        });
+        setPushStatus({ kind: 'error', message: pushErrorMessage(err, 'Failed to update push filter') });
       })
       .finally(() => { if (!cancelled) void refreshDevices(); });
     return () => { cancelled = true; };
@@ -232,10 +292,7 @@ export function NotificationSettings() {
       await disableWebPush({ client, relayBaseUrl: activeRelayUrl });
       setPushStatus({ kind: 'idle' });
     } catch (err) {
-      setPushStatus({
-        kind: 'error',
-        message: err instanceof Error ? err.message : 'Failed to disable push',
-      });
+      setPushStatus({ kind: 'error', message: pushErrorMessage(err, 'Failed to disable push') });
     } finally {
       await refreshDevices();
     }
@@ -257,10 +314,7 @@ export function NotificationSettings() {
       await revokePushDevice({ client, device, relayBaseUrl: activeRelayUrl });
       if (device.isThisDevice) setPushStatus({ kind: 'idle' });
     } catch (err) {
-      setPushStatus({
-        kind: 'error',
-        message: err instanceof Error ? err.message : 'Failed to revoke device',
-      });
+      setPushStatus({ kind: 'error', message: pushErrorMessage(err, 'Failed to revoke device') });
     } finally {
       setRevokingId(null);
       await refreshDevices();
@@ -282,6 +336,20 @@ export function NotificationSettings() {
 
   return (
     <div className="space-y-8">
+      {/* Pausing everything and quiet hours (app only) in one place, at the top, where
+          people look when mail should stop pinging (settings-p3-6). Accessibility links here. */}
+      {!isSettingHidden('doNotDisturb') && (
+        <SettingsSection id="pause" title={tWords('dnd_title')}>
+          <SettingItem label={tWords('pause_label')} description={tWords('pause_description')}>
+            <ToggleSwitch
+              checked={doNotDisturb}
+              onChange={(checked) => updateSetting('doNotDisturb', checked)}
+            />
+          </SettingItem>
+          <DesktopOsSettings part="quietHours" />
+        </SettingsSection>
+      )}
+
       <SettingsSection id="mail" title={t('email.title')} description={t('email.description')}>
         {!isSettingHidden('emailNotificationsEnabled') && (
         <SettingItem
@@ -321,13 +389,27 @@ export function NotificationSettings() {
         </SettingItem>
         )}
 
-        {/* The tab/app icon badge is a new-mail signal too; people look for it here. */}
-        <SettingItem label={tAppearance('favicon_unread_badge.label')} description={tAppearance('favicon_unread_badge.description')}>
+        {/* The tab/app icon badge is a new-mail signal too; people look for it here. The desktop app has no tab: the taskbar icon. */}
+        <SettingItem
+          label={wordingFor({ app: tDesktopP2('unread_badge_label'), browser: tAppearance('favicon_unread_badge.label') })}
+          description={wordingFor({ app: tDesktopP2('unread_badge_description'), browser: tAppearance('favicon_unread_badge.description') })}
+        >
           <ToggleSwitch
             checked={faviconUnreadBadge}
             onChange={(checked) => updateSetting('faviconUnreadBadge', checked)}
           />
         </SettingItem>
+
+        {/* Only means something with a second account. */}
+        {severalAccounts && (
+        <SettingItem label={tUnread('badge_all_accounts.label')} description={wordingFor({ app: tWords('badge_all_app'), browser: tWords('badge_all_browser') })}>
+          <ToggleSwitch
+            checked={unreadBadgeAllAccounts}
+            onChange={(checked) => updateSetting('unreadBadgeAllAccounts', checked)}
+            disabled={!faviconUnreadBadge}
+          />
+        </SettingItem>
+        )}
       </SettingsSection>
 
       <SettingsSection id="calendar" title={t('calendar.title')} description={t('calendar.description')}>
@@ -384,7 +466,21 @@ export function NotificationSettings() {
         </SettingItem>
       </SettingsSection>
 
-      <SettingsSection id="push" title={t('push.title')} description={t('push.description')}>
+      {/* The desktop app's taskbar flash and quiet hours. Nothing in a browser. */}
+      <DesktopOsSettings part="notifications" />
+
+      {!inApp && (
+      <SettingsSection id="push" title={t('push.title', { appName })} description={t('push.description')} term="push">
+        {perAccount ? (
+          <>
+            {noRelay && <p className="text-xs text-muted-foreground">{tThirdParty('push_needs_relay')}</p>}
+            <AccountPushSwitches
+              relayBaseUrl={activeRelayUrl}
+              disabled={noRelay}
+              onChanged={() => { setPushRecheck((n) => n + 1); void refreshDevices(); }}
+            />
+          </>
+        ) : (
         <SettingItem label={t('push.enable')} description={statusDescription}>
           <div className="flex items-center gap-2">
             {pushEnabled && (
@@ -395,19 +491,24 @@ export function NotificationSettings() {
             <ToggleSwitch
               checked={pushEnabled}
               onChange={(checked) => void (checked ? handleEnablePush() : handleDisablePush())}
-              disabled={busy || pushStatus.kind === 'unsupported' || !client}
+              disabled={busy || pushStatus.kind === 'unsupported' || !client || (noRelay && !pushEnabled)}
             />
           </div>
         </SettingItem>
+        )}
+
+        {sharedMailboxesWithoutPush && (
+          <p className="text-xs text-muted-foreground">{t('push.shared_mailboxes_no_push')}</p>
+        )}
 
         <SettingItem
           advanced
           label={t('push.relay_label')}
-          description={pushRelayLocked ? t('push.relay_locked_desc') : t('push.relay_desc')}
+          description={pushRelayLocked ? t('push.relay_locked_desc') : noThirdParty ? tThirdParty('relay_desc') : t('push.relay_desc')}
           locked={pushRelayLocked}
         >
           {relayChoiceFixed ? (
-            <span className="text-sm text-muted-foreground">{activeRelayLabel}</span>
+            <span className="text-sm text-muted-foreground">{noRelay ? tThirdParty('relay_none') : activeRelayLabel}</span>
           ) : (
             <Select
               value={activeRelayUrl}
@@ -425,8 +526,7 @@ export function NotificationSettings() {
           </p>
         )}
       </SettingsSection>
-
-      <MultiAccountPushSettings relayBaseUrl={activeRelayUrl} />
+      )}
 
       {client && (
         <SettingsSection id="devices" advanced title={t('push.devices_title')} description={t('push.devices_desc')}>
@@ -442,7 +542,7 @@ export function NotificationSettings() {
               onClick={() => void refreshDevices()}
               disabled={devices.kind === 'loading'}
             >
-              <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${devices.kind === 'loading' ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${devices.kind === 'loading' ? 'animate-spin [animation-direction:reverse]' : ''}`} />
               {t('push.devices_refresh')}
             </Button>
           </div>

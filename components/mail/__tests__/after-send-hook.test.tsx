@@ -25,19 +25,22 @@ const sendData = vi.hoisted(() => ({ delayedUntil: undefined as string | undefin
 vi.mock('@/components/email/email-composer', () => ({
   EmailComposer: ({ onSend }: { onSend?: (data: unknown) => Promise<void> }) => (
     <button onClick={() => {
-      onSend?.({ to: ['bob@example.com'], cc: ['carol@example.com'], bcc: [], subject: 'Hi', body: 'Hello', delayedUntil: sendData.delayedUntil })
+      onSend?.({ to: ['bob@example.com'], cc: ['carol@example.com'], bcc: [], subject: 'Hi', body: 'Hello', delayedUntil: sendData.delayedUntil, composerId: 'composer-1' })
         .catch((e) => { sendData.error = e; });
     }}>
       stub send
     </button>
   ),
 }));
-vi.mock('@/components/layout/sidebar', () => ({ Sidebar: () => null }));
+// A desktop has Compose in the folder sidebar (mail-13, mail-p3-11).
+vi.mock('@/components/layout/sidebar', () => ({
+  Sidebar: ({ onCompose }: { onCompose?: () => void }) => <button type="button" onClick={onCompose}>sidebar.compose</button>,
+}));
 vi.mock('@/components/layout/navigation-rail', () => ({ NavigationRail: () => null }));
 vi.mock('@/components/layout/calendar-event-notification-toaster', () => ({ CalendarEventNotificationToaster: () => null }));
 vi.mock('@/components/layout/share-notification-toaster', () => ({ ShareNotificationToaster: () => null }));
 vi.mock('@/components/layout/mobile-header', () => ({ MobileHeader: () => null }));
-vi.mock('@/components/email/message-list-tabs', () => ({ MessageListTabs: () => null }));
+vi.mock('@/components/email/message-list-tabs', () => ({ useMessageListPanelProps: (id: string) => ({ id }), MessageListTabs: () => null }));
 vi.mock('@/components/search/search-box', () => ({ SearchBox: () => null }));
 vi.mock('@/components/tour/tour-provider', () => ({ useTour: () => ({ activeTour: null, registerStep: vi.fn() }) }));
 vi.mock('@/components/plugins/plugin-slot', () => ({ PluginSlot: () => null }));
@@ -121,14 +124,14 @@ describe('onAfterEmailSend', () => {
     useSettingsStore.setState({ sendDelaySeconds: 0 } as never);
     const sent = vi.fn();
     emailHooks.onAfterEmailSend.register('test', sent);
-    sendEmail.mockResolvedValue({ scheduled: false, emailId: 'e1', emailSubmissionId: 's1' });
+    sendEmail.mockResolvedValue({ scheduled: false, emailId: 'e1', emailAccountId: 'acc', emailSubmissionId: 's1' });
 
     await sendFromComposer();
 
     await waitFor(() => expect(sent).toHaveBeenCalledTimes(1));
     expect(sent).toHaveBeenCalledWith({
-      emailId: 'e1', submissionId: 's1', to: ['bob@example.com'], cc: ['carol@example.com'], bcc: [],
-      subject: 'Hi', scheduledFor: null,
+      emailId: 'e1', accountId: 'acc', submissionId: 's1', to: ['bob@example.com'], cc: ['carol@example.com'], bcc: [],
+      subject: 'Hi', scheduledFor: null, composerId: 'composer-1',
     });
   });
 

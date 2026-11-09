@@ -14,11 +14,17 @@ import {
 import { SettingsSection, SettingItem, SectionNav } from '@/components/settings/settings-section';
 import { Button } from '@/components/ui/button';
 import { AdminPageHeader } from '@/components/admin/page-header';
+import { AdminBodySkeleton } from '@/components/boot-skeleton/admin-skeleton';
 import { AdminSaveBar } from '@/components/admin/save-bar';
+import { withEdit } from '@/lib/admin/edits';
 import { Badge } from '@/components/admin/badge';
-import { Flash, useFlash } from '@/components/admin/flash-message';
+import { useAdminFeedback } from '@/components/admin/feedback';
 import { inputClass, RevertButton } from '@/components/admin/config-items';
 import { cn } from '@/lib/utils';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
+import { useAdminUnsavedStore } from '@/stores/admin-unsaved-store';
+import { cssUrl, MAX_BLUR, MAX_DIM, usableBackgroundUrl } from '@/lib/login-backdrop';
 
 interface ConfigEntry {
   value?: unknown;
@@ -39,6 +45,27 @@ const TEXT_FIELDS = [
   { key: 'loginImprintUrl', label: 'Imprint URL' },
   { key: 'loginPrivacyPolicyUrl', label: 'Privacy policy URL' },
   { key: 'loginWebsiteUrl', label: 'Company website URL' },
+  { key: 'loginUsernamePlaceholder', label: 'Login email placeholder', placeholder: 'user@company.example' },
+] as const;
+
+// Accessibility and help links (OP-01): the app shows them on the login
+// page, in the settings sidebar and in the account menu (lib/help-links.ts).
+const HELP_FIELDS = [
+  { key: 'accessibilityStatementUrl', label: 'Accessibility statement URL', placeholder: 'https://...' },
+  { key: 'accessibilityFeedbackUrl', label: 'Report a barrier (URL or email)', placeholder: 'https://... or barriers@example.com' },
+  { key: 'helpUrl', label: 'Help URL', placeholder: 'https://...' },
+  { key: 'easyReadUrl', label: 'Easy Read (Leichte Sprache) URL', placeholder: 'https://...' },
+  { key: 'signLanguageUrl', label: 'Sign language (DGS) URL', placeholder: 'https://...' },
+] as const;
+
+const LOGIN_BACKGROUND_FIELDS = [
+  { key: 'loginBackgroundLightUrl', label: 'Background (light mode)', accept: '.jpg,.jpeg,.png,.webp,.svg' },
+  { key: 'loginBackgroundDarkUrl', label: 'Background (dark mode)', accept: '.jpg,.jpeg,.png,.webp,.svg' },
+] as const;
+
+const LOGIN_BACKGROUND_SLIDERS = [
+  { key: 'loginBackgroundDim', label: 'Darken background', description: 'Tones a bright or busy picture down so the form and the links under it stand out.', max: MAX_DIM, step: 5, unit: '%' },
+  { key: 'loginBackgroundBlur', label: 'Blur background', description: 'Softens the picture behind the form.', max: MAX_BLUR, step: 1, unit: 'px' },
 ] as const;
 
 const PWA_IMAGE_FIELDS = [
@@ -76,7 +103,7 @@ export function BrandingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
-  const [message, setMessage] = useFlash();
+  const setMessage = useAdminFeedback();
   const [selectedHost, setSelectedHost] = useState<string | null>(null);
   const [addingHost, setAddingHost] = useState(false);
   const [newHostInput, setNewHostInput] = useState('');
@@ -101,8 +128,13 @@ export function BrandingPage() {
 
   async function fetchConfig() {
     setLoading(true);
-    const res = await apiFetch('/api/admin/config');
-    if (res.ok) setConfig(await res.json());
+    try {
+      const res = await apiFetch('/api/admin/config');
+      if (!res.ok) throw new Error();
+      setConfig(await res.json());
+    } catch {
+      setMessage({ type: 'error', text: 'Could not load the settings' });
+    }
     setLoading(false);
   }
 
@@ -112,7 +144,10 @@ export function BrandingPage() {
   }
 
   function handleChange(key: string, value: string) {
-    setEdits(prev => ({ ...prev, [key]: value }));
+    const saved = selectedHost
+      ? selectedEntry()?.[key as BrandingOverrideKey]
+      : config[key]?.value;
+    setEdits(prev => withEdit(prev, key, value, saved));
     setMessage(null);
   }
 
@@ -123,6 +158,14 @@ export function BrandingPage() {
       return (entry?.[key as BrandingOverrideKey] as string | undefined) ?? '';
     }
     return (config[key]?.value as string) ?? '';
+  }
+
+  /** What the page shows for a key in this scope: the domain's value, else the default's. */
+  function effectiveValue(key: string): string {
+    const own = currentValue(key);
+    if (own || !selectedHost) return own;
+    const fallback = config[key]?.value;
+    return typeof fallback === 'string' ? fallback : '';
   }
 
   function isOverriddenInScope(key: string): boolean {
@@ -213,7 +256,7 @@ export function BrandingPage() {
 
     if (res.ok) {
       const data = await res.json();
-      setMessage({ type: 'success', text: `Uploaded ${file.name} successfully.` });
+      setMessage({ type: 'success', text: `${file.name} uploaded` });
       setEdits(prev => {
         const next = { ...prev };
         delete next[slot];
@@ -326,9 +369,14 @@ export function BrandingPage() {
 
   async function handleDeleteDomain() {
     if (!selectedHost) return;
-    if (!confirm(`Remove branding entry for ${selectedHost}? Uploaded files for this domain will be left behind on disk.`)) {
-      return;
-    }
+    const ok = await confirm({
+      title: `Remove the branding for ${selectedHost}?`,
+      message: 'The settings for this domain are removed. Files uploaded for it stay on disk.',
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
+      variant: 'destructive',
+    });
+    if (!ok) return;
     const next = domainEntries.filter(e => e.host !== selectedHost);
     const res = await apiFetch('/api/admin/config', {
       method: 'PATCH',
@@ -346,25 +394,28 @@ export function BrandingPage() {
     }
   }
 
+  // Another domain's settings replace the form: the page's own leave prompt
+  // asks first when this one holds edits.
   function handleScopeChange(host: string | null) {
-    if (Object.keys(edits).length > 0 && !confirm('Discard unsaved changes?')) return;
-    setSelectedHost(host);
-    setEdits({});
-    setMessage(null);
+    requestLeave(() => {
+      setSelectedHost(host);
+      setEdits({});
+      setMessage(null);
+    }, 'branding');
   }
 
   const hasEdits = Object.keys(edits).length > 0;
   const wildcardScope = !!selectedHost && !EXACT_HOST_RE.test(selectedHost);
 
   useAdminUnsavedChanges('branding', hasEdits);
+  const requestLeave = useAdminUnsavedStore((s) => s.requestLeave);
+  const { dialogProps: confirmProps, confirm } = useConfirmDialog();
 
   if (loading) {
     return (
       <div>
         <AdminPageHeader title={PAGE.label} description={PAGE.description} />
-        <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
-          <Loader2 className="me-2 h-4 w-4 animate-spin" /> Loading
-        </div>
+        <AdminBodySkeleton status="Loading" />
       </div>
     );
   }
@@ -380,10 +431,13 @@ export function BrandingPage() {
     <ImageItem
       key={field.key}
       label={field.label}
+      previewOn={field.key.endsWith('DarkUrl') ? 'dark' : field.key.endsWith('LightUrl') ? 'light' : undefined}
       accept={field.accept}
       value={currentValue(field.key)}
       badge={overrideBadge(field.key)}
-      placeholder={selectedHost ? 'Enter URL (uploads only for default scope)' : 'Enter URL or upload a file'}
+      // Files upload to the default scope and to exact hosts; a wildcard has
+      // no single host to serve them from (the scope line says so).
+      placeholder={wildcardScope ? 'Enter URL' : 'Enter URL or upload a file'}
       uploading={uploading === field.key}
       uploadDisabled={wildcardScope}
       uploaded={isUploadedFile(field.key)}
@@ -404,6 +458,7 @@ export function BrandingPage() {
           value={currentValue(field.key)}
           onChange={(e) => handleChange(field.key, e.target.value)}
           placeholder={placeholder}
+          title={placeholder}
           aria-label={field.label}
           autoComplete="off"
           spellCheck={false}
@@ -418,7 +473,7 @@ export function BrandingPage() {
     <div>
       <AdminPageHeader title={PAGE.label} description={PAGE.description} />
 
-      <Flash message={message} onDismiss={() => setMessage(null)} />
+      <ConfirmDialog {...confirmProps} />
 
       <div className="space-y-10">
         <SectionNav />
@@ -500,6 +555,65 @@ export function BrandingPage() {
           {IMAGE_FIELDS.map(imageRow)}
         </SettingsSection>
 
+        <SettingsSection
+          id="login-page"
+          title="Login page"
+          description="The layout of the sign-in page and the picture behind it. Backgrounds can be JPEG, PNG, WebP or SVG up to 5 MB; without a dark-mode picture, dark mode uses the light one."
+        >
+          <SettingItem label="Layout" description="Centered puts the form in a card over the background. Split puts it in a panel at the side and lets the background fill the rest of the screen, on screens 1024 px and wider; it is meant for use with a background picture.">
+            <div className="flex w-full flex-wrap items-center gap-1.5 sm:w-auto">
+              {overrideBadge('loginLayout')}
+              {(selectedHost ? ['', 'centered', 'split'] : ['centered', 'split']).map((layout) => {
+                const current = currentValue('loginLayout') || (selectedHost ? '' : 'centered');
+                return (
+                  <button
+                    key={layout || 'inherit'}
+                    type="button"
+                    aria-pressed={current === layout}
+                    onClick={() => handleChange('loginLayout', layout)}
+                    className={chipClass(current === layout)}
+                  >
+                    {layout === '' ? 'Same as default' : layout === 'split' ? 'Split' : 'Centered'}
+                  </button>
+                );
+              })}
+              {isOverriddenInScope('loginLayout') && <RevertButton onClick={() => handleRevert('loginLayout')} />}
+            </div>
+          </SettingItem>
+          {LOGIN_BACKGROUND_FIELDS.map(imageRow)}
+          {LOGIN_BACKGROUND_SLIDERS.map(field => {
+            const value = effectiveValue(field.key);
+            const number = Math.min(Number.parseInt(value, 10) || 0, field.max);
+            return (
+              <SettingItem key={field.key} label={field.label} description={field.description}>
+                <div className="flex w-full items-center gap-2 sm:w-auto">
+                  {overrideBadge(field.key)}
+                  <input
+                    type="range"
+                    min={0}
+                    max={field.max}
+                    step={field.step}
+                    value={number}
+                    onChange={(e) => handleChange(field.key, e.target.value === '0' && selectedHost === null ? '' : e.target.value)}
+                    aria-label={field.label}
+                    aria-valuetext={`${number} ${field.unit}`}
+                    className="w-full accent-primary sm:w-48"
+                  />
+                  <span className="w-12 shrink-0 text-end text-sm tabular-nums text-muted-foreground">{number} {field.unit}</span>
+                  {isOverriddenInScope(field.key) && <RevertButton onClick={() => handleRevert(field.key)} />}
+                </div>
+              </SettingItem>
+            );
+          })}
+          <LoginBackdropPreview
+            layout={effectiveValue('loginLayout') === 'split' ? 'split' : 'centered'}
+            lightUrl={effectiveValue('loginBackgroundLightUrl')}
+            darkUrl={effectiveValue('loginBackgroundDarkUrl')}
+            dim={Number.parseInt(effectiveValue('loginBackgroundDim'), 10) || 0}
+            blur={Number.parseInt(effectiveValue('loginBackgroundBlur'), 10) || 0}
+          />
+        </SettingsSection>
+
         <SettingsSection id="pwa" title="Progressive web app" description="Shown when users install the webmail to their home screen. Leave fields blank to fall back to the favicon and app name.">
           {PWA_IMAGE_FIELDS.map(imageRow)}
           {PWA_TEXT_FIELDS.map(field => textRow(field, field.placeholder))}
@@ -535,7 +649,15 @@ export function BrandingPage() {
         </SettingsSection>
 
         <SettingsSection id="company" title="Company information">
-          {TEXT_FIELDS.map(field => textRow(field, field.key.includes('Url') ? 'https://...' : 'Enter value'))}
+          {TEXT_FIELDS.map(field => textRow(field, 'placeholder' in field ? field.placeholder : field.key.includes('Url') ? 'https://...' : 'Enter value'))}
+        </SettingsSection>
+
+        <SettingsSection
+          id="accessibility-links"
+          title="Accessibility and help links"
+          description="Shown on the login page, in the settings sidebar and in the account menu, in the same place on every page. Leave a field empty to hide its link. Only http and https links are used; the barrier report can also be an email address."
+        >
+          {HELP_FIELDS.map(field => textRow(field, field.placeholder))}
         </SettingsSection>
       </div>
 
@@ -552,6 +674,8 @@ export function BrandingPage() {
 
 interface ImageItemProps {
   label: string;
+  /** Shows the preview on the surface the logo is meant for, whatever the panel's own mode. */
+  previewOn?: 'light' | 'dark';
   accept: string;
   value: string;
   badge: ReactNode;
@@ -567,7 +691,7 @@ interface ImageItemProps {
 }
 
 /** One image slot: a URL field, an upload button, and a preview of what is set. */
-function ImageItem({ label, accept, value, badge, placeholder, uploading, uploadDisabled, uploaded, overridden, onChange, onUpload, onDeleteUpload, onRevert }: ImageItemProps) {
+function ImageItem({ label, previewOn, accept, value, badge, placeholder, uploading, uploadDisabled, uploaded, overridden, onChange, onUpload, onDeleteUpload, onRevert }: ImageItemProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   return (
     <SettingItem label={label}>
@@ -579,6 +703,7 @@ function ImageItem({ label, accept, value, badge, placeholder, uploading, upload
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
+            title={placeholder}
             aria-label={label}
             autoComplete="off"
             spellCheck={false}
@@ -623,8 +748,13 @@ function ImageItem({ label, accept, value, badge, placeholder, uploading, upload
         {value && (
           <div className="flex items-center gap-2">
             <ImageIcon className="w-3.5 h-3.5 text-muted-foreground" />
-            <div className="h-8 w-auto bg-muted rounded flex items-center justify-center px-2">
+            <div className={cn(
+              'h-8 w-auto rounded flex items-center justify-center px-2',
+              previewOn === 'dark' ? 'bg-neutral-900' : previewOn === 'light' ? 'border border-border bg-white' : 'bg-muted',
+            )}>
+              {/* The key: a URL that failed while it was being typed hides the image, and the next one must show again. */}
               <img
+                key={value}
                 src={withBasePath(value)}
                 alt={label}
                 className="max-h-6 max-w-[200px] object-contain"
@@ -635,5 +765,82 @@ function ImageItem({ label, accept, value, badge, placeholder, uploading, upload
         )}
       </div>
     </SettingItem>
+  );
+}
+
+interface LoginBackdropPreviewProps {
+  layout: 'centered' | 'split';
+  lightUrl: string;
+  darkUrl: string;
+  dim: number;
+  blur: number;
+}
+
+/**
+ * The sign-in page in miniature, in light and dark mode, with the settings
+ * above applied: what app/login.css draws, at a fifth of a laptop screen.
+ */
+function LoginBackdropPreview({ layout, lightUrl, darkUrl, dim, blur }: LoginBackdropPreviewProps) {
+  const light = usableBackgroundUrl(lightUrl);
+  const dark = usableBackgroundUrl(darkUrl) || light;
+  return (
+    <div className="flex flex-wrap gap-4 py-2" aria-label="Preview of the sign-in page">
+      <PreviewScreen mode="light" layout={layout} url={light} dim={dim} blur={blur} />
+      <PreviewScreen mode="dark" layout={layout} url={dark} dim={dim} blur={blur} />
+    </div>
+  );
+}
+
+const PREVIEW_COLORS = {
+  light: { sidebar: '#f8fafc', card: '#ffffff', border: '#e2e8f0', bar: '#e2e8f0', primary: '#185aea' },
+  dark: { sidebar: '#0a0a0a', card: '#141414', border: 'rgba(128,128,128,0.3)', bar: '#262626', primary: '#fafafa' },
+} as const;
+
+function PreviewScreen({ mode, layout, url, dim, blur }: { mode: 'light' | 'dark'; layout: 'centered' | 'split'; url: string; dim: number; blur: number }) {
+  const c = PREVIEW_COLORS[mode];
+  // A fifth of the size, so a fifth of the blur.
+  const scaledBlur = blur / 5;
+  const form = (
+    <div className="flex w-full flex-col items-center gap-1.5">
+      <span className="mb-1 h-4 w-4 rounded" style={{ background: c.bar }} />
+      {[0, 1].map((i) => (
+        <span key={i} className="block h-2.5 w-full rounded-sm border" style={{ borderColor: c.border, background: c.card }} />
+      ))}
+      <span className="mt-1 block h-2.5 w-full rounded-sm" style={{ background: c.primary }} />
+    </div>
+  );
+  return (
+    <figure className="m-0 flex flex-col gap-1.5">
+      <div
+        className="relative isolate h-[160px] w-[256px] overflow-hidden rounded-md border border-border"
+        style={{ background: url ? c.sidebar : `linear-gradient(180deg, color-mix(in oklab, ${c.primary} 8%, ${c.sidebar}) 0%, ${c.sidebar} 65%)` }}
+      >
+        {url && (
+          <>
+            <div
+              className="absolute -z-10"
+              style={{
+                inset: `${-2 * scaledBlur}px`,
+                background: `${cssUrl(url.startsWith('/') ? withBasePath(url) : url)} center / cover no-repeat`,
+                filter: `blur(${scaledBlur}px)`,
+              }}
+            />
+            <div className="absolute inset-0 -z-10" style={{ background: `rgb(0 0 0 / ${dim / 100})` }} />
+          </>
+        )}
+        {layout === 'split' ? (
+          <div className="flex h-full w-[86px] items-center border-e px-3" style={{ background: mode === 'light' ? '#ffffff' : '#0a0a0a', borderColor: c.border }}>
+            {form}
+          </div>
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <div className="w-[76px] rounded-sm border p-2.5 shadow-sm" style={{ background: c.card, borderColor: c.border }}>
+              {form}
+            </div>
+          </div>
+        )}
+      </div>
+      <figcaption className="text-xs text-muted-foreground">{mode === 'light' ? 'Light mode' : 'Dark mode'}</figcaption>
+    </figure>
   );
 }

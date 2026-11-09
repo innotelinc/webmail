@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Folder, FileText, FileCode, ImageIcon, FileAudio, File } from "@/components/icons";
 import { SettingsSection, SettingItem, ToggleSwitch, RadioGroup } from "./settings-section";
-import { loadFilesSettings, saveFilesSettings, type FilesSettings } from "@/components/files/files-settings";
+import { useFilesSettings, type FilesSettings } from "@/components/files/files-settings";
 import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/browser-navigation";
 import { useConfig } from "@/hooks/use-config";
 
 interface SampleFile {
   name: string;
+  /** Folder names are translated; file names stay as they are. */
+  labelKey?: "preview_documents" | "preview_photos";
   isFolder: boolean;
   size: number;
   modified: string;
@@ -19,11 +21,11 @@ interface SampleFile {
 }
 
 const SAMPLE_FILES: SampleFile[] = [
-  { name: "Documents", isFolder: true, size: 0, modified: "2026-03-10" },
-  { name: "Photos", isFolder: true, size: 0, modified: "2026-03-14" },
+  { name: "Documents", labelKey: "preview_documents", isFolder: true, size: 0, modified: "2026-03-10" },
+  { name: "Photos", labelKey: "preview_photos", isFolder: true, size: 0, modified: "2026-03-14" },
   { name: "report.pdf", isFolder: false, size: 245000, modified: "2026-03-15" },
   { name: "notes.md", isFolder: false, size: 1200, modified: "2026-03-12" },
-  { name: "vacation.jpg", isFolder: false, size: 3400000, modified: "2026-03-08", thumbnailUrl: "/branding/Loomix_Icon_Color.png" },
+  { name: "logo.png", isFolder: false, size: 34000, modified: "2026-03-08", thumbnailUrl: "/branding/Loomix_Icon_Color.png" },
   { name: "song.mp3", isFolder: false, size: 5200000, modified: "2026-03-01" },
   { name: ".config", isFolder: false, size: 340, modified: "2026-02-20", hidden: true },
 ];
@@ -58,12 +60,16 @@ function formatSize(bytes: number): string {
 }
 
 function FilesSettingsPreview({ settings }: { settings: FilesSettings }) {
+  const tFiles = useTranslations("files");
+  const tWording = useTranslations("uxs_wording");
   // The sample thumbnail shows the configured logo on a branded deployment,
   // the bundled one otherwise. (#1160)
   const { appLogoLightUrl, appLogoDarkUrl } = useConfig();
   const thumbnailUrl = appLogoLightUrl || appLogoDarkUrl || "/branding/Loomix_Icon_Color.png";
   const sortedFiles = useMemo(() => {
-    let files = SAMPLE_FILES.map((f) => (f.thumbnailUrl ? { ...f, thumbnailUrl } : f)).filter((f) => {
+    let files = SAMPLE_FILES
+      .map((f) => (f.labelKey ? { ...f, name: tWording(f.labelKey) } : f))
+      .map((f) => (f.thumbnailUrl ? { ...f, thumbnailUrl } : f)).filter((f) => {
       if (!settings.showHiddenFiles && f.hidden) return false;
       return true;
     });
@@ -82,14 +88,14 @@ function FilesSettingsPreview({ settings }: { settings: FilesSettings }) {
     });
 
     return files;
-  }, [settings.showHiddenFiles, settings.defaultSortKey, settings.defaultSortDir, thumbnailUrl]);
+  }, [settings.showHiddenFiles, settings.defaultSortKey, settings.defaultSortDir, thumbnailUrl, tWording]);
 
   const listView = (
     <div className="flex-1 min-w-0 overflow-hidden">
-      <div className="flex items-center gap-3 px-2 py-1 text-[10px] font-medium text-muted-foreground border-b border-border bg-muted/50">
-        <span className="flex-1 min-w-0">Name</span>
-        <span className="w-14 text-end">Size</span>
-        <span className="w-16 text-end">Modified</span>
+      <div className="flex items-center gap-3 px-2 py-1 text-[0.625rem] font-medium text-muted-foreground border-b border-border bg-muted/50">
+        <span className="flex-1 min-w-0">{tFiles("name")}</span>
+        <span className="w-14 text-end">{tFiles("size")}</span>
+        <span className="w-16 text-end">{tFiles("modified")}</span>
       </div>
       {sortedFiles.map((file) => (
         <div
@@ -104,13 +110,13 @@ function FilesSettingsPreview({ settings }: { settings: FilesSettings }) {
           ) : settings.showIcons ? (
             getPreviewIcon(file, settings.coloredIcons, "sm")
           ) : null}
-          <span className={cn("flex-1 min-w-0 truncate text-[11px]", file.isFolder && "font-medium")}>
+          <span className={cn("flex-1 min-w-0 truncate text-[0.6875rem]", file.isFolder && "font-medium")}>
             {file.name}
           </span>
-          <span className="w-14 text-end text-[10px] text-muted-foreground tabular-nums">
+          <span className="w-14 text-end text-[0.625rem] text-muted-foreground tabular-nums">
             {formatSize(file.size)}
           </span>
-          <span className="w-16 text-end text-[10px] text-muted-foreground tabular-nums">
+          <span className="w-16 text-end text-[0.625rem] text-muted-foreground tabular-nums">
             {file.modified.slice(5)}
           </span>
         </div>
@@ -136,7 +142,7 @@ function FilesSettingsPreview({ settings }: { settings: FilesSettings }) {
             ) : (
               <div className="w-8 h-8" />
             )}
-            <span className={cn("text-[9px] truncate w-full text-center", file.isFolder && "font-medium")}>
+            <span className={cn("text-[0.5625rem] truncate w-full text-center", file.isFolder && "font-medium")}>
               {file.name}
             </span>
           </div>
@@ -156,30 +162,11 @@ function FilesSettingsPreview({ settings }: { settings: FilesSettings }) {
 
 export function FilesSettingsComponent() {
   const t = useTranslations("settings.files");
-  const [settings, setSettings] = useState<FilesSettings>(loadFilesSettings);
-
-  // Listen for external changes (e.g. if file-browser updates settings)
-  useEffect(() => {
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === "files-settings") {
-        setSettings(loadFilesSettings());
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
-  const update = useCallback((patch: Partial<FilesSettings>) => {
-    setSettings(prev => {
-      const next = { ...prev, ...patch };
-      saveFilesSettings(next);
-      return next;
-    });
-  }, []);
+  const [settings, update] = useFilesSettings();
 
   return (
     <div>
-      <div className="sticky top-0 z-10 bg-background pb-4 -mx-4 px-4 -mt-4 pt-4 lg:-mx-6 lg:px-6 lg:-mt-6 lg:pt-6 border-b border-border mb-6">
+      <div className="[@media(min-height:640px)]:sticky top-0 z-10 bg-background pb-4 -mx-4 px-4 -mt-4 pt-4 lg:-mx-6 lg:px-6 lg:-mt-6 lg:pt-6 border-b border-border mb-6">
         <p className="text-sm font-medium text-foreground mb-1">{t("preview.label")}</p>
         <FilesSettingsPreview settings={settings} />
       </div>

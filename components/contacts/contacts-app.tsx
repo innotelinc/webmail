@@ -1,11 +1,14 @@
 "use client";
 
+import { isAppLockedNow } from "@/lib/app-lock/state";
+import { AppMain, SkipLink } from "@/components/layout/app-landmarks";
 import { Suspense, useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Users, AlertTriangle } from "@/components/icons";
+import { ArrowLeft, Users, UsersRound, AlertTriangle, Plus, UserPlus, Upload, BookPlus, Printer, Merge } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { ContextMenuItem } from "@/components/ui/context-menu";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { ContactList } from "@/components/contacts/contact-list";
@@ -15,12 +18,23 @@ import { ContactGroupForm } from "@/components/contacts/contact-group-form";
 import { ContactGroupDetail } from "@/components/contacts/contact-group-detail";
 import { ContactsSidebar, type ContactCategory } from "@/components/contacts/contacts-sidebar";
 import { ContactImportDialog } from "@/components/contacts/contact-import-dialog";
-import { DirectoryBrowser, directoryKey } from "@/components/contacts/directory-browser";
+import { ContactMergeDialog } from "@/components/contacts/contact-merge-dialog";
+import { ContactDuplicatesView } from "@/components/contacts/contact-duplicates-view";
+import { findDuplicateGroups, ownerKey, planMerge, type MergePlan } from "@/lib/contacts/merge";
+import { AddressBookPickerDialog } from "@/components/contacts/address-book-picker-dialog";
+import { DirectoryBrowser, directoryKey, filterDirectory } from "@/components/contacts/directory-browser";
 import { DirectoryEntryDetail } from "@/components/contacts/directory-entry-detail";
-import { RenameDialog } from "@/components/files/rename-dialog";
-import { exportContacts } from "@/components/contacts/contact-export";
+import { PromptDialog } from "@/components/ui/prompt-dialog";
+import { exportContacts, useContactExportBusy } from "@/components/contacts/contact-export";
+import { ContactSelectionView, selectionRecipients } from "@/components/contacts/contact-selection-view";
 import { AppTopBannerSlot } from "@/components/plugins/app-top-banner-slot";
+import { AppSidePanelPhoneButton, useAppSidePanel } from "@/components/plugins/app-side-panel";
+import { contactToView } from "@/lib/plugin-projection";
+import { useStrictestDevices } from "@/hooks/use-device-policy";
 import { useContactStore, getContactDisplayName, getContactPrimaryEmail, type DirectoryEntry } from "@/stores/contact-store";
+import { useSettingsStore } from "@/stores/settings-store";
+import { inlineContactMedia, type ContactSaveOptions } from "@/lib/contact-media";
+import { getContactPhotoClient } from "@/hooks/use-contact-photo";
 import { savePendingMailto } from "@/lib/protocol-handlers/session";
 import { formatRecipient, formatRecipientEntry, type Recipient } from "@/lib/email-composer-utils";
 import { useAuthStore, redirectToLogin, saveRedirectAfterLogin } from '@/stores/auth-store';
@@ -36,18 +50,39 @@ import { useIsEmbedded } from "@/hooks/use-is-embedded";
 import { useIsFocusedProTab } from "@/hooks/use-pane-context";
 import { useProMultiAccountContacts } from "@/hooks/use-pro-multi-account-contacts";
 import { ResizeHandle } from "@/components/layout/resize-handle";
-import { useIsDesktop, useIsMobile } from "@/hooks/use-media-query";
+import { EdgeDrawer } from "@/components/layout/edge-drawer";
+import { useIsFullDesktop, useIsMobile } from "@/hooks/use-media-query";
 import { useRefreshGesture } from "@/hooks/use-refresh-gesture";
 import type { ContactCard, AddressBook, AddressBookRights } from "@/lib/jmap/types";
 import { ShareCollectionDialog } from "@/components/settings/share-collection-dialog";
 import { appPath, buildContactsPath, parseContactsPath, type ContactDeepLink } from "@/lib/deep-links";
 import { consumePendingDeepLinkEntry, subscribePendingDeepLink } from "@/lib/deep-link-handoff";
+import { useHandoffFiles } from "@/hooks/use-handoff-files";
 import { useDeepLinkUrl } from "@/hooks/use-deep-link-url";
 import { useProInterfaceActive } from "@/components/pro/pro-interface-redirect";
 import { useLiteLinkSegments } from "@/hooks/use-lite-link-segments";
 import { useDocumentTitle } from "@/hooks/use-document-title";
+import { useDesktopWindowName } from "@/lib/desktop/window-name";
+import { ContactsSkeleton, ContactsSkeletonBody } from "@/components/boot-skeleton/contacts-skeleton";
+import { useSkeletonLabels } from "@/components/boot-skeleton/use-skeleton-labels";
+import { useRegisterCommands } from "@/lib/command-registry";
+import { useAppCommands } from "@/lib/app-commands";
+import { useCloseOnBack } from "@/hooks/use-close-on-back";
+import { useLeaveGuard } from "@/lib/leave-guard";
+import { useDeleteCategory } from "@/hooks/use-delete-category";
 import { MvTopBar } from "@/components/layout/mv-top-bar";
 import { useMountainViewShell } from "@/hooks/use-mountain-view-shell";
+import { usePrintListener, usePrinting } from "@/components/print/print-root";
+import { requestPrint, usePrintStore } from "@/stores/print-store";
+import { printContact, resolveContactsPrint } from "@/components/contacts/contact-print";
+import {
+  ContactGroupPrintSheet,
+  ContactListPrint,
+  ContactPrintSheet,
+  DirectoryEntryPrintSheet,
+  DirectoryListPrint,
+} from "@/components/contacts/contact-print-views";
+import { useCollectionNames } from "@/hooks/use-collection-names";
 
 type View =
   | "list"
@@ -58,7 +93,8 @@ type View =
   | "group-create"
   | "group-edit"
   | "bulk-add-to-group"
-  | "directory-detail";
+  | "directory-detail"
+  | "duplicates";
 
 export interface ContactsAppProps {
   /** Path segments after `/contacts` (`['<contactId>', 'edit']`). */
@@ -68,9 +104,21 @@ export interface ContactsAppProps {
 function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = {}) {
   // Static Lite build: the route params are empty, read the link from the URL.
   const linkSegments = useLiteLinkSegments('contacts', routeSegments);
+  const shownName = useCollectionNames();
   const t = useTranslations("contacts");
+  const tImport = useTranslations("ux_p2_pim_cm");
+  const skeleton = useSkeletonLabels();
+  // Organisation > Devices > No printing: no Print buttons (Ctrl+P prints a note).
+  const printOff = useStrictestDevices().noPrint;
   const tSidebar = useTranslations("sidebar");
+  const tUxContact = useTranslations("ux_pim_contact");
+  const tCommon = useTranslations("common");
+  const tShell = useTranslations("shell");
+  const tMerge = useTranslations("ux_pim_cimport");
+  const tPc = useTranslations("ux_p3_pim_pc");
+  const exportBusy = useContactExportBusy();
   useDocumentTitle(tSidebar("contacts"));
+  useDesktopWindowName(tSidebar("contacts"), { withAccount: true });
   const contactsEnabled = usePolicyStore((s) => s.isFeatureEnabled('contactsEnabled'));
   const { client, isAuthenticated, logout, checkAuth, isLoading: authLoading } = useAuthStore();
   const { showAppsModal, inlineApp, loadedApps, handleManageApps, handleInlineApp, closeInlineApp, closeAppsModal } = useSidebarApps();
@@ -89,6 +137,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     fetchContacts,
     createContact,
     updateContact,
+    fetchContactFromServer,
     deleteContact,
     addLocalContact,
     updateLocalContact,
@@ -113,11 +162,16 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     setDefaultAddressBook,
     renameKeyword,
     importContacts,
+    mergeContacts,
+    undoMergeContacts,
   } = useContactStore();
 
   const [view, setView] = useState<View>("list");
   const [activeCategory, setActiveCategory] = useState<ContactCategory>("all");
   const [showImportDialog, setShowImportDialog] = useState(false);
+  // "Merge…" (two or more cards) and "Merge with…" (one card, the other picked in the dialog).
+  const [mergeCards, setMergeCards] = useState<ContactCard[] | null>(null);
+  const [mergePickFor, setMergePickFor] = useState<ContactCard | null>(null);
   const [renamingAddressBook, setRenamingAddressBook] = useState<AddressBook | null>(null);
   const [creatingAddressBook, setCreatingAddressBook] = useState(false);
   const [sharingAddressBookId, setSharingAddressBookId] = useState<string | null>(null);
@@ -125,15 +179,28 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   const [createPrefill, setCreatePrefill] = useState<{ email?: string; name?: string } | undefined>(undefined);
   const [returnToEmail, setReturnToEmail] = useState(false);
   const [renamingKeyword, setRenamingKeyword] = useState<string | null>(null);
+  // "Move to…": the contacts waiting for an address book to be picked.
+  const [movingContactIds, setMovingContactIds] = useState<string[] | null>(null);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  // Who a new group starts with: the selection when it came from "Add to group".
+  const [newGroupMemberIds, setNewGroupMemberIds] = useState<string[]>([]);
   const [directorySelection, setDirectorySelection] = useState<Set<string>>(() => new Set());
   const [openDirectoryKey, setOpenDirectoryKey] = useState<string | null>(null);
   const directoryPrincipals = useContactStore((s) => s.directoryPrincipals);
-  const showDirectory = !!client?.supportsPrincipals();
+  const directoryStatus = useContactStore((s) => s.directoryStatus);
+  const showContactsDirectory = useSettingsStore((s) => s.showContactsDirectory);
+  // Hidden when the user turned it off, and when the server refuses to list
+  // its directory (Stalwart 1.0 for normal users): there's nothing to browse.
+  const showDirectory = !!client?.supportsPrincipals() && showContactsDirectory && directoryStatus !== "forbidden";
   const hasFetched = useRef(false);
   const { dialogProps: confirmDialogProps, confirm: confirmDialog } = useConfirmDialog();
   const isMobile = useIsMobile();
-  const isDesktop = useIsDesktop();
+  // Below the full desktop the sidebar opens over the page.
+  const isFullDesktop = useIsFullDesktop();
+  const locale = useLocale();
+  usePrintListener();
+  const printing = usePrinting();
+  const printTarget = usePrintStore((s) => s.target);
   const isEmbedded = useIsEmbedded();
   // Mountain View's desktop chrome: its top bar in place of the left rail.
   const mvShell = useMountainViewShell(isEmbedded);
@@ -145,9 +212,80 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   const intentAppliedRef = useRef(false);
   // Narrow pane (Pro split or small window): the categories sidebar collapses
   // into a burger-toggled overlay.
-  const isNarrow = !isDesktop;
+  const isNarrow = !isFullDesktop;
   const [narrowSidebarOpen, setNarrowSidebarOpen] = useState(false);
+  const closeNarrowSidebar = useCallback(() => setNarrowSidebarOpen(false), []);
   useEffect(() => { if (!isNarrow) setNarrowSidebarOpen(false); }, [isNarrow]);
+  // A new view (a form, a group, a contact) replaces whatever the drawer was for.
+  useEffect(() => { setNarrowSidebarOpen(false); }, [view]);
+  // R5: an editor with unsaved changes asks before anything replaces it.
+  const [editorDirty, setEditorDirtyState] = useState(false);
+  const editorDirtyRef = useRef(false);
+  const setEditorDirty = useCallback((dirty: boolean) => {
+    editorDirtyRef.current = dirty;
+    setEditorDirtyState(dirty);
+  }, []);
+  useEffect(() => {
+    if (view !== "create" && view !== "edit" && view !== "group-create" && view !== "group-edit") setEditorDirty(false);
+  }, [view, setEditorDirty]);
+  const askDiscard = useCallback(() => confirmDialog({
+    title: t("form.discard_title"),
+    message: t("form.discard_message"),
+    confirmText: t("form.discard"),
+    cancelText: t("form.keep_editing"),
+    variant: "destructive",
+  }), [confirmDialog, t]);
+  const confirmDiscard = useCallback(async () => {
+    if (!editorDirtyRef.current) return true;
+    const discard = await askDiscard();
+    if (discard) setEditorDirty(false);
+    return discard;
+  }, [askDiscard, setEditorDirty]);
+  // The rail and the phone tab bar ask too, before they leave Contacts. Only
+  // ask there: leaving unmounts the form, and clearing it first would let the
+  // Back guard below take its history step back over the navigation.
+  useLeaveGuard(() => editorDirtyRef.current, askDiscard);
+  const guard = <A extends unknown[]>(action: (...args: A) => unknown) => (...args: A): void => {
+    if (!editorDirtyRef.current) {
+      action(...args);
+      return;
+    }
+    void confirmDiscard().then((discard) => { if (discard) action(...args); });
+  };
+  // Leaving the page or going Back asks too.
+  useEffect(() => {
+    if (!editorDirty) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      // The app lock asks nobody: the page is going to the lock screen.
+      if (!isAppLockedNow()) e.preventDefault();
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [editorDirty]);
+  const handleCancelRef = useRef<() => void>(() => {});
+  // Set when the app itself goes Back (to the email it came from): the
+  // guard's history entry is in the way then, and is stepped over.
+  const leavingRef = useRef(false);
+  const backGuard = useCloseOnBack({ active: editorDirty, onBack: () => {
+    if (leavingRef.current) {
+      leavingRef.current = false;
+      window.history.back();
+      return;
+    }
+    void confirmDiscard().then((discard) => {
+      if (discard) handleCancelRef.current();
+      else backGuard.rearm();
+    });
+  } });
+  const routerBack = useCallback(() => {
+    if (backGuard.armed()) leavingRef.current = true;
+    router.back();
+  }, [backGuard, router]);
+  // Anything picked in the drawer closes it (R7).
+  const fromDrawer = <A extends unknown[], R>(action: (...args: A) => R) => (...args: A): R => {
+    setNarrowSidebarOpen(false);
+    return action(...args);
+  };
 
   // Panel resize state - sidebar (categories)
   const [sidebarWidth, setSidebarWidth] = useState(() => {
@@ -246,6 +384,14 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   // focused tab writes the address bar; the standard instance that renders
   // while Pro takes over a route stays silent.
   const proInterfaceActive = useProInterfaceActive();
+  // A .vcf opened from the OS (lib/launch-handoff.ts). It waits for the
+  // contacts, or everything would look new to the duplicate check. The
+  // standard page that renders while the Pro shell takes over leaves it for
+  // the Pro one.
+  const launchedFile = useHandoffFiles(
+    "contacts",
+    isAuthenticated && !!client && (contactsLoaded || !supportsSync) && (isEmbedded || !proInterfaceActive),
+  );
   const isFocusedProTab = useIsFocusedProTab();
   const contactsLinkPath = appPath(buildContactsPath({
     contactId: view === 'detail' || view === 'edit' ? selectedContactId : null,
@@ -283,6 +429,20 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   const selectedContact = contacts.find((c) => c.id === selectedContactId) || null;
   const selectedGroup = selectedGroupId ? contacts.find(c => c.id === selectedGroupId) || null : null;
   const selectedGroupMembers = useMemo(() => selectedGroupId ? getGroupMembers(selectedGroupId) : [], [selectedGroupId, getGroupMembers]);
+
+  // The plugin side panel (app-side-panel), with the contact the user opened
+  // and how many are ticked. On desktop it sits under a row of its own with
+  // the open contact's name and the panel's button.
+  const openContact = (view === "detail" || view === "edit") && activeCategory !== "directory" && selectedContact?.kind !== "group" ? selectedContact : null;
+  const selectedCount = selectedContactIds.size;
+  const sidePanelContext = useMemo(() => ({
+    ...(openContact ? { contact: contactToView(openContact) } : {}),
+    selectedCount,
+  }), [openContact, selectedCount]);
+  const sidePanel = useAppSidePanel({ view: "contacts", context: sidePanelContext });
+  const sidePanelTitle = openContact
+    ? getContactDisplayName(openContact)
+    : view === "group-detail" && selectedGroup ? getContactDisplayName(selectedGroup) : "";
 
   // Collect all unique keywords across contacts
   const allKeywords = useMemo(() => {
@@ -338,14 +498,53 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     try {
       await moveContactToAddressBook(client, contactIds, addressBook);
       const msg = contactIds.length === 1
-        ? t("address_books.moved", { name: addressBook.name })
-        : t("address_books.moved_plural", { count: contactIds.length, name: addressBook.name });
+        ? t("address_books.moved", { name: shownName.addressBook(addressBook) })
+        : t("address_books.moved_plural", { count: contactIds.length, name: shownName.addressBook(addressBook) });
       toast.success(msg);
     } catch (error) {
       console.error('Failed to move contacts:', error);
       toast.error(t("address_books.move_failed"));
     }
-  }, [client, moveContactToAddressBook, t]);
+  }, [client, moveContactToAddressBook, t, shownName]);
+
+  // Address books contacts can be moved to; "Move to…" needs a second one.
+  const writableBooks = useMemo(() => addressBooks.filter((b) => b.myRights?.mayWrite !== false), [addressBooks]);
+  const canMoveContacts = !!client && supportsSync && writableBooks.length > 1;
+  // A contact in an address book shared read-only can't be changed: its menus leave out Edit, Move and Delete.
+  const isContactReadOnly = useCallback((contact: ContactCard) => Object.entries(contact.addressBookIds ?? {})
+    .some(([id, inBook]) => inBook && addressBooks.find((b) => b.id === id)?.myRights?.mayWrite === false), [addressBooks]);
+  const handleMoveContacts = useCallback((ids: string[]) => {
+    if (ids.length > 0) setMovingContactIds(ids);
+  }, []);
+  // The book the contacts are in, when they share one, so the picker can leave it out.
+  const movingFromBookId = useMemo(() => {
+    if (!movingContactIds) return null;
+    const books = new Set(movingContactIds.flatMap((id) => {
+      const c = contacts.find((x) => x.id === id);
+      return c?.addressBookIds ? Object.keys(c.addressBookIds).filter((k) => c.addressBookIds[k]) : [];
+    }));
+    return books.size === 1 ? [...books][0] : null;
+  }, [movingContactIds, contacts]);
+
+  // The directory went away while open (turned off, or the server refused
+  // to list it): back to all contacts.
+  useEffect(() => {
+    if (!showDirectory && activeCategory === "directory") {
+      setActiveCategory("all");
+      setDirectorySelection(new Set());
+      setOpenDirectoryKey(null);
+      setView("list");
+    }
+  }, [showDirectory, activeCategory]);
+
+  // Deleting a category only takes a label off contacts: no question, an Undo (R3).
+  const deleteCategory = useDeleteCategory();
+  const handleDeleteKeyword = useCallback(async (keyword: string) => {
+    if (!(await deleteCategory(keyword))) return;
+    if (typeof activeCategory === "object" && "keyword" in activeCategory && activeCategory.keyword === keyword) {
+      setActiveCategory("all");
+    }
+  }, [deleteCategory, activeCategory]);
 
   const handleDropContactsToCategory = useCallback(async (contactIds: string[], keyword: string) => {
     if (!client && supportsSync) return;
@@ -395,19 +594,51 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
       await createAddressBook(client, name);
       await refreshAddressBooks();
       toast.success(t("address_books.created"));
-      setCreatingAddressBook(false);
     } catch (error) {
       console.error('Failed to create address book:', error);
       toast.error(t("address_books.create_failed"));
     }
   }, [client, createAddressBook, refreshAddressBooks, t]);
 
-  const handleImportContacts = useCallback(async (importedContacts: ContactCard[]) => {
+  const handleImportContacts = useCallback(async (importedContacts: ContactCard[], addressBookId?: string) => {
     return importContacts(
       supportsSync && client ? client : null,
-      importedContacts
+      importedContacts,
+      addressBookId,
     );
   }, [supportsSync, client, importContacts]);
+  // "Update the existing contacts" in the import (pim-p3-15): what the file has is merged
+  // into the card it matched, as Merge does, so nothing on that card is lost.
+  const handleUpdateFromImport = useCallback(async (pairs: Array<{ existingId: string; card: ContactCard }>) => {
+    let updated = 0;
+    for (const { existingId, card } of pairs) {
+      const existing = useContactStore.getState().contacts.find((c) => c.id === existingId);
+      if (!existing || isContactReadOnly(existing)) continue;
+      const { patch } = planMerge([existing, { ...card, updated: undefined } as ContactCard]);
+      if (Object.keys(patch).length === 0) { updated++; continue; }
+      const ok = supportsSync && client
+        ? await updateContact(client, existingId, patch)
+        : await updateLocalContact(existingId, patch);
+      if (ok) updated++;
+    }
+    return updated;
+  }, [isContactReadOnly, supportsSync, client, updateContact, updateLocalContact]);
+
+  // Done importing: a toast instead of a dialog page, and Show opens where they went.
+  const handleImported = useCallback((count: number, addressBookId?: string) => {
+    if (count <= 0) return;
+    toast.success(t("import.success", { count }), {
+      action: {
+        label: tImport("import_show"),
+        onClick: () => {
+          setSearchQuery("");
+          handleSelectCategory(addressBookId ? { addressBookId } : "all");
+        },
+      },
+    });
+  }, [t, tImport, handleSelectCategory, setSearchQuery]);
+  // "Import into" starts at the address book on screen.
+  const openBookId = typeof activeCategory === "object" && "addressBookId" in activeCategory ? activeCategory.addressBookId : undefined;
 
   const handleSelectContact = (id: string) => {
     setSelectedContact(id);
@@ -431,14 +662,31 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     setView("edit");
   };
 
-  const deleteContactById = useCallback(async (contactId: string) => {
-    const confirmed = await confirmDialog({
-      title: t("delete_confirm_title"),
-      message: t("delete_confirm"),
+  // R3: the confirm names what goes ("Delete Alice Smith?", "Delete 3
+  // contacts?") and says what is lost with it.
+  const confirmDeleteContacts = useCallback((ids: string[]) => {
+    const only = ids.length === 1 ? contacts.find((c) => c.id === ids[0]) : undefined;
+    const name = only ? getContactDisplayName(only).trim() : "";
+    return confirmDialog({
+      title: name ? t("delete_named_title", { name }) : t("bulk.delete_confirm", { count: ids.length }),
+      message: t("delete_details_message"),
       confirmText: t("form.delete"),
       variant: "destructive",
     });
-    if (!confirmed) return;
+  }, [contacts, confirmDialog, t]);
+  const confirmDeleteGroup = useCallback((groupId: string) => {
+    const group = contacts.find((c) => c.id === groupId);
+    const name = group ? getContactDisplayName(group).trim() : "";
+    return confirmDialog({
+      title: name ? t("delete_named_title", { name }) : t("groups.delete_confirm_title"),
+      message: t("groups.delete_message"),
+      confirmText: t("form.delete"),
+      variant: "destructive",
+    });
+  }, [contacts, confirmDialog, t]);
+
+  const deleteContactById = useCallback(async (contactId: string) => {
+    if (!(await confirmDeleteContacts([contactId]))) return;
 
     try {
       const deleted = supportsSync && client
@@ -452,7 +700,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
       console.error('Failed to delete contact:', error);
       toast.error(t("toast.error_delete"));
     }
-  }, [confirmDialog, t, supportsSync, client, deleteContact, deleteLocalContact, selectedContactId]);
+  }, [confirmDeleteContacts, t, supportsSync, client, deleteContact, deleteLocalContact, selectedContactId]);
 
   const handleDelete = async () => {
     if (!selectedContact) return;
@@ -472,29 +720,92 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     clearSelection();
     toggleContactSelection(id);
     if (groups.length === 0) {
+      // No group to add to yet: a new one, with the contact already in it.
+      setNewGroupMemberIds([id]);
       setView("group-create");
       return;
     }
     setView("bulk-add-to-group");
   }, [clearSelection, toggleContactSelection, groups.length]);
 
-  const handleDuplicateContact = useCallback(async (source: ContactCard) => {
-    const { id: _id, uid: _uid, created: _created, updated: _updated, ...rest } = source;
-    void _id; void _uid; void _created; void _updated;
-    const data: Partial<ContactCard> = JSON.parse(JSON.stringify(rest));
-    const created = supportsSync && client
-      ? await createContact(client, data)
-      : await addLocalContact({
-        id: `local-${generateUUID()}`,
-        addressBookIds: data.addressBookIds || {},
-        ...data,
-      });
-    if (created) toast.success(t("toast.created"));
-  }, [supportsSync, client, createContact, addLocalContact, t]);
+  // After a save or a duplicate the new card is on screen, not "Select a contact".
+  const showNewestContact = useCallback(() => {
+    const newest = useContactStore.getState().contacts.at(-1);
+    if (!newest) {
+      setView("list");
+      return;
+    }
+    setSelectedContact(newest.id);
+    setView("detail");
+  }, [setSelectedContact]);
 
-  const handleSaveNew = useCallback(async (data: Partial<ContactCard>) => {
+  // Likely duplicates among the cards that can be changed, for "Possible duplicates (n)".
+  const duplicateGroups = useMemo(
+    () => findDuplicateGroups(individuals.filter((c) => !isContactReadOnly(c))),
+    [individuals, isContactReadOnly],
+  );
+  const mergeable = useCallback((cards: ContactCard[]) => cards.length > 1
+    && cards.every((c) => c.kind !== "group" && !isContactReadOnly(c))
+    && new Set(cards.map(ownerKey)).size === 1, [isContactReadOnly]);
+  const handleMergeCards = useCallback((cards: ContactCard[]) => {
+    if (!mergeable(cards)) {
+      toast.error(tMerge("merge_not_possible"));
+      return;
+    }
+    setMergeCards(cards);
+  }, [mergeable, tMerge]);
+  const handleBulkMerge = () => handleMergeCards(contacts.filter((c) => selectedContactIds.has(c.id)));
+
+  const runMerge = useCallback(async (plan: MergePlan): Promise<boolean> => {
+    const sync = supportsSync && !!client;
+    try {
+      let { others, patch } = plan;
+      if (sync) {
+        // Photos still in blobs go with their cards: the merged card and Undo get the bytes.
+        const source = (card: ContactCard) => ({
+          client: getContactPhotoClient(card.localAccountId),
+          accountId: card.accountId,
+          localAccountId: card.localAccountId,
+        });
+        others = await Promise.all(others.map(async (card) => card.media
+          ? { ...card, media: await inlineContactMedia(card.media, source(card), "drop") }
+          : card));
+        if (patch.media) {
+          const own = plan.keep.media ?? {};
+          const added = Object.fromEntries(Object.entries(patch.media).filter(([key]) => !(key in own)));
+          patch = { ...patch, media: { ...own, ...(await inlineContactMedia(added, source(plan.keep), "drop")) } };
+        }
+      }
+      const undo = await mergeContacts(sync ? client : null, { ...plan, others, patch });
+      if (!undo) return false;
+      // From "Possible duplicates" the list stays, for the next set.
+      if (view !== "duplicates") {
+        setSelectedContact(plan.keep.id);
+        setView("detail");
+      }
+      // Not every card went: say so, and still offer Undo for what changed.
+      (undo.incomplete ? toast.error : toast.success)(tMerge(undo.incomplete ? "merge_failed" : "merged"), {
+        action: {
+          label: tMerge("undo"),
+          onClick: () => {
+            void undoMergeContacts(sync ? client : null, undo).then((ok) => {
+              if (ok) toast.info(tMerge("undone"));
+              else toast.error(tMerge("undo_failed"));
+            });
+          },
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error("Failed to merge contacts:", error);
+      toast.error(tMerge("merge_failed"));
+      return false;
+    }
+  }, [supportsSync, client, mergeContacts, undoMergeContacts, setSelectedContact, tMerge, view]);
+
+  const handleSaveNew = useCallback(async (data: Partial<ContactCard>, options?: ContactSaveOptions) => {
     const created = supportsSync && client
-      ? await createContact(client, data)
+      ? await createContact(client, data, options)
       : await addLocalContact({
         id: `local-${generateUUID()}`,
         addressBookIds: {},
@@ -503,21 +814,22 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     // A plugin stopped it: keep the form open with what was typed.
     if (!created) return;
     toast.success(t("toast.created"));
+    setEditorDirty(false);
     setDefaultBookIdForCreate(undefined);
     setCreatePrefill(undefined);
     if (returnToEmail) {
       setReturnToEmail(false);
-      router.back();
+      routerBack();
       return;
     }
-    setView("list");
-  }, [supportsSync, client, createContact, addLocalContact, t, returnToEmail, router]);
+    showNewestContact();
+  }, [supportsSync, client, createContact, addLocalContact, t, returnToEmail, routerBack, setEditorDirty, showNewestContact]);
 
-  const handleSaveEdit = useCallback(async (data: Partial<ContactCard>) => {
+  const handleSaveEdit = useCallback(async (data: Partial<ContactCard>, options?: ContactSaveOptions) => {
     if (!selectedContact) return;
 
     const updated = supportsSync && client
-      ? await updateContact(client, selectedContact.id, data)
+      ? await updateContact(client, selectedContact.id, data, options)
       : await updateLocalContact(selectedContact.id, data);
     if (!updated) return;
     toast.success(t("toast.updated"));
@@ -525,12 +837,13 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   }, [supportsSync, client, selectedContact, updateContact, updateLocalContact, t]);
 
   const handleCancel = () => {
+    setEditorDirty(false);
     setDefaultBookIdForCreate(undefined);
     // Came from email → cancel returns to the email instead of the contact list.
     if (returnToEmail && view === "create") {
       setCreatePrefill(undefined);
       setReturnToEmail(false);
-      router.back();
+      routerBack();
       return;
     }
     if (view === "create") setCreatePrefill(undefined);
@@ -543,6 +856,8 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     }
   };
 
+  handleCancelRef.current = handleCancel;
+
   const _handleSelectGroup = (id: string) => {
     setSelectedGroupId(id);
     setActiveCategory({ groupId: id });
@@ -551,6 +866,14 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
 
   const handleCreateGroup = () => {
     setSelectedGroupId(null);
+    setNewGroupMemberIds([]);
+    setView("group-create");
+  };
+
+  // "Add to group": a new group starting with the selected contacts.
+  const handleCreateGroupFromSelection = () => {
+    setSelectedGroupId(null);
+    setNewGroupMemberIds(Array.from(selectedContactIds));
     setView("group-create");
   };
 
@@ -579,6 +902,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
       bcc: field === "bcc" ? recipients : [],
       subject: "",
       body: "",
+      inApp: true,
     });
     router.push("/");
   }, [router]);
@@ -631,13 +955,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   }, [openComposeInApp]);
 
   const handleDeleteGroupFromSidebar = useCallback(async (groupId: string) => {
-    const confirmed = await confirmDialog({
-      title: t("groups.delete_confirm_title"),
-      message: t("groups.delete_confirm"),
-      confirmText: t("form.delete"),
-      variant: "destructive",
-    });
-    if (!confirmed) return;
+    if (!(await confirmDeleteGroup(groupId))) return;
 
     try {
       await deleteGroup(supportsSync && client ? client : null, groupId);
@@ -651,18 +969,11 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
       console.error('Failed to delete group:', error);
       toast.error(t("toast.error_delete"));
     }
-  }, [confirmDialog, deleteGroup, supportsSync, client, selectedGroupId, t]);
+  }, [confirmDeleteGroup, deleteGroup, supportsSync, client, selectedGroupId, t]);
 
   const handleDeleteGroup = async () => {
     if (!selectedGroup) return;
-
-    const confirmed = await confirmDialog({
-      title: t("groups.delete_confirm_title"),
-      message: t("groups.delete_confirm"),
-      confirmText: t("form.delete"),
-      variant: "destructive",
-    });
-    if (!confirmed) return;
+    if (!(await confirmDeleteGroup(selectedGroup.id))) return;
 
     try {
       await deleteGroup(supportsSync && client ? client : null, selectedGroup.id);
@@ -690,9 +1001,10 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     } else {
       await createGroup(jmapClient, name, memberIds);
       toast.success(t("toast.created"));
+      clearSelection();
       setView("list");
     }
-  }, [view, selectedGroup, selectedGroupMembers, supportsSync, client, createGroup, updateGroup, addMembersToGroup, removeMembersFromGroup, t]);
+  }, [view, selectedGroup, selectedGroupMembers, supportsSync, client, createGroup, updateGroup, addMembersToGroup, removeMembersFromGroup, clearSelection, t]);
 
   const handleRemoveGroupMember = async (memberId: string) => {
     if (!selectedGroup) return;
@@ -712,13 +1024,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   const handleBulkDelete = async () => {
     if (selectedContactIds.size === 0) return;
 
-    const confirmed = await confirmDialog({
-      title: t("bulk.delete_confirm_title"),
-      message: t("bulk.delete_confirm", { count: selectedContactIds.size }),
-      confirmText: t("bulk.delete"),
-      variant: "destructive",
-    });
-    if (!confirmed) return;
+    if (!(await confirmDeleteContacts(Array.from(selectedContactIds)))) return;
 
     try {
       if (!(await bulkDeleteContacts(
@@ -736,20 +1042,41 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   const handleBulkAddToGroup = () => {
     if (selectedContactIds.size === 0) return;
     if (groups.length === 0) {
-      setView("group-create");
+      handleCreateGroupFromSelection();
       return;
     }
     setView("bulk-add-to-group");
   };
 
-  const handleBulkExport = () => {
+  /** One new message to everyone ticked, in To (pim-p3-7). */
+  const handleBulkCompose = () => {
+    const recipients = selectionRecipients(contacts.filter((c) => selectedContactIds.has(c.id)));
+    if (recipients.length === 0) {
+      toast.error(tPc("no_addresses"));
+      return;
+    }
+    openComposeInApp(recipients, "to");
+  };
+
+  const handleBulkExport = async () => {
     const toExport = contacts.filter(c => selectedContactIds.has(c.id));
-    if (toExport.length > 0) {
-      exportContacts(toExport);
+    if (toExport.length > 0 && await exportContacts(toExport)) {
       toast.success(t("export.success", { count: toExport.length }));
       clearSelection();
     }
   };
+
+  // File > New contact in the desktop app's menus, from any app.
+  useAppCommands({ "new-contact": () => guard(handleCreateNew)(), "import-contacts": () => setShowImportDialog(true) }, contactsEnabled);
+
+  // The command palette's Contacts group (Ctrl/⌘+K).
+  useRegisterCommands(tSidebar("contacts"), [
+    { id: "new-contact", label: t("create_new"), icon: UserPlus, run: () => guard(handleCreateNew)() },
+    { id: "import", label: t("import.title"), icon: Upload, run: () => setShowImportDialog(true) },
+    { id: "find-duplicates", label: tMerge("find_duplicates"), icon: Merge, run: () => guard(() => setView("duplicates"))() },
+    { id: "new-group", label: t("groups.create"), icon: UsersRound, run: () => guard(handleCreateGroup)() },
+    { id: "new-address-book", label: t("address_books.create"), icon: BookPlus, run: () => setCreatingAddressBook(true), when: () => !!client },
+  ], contactsEnabled);
 
   const handleBulkAddToGroupConfirm = async (groupId: string) => {
     try {
@@ -766,7 +1093,12 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     }
   };
 
-  if (!isAuthenticated) return null;
+  // Until the session is restored: the page skeleton the server drew.
+  if (!isAuthenticated) {
+    return isEmbedded
+      ? <ContactsSkeletonBody embedded />
+      : <ContactsSkeleton label={skeleton.label} labels={skeleton.labels} />;
+  }
 
   const renderRightPanel = () => {
     // The directory is read-only: its panel shows the open entry whatever the view.
@@ -774,14 +1106,34 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
       return (
         <DirectoryEntryDetail
           entry={directoryPrincipals.find((e) => directoryKey(e) === openDirectoryKey) ?? null}
+          onPrint={printOff ? undefined : (entry) => { void requestPrint({ kind: "directory-entry", entry }); }}
           onCompose={(entry) => handleComposeDirectory([entry])}
-          onAddToContacts={handleAddDirectoryEntryToContacts}
+          onAddToContacts={guard(handleAddDirectoryEntryToContacts)}
         />
       );
     }
+    // Ticked contacts: what can be done with them, not the one that was open (pim-p3-7).
+    if (selectedContactIds.size > 0 && !isMobile && (view === "detail" || view === "list")) {
+      const chosen = contacts.filter((c) => selectedContactIds.has(c.id));
+      if (chosen.length > 0) {
+        return (
+          <ContactSelectionView
+            contacts={chosen}
+            onSendEmail={handleBulkCompose}
+            onAddToGroup={guard(handleBulkAddToGroup)}
+            onMoveTo={canMoveContacts ? () => handleMoveContacts(chosen.map((c) => c.id)) : undefined}
+            onMerge={handleBulkMerge}
+            onExport={() => { void handleBulkExport(); }}
+            onDelete={() => { void handleBulkDelete(); }}
+            onClear={clearSelection}
+            exporting={exportBusy}
+          />
+        );
+      }
+    }
     switch (view) {
       case "create":
-        return <ContactForm addressBooks={addressBooks} allKeywords={allKeywords} defaultAddressBookId={defaultBookIdForCreate} prefill={createPrefill} onSave={handleSaveNew} onCancel={handleCancel} />;
+        return <ContactForm addressBooks={addressBooks} allKeywords={allKeywords} defaultAddressBookId={defaultBookIdForCreate} prefill={createPrefill} onSave={handleSaveNew} onCancel={guard(handleCancel)} onDirtyChange={setEditorDirty} />;
 
       case "edit":
         if (!selectedContact) return null;
@@ -791,7 +1143,9 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
             addressBooks={addressBooks}
             allKeywords={allKeywords}
             onSave={handleSaveEdit}
-            onCancel={handleCancel}
+            onCancel={guard(handleCancel)}
+            onDirtyChange={setEditorDirty}
+            loadCurrentMedia={supportsSync && client ? () => fetchContactFromServer(client, selectedContact.id) : undefined}
           />
         );
 
@@ -805,11 +1159,12 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
             onDelete={handleDeleteGroup}
             onRemoveMember={handleRemoveGroupMember}
             onComposeGroup={(field) => handleComposeGroupFromSidebar(selectedGroup.id, field)}
+            onPrint={printOff ? undefined : () => { void requestPrint({ kind: "contact-group", group: selectedGroup }); }}
             isMobile={isMobile}
-            onSelectMember={(id) => {
+            onSelectMember={guard((id: string) => {
               setSelectedContact(id);
               setView("detail");
-            }}
+            })}
           />
         );
 
@@ -817,8 +1172,10 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
         return (
           <ContactGroupForm
             individuals={individuals}
+            currentMemberIds={newGroupMemberIds}
             onSave={handleSaveGroup}
-            onCancel={handleCancel}
+            onCancel={guard(handleCancel)}
+            onDirtyChange={setEditorDirty}
           />
         );
 
@@ -830,7 +1187,18 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
             individuals={individuals}
             currentMemberIds={selectedGroupMembers.map(m => m.id)}
             onSave={handleSaveGroup}
-            onCancel={handleCancel}
+            onCancel={guard(handleCancel)}
+            onDirtyChange={setEditorDirty}
+          />
+        );
+
+      case "duplicates":
+        return (
+          <ContactDuplicatesView
+            groups={duplicateGroups}
+            addressBooks={addressBooks}
+            onMerge={handleMergeCards}
+            onOpen={(id) => { setSelectedContact(id); setView("detail"); }}
           />
         );
 
@@ -844,6 +1212,16 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
               </p>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-border">
+              <button
+                type="button"
+                onClick={handleCreateGroupFromSelection}
+                className="w-full flex items-center gap-3 px-6 py-3 text-start hover:bg-muted transition-colors"
+              >
+                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <UsersRound className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0 text-sm font-medium">{t("bulk.new_group")}</div>
+              </button>
               {groups.map((group) => {
                 const gName = getContactDisplayName(group);
                 const memberCount = group.members
@@ -892,12 +1270,15 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
                 ? () => handleAddContactToGroup(selectedContact.id)
                 : undefined
             }
-            onDuplicate={
+            onMergeWith={
               selectedContact
-                ? () => void handleDuplicateContact(selectedContact)
+                ? () => setMergePickFor(selectedContact)
                 : undefined
             }
+            onMoveTo={selectedContact && canMoveContacts ? () => handleMoveContacts([selectedContact.id]) : undefined}
+            onPrint={selectedContact && !printOff ? () => { void printContact(selectedContact); } : undefined}
             isMobile={isMobile}
+            readOnly={selectedContact ? isContactReadOnly(selectedContact) : false}
           />
         );
     }
@@ -907,9 +1288,9 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
     return (
       <div className="flex h-dvh items-center justify-center bg-background p-6">
         <div className="max-w-lg text-center space-y-3">
-          <AlertTriangle className="w-10 h-10 text-yellow-500 mx-auto" />
-          <p className="text-sm font-medium">Contacts feature is disabled by your administrator</p>
-          <p className="text-xs text-muted-foreground">Please contact your administrator if you need access.</p>
+          <AlertTriangle className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto" />
+          <p className="text-sm font-medium">{t("disabled_title")}</p>
+          <p className="text-xs text-muted-foreground">{t("disabled_description")}</p>
         </div>
       </div>
     );
@@ -918,11 +1299,102 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   const showListPanel = !isMobile || view === "list";
   const showRightPanel = !isMobile || view !== "list";
 
+  // The print copy (Ctrl+P or Print): the contact, group or directory entry
+  // that is open, else the list as it is on screen.
+  const printContent = printing ? resolveContactsPrint(printTarget, {
+    directory: activeCategory === "directory",
+    detailShown: showRightPanel,
+    view,
+    selectedContact,
+    selectedGroup,
+    openDirectoryEntry: directoryPrincipals.find((e) => directoryKey(e) === openDirectoryKey) ?? null,
+  }) : null;
+  const listTitle = activeCategory === "all" ? t("tabs.all")
+    : activeCategory === "uncategorized" ? t("no_category")
+      : activeCategory === "directory" ? t("directory.title")
+        : "addressBookId" in activeCategory ? (() => { const book = addressBooks.find((b) => b.id === activeCategory.addressBookId); return book ? shownName.addressBook(book) : t("title"); })()
+          : "keyword" in activeCategory ? activeCategory.keyword
+            : getContactDisplayName(groups.find((g) => g.id === activeCategory.groupId) ?? ({} as ContactCard)) || t("title");
+  // The list prints itself, with its filters and letter groups; a phone
+  // showing something else prints what the list would hold.
+  const printCopy = (() => {
+    switch (printContent?.kind) {
+      case "contact": return <ContactPrintSheet contact={printContent.contact} photoUri={printContent.photoUri} />;
+      case "group": return <ContactGroupPrintSheet group={printContent.group} members={getGroupMembers(printContent.group.id)} />;
+      case "directory-entry": return <DirectoryEntryPrintSheet entry={printContent.entry} />;
+      case "directory-list":
+        return showListPanel ? null : <DirectoryListPrint entries={filterDirectory(directoryPrincipals, "", locale)} />;
+      case "list":
+        return showListPanel ? null : (
+          <ContactListPrint
+            title={listTitle}
+            contacts={[...displayedContacts].sort((a, b) => getContactDisplayName(a).localeCompare(getContactDisplayName(b), locale))}
+            searchQuery={searchQuery}
+          />
+        );
+      default: return null;
+    }
+  })();
+
+  // The categories: beside the list on the full desktop, a drawer below it.
+  const contactsSidebar = (
+    <ContactsSidebar
+      groups={groups}
+      individuals={individuals}
+      addressBooks={addressBooks}
+      activeCategory={activeCategory}
+      onSelectCategory={guard(handleSelectCategory)}
+      onCreateGroup={fromDrawer(guard(handleCreateGroup))}
+      onCreateContact={fromDrawer(guard(handleCreateNew))}
+      onCreateAddressBook={client ? fromDrawer(() => setCreatingAddressBook(true)) : undefined}
+      onImport={fromDrawer(() => setShowImportDialog(true))}
+      onEditGroup={fromDrawer(guard(handleEditGroupFromSidebar))}
+      onDeleteGroup={fromDrawer(handleDeleteGroupFromSidebar)}
+      onComposeGroup={fromDrawer(handleComposeGroupFromSidebar)}
+      onDropContacts={handleDropContacts}
+      onDropContactsToCategory={handleDropContactsToCategory}
+      onRenameAddressBook={client ? fromDrawer((book: AddressBook) => setRenamingAddressBook(book)) : undefined}
+      onShareAddressBook={client ? fromDrawer((book: AddressBook) => setSharingAddressBookId(book.id)) : undefined}
+      onSetDefaultAddressBook={client ? fromDrawer(async (book: AddressBook) => {
+        try {
+          await setDefaultAddressBook(client, book);
+          toast.success(t("address_books.default_updated"));
+        } catch {
+          toast.error(t("address_books.set_default_failed"));
+        }
+      }) : undefined}
+      onCreateContactInBook={fromDrawer(guard((book: AddressBook) => {
+        setDefaultBookIdForCreate(book.id);
+        setSelectedContact(null);
+        setView("create");
+      }))}
+      onDeleteAddressBook={client ? fromDrawer(async (book: AddressBook) => {
+        const ok = await confirmDialog({
+          title: t("address_books.delete_title"),
+          message: t("address_books.confirm_delete", { name: shownName.addressBook(book) }),
+          variant: "destructive",
+          confirmText: t("address_books.delete"),
+        });
+        if (!ok) return;
+        try {
+          await removeAddressBook(client, book);
+          toast.success(t("address_books.deleted"));
+        } catch {
+          toast.error(t("address_books.delete_failed"));
+        }
+      }) : undefined}
+      onRenameKeyword={fromDrawer((kw: string) => setRenamingKeyword(kw))}
+      onDeleteKeyword={fromDrawer((kw: string) => void handleDeleteKeyword(kw))}
+      directoryCount={showDirectory ? directoryPrincipals.length : undefined}
+      multiAccountMode={multiAccountEnabled && accountClients.length > 1}
+    />
+  );
+
   const mobileBackToList = () => {
     if (returnToEmail) {
       setReturnToEmail(false);
       setCreatePrefill(undefined);
-      router.back();
+      routerBack();
       return;
     }
     setView("list");
@@ -930,7 +1402,8 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
   };
 
   return (
-    <div className={cn("flex flex-col overflow-hidden pt-[env(safe-area-inset-top)]", mvShell ? "bg-[var(--mv-canvas)]" : "bg-background", isEmbedded ? "h-full" : "h-dvh")}>
+    <div className={cn("flex flex-col overflow-hidden pt-[var(--app-top-inset)]", mvShell ? "bg-[var(--mv-canvas)]" : "bg-background", isEmbedded ? "h-full" : "h-dvh")}>
+      {!isEmbedded && <SkipLink>{tShell("skip_to_content")}</SkipLink>}
       <AppTopBannerSlot />
       {refreshIndicator}
       {mvShell && (
@@ -963,103 +1436,63 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
         {inlineApp && (
           <InlineAppView apps={loadedApps} activeAppId={inlineApp!.id} onClose={closeInlineApp} />
         )}
-        <div className={cn("relative flex flex-1 min-h-0", inlineApp && "hidden")}>
-          {/* Narrow-pane backdrop for the overlay categories sidebar */}
-          {isNarrow && narrowSidebarOpen && (
-            <div
-              className={cn(
-                "inset-0 bg-black/50 z-40",
-                isEmbedded ? "absolute" : "fixed"
-              )}
-              onClick={() => setNarrowSidebarOpen(false)}
-            />
+        {/* Holds the drawer in a Pro pane and clips it there when closed. */}
+        <div className={cn("relative flex flex-1 min-h-0 overflow-hidden", inlineApp && "hidden")}>
+          {/* Panel 1: the categories. Below the full desktop a drawer from the
+              window's edge, over the app rail, as Mail's folders. */}
+          {showListPanel && isNarrow && (
+            <EdgeDrawer
+              open={narrowSidebarOpen}
+              onClose={closeNarrowSidebar}
+              contained={isEmbedded || mvShell}
+              data-testid="contacts-sidebar-drawer"
+              data-pane="sidebar"
+              className="border-e border-border bg-background"
+            >
+              {contactsSidebar}
+            </EdgeDrawer>
           )}
+          {showListPanel && !isNarrow && !isMobile && (
+            <>
+              <div
+                data-pane="sidebar"
+                className={cn(
+                  "border-e border-border flex flex-col flex-shrink-0 bg-background",
+                  !isSidebarResizing && "transition-[width] duration-300",
+                )}
+                style={{ width: `${sidebarWidth}px` }}
+              >
+                {contactsSidebar}
+              </div>
+              <ResizeHandle
+                pane="sidebar"
+                value={sidebarWidth}
+                min={180}
+                max={400}
+                onResizeStart={() => { sidebarDragStartWidth.current = sidebarWidth; setIsSidebarResizing(true); }}
+                onResize={(delta) => setSidebarWidth(Math.max(180, Math.min(400, sidebarDragStartWidth.current + delta)))}
+                onResizeEnd={() => {
+                  setIsSidebarResizing(false);
+                  localStorage.setItem("contacts-sidebar-width", String(sidebarWidth));
+                }}
+                onDoubleClick={() => { setSidebarWidth(256); localStorage.setItem("contacts-sidebar-width", "256"); }}
+              />
+            </>
+          )}
+
+          {/* The list and the contact: the main content, after the sidebar. */}
+          <AppMain
+            embedded={isEmbedded}
+            heading={tShell("heading", { place: listTitle, app: tSidebar("contacts") })}
+            className="relative flex flex-1 min-w-0 min-h-0"
+          >
           {showListPanel && (
             <>
-              {/* Panel 1: Categories sidebar (in-flow on desktop, overlay on narrow) */}
-              {(!isMobile || isNarrow) && (
-                <>
-                  <div
-                    className={cn(
-                      "border-e border-border flex flex-col flex-shrink-0 bg-background",
-                      !isSidebarResizing && "transition-[width] duration-300",
-                      isNarrow && cn(
-                        "absolute inset-y-0 left-0 z-50 w-72 pt-[env(safe-area-inset-top)]",
-                        "transform transition-transform duration-300 ease-in-out",
-                        !narrowSidebarOpen && "-translate-x-full"
-                      )
-                    )}
-                    style={isNarrow ? undefined : { width: `${sidebarWidth}px` }}
-                  >
-                    <ContactsSidebar
-                      groups={groups}
-                      individuals={individuals}
-                      addressBooks={addressBooks}
-                      activeCategory={activeCategory}
-                      onSelectCategory={handleSelectCategory}
-                      onCreateGroup={handleCreateGroup}
-                      onCreateContact={handleCreateNew}
-                      onCreateAddressBook={client ? () => setCreatingAddressBook(true) : undefined}
-                      onImport={() => setShowImportDialog(true)}
-                      onEditGroup={handleEditGroupFromSidebar}
-                      onDeleteGroup={handleDeleteGroupFromSidebar}
-                      onComposeGroup={handleComposeGroupFromSidebar}
-                      onDropContacts={handleDropContacts}
-                      onDropContactsToCategory={handleDropContactsToCategory}
-                      onRenameAddressBook={client ? (book) => setRenamingAddressBook(book) : undefined}
-                      onShareAddressBook={client ? (book) => setSharingAddressBookId(book.id) : undefined}
-                      onSetDefaultAddressBook={client ? async (book) => {
-                        try {
-                          await setDefaultAddressBook(client, book);
-                          toast.success(t("address_books.default_updated"));
-                        } catch {
-                          toast.error(t("address_books.set_default_failed"));
-                        }
-                      } : undefined}
-                      onCreateContactInBook={(book) => {
-                        setDefaultBookIdForCreate(book.id);
-                        setSelectedContact(null);
-                        setView("create");
-                      }}
-                      onDeleteAddressBook={client ? async (book) => {
-                        const ok = await confirmDialog({
-                          title: t("address_books.delete"),
-                          message: t("address_books.confirm_delete", { name: book.name }),
-                          variant: "destructive",
-                          confirmText: t("address_books.delete"),
-                        });
-                        if (!ok) return;
-                        try {
-                          await removeAddressBook(client, book);
-                          toast.success(t("address_books.deleted"));
-                        } catch {
-                          toast.error(t("address_books.delete_failed"));
-                        }
-                      } : undefined}
-                      onRenameKeyword={(kw) => setRenamingKeyword(kw)}
-                      directoryCount={showDirectory ? directoryPrincipals.length : undefined}
-                      multiAccountMode={multiAccountEnabled && accountClients.length > 1}
-                    />
-                  </div>
-                  {!isNarrow && (
-                    <ResizeHandle
-                      onResizeStart={() => { sidebarDragStartWidth.current = sidebarWidth; setIsSidebarResizing(true); }}
-                      onResize={(delta) => setSidebarWidth(Math.max(180, Math.min(400, sidebarDragStartWidth.current + delta)))}
-                      onResizeEnd={() => {
-                        setIsSidebarResizing(false);
-                        localStorage.setItem("contacts-sidebar-width", String(sidebarWidth));
-                      }}
-                      onDoubleClick={() => { setSidebarWidth(256); localStorage.setItem("contacts-sidebar-width", "256"); }}
-                    />
-                  )}
-                </>
-              )}
-
               {/* Panel 2: Contact list */}
               <div
                 data-tour="contacts-list"
                 className={cn(
-                  "border-e border-border bg-background flex flex-col flex-shrink-0",
+                  "relative border-e border-border bg-background flex flex-col flex-shrink-0",
                   isMobile ? "w-full" : "",
                   !isListResizing && !isMobile && "transition-[width] duration-300"
                 )}
@@ -1073,6 +1506,8 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
                       onSelectedChange={setDirectorySelection}
                       onOpen={(entry) => { setOpenDirectoryKey(directoryKey(entry)); setView("directory-detail"); }}
                       activeKey={openDirectoryKey}
+                      onPrint={printOff ? undefined : () => { void requestPrint({ kind: "directory-list" }); }}
+                      printing={printContent?.kind === "directory-list"}
                       onMenuClick={isNarrow ? () => setNarrowSidebarOpen(true) : undefined}
                       className="flex-1"
                     />
@@ -1096,11 +1531,13 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
                 ) : (
                 <ContactList
                   contacts={displayedContacts}
-                  selectedContactId={selectedContactId}
+                  isContactReadOnly={isContactReadOnly}
+                  // A group's page opens no member: none is marked in the list (#pim-18).
+                  selectedContactId={view === "group-detail" || view === "group-edit" ? null : selectedContactId}
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
-                  onSelectContact={handleSelectContact}
-                  onCreateNew={handleCreateNew}
+                  onSelectContact={guard(handleSelectContact)}
+                  onCreateNew={guard(handleCreateNew)}
                   className="flex-1"
                   selectedContactIds={selectedContactIds}
                   onToggleSelection={toggleContactSelection}
@@ -1108,19 +1545,65 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
                   onSelectAll={selectAllContacts}
                   onClearSelection={clearSelection}
                   onBulkDelete={handleBulkDelete}
-                  onBulkAddToGroup={handleBulkAddToGroup}
+                  onBulkAddToGroup={guard(handleBulkAddToGroup)}
                   onBulkExport={handleBulkExport}
-                  onEditContact={handleEditContact}
+                  onEditContact={guard(handleEditContact)}
                   onDeleteContact={handleDeleteContact}
-                  onAddContactToGroup={handleAddContactToGroup}
+                  onAddContactToGroup={guard(handleAddContactToGroup)}
+                  onComposeContact={handleComposeContact}
+                  onMergeContact={(contact) => setMergePickFor(contact)}
+                  onBulkMerge={handleBulkMerge}
+                  onBulkCompose={handleBulkCompose}
+                  banner={duplicateGroups.length > 0 && view !== "duplicates" ? (
+                    <button
+                      type="button"
+                      onClick={guard(() => setView("duplicates"))}
+                      className="w-full flex items-center gap-2 px-4 py-1.5 border-b border-border text-start text-xs font-medium text-primary hover:bg-muted transition-colors"
+                    >
+                      <Merge className="w-3.5 h-3.5" />
+                      {tMerge("possible_duplicates", { count: duplicateGroups.length })}
+                    </button>
+                  ) : undefined}
+                  onMoveContacts={canMoveContacts ? handleMoveContacts : undefined}
                   onMenuClick={isNarrow ? () => setNarrowSidebarOpen(true) : undefined}
-                  isLoading={supportsSync && !contactsLoaded}
+                  emptyView={activeCategory !== "all"}
+                  onImport={() => setShowImportDialog(true)}
+                  phoneMenuItems={(close) => (
+                    // On the phone these are otherwise only in the drawer's "+".
+                    <>
+                      <ContextMenuItem icon={UsersRound} label={t("groups.create")} onClick={() => { close(); guard(handleCreateGroup)(); }} />
+                      <ContextMenuItem icon={Upload} label={tUxContact("import_menu")} onClick={() => { close(); setShowImportDialog(true); }} />
+                      <ContextMenuItem icon={Merge} label={tMerge("find_duplicates")} onClick={() => { close(); guard(() => setView("duplicates"))(); }} />
+                      {!printOff && <ContextMenuItem icon={Printer} label={tCommon("print")} onClick={() => { close(); void requestPrint({ kind: "contact-list" }); }} />}
+                    </>
+                  )}
+                  // Until the session is back, nobody knows yet whether the server
+                  // keeps contacts: show the rows loading, not an empty book.
+                  isLoading={!contactsLoaded && (supportsSync || !client)}
+                  onPrint={printOff ? undefined : () => { void requestPrint({ kind: "contact-list" }); }}
+                  printTitle={printContent?.kind === "list" ? listTitle : null}
                 />
+                )}
+                {/* The phone's create button, as in Mail and Files (R7). */}
+                {isMobile && activeCategory !== "directory" && selectedContactIds.size === 0 && (
+                  <Button
+                    size="icon-lg"
+                    className="absolute bottom-4 end-4 z-20 rounded-full shadow-lg"
+                    aria-label={t("create_new")}
+                    title={t("create_new")}
+                    onClick={guard(handleCreateNew)}
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Button>
                 )}
               </div>
 
               {!isMobile && (
                 <ResizeHandle
+                  pane="contactList"
+                  value={listWidth}
+                  min={220}
+                  max={500}
                   onResizeStart={() => { listDragStartWidth.current = listWidth; setIsListResizing(true); }}
                   onResize={(delta) => setListWidth(Math.max(220, Math.min(500, listDragStartWidth.current + delta)))}
                   onResizeEnd={() => {
@@ -1133,27 +1616,42 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
             </>
           )}
 
-          {/* Panel 3: Detail / Form */}
+          {/* Panel 3: Detail / Form. With a plugin side panel, a row with the
+              contact's name and the panel's button sits over it, like the
+              reader's toolbar. The same element either way, so a form keeps
+              what was typed when the panel starts or stops docking. */}
           {showRightPanel && (
-            <div className="flex-1 min-w-0 flex flex-col">
+            <div className="flex-1 min-w-0 flex flex-col" data-contacts-side-panel-column="">
+              {sidePanel.docks && (
+                <div className="flex items-center gap-2 h-14 box-content border-b border-border px-2 sm:px-4 lg:px-6 shrink-0" data-contacts-panel-row="">
+                  <div className="flex-1 min-w-0 truncate text-sm font-semibold" title={sidePanelTitle || undefined}>{sidePanelTitle}</div>
+                  {sidePanel.toggle}
+                </div>
+              )}
               {isMobile && (
-                <div className="px-3 py-2 border-b border-border">
+                <div className="flex items-center gap-2 px-3 py-2 border-b border-border">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={mobileBackToList}
+                    onClick={guard(mobileBackToList)}
                     className="touch-manipulation"
                   >
                     <ArrowLeft className="w-4 h-4 me-2" />
                     {returnToEmail ? t("back_to_email") : t("back_to_contacts")}
                   </Button>
+                  {/* The list's header with its button is hidden while a contact is open. */}
+                  <AppSidePanelPhoneButton className="ms-auto" />
                 </div>
               )}
-              <div className="flex-1 min-h-0">
-                {renderRightPanel()}
+              <div ref={sidePanel.rowRef} className="relative flex flex-1 min-h-0">
+                <div className="flex-1 min-w-0 min-h-0">
+                  {renderRightPanel()}
+                </div>
+                {sidePanel.panel}
               </div>
             </div>
           )}
+          </AppMain>
         </div>
 
         {isMobile && !isEmbedded && (
@@ -1169,65 +1667,107 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
 
       <SidebarAppsModal isOpen={showAppsModal} onClose={closeAppsModal} />
       <ConfirmDialog {...confirmDialogProps} />
-      {renamingKeyword !== null && (
-        <RenameDialog
-          currentName={renamingKeyword}
-          title={t("rename_category")}
-          label={t("category_name_label")}
-          onCancel={() => setRenamingKeyword(null)}
-          onConfirm={async (newName) => {
+      <PromptDialog
+        isOpen={renamingKeyword !== null}
+        onClose={() => setRenamingKeyword(null)}
+        title={t("rename_category")}
+        placeholder={t("category_name_label")}
+        defaultValue={renamingKeyword ?? ""}
+        confirmText={t("form.save")}
+        cancelText={t("form.cancel")}
+        onSubmit={(newName) => {
+          const keyword = renamingKeyword;
+          if (keyword === null || newName === keyword) return;
+          void (async () => {
             try {
-              await renameKeyword(supportsSync && client ? client : null, renamingKeyword, newName);
+              await renameKeyword(supportsSync && client ? client : null, keyword, newName);
               toast.success(t("category_renamed"));
-              if (typeof activeCategory === "object" && "keyword" in activeCategory && activeCategory.keyword === renamingKeyword) {
-                setActiveCategory({ keyword: newName.trim() });
+              if (typeof activeCategory === "object" && "keyword" in activeCategory && activeCategory.keyword === keyword) {
+                setActiveCategory({ keyword: newName });
               }
-              setRenamingKeyword(null);
             } catch (err) {
               console.error("Failed to rename category:", err);
               toast.error(t("category_rename_failed"));
             }
-          }}
-        />
-      )}
-      {creatingAddressBook && (
-        <RenameDialog
-          currentName=""
-          title={t("address_books.create")}
-          label={t("address_books.name_label")}
-          onCancel={() => setCreatingAddressBook(false)}
-          onConfirm={handleCreateAddressBook}
-        />
-      )}
-      {renamingAddressBook && (
-        <RenameDialog
-          currentName={renamingAddressBook.name}
-          title={t("address_books.rename")}
-          label={t("address_books.name_label")}
-          onCancel={() => setRenamingAddressBook(null)}
-          onConfirm={async (newName) => {
-            if (!client) return;
+          })();
+        }}
+      />
+      <PromptDialog
+        isOpen={creatingAddressBook}
+        onClose={() => setCreatingAddressBook(false)}
+        title={t("address_books.create")}
+        placeholder={t("address_books.name_label")}
+        confirmText={t("address_books.create_confirm")}
+        cancelText={t("form.cancel")}
+        onSubmit={(name) => void handleCreateAddressBook(name)}
+      />
+      <PromptDialog
+        isOpen={renamingAddressBook !== null}
+        onClose={() => setRenamingAddressBook(null)}
+        title={t("address_books.rename")}
+        placeholder={t("address_books.name_label")}
+        defaultValue={renamingAddressBook ? shownName.addressBook(renamingAddressBook) : ""}
+        confirmText={t("form.save")}
+        cancelText={t("form.cancel")}
+        onSubmit={(newName) => {
+          const book = renamingAddressBook;
+          // The shown name kept as it was is no rename, also for the server's default name.
+          if (!client || !book || newName === book.name || newName === shownName.addressBook(book)) return;
+          void (async () => {
             try {
-              await renameAddressBook(client, renamingAddressBook, newName);
+              await renameAddressBook(client, book, newName);
               toast.success(t("address_books.renamed"));
-              setRenamingAddressBook(null);
             } catch (err) {
               console.error("Failed to rename address book:", err);
               toast.error(t("address_books.rename_failed"));
             }
-          }}
+          })();
+        }}
+      />
+      <AddressBookPickerDialog
+        isOpen={movingContactIds !== null}
+        onClose={() => setMovingContactIds(null)}
+        addressBooks={writableBooks}
+        currentId={movingFromBookId}
+        count={movingContactIds?.length ?? 0}
+        onPick={(book) => {
+          if (movingContactIds) void handleDropContacts(movingContactIds, book);
+        }}
+      />
+      {launchedFile.file && (
+        <ContactImportDialog
+          key={`${launchedFile.file.name}:${launchedFile.file.lastModified}`}
+          existingContacts={contacts}
+          onImport={handleImportContacts}
+          initialFile={launchedFile.file}
+          onClose={launchedFile.done}
+          addressBooks={supportsSync ? writableBooks : []}
+          defaultAddressBookId={openBookId}
+          onImported={handleImported}
+          onUpdateExisting={handleUpdateFromImport}
         />
       )}
       {showImportDialog && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-background rounded-lg border border-border shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
-            <ContactImportDialog
-              existingContacts={contacts}
-              onImport={handleImportContacts}
-              onClose={() => setShowImportDialog(false)}
-            />
-          </div>
-        </div>
+        <ContactImportDialog
+          existingContacts={contacts}
+          onImport={handleImportContacts}
+          onClose={() => setShowImportDialog(false)}
+          addressBooks={supportsSync ? writableBooks : []}
+          defaultAddressBookId={openBookId}
+          onImported={handleImported}
+          onUpdateExisting={handleUpdateFromImport}
+        />
+      )}
+      {(mergeCards || mergePickFor) && (
+        <ContactMergeDialog
+          cards={mergeCards ?? undefined}
+          pickFor={mergePickFor ?? undefined}
+          candidates={mergePickFor ? individuals.filter((c) => c.id !== mergePickFor.id && !isContactReadOnly(c) && ownerKey(c) === ownerKey(mergePickFor)) : undefined}
+          suggested={mergePickFor ? (duplicateGroups.find((g) => g.some((c) => c.id === mergePickFor.id)) ?? []).filter((c) => c.id !== mergePickFor.id) : undefined}
+          groups={groups}
+          onMerge={runMerge}
+          onClose={() => { setMergeCards(null); setMergePickFor(null); }}
+        />
       )}
       {sharingAddressBookId && client && (() => {
         const book = addressBooks.find((b) => b.id === sharingAddressBookId);
@@ -1236,7 +1776,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
           <ShareCollectionDialog
             client={client}
             kind="addressBook"
-            collectionName={book.name}
+            collectionName={shownName.addressBook(book)}
             shareWith={book.shareWith}
             ownAccountId={client.getAccountId()}
             onShare={async (principalId, rights) => {
@@ -1247,6 +1787,7 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
         );
       })()}
       </div>
+      {printCopy}
     </div>
   );
 }
@@ -1255,8 +1796,14 @@ function ContactsAppContent({ linkSegments: routeSegments }: ContactsAppProps = 
 // prerender (static Lite build); at runtime it never suspends.
 export function ContactsApp(props: ContactsAppProps = {}) {
   return (
-    <Suspense fallback={null}>
+    // The static Lite export writes this fallback into the page's HTML.
+    <Suspense fallback={<ContactsFallback />}>
       <ContactsAppContent {...props} />
     </Suspense>
   );
+}
+
+function ContactsFallback() {
+  const { label, labels } = useSkeletonLabels();
+  return <ContactsSkeleton label={label} labels={labels} />;
 }

@@ -307,6 +307,8 @@ export interface ConfigFieldSchema {
   default?: unknown;
   placeholder?: string;
   options?: { label: string; value: string }[];
+  /** `type: 'string'` only: the admin form shows a full-width text box. */
+  multiline?: boolean;
 }
 
 function validateConfigSchema(raw: unknown, errors: string[]): Record<string, ConfigFieldSchema> | undefined {
@@ -439,6 +441,27 @@ export function checkPluginManifest(m: Record<string, unknown>, opts: { appVersi
       const unknown = permissions.filter((p) => !KNOWN_PERMISSIONS.has(p));
       if (unknown.length > 0) errors.push(`Unknown permissions: ${unknown.join(', ')} (this Loomix version does not offer them)`);
     }
+  }
+  // Permissions a plugin uses when the webmail offers them: the ones this
+  // version knows are granted like "permissions" (and shown for consent the
+  // same way); unknown ones are left out, so one package installs on older
+  // and newer webmails alike and checks api.host.features for what it got.
+  if (m.optionalPermissions !== undefined) {
+    if (!Array.isArray(m.optionalPermissions) || m.optionalPermissions.some((p) => typeof p !== 'string')) {
+      errors.push('"optionalPermissions" must be a list of strings');
+    } else {
+      const asked = [...new Set(m.optionalPermissions as string[])].filter((p) => !DEPRECATED_PERMISSIONS.includes(p));
+      const unknown = asked.filter((p) => !KNOWN_PERMISSIONS.has(p));
+      if (unknown.length > 0) warnings.push(`Left out optional permissions this Loomix version does not offer: ${unknown.join(', ')}`);
+      permissions = [...new Set([...permissions, ...asked.filter((p) => KNOWN_PERMISSIONS.has(p))])];
+    }
+  }
+  // Only the privileged tier may reach the OS certificate store. Left out rather than
+  // refused, like an optional permission this version doesn't offer: the host would
+  // refuse the calls anyway, and consent shouldn't ask for what can't be used.
+  if (tier !== 'privileged' && permissions.includes('keystore')) {
+    warnings.push('Left out the "keystore" permission: it needs the privileged tier');
+    permissions = permissions.filter((p) => p !== 'keystore');
   }
   if (tier === 'privileged' && !permissions.includes('crypto:full')) {
     errors.push('A privileged plugin must request the "crypto:full" permission');
@@ -600,6 +623,9 @@ export function checkThemeManifest(manifest: Record<string, unknown>): { result:
   }
   if (manifest.typography !== undefined && (typeof manifest.typography !== 'object' || manifest.typography === null)) {
     errors.push('"typography" must be an object');
+  }
+  if (manifest.print !== undefined && (typeof manifest.print !== 'object' || manifest.print === null || Array.isArray(manifest.print))) {
+    errors.push('"print" must be an object');
   }
 
   if (errors.length > 0) return { result: null, errors };

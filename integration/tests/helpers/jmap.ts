@@ -48,6 +48,8 @@ export class JmapClient {
    *  personal mailboxes this equals the mail account, but read it from the
    *  session so the helper stays correct if that ever diverges. */
   filesAccountId = '';
+  /** Stalwart 1.0 (File Storage draft 18) wants `@type` on a FileNode create. */
+  private typedFileNodes = false;
   /** Every account visible in this user's session (own + shared/group),
    *  keyed by accountId -> account name (its email address). */
   accounts: Record<string, string> = {};
@@ -70,6 +72,8 @@ export class JmapClient {
     if (!primary) throw new Error(`No mail account for ${email} in JMAP session`);
     c.accountId = primary;
     c.filesAccountId = session.primaryAccounts?.[FILENODE] ?? primary;
+    c.typedFileNodes = 'supportedNodeTypes' in
+      (session.accounts?.[c.filesAccountId]?.accountCapabilities?.[FILENODE] ?? {});
     c.accounts = Object.fromEntries(
       Object.entries(session.accounts ?? {}).map(([id, a]) => [id, (a as { name: string }).name]),
     );
@@ -145,7 +149,17 @@ export class JmapClient {
       ],
       [CORE, PRINCIPALS],
     );
-    const list = r.methodResponses[1][1].list as Array<{ id: string; email?: string }>;
+    const [method, result] = r.methodResponses[0];
+    if (method === 'error') {
+      // Stalwart 1.0 answers `forbidden` ("The administrator has disabled
+      // directory queries.") unless the Sharing setting allowDirectoryQueries
+      // is on; the account plan turns it on.
+      const hint = result.type === 'forbidden'
+        ? ' Is Sharing.allowDirectoryQueries on (see stalwart/plan-accounts.ndjson.tpl)?'
+        : '';
+      throw new Error(`Principal/query for ${email} failed: ${result.type}: ${result.description ?? ''}${hint}`);
+    }
+    const list = (r.methodResponses[1][1].list ?? []) as Array<{ id: string; email?: string }>;
     const match = list.find((p) => p.email === email) ?? list[0];
     if (!match) throw new Error(`No principal found for ${email}`);
     return match.id;
@@ -186,6 +200,29 @@ export class JmapClient {
     if (!mb) throw new Error(`No ${role} mailbox to share`);
     await this.shareMailbox(mb.id, granteeEmail);
     return mb.id;
+  }
+
+  /**
+   * Upload an RFC 5322 message and import it into this account's mailbox with
+   * `role`, unread. A stand-in for SMTP delivery where submission is unreachable.
+   */
+  async importRaw(raw: string, role = 'inbox', accountId: string = this.accountId): Promise<string> {
+    const up = await fetch(`${JMAP_URL}/jmap/upload/${accountId}/`, {
+      method: 'POST',
+      headers: { Authorization: this.authHeader, 'Content-Type': 'message/rfc822' },
+      body: raw,
+    });
+    if (!up.ok) throw new Error(`JMAP upload failed: ${up.status}`);
+    const { blobId } = await up.json();
+    const mailbox = await this.mailboxByRole(role, accountId);
+    if (!mailbox) throw new Error(`No ${role} mailbox`);
+    const r = await this.request([['Email/import', {
+      accountId,
+      emails: { m: { blobId, mailboxIds: { [mailbox.id]: true }, keywords: {} } },
+    }, '0']]);
+    const created = r.methodResponses?.[0]?.[1]?.created?.m;
+    if (!created) throw new Error(`Email/import failed: ${JSON.stringify(r.methodResponses).slice(0, 400)}`);
+    return created.id as string;
   }
 
   async mailboxes(accountId: string = this.accountId): Promise<JmapMailbox[]> {
@@ -364,6 +401,7 @@ export class JmapClient {
   async createFileDirectory(name: string, parentId: string | null = null): Promise<string> {
     const props: Record<string, unknown> = { name };
     if (parentId !== null) props.parentId = parentId;
+    if (this.typedFileNodes) props['@type'] = 'Directory';
     const r = await this.request(
       [['FileNode/set', { accountId: this.filesAccountId, create: { dir0: props } }, '0']],
       [CORE, FILENODE],

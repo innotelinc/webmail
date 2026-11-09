@@ -4,29 +4,41 @@ import { useState, useEffect, useRef, useMemo, useCallback, useLayoutEffect } fr
 import { useTranslations, useLocale } from "next-intl";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { LinkifiedText } from "@/components/ui/linkified-text";
 import {
   X, Clock, MapPin, Video, Users, Repeat, Bell, AlignLeft,
-  Pencil, Trash2, Copy, Send, Check, MoreVertical, Calendar as CalendarIcon,
+  Pencil, Trash2, Copy, CopyPlus, Send, Check, MoreVertical, Printer, Calendar as CalendarIcon,
 } from "@/components/icons";
 import { format, isSameDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import type { CalendarEvent, Calendar, CalendarParticipant } from "@/lib/jmap/types";
 import { parseDuration, getEventColor } from "./event-card";
 import { getEventDisplayEndDate, getEventEndDate, getEventStartDate } from "@/lib/calendar-utils";
+import { eventZonedTimes, zonedTimesText } from "@/lib/event-time-zone";
 import { buildRecurrenceSummary } from "./recurrence-editor";
 import { formatEventAlertsLabel } from "./alert-list-editor";
 import {
   getUserParticipantId,
-  getUserStatus,
   getParticipantList,
 } from "@/lib/calendar-participants";
 import { canUserRsvp, getEventEditability, type EditabilityContext } from "@/lib/calendar-editability";
 import { useFormatEventDate } from "@/hooks/use-format-event-date";
+import { useCalendarLocale } from "@/hooks/use-calendar-locale";
 import { useContactNameResolver } from "@/hooks/use-contact-name-resolver";
 import { findMeetingLink, locationAction, mapsUrl, primaryLocationName } from "@/lib/event-links";
+import { descriptionAsText } from "@/lib/calendar-description";
+import { useNoThirdPartyTraffic } from "@/hooks/use-third-party-mode";
 import { PluginSlot } from "@/components/plugins/plugin-slot";
 import { eventToView } from "@/lib/plugin-projection";
+import { ParticipantStatusBadge } from "./rsvp-buttons";
+import { AnswerBars, useAnswerView } from "./answer-bars";
+import type { AnswerTarget } from "@/lib/calendar-delegate";
+import { isEditableEventTarget } from "@/lib/keyboard";
+import { isSingleKeyShortcutOff } from "@/lib/single-key-shortcuts";
+import { useCvdColor } from "@/hooks/use-cvd-color";
+import { gateLinkClick } from "@/lib/plugin-hook-result";
+import { useCollectionNames } from "@/hooks/use-collection-names";
 
 interface EventDetailPopoverProps {
   event: CalendarEvent;
@@ -37,19 +49,27 @@ interface EventDetailPopoverProps {
   onDuplicate: () => void;
   /** Opens the event's full action menu (export, copy, ...) at the click. */
   onMore?: (e: React.MouseEvent) => void;
+  /** Prints the event on a sheet of its own. */
+  onPrint?: () => void;
   onClose: () => void;
   onSaveNote: (note: string) => void;
-  onRsvp?: (status: CalendarParticipant["participationStatus"]) => void;
+  /** Without a target: the user's own answer on this event. */
+  onRsvp?: (status: CalendarParticipant["participationStatus"], target?: AnswerTarget) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   currentUserEmails?: string[];
   isSubscriptionCalendar?: (calendarId: string) => boolean;
   timeFormat?: "12h" | "24h";
   isMobile?: boolean;
+  /**
+   * Opened by a click or Enter rather than shown on hover: it takes the
+   * focus, and gives it back to the event when it closes.
+   */
+  pinned?: boolean;
 }
 
 const POPOVER_WIDTH = 360;
-const HEADER_BUTTON = "p-1.5 rounded-md hover:bg-muted transition-colors duration-150 text-muted-foreground hover:text-foreground";
+const HEADER_BUTTON = "text-muted-foreground hover:text-foreground";
 const POPOVER_GAP = 8;
 const VIEWPORT_MARGIN = 12;
 const MAX_HEIGHT = 480;
@@ -94,12 +114,20 @@ function computePosition(
   };
 }
 
-function formatDurationDisplay(minutes: number): string {
-  if (minutes < 60) return `${minutes}min`;
+/** "1 hr 30 min", "1 Std. 30 Min.": the language's own short units (pim-p2-19). */
+export function formatDurationDisplay(minutes: number, locale: string): string {
+  const unit = (value: number, name: "hour" | "minute") => {
+    try {
+      return new Intl.NumberFormat(locale, { style: "unit", unit: name, unitDisplay: "short" }).format(value);
+    } catch {
+      return `${value}${name === "hour" ? "h" : "min"}`;
+    }
+  };
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  if (m === 0) return `${h}h`;
-  return `${h}h${m}min`;
+  if (h === 0) return unit(m, "minute");
+  if (m === 0) return unit(h, "hour");
+  return `${unit(h, "hour")} ${unit(m, "minute")}`;
 }
 
 function getRecurrenceLabel(event: CalendarEvent, t: ReturnType<typeof useTranslations>, locale: string): string | null {
@@ -115,6 +143,7 @@ export function EventDetailPopover({
   onDelete,
   onDuplicate,
   onMore,
+  onPrint,
   onClose,
   onSaveNote,
   onRsvp,
@@ -124,8 +153,13 @@ export function EventDetailPopover({
   isSubscriptionCalendar,
   timeFormat = "24h",
   isMobile,
+  pinned = false,
 }: EventDetailPopoverProps) {
+  const shownName = useCollectionNames();
   const t = useTranslations("calendar");
+  const paint = useCvdColor();
+  const tCommon = useTranslations("common");
+  const tEvent = useTranslations("ux_pim_event");
   const locale = useLocale();
   const popoverRef = useRef<HTMLDivElement>(null);
   const noteInputRef = useRef<HTMLTextAreaElement>(null);
@@ -133,26 +167,33 @@ export function EventDetailPopover({
   const [ready, setReady] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteExpanded, setNoteExpanded] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSavingNote, setIsSavingNote] = useState(false);
 
   // Bare addresses (the organizer above all — Stalwart drops its display name)
   // render with the contact card's name instead of the raw email.
   const resolveContactName = useContactNameResolver();
 
-  const color = getEventColor(event, calendar);
+  const color = paint(getEventColor(event, calendar));
   const startDate = getEventStartDate(event);
   const durationMinutes = parseDuration(event.duration);
   const endDate = getEventEndDate(event);
   const displayEndDate = getEventDisplayEndDate(event);
   const isMultiDay = !isSameDay(startDate, displayEndDate);
+  // An event on another zone's clock shows its own times too (pim-2).
+  const zoned = eventZonedTimes(event, startDate, endDate);
+  const zonedText = zoned
+    ? zonedTimesText(zoned, startDate, endDate, timeFormat === "12h" ? "h:mm a" : "HH:mm", locale)
+    : null;
 
   const locationName = useMemo(() => primaryLocationName(event) ?? null, [event]);
+  // Re-computes the location link once the config is known (#903).
+  const noThirdParty = useNoThirdPartyTraffic();
 
   // Invitations (Teams above all) leave virtualLocations empty and bury the
   // join URL in the description; surface it as the meeting link anyway.
   const meeting = useMemo(() => findMeetingLink(event), [event]);
   const pluginProps = useMemo(() => ({ event: eventToView(event) }), [event]);
+  const description = useMemo(() => descriptionAsText(event), [event]);
   const virtualLocation = meeting?.uri ?? null;
 
   // A URL opens as a link, a location that only names the service joins the
@@ -160,8 +201,10 @@ export function EventDetailPopover({
   const locationHref = useMemo(() => {
     if (!locationName) return null;
     const action = locationAction(locationName, meeting);
-    return action.kind === "url" ? action.uri : mapsUrl(action.query);
-  }, [locationName, meeting]);
+    if (action.kind === "url") return action.uri;
+    // No Google Maps link while third-party traffic is off (#903).
+    return noThirdParty ? null : mapsUrl(action.query);
+  }, [locationName, meeting, noThirdParty]);
   const [locationCopied, setLocationCopied] = useState(false);
   const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
@@ -214,10 +257,7 @@ export function EventDetailPopover({
     [event, currentUserEmails]
   );
 
-  const userCurrentStatus = useMemo(
-    () => getUserStatus(event, currentUserEmails),
-    [event, currentUserEmails]
-  );
+  const answerView = useAnswerView(event, calendar, currentUserEmails, canRsvp && !!userParticipantId);
 
   const formatTime = useCallback(
     (d: Date) => format(d, timeFormat === "12h" ? "h:mm a" : "HH:mm"),
@@ -229,7 +269,7 @@ export function EventDetailPopover({
     const height = popoverRef.current.offsetHeight;
     setPosition(computePosition(anchorRect, height));
     if (!ready) requestAnimationFrame(() => setReady(true));
-  }, [anchorRect, noteExpanded, showDeleteConfirm, ready]);
+  }, [anchorRect, noteExpanded, ready]);
 
   // Content that grows after the popover was placed (a plugin section reports
   // its height a moment later) moves it again, so it stays in the window.
@@ -244,14 +284,47 @@ export function EventDetailPopover({
     return () => observer.disconnect();
   }, [anchorRect, isMobile]);
 
+  // A card opened by click or Enter takes the focus, and gives it back to
+  // the event when it closes.
+  useEffect(() => {
+    if (!pinned) return;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const node = popoverRef.current;
+    return () => {
+      const active = document.activeElement;
+      if (opener?.isConnected && (!active || active === document.body || node?.contains(active))) opener.focus({ preventScroll: true });
+    };
+  }, [pinned]);
+
+  // The focus goes in once the card is placed: before, it is hidden and
+  // can't take the focus, which stayed on the event. A card that just
+  // turned visible can still count as hidden for a frame, so it tries again
+  // on the next ones, unless the focus moved somewhere else meanwhile.
+  const placed = position !== null;
+  useEffect(() => {
+    const node = popoverRef.current;
+    if (!pinned || !placed || !node) return;
+    const from = document.activeElement;
+    let frame = 0;
+    let tries = 0;
+    const attempt = () => {
+      const active = document.activeElement;
+      if (node.contains(active) || active !== from) return;
+      const first = node.querySelector<HTMLElement>("button");
+      first?.focus({ preventScroll: true });
+      if (first && document.activeElement !== first && ++tries < 30) frame = requestAnimationFrame(attempt);
+    };
+    attempt();
+    return () => cancelAnimationFrame(frame);
+  }, [pinned, placed]);
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      const target = e.target as HTMLElement;
-      const tag = target?.tagName?.toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") return;
-      if (target?.getAttribute("contenteditable") === "true") return;
-      if (e.key === "e" && !noteExpanded && canEditBody) {
+      if (isEditableEventTarget(e)) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+      if (isSingleKeyShortcutOff(e)) return;
+      if (e.code === "KeyE" && !noteExpanded && canEditBody) {
         e.preventDefault();
         onEdit();
       }
@@ -308,6 +381,7 @@ export function EventDetailPopover({
   const hasParticipants = participants.length > 0;
 
   const formatEventDate = useFormatEventDate();
+  const { formatDateRangeLabel } = useCalendarLocale();
 
   const popover = (
     <div
@@ -338,69 +412,47 @@ export function EventDetailPopover({
       {/* Actions sit at the top, the event's colour square beside its title. */}
       <div className="flex items-center justify-end gap-0.5 px-2 pt-2">
         {canEditBody && (
-          <button
-            type="button"
+          <IconButton
             onClick={onEdit}
             className={HEADER_BUTTON}
-            aria-label={t("events.edit")}
-            title={t("events.edit")}
+            label={t("events.edit")}
           >
             <Pencil className="w-4 h-4" />
-          </button>
+          </IconButton>
         )}
         {canEditBody && (
-          <button
-            type="button"
-            onClick={() => setShowDeleteConfirm(true)}
+          <IconButton
+            onClick={onDelete}
             className={HEADER_BUTTON}
-            aria-label={t("events.delete")}
-            title={t("events.delete")}
+            label={t("events.delete")}
           >
             <Trash2 className="w-4 h-4" />
-          </button>
+          </IconButton>
         )}
-        <button
-          type="button"
+        {onPrint && (
+          <IconButton
+            onClick={onPrint}
+            className={HEADER_BUTTON}
+            label={tCommon("print")}
+          >
+            <Printer className="w-4 h-4" />
+          </IconButton>
+        )}
+        <IconButton
           onClick={onMore ?? onDuplicate}
           className={HEADER_BUTTON}
-          aria-label={onMore ? t("toolbar.more") : t("events.duplicate")}
-          title={onMore ? t("toolbar.more") : t("events.duplicate")}
+          label={onMore ? t("toolbar.more") : t("events.duplicate")}
         >
-          {onMore ? <MoreVertical className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-        </button>
-        <button
-          type="button"
+          {onMore ? <MoreVertical className="w-4 h-4" /> : <CopyPlus className="w-4 h-4" />}
+        </IconButton>
+        <IconButton
           onClick={onClose}
           className={HEADER_BUTTON}
-          aria-label={t("form.cancel")}
+          label={tCommon("close")}
         >
           <X className="w-4 h-4" />
-        </button>
+        </IconButton>
       </div>
-
-      {showDeleteConfirm && (
-        <div className="mx-4 mt-1 mb-2 flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-2">
-          <span className="text-sm text-destructive flex-1">
-            {t("detail.delete_confirm")}
-          </span>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={onDelete}
-            className="h-7 text-xs"
-          >
-            {t("events.delete")}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowDeleteConfirm(false)}
-            className="h-7 text-xs"
-          >
-            {t("form.cancel")}
-          </Button>
-        </div>
-      )}
 
       <div className="flex items-start gap-2.5 px-4 pb-1">
         <span
@@ -413,15 +465,16 @@ export function EventDetailPopover({
             "text-lg font-semibold leading-snug break-words text-foreground",
             event.status === "cancelled" && "line-through text-muted-foreground"
           )}>
-            {event.title || t("events.no_title")}
+            {/* Its own direction, next to the colour square. */}
+            <bdi>{event.title || t("events.no_title")}</bdi>
           </h3>
           {event.status === "tentative" && (
-            <span className="mt-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-warning/15 text-warning">
+            <span className="mt-1 inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-warning/15 text-amber-600 dark:text-amber-400">
               {t("detail.tentative")}
             </span>
           )}
           {event.status === "cancelled" && (
-            <span className="mt-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 line-through">
+            <span className="mt-1 inline-flex items-center px-1.5 py-0.5 rounded text-[0.625rem] font-medium bg-destructive/10 text-red-600 dark:text-red-400 line-through">
               {t("detail.cancelled")}
             </span>
           )}
@@ -440,11 +493,9 @@ export function EventDetailPopover({
             {isMultiDay ? (
               event.showWithoutTime ? (
                 <>
+                  {/* One range as the language writes it (pim-13). */}
                   <div className="font-medium text-foreground">
-                    {formatEventDate(startDate)} –
-                  </div>
-                  <div className="font-medium text-foreground">
-                    {formatEventDate(displayEndDate)}
+                    {formatDateRangeLabel(startDate, displayEndDate, { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                   </div>
                   <div className="text-muted-foreground">{t("events.all_day")}</div>
                 </>
@@ -463,8 +514,13 @@ export function EventDetailPopover({
                     </span>
                   </div>
                   <div className="text-muted-foreground text-xs">
-                    ({formatDurationDisplay(durationMinutes)})
+                    ({formatDurationDisplay(durationMinutes, locale)})
                   </div>
+                  {zoned && zonedText && (
+                    <div className="text-muted-foreground text-xs" data-testid="event-zone-times">
+                      {tEvent("zone_only", { times: zonedText.times, zone: zoned.zone })}
+                    </div>
+                  )}
                 </>
               )
             ) : (
@@ -474,10 +530,14 @@ export function EventDetailPopover({
                 </span>
                 {event.showWithoutTime ? (
                   <span className="text-muted-foreground ms-1.5">{t("events.all_day")}</span>
+                ) : zoned && zonedText ? (
+                  <div className="text-muted-foreground" data-testid="event-zone-times">
+                    {tEvent("zone_times", { times: zonedText.times, zone: zoned.zone, local: zonedText.local })}
+                  </div>
                 ) : (
                   <div className="text-muted-foreground">
-                    {formatTime(startDate)} – {formatTime(endDate)}
-                    <span className="ms-1.5 text-xs">({formatDurationDisplay(durationMinutes)})</span>
+                    <bdi dir="ltr">{formatTime(startDate)} – {formatTime(endDate)}</bdi>
+                    <span className="ms-1.5 text-xs">({formatDurationDisplay(durationMinutes, locale)})</span>
                   </div>
                 )}
               </>
@@ -493,7 +553,10 @@ export function EventDetailPopover({
               href={locationHref ?? undefined}
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-primary hover:underline min-w-0 break-words"
+              onClick={gateLinkClick}
+              onAuxClick={gateLinkClick}
+              className={cn("text-sm min-w-0 break-words", locationHref ? "text-primary hover:underline" : "text-foreground")}
+              dir="auto"
               title={locationName}
             >
               {/^https?:\/\//i.test(locationName)
@@ -522,6 +585,8 @@ export function EventDetailPopover({
               href={virtualLocation}
               target="_blank"
               rel="noreferrer"
+              onClick={gateLinkClick}
+              onAuxClick={gateLinkClick}
               className="text-sm text-primary hover:underline truncate"
               title={virtualLocation}
             >
@@ -547,15 +612,15 @@ export function EventDetailPopover({
               <div className="mt-1 space-y-0.5">
                 {participants.slice(0, 5).map((p) => (
                   <div key={p.id} className="flex items-center justify-between gap-2 text-xs">
-                    <span className="truncate text-foreground">
+                    <span dir="auto" className="truncate text-foreground" title={p.email}>
                       {p.name || p.email}
                       {p.isOrganizer && (
                         <span className="text-muted-foreground ms-1">
-                          ({t("participants.organizer").toLowerCase()})
+                          ({t("participants.organizer_role")})
                         </span>
                       )}
                     </span>
-                    <ParticipantStatusBadge status={p.status} t={t} />
+                    <ParticipantStatusBadge status={p.status} className="text-[0.625rem]" />
                   </div>
                 ))}
                 {participants.length > 5 && (
@@ -588,16 +653,16 @@ export function EventDetailPopover({
         {calendar && (
           <div className="flex items-start gap-2.5">
             <CalendarIcon className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-            <span className="text-sm text-foreground truncate">{calendar.name}</span>
+            <span dir="auto" className="text-sm text-foreground truncate" title={shownName.calendar(calendar)}>{shownName.calendar(calendar)}</span>
           </div>
         )}
 
         {/* Description */}
-        {event.description && (
+        {description && (
           <div className="flex items-start gap-2.5">
             <AlignLeft className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-muted-foreground whitespace-pre-line line-clamp-3 break-words">
-              <LinkifiedText text={event.description} />
+            <p dir="auto" className="text-sm text-muted-foreground whitespace-pre-line line-clamp-3 break-words">
+              <LinkifiedText text={description} />
             </p>
           </div>
         )}
@@ -611,6 +676,7 @@ export function EventDetailPopover({
           {noteExpanded ? (
             <div className="space-y-2">
               <textarea
+                aria-label={t("detail.add_note")}
                 ref={noteInputRef}
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
@@ -618,25 +684,23 @@ export function EventDetailPopover({
                 placeholder={t("detail.add_note")}
                 rows={2}
                 autoFocus
-                className="w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm resize-none focus:outline-hidden"
               />
               <div className="flex justify-end gap-1.5">
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="xs"
                   onClick={() => {
                     setNoteText("");
                     setNoteExpanded(false);
                   }}
-                  className="h-7 text-xs"
                 >
                   {t("form.cancel")}
                 </Button>
                 <Button
-                  size="sm"
+                  size="xs"
                   onClick={handleSaveNote}
                   disabled={!noteText.trim() || isSavingNote}
-                  className="h-7 text-xs"
                 >
                   <Send className="w-3 h-3 me-1" />
                   {t("detail.save_note")}
@@ -655,84 +719,18 @@ export function EventDetailPopover({
         </div>
       )}
 
-      {/* RSVP Bar (for attendees) */}
-      {canRsvp && onRsvp && userParticipantId && (
-        <div className="px-4 py-3 border-t border-border">
-          <p className="text-xs font-medium text-muted-foreground mb-2">
-            {t("participants.rsvp_label")}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant={userCurrentStatus === "accepted" ? "default" : "outline"}
-              onClick={() => onRsvp("accepted")}
-              className={
-                userCurrentStatus === "accepted"
-                  ? "bg-success hover:bg-success/80 text-success-foreground"
-                  : "text-success border-success/30 hover:bg-success/10"
-              }
-            >
-              {userCurrentStatus === "accepted" && <Check className="w-3.5 h-3.5 me-1" />}
-              {t("participants.accepted")}
-            </Button>
-            <Button
-              size="sm"
-              variant={userCurrentStatus === "tentative" ? "default" : "outline"}
-              onClick={() => onRsvp("tentative")}
-              className={
-                userCurrentStatus === "tentative"
-                  ? "bg-warning hover:bg-warning/80 text-warning-foreground"
-                  : "border border-warning/30 text-warning hover:bg-warning/10"
-              }
-            >
-              {userCurrentStatus === "tentative" && <Check className="w-3.5 h-3.5 me-1" />}
-              {t("participants.tentative")}
-            </Button>
-            <Button
-              size="sm"
-              variant={userCurrentStatus === "declined" ? "default" : "ghost"}
-              onClick={() => onRsvp("declined")}
-              className={
-                userCurrentStatus === "declined"
-                  ? "bg-destructive hover:bg-destructive/80 text-destructive-foreground"
-                  : "text-destructive hover:bg-destructive/10"
-              }
-            >
-              {userCurrentStatus === "declined" && <Check className="w-3.5 h-3.5 me-1" />}
-              {t("participants.declined")}
-            </Button>
-          </div>
-        </div>
+      {/* RSVP bars: the user's own, and "Answer for <owner>" in a calendar shared with them. */}
+      {onRsvp && (
+        <AnswerBars
+          view={answerView}
+          size="xs"
+          className="px-4 py-3 border-t border-border empty:hidden"
+          onRespond={(target, status) => onRsvp(status, target)}
+        />
       )}
 
     </div>
   );
 
   return createPortal(popover, document.body);
-}
-
-function ParticipantStatusBadge({
-  status,
-  t,
-}: {
-  status: CalendarParticipant["participationStatus"];
-  t: ReturnType<typeof useTranslations>;
-}) {
-  const colors: Record<string, string> = {
-    accepted: "text-success",
-    declined: "text-destructive",
-    tentative: "text-warning",
-    "needs-action": "text-muted-foreground",
-  };
-  const labels: Record<string, string> = {
-    accepted: "participants.accepted",
-    declined: "participants.declined",
-    tentative: "participants.tentative",
-    "needs-action": "participants.needs_action",
-  };
-  return (
-    <span className={`text-[10px] flex-shrink-0 ${colors[status] || ""}`}>
-      {t(labels[status] || labels["needs-action"])}
-    </span>
-  );
 }

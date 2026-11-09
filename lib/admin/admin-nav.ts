@@ -17,11 +17,22 @@ export const ADMIN_PAGE_IDS = [
   'auth',
   'branding',
   'policy',
+  'organisation',
+  'org-signatures',
+  'org-templates',
+  'org-security',
+  'org-sharing',
+  'org-labels',
+  'org-proofreading',
+  'org-calendars',
+  'org-notices',
+  'org-devices',
   'plugins',
   'themes',
   'marketplace',
   'version',
   'telemetry',
+  'monitoring',
   'logs',
 ] as const;
 
@@ -31,8 +42,8 @@ export function isAdminPageId(value: string | null | undefined): value is AdminP
   return typeof value === 'string' && (ADMIN_PAGE_IDS as readonly string[]).includes(value);
 }
 
-/** `top` has no heading in the sidebar; the other two do. */
-export type AdminPageGroup = 'top' | 'extensions' | 'system';
+/** `top` has no heading in the sidebar; the others do. */
+export type AdminPageGroup = 'top' | 'organisation' | 'extensions' | 'system';
 
 export interface AdminSectionDef {
   /** The `id` the page gives its SettingsSection, for jump links and search. */
@@ -75,6 +86,7 @@ export const ADMIN_PAGES: readonly AdminPageDef[] = [
       { id: 'login', title: 'Login page', keywords: 'version 2fa totp code access token remember me heading subtitle' },
       { id: 'servers', title: 'JMAP servers', keywords: 'multi server domain auto pick list' },
       { id: 'wopi', title: 'Document editing', keywords: 'wopi collabora onlyoffice office files host url' },
+      { id: 'bimi', title: 'Brand logos', keywords: 'bimi vmc cmc mark certificate sender logo icon dmarc' },
       { id: 'logging', title: 'Logging', keywords: 'log level format json text debug' },
       { id: 'sync', title: 'Settings sync', keywords: 'session secret devices' },
     ],
@@ -107,10 +119,10 @@ export const ADMIN_PAGES: readonly AdminPageDef[] = [
   },
   {
     id: 'policy',
-    label: 'User policy',
-    description: 'Which features users get and which settings they may change',
-    group: 'top',
-    keywords: 'features gates restrictions lock hide users',
+    label: 'Features and settings',
+    description: 'Which features users get, which settings they may change, and what they start with, for everyone or one domain or group',
+    group: 'organisation',
+    keywords: 'user policy features gates restrictions lock hide users defaults presets scope domain group',
     sections: [
       { id: 'features', title: 'Features', keywords: 'calendar contacts files smime templates keywords sidebar apps unified mailbox archive custom from debug export' },
       { id: 'push-relays', title: 'Push relays', keywords: 'notifications relay url default lock' },
@@ -119,15 +131,131 @@ export const ADMIN_PAGES: readonly AdminPageDef[] = [
     ],
   },
   {
+    id: 'organisation',
+    label: 'Domains and groups',
+    description: 'Give some domains or groups their own settings, see what applies to a user, and keep the policy in one file',
+    group: 'organisation',
+    keywords: 'organisation organization scope domain group department customer tenant effective policy export import file json',
+    sections: [
+      { id: 'scopes', title: 'Domains and groups', keywords: 'scope domain group add remove order' },
+      { id: 'effective', title: 'Effective policy', keywords: 'user address lookup applies source' },
+      { id: 'policy-file', title: 'Policy file', keywords: 'export import download upload json backup git' },
+    ],
+  },
+  {
+    id: 'org-signatures',
+    label: 'Signatures',
+    description: 'The signature and legal disclaimer every message carries',
+    group: 'organisation',
+    keywords: 'signature disclaimer footer legal imprint placeholder phone title department lock',
+    sections: [
+      { id: 'signature', title: 'Signature', keywords: 'template placeholder name email lock' },
+      { id: 'details', title: 'User details', keywords: 'phone mobile title department fields' },
+      { id: 'disclaimer', title: 'Disclaimer', keywords: 'footer legal notice confidentiality' },
+    ],
+  },
+  {
+    id: 'org-templates',
+    label: 'Templates',
+    description: 'Templates every user can pick, and what users may keep of their own',
+    group: 'organisation',
+    keywords: 'templates library snippets canned responses team personal',
+    sections: [
+      { id: 'library', title: 'Organisation library', keywords: 'templates read-only shared add edit' },
+      { id: 'user-templates', title: 'Personal and team templates', keywords: 'personal team group lock hide' },
+      { id: 'vacation-templates', title: 'Out-of-office replies', keywords: 'vacation away auto reply out of office absence deputy placeholder' },
+    ],
+  },
+  {
+    id: 'org-security',
+    label: 'Security',
+    description: 'Warnings about mail from and to outside the organisation, phishing reports, sign-out times and outside connections',
+    group: 'organisation',
+    keywords: 'security external warning label recipients domains session timeout idle sign out third party traffic privacy',
+    sections: [
+      { id: 'external', title: 'External mail', keywords: 'external sender label recipient warning organisation domains contacts' },
+      { id: 'phishing', title: 'Phishing reports', keywords: 'phishing report spam abuse security desk arf forward' },
+      { id: 'sessions', title: 'Sessions', keywords: 'idle timeout maximum length sign out warning' },
+      { id: 'third-party', title: 'Third-party traffic', keywords: 'telemetry favicon relay directory outgoing hosts privacy gdpr' },
+    ],
+  },
+  {
+    id: 'org-sharing',
+    label: 'Sharing',
+    description: 'Tags in shared mailboxes, delegates and recovering deleted items',
+    group: 'organisation',
+    keywords: 'sharing shared mailbox tags delegate access recover deleted items archive',
+    sections: [
+      { id: 'shared-tags', title: 'Shared tags', keywords: 'tags labels colours group mailbox edit lock' },
+      { id: 'delegates', title: 'Delegates', keywords: 'delegate access mail calendar contacts rights read write' },
+      { id: 'recovery', title: 'Recover deleted items', keywords: 'recover restore deleted archive enterprise' },
+    ],
+  },
+  {
+    id: 'org-labels',
+    label: 'Classification',
+    description: 'Labels such as Internal or Confidential that users pick when they write, and that arrive with the message',
+    group: 'organisation',
+    keywords: 'classification label sensitivity confidential internal public vs-nfd sio-label header subject prefix required',
+    sections: [
+      { id: 'labels', title: 'Classification labels', keywords: 'labels presets default required header prefix colour' },
+    ],
+  },
+  {
+    id: 'org-proofreading',
+    label: 'Proofreading',
+    description: 'Spelling and grammar checks while users write: required, off, or their choice',
+    group: 'organisation',
+    keywords: 'proofreading spelling grammar spell check languagetool writing language mandatory required',
+    sections: [
+      { id: 'proofreading', title: 'Proofreading', keywords: 'checker plugin required lock language force' },
+    ],
+  },
+  {
+    id: 'org-calendars',
+    label: 'Calendars',
+    description: 'Company calendars every user sees, free/busy sharing and out-of-office in the calendar',
+    group: 'organisation',
+    keywords: 'calendar ics feed subscription holidays company free busy availability out of office vacation',
+    sections: [
+      { id: 'company-calendars', title: 'Company calendars', keywords: 'ics feed url subscription holidays read-only colour' },
+      { id: 'free-busy', title: 'Free/busy sharing', keywords: 'free busy availability group share find a time' },
+      { id: 'out-of-office', title: 'Out-of-office', keywords: 'vacation away busy block calendar lock' },
+    ],
+  },
+  {
+    id: 'org-notices',
+    label: 'Notices',
+    description: 'An announcement across the apps, and how long Trash and Junk keep mail',
+    group: 'organisation',
+    keywords: 'announcement banner notice maintenance message retention trash junk days',
+    sections: [
+      { id: 'announcement', title: 'Announcement', keywords: 'banner message severity start end dismiss languages' },
+      { id: 'retention', title: 'Trash and Junk', keywords: 'retention days deleted expunge trash junk' },
+    ],
+  },
+  {
+    id: 'org-devices',
+    label: 'Devices',
+    description: 'What users may save, print or keep on their devices',
+    group: 'organisation',
+    keywords: 'device download export print watermark install pwa push notification offline data loss',
+    sections: [
+      { id: 'devices', title: 'Downloads, printing and notifications', keywords: 'download attachment export print watermark install prompt push sender subject' },
+      { id: 'offline', title: 'Offline mode', keywords: 'offline cache device keep mail outbox' },
+      { id: 'registered', title: 'Registered devices', keywords: 'device registry wipe remote lost stolen laptop remove desktop app browser' },
+    ],
+  },
+  {
     id: 'plugins',
     label: 'Plugins',
     description: 'Plugins installed for every user, and what users may install themselves',
     group: 'extensions',
-    keywords: 'extensions addons upload zip approve permissions configure force enable',
+    keywords: 'extensions addons upload zip approve permissions configure force enable always on default off',
     sections: [
+      { id: 'policy', title: 'Plugins for users', keywords: 'plugins enabled master switch user uploads require approval policy' },
       { id: 'approvals', title: 'Approval requests', keywords: 'approve deny user uploaded code review' },
       { id: 'installed', title: 'Installed plugins', keywords: 'enable disable remove roll back configure' },
-      { id: 'policy', title: 'Plugin policy', keywords: 'plugins enabled user uploads require approval' },
     ],
     hasDetail: true,
   },
@@ -172,10 +300,24 @@ export const ADMIN_PAGES: readonly AdminPageDef[] = [
     group: 'system',
     keywords: 'telemetry heartbeat anonymous consent privacy',
     sections: [
-      { id: 'status', title: 'Status', keywords: 'enable disable consent' },
+      { id: 'status', title: 'Status', keywords: 'enable disable consent error counts' },
       { id: 'accounts', title: 'Account activity', keywords: 'active total logins' },
       { id: 'endpoint', title: 'Endpoint', keywords: 'collector url' },
       { id: 'payload', title: 'Payload preview', keywords: 'send now json' },
+    ],
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    description: 'Error reports, metrics, health checks and tracing for your own tools',
+    group: 'system',
+    keywords: 'monitoring errors sentry bugsink glitchtip dsn prometheus metrics health probes tracing opentelemetry otel',
+    sections: [
+      { id: 'errors', title: 'Error reporting', keywords: 'dsn sentry bugsink glitchtip sample rate environment' },
+      { id: 'errors-today', title: 'Errors today', keywords: 'count fingerprint top' },
+      { id: 'metrics', title: 'Metrics', keywords: 'prometheus scrape token grafana' },
+      { id: 'health', title: 'Health checks', keywords: 'liveness readiness probe kubernetes docker' },
+      { id: 'tracing', title: 'Tracing', keywords: 'opentelemetry otel otlp jaeger tempo spans traceparent' },
     ],
   },
   {

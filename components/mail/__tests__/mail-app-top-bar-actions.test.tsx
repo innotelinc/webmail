@@ -20,7 +20,7 @@ vi.mock('@/components/layout/navigation-rail', () => ({ NavigationRail: () => nu
 vi.mock('@/components/layout/calendar-event-notification-toaster', () => ({ CalendarEventNotificationToaster: () => null }));
 vi.mock('@/components/layout/share-notification-toaster', () => ({ ShareNotificationToaster: () => null }));
 vi.mock('@/components/layout/mobile-header', () => ({ MobileHeader: () => null }));
-vi.mock('@/components/email/message-list-tabs', () => ({ MessageListTabs: () => null }));
+vi.mock('@/components/email/message-list-tabs', () => ({ useMessageListPanelProps: (id: string) => ({ id }), MessageListTabs: () => null }));
 vi.mock('@/components/search/search-box', () => ({ SearchBox: () => <input data-testid="search" /> }));
 vi.mock('@/components/tour/tour-provider', () => ({ useTour: () => ({ activeTour: null, registerStep: vi.fn() }) }));
 vi.mock('@/components/plugins/plugin-slot', () => ({ PluginSlot: () => null }));
@@ -84,15 +84,15 @@ describe('top-bar-actions in the standard layout', () => {
     expect(container.querySelector('[data-plugin-actions="top-bar-actions"]')).toBeNull();
   });
 
-  it('puts plugin buttons in the search row after refresh', () => {
+  it('puts plugin buttons in the search row after the folder menu', () => {
     act(() => setPluginActions('tr', 'Translator', 'top-bar-actions', [{ id: 'go', label: 'Translate' }]));
     const { container } = render(<MailApp />);
 
     const group = container.querySelector('[data-plugin-actions="top-bar-actions"]')!;
     expect(group).not.toBeNull();
-    const refresh = screen.getByRole('button', { name: 'refresh' });
-    expect(group.parentElement).toBe(refresh.parentElement);
-    expect(refresh.compareDocumentPosition(group) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const folderMenu = screen.getByTestId('mail-folder-menu');
+    expect(group.parentElement).toBe(folderMenu.parentElement);
+    expect(folderMenu.compareDocumentPosition(group) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Translate' })).toBeInTheDocument();
   });
 
@@ -122,13 +122,32 @@ describe('command palette commands on the mail page', () => {
 });
 
 describe('code warm-up once signed in', () => {
-  it('fetches the viewer and editor code when the browser is idle', async () => {
+  it('fetches the viewer and editor code when the browser is idle after the first rows', async () => {
     const idle = vi.fn(() => 1);
     vi.stubGlobal('requestIdleCallback', idle);
     vi.stubGlobal('cancelIdleCallback', vi.fn());
+    vi.stubGlobal('requestAnimationFrame', (run: FrameRequestCallback) => { run(0); return 1; });
+    vi.stubGlobal('cancelAnimationFrame', vi.fn());
     const { unmount } = render(<MailApp />);
+    await act(async () => {});
+    // The wait for the list is idle time too: the viewer's code doesn't take it.
+    expect(idle).not.toHaveBeenCalled();
+    act(() => { useEmailStore.setState({ emails: [{ id: 'm1', threadId: 't1', keywords: {}, mailboxIds: { inbox: true } }] } as never); });
     await act(async () => {});
     expect(idle).toHaveBeenCalled();
     unmount();
+  });
+});
+
+describe('advanced search folder select', () => {
+  it('names system folders in the user language, as the sidebar does (#1429)', () => {
+    const projects = { id: 'projects', name: 'Projects', role: null } as unknown as Mailbox;
+    useEmailStore.setState({ mailboxes: [inbox, projects], isAdvancedSearchOpen: true } as never);
+    render(<MailApp />);
+
+    const options = Array.from(document.querySelectorAll('option')).map((o) => o.textContent);
+    expect(options).toContain('sidebar.mailboxes.inbox');
+    expect(options).toContain('Projects');
+    expect(options).not.toContain('Inbox');
   });
 });

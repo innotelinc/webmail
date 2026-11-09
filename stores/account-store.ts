@@ -1,7 +1,29 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { mainWindowStorage } from '@/lib/popout/window-role';
+import { IS_DESKTOP_BUILD } from '@/lib/desktop/flag';
+import { forgetDesktopServer } from '@/lib/desktop/bridge';
 import { generateAccountId, generateAvatarColor, getMaxAccounts } from '@/lib/account-utils';
 import { authHooks } from '@/lib/plugin-hooks';
+import { clearEvicted, dropEvictedOwner, isEvicted, markEvicted, rememberEvictedOwner } from '@/lib/offline/state';
+
+export type AccountRemovalReason = 'explicit' | 'evicted' | 'wiped';
+
+const removalListeners = new Set<(accountId: string, reason: AccountRemovalReason) => void>();
+
+/** Told before an account leaves the registry, and why. */
+export function onAccountRemoved(listener: (accountId: string, reason: AccountRemovalReason) => void): () => void {
+  removalListeners.add(listener);
+  return () => removalListeners.delete(listener);
+}
+
+function sameServerOrigin(a: string, b: string): boolean {
+  try {
+    return new URL(a).origin === new URL(b).origin;
+  } catch {
+    return a === b;
+  }
+}
 
 export interface AccountEntry {
   /** Unique key: `${username}@${serverHostname}` */
@@ -43,6 +65,12 @@ export interface AccountEntry {
   avatarColor: string;
   /** Timestamp of last successful login */
   lastLoginAt: number;
+  /**
+   * When the user last signed in to it with a password, token or provider
+   * login (not a restore). The organisation's maximum session length counts
+   * from here. `undefined` = signed in before this was recorded.
+   */
+  signedInAt?: number;
   /** Whether this account is currently connected */
   isConnected: boolean;
   /** Whether this account had a connection error */
@@ -55,6 +83,11 @@ export interface AccountEntry {
    * device yet. Kept across reloads, and opening it leads to the sign-in form.
    */
   awaitingSignIn?: boolean;
+  /**
+   * Opened by an admin through an impersonation handoff rather than by the
+   * mailbox owner. The server says so each time the session is restored.
+   */
+  impersonated?: boolean;
 }
 
 interface AccountState {
@@ -63,7 +96,11 @@ interface AccountState {
   defaultAccountId: string | null;
 
   addAccount: (entry: Omit<AccountEntry, 'id' | 'cookieSlot' | 'avatarColor'>) => string;
-  removeAccount: (accountId: string) => void;
+  /**
+   * `reason`: 'explicit' when someone signed the account out or removed it, its
+   * offline data goes with it; 'evicted' when the app dropped it by itself.
+   */
+  removeAccount: (accountId: string, reason?: AccountRemovalReason) => void;
   setActiveAccount: (accountId: string) => void;
   setDefaultAccount: (accountId: string) => void;
   getDefaultAccount: () => AccountEntry | null;
@@ -86,6 +123,8 @@ export const useAccountStore = create<AccountState>()(
         const state = get();
 
         const id = generateAccountId(entry.username, entry.serverUrl);
+        clearEvicted(id);
+        dropEvictedOwner(id);
         if (state.accounts.some((a) => a.id === id)) {
           // Already exists - update mutable fields and return existing id
           set((s) => ({
@@ -136,8 +175,14 @@ export const useAccountStore = create<AccountState>()(
         return id;
       },
 
-      removeAccount: (accountId) => {
+      removeAccount: (accountId, reason = 'explicit') => {
         if (!get().accounts.some((a) => a.id === accountId)) return;
+        const leaving = get().accounts.find((a) => a.id === accountId);
+        if (reason === 'evicted') {
+          markEvicted(accountId);
+          if (IS_DESKTOP_BUILD && leaving && isEvicted(accountId)) rememberEvictedOwner(accountId, leaving);
+        }
+        for (const listener of [...removalListeners]) listener(accountId, reason);
         set((s) => {
           const remaining = s.accounts.filter((a) => a.id !== accountId);
           const wasDefault = s.defaultAccountId === accountId;
@@ -162,6 +207,10 @@ export const useAccountStore = create<AccountState>()(
           };
         });
         void authHooks.onAccountRemove.emit({ accountId });
+        // The desktop app stops trusting a server its last account left.
+        if (IS_DESKTOP_BUILD && leaving && !get().accounts.some((a) => sameServerOrigin(a.serverUrl, leaving.serverUrl))) {
+          forgetDesktopServer(leaving.serverUrl, 'signed-out');
+        }
       },
 
       setActiveAccount: (accountId) => {
@@ -239,6 +288,7 @@ export const useAccountStore = create<AccountState>()(
     }),
     {
       name: 'account-registry',
+      storage: createJSONStorage(mainWindowStorage),
       partialize: (state) => ({
         accounts: state.accounts,
         activeAccountId: state.activeAccountId,

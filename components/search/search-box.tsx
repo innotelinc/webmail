@@ -2,12 +2,11 @@
 
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X } from "@/components/icons";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
+import { ToolbarSearch } from "@/components/ui/toolbar";
 import { useContactStore } from "@/stores/contact-store";
 import { useSearchHistoryStore } from "@/stores/search-history-store";
-import { buildSearchSuggestions, type ContactSuggestion, type SearchSuggestion } from "@/lib/search-suggestions";
+import { buildSearchSuggestions, listSenderMatches, type ContactSuggestion, type SearchSuggestion } from "@/lib/search-suggestions";
+import { useEmailStore } from "@/stores/email-store";
 import { SearchSuggestions, suggestionOptionId } from "./search-suggestions";
 
 export type ContactSearchField = "from" | "to";
@@ -26,6 +25,8 @@ interface SearchBoxProps {
   autoFocus?: boolean;
   /** Overrides the default placeholder, which carries the `/` shortcut hint. */
   placeholder?: string;
+  /** A control at the end of the field, after the clear button (the filter toggle). */
+  trailing?: React.ReactNode;
 }
 
 /**
@@ -35,7 +36,7 @@ interface SearchBoxProps {
  * reuses the composer's contact autocomplete lookup so directory principals,
  * address-book contacts and recent recipients all surface here too.
  */
-export function SearchBox({ value, onChange, onSubmit, onClear, onSelectContact, disabled = false, title, autoFocus, placeholder }: SearchBoxProps) {
+export function SearchBox({ value, onChange, onSubmit, onClear, onSelectContact, disabled = false, title, autoFocus, placeholder, trailing }: SearchBoxProps) {
   const t = useTranslations("sidebar");
   const listId = `search-suggestions-${useId().replace(/:/g, "")}`;
 
@@ -66,7 +67,10 @@ export function SearchBox({ value, onChange, onSubmit, onClear, onSelectContact,
   const suggestions = useMemo<SearchSuggestion[]>(() => {
     const query = draft.trim();
     const matches = query ? getAutocomplete(query).filter((r) => !r.group && r.email) : [];
-    return buildSearchSuggestions(draft, recentSearches, matches);
+    // Then the senders of the mail on screen, read as typed (no subscription:
+    // the list changing doesn't need the box drawn again).
+    const senders = query ? listSenderMatches(useEmailStore.getState().emails, query) : [];
+    return buildSearchSuggestions(draft, recentSearches, [...matches, ...senders]);
     // The three store slices are inputs of getAutocomplete (read via get()),
     // not of this closure — list them so the memo recomputes when they load.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,16 +138,13 @@ export function SearchBox({ value, onChange, onSubmit, onClear, onSelectContact,
             onClear();
           }
         }}
-        className="relative"
       >
-        <Search className="absolute start-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        {/* type="search": Bitwarden skips search fields unconditionally (it
-            honours data-bwignore only when the user opted in) and otherwise
-            offered logins here. */}
-        <Input
-          type="search"
+        <ToolbarSearch
           autoFocus={autoFocus}
-          placeholder={placeholder ?? t("search_placeholder_hint")}
+          // Short, so a narrow list column doesn't cut it; the "/" shortcut
+          // shows as a key cap instead of in the text.
+          placeholder={placeholder ?? t("search_placeholder")}
+          shortcut="/"
           value={draft}
           onChange={(e) => {
             setDraft(e.target.value);
@@ -162,7 +163,13 @@ export function SearchBox({ value, onChange, onSubmit, onClear, onSelectContact,
             close();
           }}
           onKeyDown={handleKeyDown}
-          className={cn("ps-9 h-9 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none", draft && "pe-8")}
+          onClear={() => {
+            setDraft("");
+            close();
+            onClear();
+          }}
+          clearLabel={t("clear_search")}
+          trailing={trailing}
           role="combobox"
           aria-expanded={showDropdown}
           aria-controls={listId}
@@ -174,20 +181,6 @@ export function SearchBox({ value, onChange, onSubmit, onClear, onSelectContact,
           disabled={disabled}
           title={title}
         />
-        {draft && (
-          <button
-            type="button"
-            onClick={() => {
-              setDraft("");
-              close();
-              onClear();
-            }}
-            className="absolute end-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={t("clear_search")}
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
       </form>
       {showDropdown && (
         <SearchSuggestions

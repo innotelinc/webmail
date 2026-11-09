@@ -84,14 +84,14 @@ export function SearchSuggestions({
 
         const heading =
           (i === 0 && hasRecent && suggestion.kind === "recent" && (
-            <div className="px-3 pt-1 pb-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+            <div className="px-3 pt-1 pb-0.5 text-[0.6875rem] font-medium text-muted-foreground">
               {t("suggestions_recent")}
             </div>
           )) ||
           (i === firstContactIndex && (
             <div
               className={cn(
-                "px-3 pt-1 pb-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground",
+                "px-3 pt-1 pb-0.5 text-[0.6875rem] font-medium text-muted-foreground",
                 hasRecent && "mt-1 border-t border-border pt-2",
               )}
             >
@@ -154,18 +154,19 @@ export function SearchSuggestions({
                 onSelect(suggestion);
               }}
             >
-              <Avatar name={suggestion.name} email={suggestion.email} size="sm" className="shrink-0 w-6 h-6 text-[10px]" />
-              <span className="flex-1 min-w-0 flex items-baseline gap-1.5 truncate">
+              <Avatar name={suggestion.name} email={suggestion.email} size="sm" className="shrink-0 w-6 h-6 text-[0.625rem]" />
+              <span className="flex-1 min-w-0 flex items-baseline gap-1.5 overflow-hidden">
                 {suggestion.name ? (
                   <>
-                    <HighlightedText text={suggestion.name} query={query} className="truncate" />
-                    <HighlightedText text={`<${suggestion.email}>`} query={query} className="text-muted-foreground truncate" />
+                    {/* The address gives way first: both shrinking left "Bo..." in a narrow list. */}
+                    <HighlightedText text={suggestion.name} query={query} className="truncate shrink-0 max-w-[60%]" />
+                    <HighlightedText text={`<${suggestion.email}>`} query={query} className="text-muted-foreground truncate min-w-0" />
                   </>
                 ) : (
                   <HighlightedText text={suggestion.email} query={query} className="truncate" />
                 )}
               </span>
-              <span className="shrink-0 flex items-center gap-1 text-[11px]">
+              <span className="shrink-0 flex items-center gap-1 text-[0.6875rem]">
                 <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">{t("from")}</span>
                 <button
                   type="button"

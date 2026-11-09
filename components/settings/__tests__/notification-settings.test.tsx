@@ -1,10 +1,14 @@
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { afterEach, describe, it, expect, vi, beforeEach } from 'vitest';
 import { NotificationSettings } from '../notification-settings';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { usePolicyStore } from '@/stores/policy-store';
+import { useEmailStore } from '@/stores/email-store';
+import { useIdentityStore } from '@/stores/identity-store';
+import { jmapSetError } from '@/lib/jmap/jmap-error';
+import type { Mailbox } from '@/lib/jmap/types';
 import * as webPush from '@/lib/web-push';
 
 // next-intl's useTranslations -> identity so labels are their keys.
@@ -25,6 +29,7 @@ vi.mock('@/lib/web-push', () => ({
   enableWebPush: vi.fn(async () => ({ subscriptionId: 'sub-1' })),
   disableWebPush: vi.fn(async () => undefined),
   listPushDevices: vi.fn(async () => []),
+  mailAccountsWithoutPush: vi.fn(() => []),
   revokePushDevice: vi.fn(async () => undefined),
   serverSupportsEmailPush: vi.fn(() => true),
 }));
@@ -129,5 +134,185 @@ describe('NotificationSettings - pushNotifyInboxOnly', () => {
     // Give any effect a chance to fire.
     await Promise.resolve();
     expect(webPush.enableWebPush).not.toHaveBeenCalled();
+  });
+});
+
+describe('NotificationSettings - demo mode', () => {
+  beforeEach(() => {
+    useAuthStore.setState({ client: fakeClient, username: 'me@example.com', isDemoMode: true });
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    useAuthStore.setState({ isDemoMode: false });
+  });
+
+  it('says push is not available and offers no switch that would call the relay', async () => {
+    const { findByText, getAllByRole } = render(<NotificationSettings />);
+    await findByText('push.status_demo');
+    const pushSwitch = getAllByRole('switch').find((el) => (el as HTMLButtonElement).disabled);
+    expect(pushSwitch).toBeTruthy();
+    expect(webPush.enableWebPush).not.toHaveBeenCalled();
+  });
+});
+
+describe('NotificationSettings - mailboxes shared by ACL', () => {
+  const mailbox = (id: string, accountId: string, isShared: boolean) =>
+    ({ id, originalId: id, name: id, accountId, isShared }) as unknown as Mailbox;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useSettingsStore.setState({ emailNotificationsEnabled: true, pushNotifyInboxOnly: false });
+    useAuthStore.setState({ client: fakeClient, username: 'me@example.com' });
+    usePolicyStore.setState({
+      ...usePolicyStore.getState(),
+      policy: {},
+      isSettingLocked: () => false,
+      isSettingHidden: () => false,
+    } as never);
+    useEmailStore.setState({
+      mailboxes: [
+        mailbox('inbox', 'acct-1', false),
+        mailbox('acct-group:inbox', 'acct-group', true),
+        mailbox('acct-acl:projects', 'acct-acl', true),
+      ],
+    });
+    // Stalwart 0.16 gives a group's members an identity with its address.
+    useIdentityStore.setState({
+      identities: [
+        { id: 'i-own', name: 'Me', email: 'me@example.com', mayDelete: false },
+        { id: 'i-group', name: 'Team', email: 'team@example.com', mayDelete: true },
+      ],
+    });
+  });
+
+  it('says that mailboxes shared by other users send no background notifications', async () => {
+    (webPush.mailAccountsWithoutPush as ReturnType<typeof vi.fn>).mockReturnValue(['acct-acl']);
+
+    const { findByText } = render(<NotificationSettings />);
+
+    await findByText('push.shared_mailboxes_no_push');
+    // The identities tell the user's groups apart on Stalwart 0.16.
+    expect(webPush.mailAccountsWithoutPush).toHaveBeenCalledWith(
+      fakeClient,
+      ['acct-group', 'acct-acl'],
+      ['me@example.com', 'team@example.com'],
+    );
+  });
+
+  it('says nothing when every shared mailbox is covered', async () => {
+    (webPush.mailAccountsWithoutPush as ReturnType<typeof vi.fn>).mockReturnValue([]);
+
+    const { findByText, queryByText } = render(<NotificationSettings />);
+
+    await findByText('push.status_active');
+    expect(queryByText('push.shared_mailboxes_no_push')).toBeNull();
+  });
+});
+
+describe('NotificationSettings - push errors', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useSettingsStore.setState({ emailNotificationsEnabled: true, pushNotifyInboxOnly: false });
+    useAuthStore.setState({ client: fakeClient, username: 'me@example.com' });
+    usePolicyStore.setState({
+      ...usePolicyStore.getState(),
+      policy: {},
+      isSettingLocked: () => false,
+      isSettingHidden: () => false,
+    } as never);
+    (webPush.isWebPushEnabled as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+  });
+
+  async function enableAndFail(error: unknown) {
+    (webPush.enableWebPush as ReturnType<typeof vi.fn>).mockRejectedValueOnce(error);
+    const view = render(<NotificationSettings />);
+    await view.findByText('push.status_inactive');
+    fireEvent.click(view.getByRole('switch', { name: 'push.enable' }));
+    return (await view.findByRole('alert')).textContent;
+  }
+
+  it('explains a forbidden refusal instead of showing the raw server error', async () => {
+    const text = await enableAndFail(jmapSetError('PushSubscription/set create failed: forbidden', {
+      type: 'forbidden',
+      description: 'No access to one of the accounts in the emailPush map.',
+    }));
+
+    expect(text).toBe('push.error_forbidden');
+  });
+
+  it('explains the subscription limit on overQuota', async () => {
+    const text = await enableAndFail(jmapSetError('PushSubscription/set create failed', {
+      type: 'overQuota',
+      description: 'There are too many subscriptions, please delete some before adding a new one.',
+    }));
+
+    expect(text).toBe('push.error_over_quota');
+  });
+
+  it('keeps the message of any other failure', async () => {
+    const text = await enableAndFail(new Error('Relay register failed: 502'));
+
+    expect(text).toBe('Relay register failed: 502');
+  });
+});
+
+describe('NotificationSettings - the unread count in the desktop app', () => {
+  beforeEach(() => {
+    useSettingsStore.setState({ emailNotificationsEnabled: true });
+    useAuthStore.setState({ client: fakeClient, username: 'me@example.com' });
+    usePolicyStore.setState({ ...usePolicyStore.getState(), policy: {}, isSettingLocked: () => false, isSettingHidden: () => false } as never);
+  });
+  afterEach(() => {
+    delete (window as unknown as { bulwarkDesktop?: unknown }).bulwarkDesktop;
+  });
+
+  it('speaks of the taskbar icon there, not of a tab', async () => {
+    (window as unknown as { bulwarkDesktop: unknown }).bulwarkDesktop = { version: 1, platform: 'win32' };
+    const { findByText, queryByText } = render(<NotificationSettings />);
+    await findByText('unread_badge_label');
+    expect(queryByText('favicon_unread_badge.label')).toBeNull();
+  });
+
+  it('keeps the tab in a browser', async () => {
+    const { findByText } = render(<NotificationSettings />);
+    await findByText('favicon_unread_badge.label');
+  });
+});
+
+// settings-p2-17 (2026-11-04): with several accounts the page had one switch
+// for the account on screen and, below it, a checklist with bulk buttons.
+describe('NotificationSettings - several accounts', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    const { useAccountStore } = await import('@/stores/account-store');
+    const clients: Record<string, unknown> = { a: fakeClient, b: { getAccountId: () => 'acct-2' } };
+    useAccountStore.setState({
+      accounts: [
+        { id: 'a', username: 'a', email: 'a@example.com', displayName: 'Alice', isConnected: true },
+        { id: 'b', username: 'b', email: 'b@example.com', displayName: 'Bob', isConnected: true },
+      ] as never,
+    });
+    useAuthStore.setState({ client: fakeClient, username: 'a@example.com', isDemoMode: false, getClientForAccount: ((id: string) => clients[id]) as never });
+    usePolicyStore.setState({
+      ...usePolicyStore.getState(),
+      policy: {},
+      isSettingLocked: () => false,
+      isSettingHidden: () => false,
+    } as never);
+  });
+
+  afterEach(async () => {
+    const { useAccountStore } = await import('@/stores/account-store');
+    useAccountStore.setState({ accounts: [] });
+  });
+
+  it('has one switch per account instead of the switch for this account and a checklist', async () => {
+    const { findByRole, queryByText, queryByRole } = render(<NotificationSettings />);
+    expect(await findByRole('switch', { name: 'Alice (a@example.com)' })).toBeTruthy();
+    expect(await findByRole('switch', { name: 'Bob (b@example.com)' })).toBeTruthy();
+    expect(queryByText('push.enable')).toBeNull();
+    expect(queryByText('select_all')).toBeNull();
+    expect(queryByRole('checkbox')).toBeNull();
   });
 });

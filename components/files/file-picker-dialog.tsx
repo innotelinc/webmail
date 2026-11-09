@@ -9,9 +9,10 @@ import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { debug } from "@/lib/debug";
 import { cn, formatFileSize } from "@/lib/utils";
 import { getFileIconByName } from "@/components/files/file-icons";
-import { loadFilesSettings } from "@/components/files/files-settings";
+import { getFilesSettings } from "@/components/files/files-settings";
 import type { IJMAPClient } from "@/lib/jmap/client-interface";
 import type { FileNode } from "@/lib/jmap/types";
+import { ModalWindow } from "@/components/ui/dialog-surface";
 
 // The level that holds what other people share with the user. JMAP ids are
 // base64url (shared ones add an "accountId:" prefix), so "#" never collides.
@@ -45,13 +46,14 @@ function byFolderThenName(a: FileNode, b: FileNode): number {
 export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogProps) {
   const t = useTranslations("files");
   const tComposer = useTranslations("email_composer");
+  const tCommon = useTranslations("common");
   const [nodes, setNodes] = useState<FileNode[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [trail, setTrail] = useState<{ id: string; name: string }[]>([]);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Map<string, FileNode>>(() => new Map());
-  const [showHidden] = useState(() => loadFilesSettings().showHiddenFiles);
+  const [showHidden] = useState(() => getFilesSettings().showHiddenFiles);
 
   const modalRef = useFocusTrap({ isActive: true, onEscape: onClose, restoreFocus: true });
 
@@ -144,7 +146,7 @@ export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogPr
         <span className="block truncate">{name}</span>
         {detail && <span className="block truncate text-xs text-muted-foreground">{detail}</span>}
       </span>
-      <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground rtl:rotate-180" />
+      <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground" />
     </button>
   );
 
@@ -159,7 +161,7 @@ export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogPr
         onClick={() => toggle(node)}
         className={cn(
           "w-full flex items-center gap-3 px-3 py-2 rounded-md text-start text-sm transition-colors",
-          checked ? "bg-primary/10" : "hover:bg-muted",
+          checked ? "bg-selection" : "hover:bg-muted",
         )}
       >
         <span
@@ -175,7 +177,7 @@ export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogPr
           <span className="block truncate">{node.name}</span>
           {detail && <span className="block truncate text-xs text-muted-foreground">{detail}</span>}
         </span>
-        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{formatFileSize(node.size)}</span>
+        <bdi dir="ltr" className="shrink-0 text-xs text-muted-foreground tabular-nums">{formatFileSize(node.size)}</bdi>
       </button>
     );
   };
@@ -210,7 +212,7 @@ export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogPr
         {here === null && !needle && sharedRoots.length > 0 && folderRow(
           SHARED_WITH_ME,
           t("shared_with_me"),
-          <Users className="w-5 h-5 shrink-0 text-blue-500" />,
+          <Users className="w-5 h-5 shrink-0 text-primary" />,
           () => openFolder(SHARED_WITH_ME, t("shared_with_me")),
         )}
         {entries.map((node) =>
@@ -218,7 +220,7 @@ export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogPr
             ? folderRow(
                 node.id,
                 node.name,
-                <Folder className="w-5 h-5 shrink-0 text-blue-500" />,
+                <Folder className="w-5 h-5 shrink-0 text-primary" />,
                 () => openFolder(node.id, node.name),
                 sharedBy(node),
               )
@@ -229,83 +231,86 @@ export function FilePickerDialog({ client, onClose, onPick }: FilePickerDialogPr
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
-      <div
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="file-picker-title"
-        className="bg-background border border-border rounded-lg shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-        data-testid="file-picker-dialog"
-      >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h2 id="file-picker-title" className="text-sm font-semibold text-foreground">
-            {tComposer("attach_from_files")}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t("cancel")}
-            className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="px-4 py-2 border-b border-border space-y-2">
-          <div className="relative">
-            <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("search_placeholder")}
-              className="ps-9 h-9"
-            />
+    <ModalWindow title={tComposer("attach_from_files")} onClose={onClose}>
+      <div data-modal-backdrop="" className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+        <div
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="file-picker-title"
+          className="bg-background border border-border rounded-lg shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+          data-testid="file-picker-dialog"
+        >
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <h2 id="file-picker-title" className="text-sm font-semibold text-foreground">
+              {tComposer("attach_from_files")}
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={tCommon("close")}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          {!needle && (
-            <nav className="flex items-center gap-1 text-sm min-w-0 overflow-x-auto" aria-label={t("path")}>
-              <button
-                type="button"
-                onClick={() => setTrail([])}
-                className={cn(
-                  "shrink-0 px-1.5 py-0.5 rounded hover:bg-muted",
-                  trail.length === 0 ? "font-medium text-foreground" : "text-muted-foreground",
-                )}
-              >
-                {t("my_files")}
-              </button>
-              {trail.map((crumb, i) => (
-                <span key={crumb.id} className="flex items-center gap-1 min-w-0">
-                  <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground rtl:rotate-180" />
-                  <button
-                    type="button"
-                    onClick={() => setTrail(trail.slice(0, i + 1))}
-                    className={cn(
-                      "truncate max-w-[10rem] px-1.5 py-0.5 rounded hover:bg-muted",
-                      i === trail.length - 1 ? "font-medium text-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    {crumb.name}
-                  </button>
-                </span>
-              ))}
-            </nav>
-          )}
-        </div>
 
-        <div className="flex-1 min-h-[12rem] overflow-y-auto p-2">{body}</div>
+          <div className="px-4 py-2 border-b border-border space-y-2">
+            <div className="relative">
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                aria-label={t("search_placeholder")}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t("search_placeholder")}
+                className="ps-9 h-9"
+              />
+            </div>
+            {!needle && (
+              <nav className="flex items-center gap-1 text-sm min-w-0 overflow-x-auto" aria-label={t("path")}>
+                <button
+                  type="button"
+                  onClick={() => setTrail([])}
+                  className={cn(
+                    "shrink-0 px-1.5 py-0.5 rounded hover:bg-muted",
+                    trail.length === 0 ? "font-medium text-foreground" : "text-muted-foreground",
+                  )}
+                >
+                  {t("my_files")}
+                </button>
+                {trail.map((crumb, i) => (
+                  <span key={crumb.id} className="flex items-center gap-1 min-w-0">
+                    <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+                    <button
+                      type="button"
+                      onClick={() => setTrail(trail.slice(0, i + 1))}
+                      className={cn(
+                        "truncate max-w-[10rem] px-1.5 py-0.5 rounded hover:bg-muted",
+                        i === trail.length - 1 ? "font-medium text-foreground" : "text-muted-foreground",
+                      )}
+                    >
+                      {crumb.name}
+                    </button>
+                  </span>
+                ))}
+              </nav>
+            )}
+          </div>
 
-        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
-          <Button variant="outline" onClick={onClose}>{t("cancel")}</Button>
-          <Button
-            onClick={() => onPick([...selected.values()])}
-            disabled={selected.size === 0}
-            data-testid="file-picker-attach"
-          >
-            {tComposer("files_picker.attach", { count: selected.size })}
-          </Button>
+          <div className="flex-1 min-h-[12rem] overflow-y-auto p-2">{body}</div>
+
+          <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border">
+            <Button variant="outline" onClick={onClose}>{t("cancel")}</Button>
+            <Button
+              onClick={() => onPick([...selected.values()])}
+              disabled={selected.size === 0}
+              data-testid="file-picker-attach"
+            >
+              {tComposer("files_picker.attach", { count: selected.size })}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalWindow>
   );
 }

@@ -12,6 +12,8 @@ import { useThemeStore } from '@/stores/theme-store';
 import { DEFAULT_SEARCH_FILTERS } from '@/lib/jmap/search-utils';
 import { useUIStore } from '@/stores/ui-store';
 import { threadKeyFor } from '@/lib/thread-utils';
+import { useToastStore } from '@/stores/toast-store';
+import { ToastContainer } from '@/components/ui/toast';
 
 const device = vi.hoisted(() => ({ mobile: false }));
 
@@ -31,14 +33,17 @@ vi.mock('@/components/layout/share-notification-toaster', () => ({ ShareNotifica
 vi.mock('@/components/layout/mv-top-bar', () => ({ MvTopBar: () => null }));
 vi.mock('@/components/layout/mv-side-panel', () => ({ MvSidePanel: () => null }));
 vi.mock('@/components/layout/mobile-header', () => ({ MobileHeader: () => null }));
-vi.mock('@/components/email/message-list-tabs', () => ({ MessageListTabs: () => null }));
+vi.mock('@/components/email/message-list-tabs', () => ({ useMessageListPanelProps: (id: string) => ({ id }), MessageListTabs: () => null }));
 vi.mock('@/components/search/search-box', () => ({ SearchBox: () => null }));
 vi.mock('@/components/tour/tour-provider', () => ({ useTour: () => ({ activeTour: null, registerStep: vi.fn() }) }));
 vi.mock('@/components/plugins/plugin-slot', () => ({ PluginSlot: () => null }));
 vi.mock('@/hooks/use-plugin-slot-offers', () => ({ usePluginSlotOffers: () => [] }));
 vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Mail' }) }));
 vi.mock('@/hooks/use-identity-sync', () => ({ useIdentitySync: () => {} }));
-vi.mock('@/hooks/use-pro-multi-account-identities', () => ({ useProMultiAccountIdentities: () => [] }));
+vi.mock('@/hooks/use-pro-multi-account-identities', () => ({
+  useProMultiAccountIdentities: () => [],
+  cachedIdentitiesForAccount: () => undefined,
+}));
 vi.mock('@/hooks/use-pro-multi-account-mailboxes', () => ({ useProMultiAccountMailboxes: () => {} }));
 vi.mock('@/hooks/use-wopi-status', () => ({ useWopiStatus: () => null, canWopiOpen: () => false }));
 vi.mock('@/hooks/use-browser-navigation', () => ({ useBrowserNavigation: () => {} }));
@@ -46,6 +51,7 @@ vi.mock('@/hooks/use-media-query', () => ({
   useDeviceDetection: () => ({ isMobile: device.mobile, isTablet: false, isDesktop: !device.mobile }),
   useMediaQuery: () => false,
   useIsDesktop: () => true,
+  narrowerThan: (px: number) => `(width < ${px / 16}rem)`,
 }));
 vi.mock('@/lib/push-bindings', () => ({ reconcilePushBindings: () => {}, releasePushBindings: () => {} }));
 vi.mock('@/components/email/email-list', async () => {
@@ -129,7 +135,9 @@ beforeEach(() => {
     getClientForAccount: (id) => (id === 'login-primary' ? asClient(primary) : id === 'login-other' ? asClient(other) : undefined) as never,
     getAllConnectedClients: () => new Map([['login-primary', asClient(primary)], ['login-other', asClient(other)]]) as never,
   });
-  useSettingsStore.setState({ interfaceLayout: 'default', markAsReadDelay: -1, enableUnifiedMailbox: false, mailAttachmentAction: 'download', mailLayout: 'split', attachmentImagePreviewsEnabled: false, postExportAction: 'none', attachmentDownloadTemplate: '{filename}', filenameLowercase: false } as never);
+  // One message in the reader: fetching its conversation would take the
+  // requests these tests count.
+  useSettingsStore.setState({ interfaceLayout: 'default', markAsReadDelay: -1, enableUnifiedMailbox: false, mailAttachmentAction: 'download', mailLayout: 'split', attachmentImagePreviewsEnabled: false, postExportAction: 'none', attachmentDownloadTemplate: '{filename}', filenameLowercase: false, disableThreading: true } as never);
   useEmailStore.setState({
     emails: [message()], selectedEmail: message(), selectedMailbox: sharedMailbox.id,
     mailboxes: [primaryMailbox, sharedMailbox], viewingAccountId: null, accountMailboxes: {},
@@ -147,6 +155,14 @@ async function downloadAttachment() {
   // same production handler. The raw RFC822 part is the live reproduction.
   const buttons = await screen.findAllByTitle('download', {}, { timeout: 5000 });
   fireEvent.click(buttons[0]);
+}
+/** The button that covers an attachment's tile and opens it like a click on the tile. */
+async function findAttachmentOpener(name: string): Promise<HTMLElement> {
+  return waitFor(() => {
+    const tile = document.querySelector<HTMLElement>(`[data-attachment-name="${name}"]`);
+    if (!tile) throw new Error(`No attachment named ${name}`);
+    return within(tile).getAllByRole('button')[0];
+  }, { timeout: 5000 });
 }
 async function exportEmail() {
   fireEvent.click((await screen.findAllByRole('button', { name: 'more_actions' }))[0]);
@@ -170,6 +186,122 @@ async function connectDownloadClient(serverUrl: string, username: string, accoun
   await client.connect();
   return client;
 }
+
+describe('standard mail attachment download feedback', () => {
+  const bytes = 'synthetic attachment bytes';
+  const downloadUrl = 'https://mail.example.com/download/nrichmond/same-blob/report.txt?accept=application%2Foctet-stream';
+  const response = () => new Response(bytes, { status: 200, headers: { 'Content-Type': 'application/octet-stream' } });
+
+  function DownloadToasts() {
+    const toasts = useToastStore(state => state.toasts);
+    return <ToastContainer toasts={toasts} onClose={useToastStore.getState().removeToast} />;
+  }
+
+  beforeEach(() => useToastStore.getState().clearToasts());
+  afterEach(() => useToastStore.getState().clearToasts());
+
+  async function openAttachment(action: 'Download button' | 'attachment click') {
+    const client = await connectDownloadClient('https://mail.example.com', 'test-login', 'postal12345');
+    useAuthStore.setState({ client,
+      getClientForAccount: id => id === 'login-primary' ? client : undefined,
+      getAllConnectedClients: () => new Map([['login-primary', client]]),
+    });
+    const selected = message({ attachments: [{ partId: '3', blobId: 'same-blob', name: 'report.txt', type: 'application/octet-stream', size: bytes.length }] });
+    useEmailStore.setState({ selectedEmail: selected, emails: [selected] });
+    // The explicit Download button must also bypass the Preview preference.
+    useSettingsStore.setState({ mailAttachmentAction: action === 'Download button' ? 'preview' : 'download' });
+    const fetchMock = vi.mocked(fetch);
+    fetchMock.mockReset();
+    fetchMock.mockRejectedValue(new Error('Unexpected network request'));
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const downloads: { href: string; name: string; connected: boolean }[] = [];
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+      downloads.push({ href: this.href, name: this.download, connected: document.body.contains(this) });
+    });
+    render(<><MailApp /><DownloadToasts /></>);
+    const button = (await screen.findAllByTitle('download', {}, { timeout: 5000 }))[0];
+    const opener = await findAttachmentOpener('report.txt');
+    const click = () => fireEvent.click(action === 'Download button' ? button : opener);
+
+    function expectRequests(count: number) {
+      expect(fetchMock).toHaveBeenCalledTimes(count);
+      for (let i = 0; i < count; i++) expectBlobRequest(downloadUrl, 'test-login', i);
+    }
+    async function expectDownload(count: number) {
+      await waitFor(() => expect(downloads).toHaveLength(1), { timeout: 4000 });
+      expectRequests(count);
+      expect(downloads[0]).toEqual({ href: 'blob:test', name: 'report.txt', connected: true });
+      expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
+      const blob = vi.mocked(URL.createObjectURL).mock.calls[0][0] as Blob;
+      expect(await blob.text()).toBe(bytes);
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:test');
+    }
+    return { click, fetchMock, errors, downloads, button, selected, expectRequests, expectDownload };
+  }
+
+  describe.each(['Download button', 'attachment click'] as const)('%s', action => {
+    it.each(['HTTP 403', 'HTTP 503', 'exhausted network retry'] as const)(
+      'reports %s once and downloads on another click after recovery', async failure => {
+        const { click, fetchMock, errors, downloads, button, selected, expectRequests, expectDownload } = await openAttachment(action);
+        const attempts = failure === 'exhausted network retry' ? 2 : 1;
+        if (failure === 'exhausted network retry') {
+          fetchMock.mockRejectedValueOnce(new TypeError('synthetic offline'))
+            .mockRejectedValueOnce(new TypeError('synthetic offline'));
+        } else {
+          fetchMock.mockResolvedValueOnce(new Response('synthetic refusal', { status: failure === 'HTTP 403' ? 403 : 503 }));
+        }
+        click();
+        await waitFor(() => expect(errors).toHaveBeenCalledWith('Failed to download attachment:', expect.any(Error)), { timeout: 4000 });
+        expectRequests(attempts);
+        expect(downloads).toEqual([]);
+        expect(URL.createObjectURL).not.toHaveBeenCalled();
+        expect(button).toBeEnabled();
+        expect(useEmailStore.getState().selectedEmail).toBe(selected);
+        // The shared next-intl test mock returns translation keys verbatim.
+        expect(useToastStore.getState().toasts).toEqual([
+          expect.objectContaining({ type: 'error', title: 'files.download_error' }),
+        ]);
+        expect(screen.getByText('files.download_error')).toBeVisible();
+
+        // Reuse the same UI node, client, owner and blob without navigation.
+        fetchMock.mockResolvedValueOnce(response());
+        click();
+        await expectDownload(attempts + 1);
+        expect(useEmailStore.getState().selectedEmail).toBe(selected);
+        expect(errors).toHaveBeenCalledTimes(1);
+        expect(useToastStore.getState().toasts).toHaveLength(1);
+      },
+    );
+
+    it('does not notify when the existing automatic network retry recovers', async () => {
+      const { click, fetchMock, errors, selected, expectDownload } = await openAttachment(action);
+      fetchMock.mockRejectedValueOnce(new TypeError('synthetic transient')).mockResolvedValueOnce(response());
+      click();
+      await expectDownload(2);
+      expect(errors).not.toHaveBeenCalled();
+      expect(useToastStore.getState().toasts).toEqual([]);
+      expect(screen.queryByText('files.download_error')).not.toBeInTheDocument();
+      expect(useEmailStore.getState().selectedEmail).toBe(selected);
+    });
+  });
+
+  it('finishes the original attachment download after switching messages', async () => {
+    const { click, fetchMock, errors, downloads, expectDownload } = await openAttachment('Download button');
+    let finish!: (value: Response) => void;
+    fetchMock.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    click();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    const next = message({ id: 'next', subject: 'Next', sourceAccountId: 'different-owner', attachments: [] });
+    act(() => useEmailStore.setState({ selectedEmail: next }));
+    expect(document.querySelector('[data-attachment-name="report.txt"]')).toBeNull();
+    expect(downloads).toEqual([]);
+    await act(async () => finish(response()));
+    await expectDownload(1);
+    expect(useEmailStore.getState().selectedEmail).toBe(next);
+    expect(useToastStore.getState().toasts).toEqual([]);
+    expect(errors).not.toHaveBeenCalled();
+  });
+});
 
 describe('standard mail UI blob routing', () => {
   it.each([sharedMailbox.id, primaryMailbox.id])('uses the session downloadUrl for %s', async (mailboxId) => {
@@ -266,7 +398,7 @@ describe('standard mail UI blob routing', () => {
   it('exports the raw shared message through its owner', async () => {
     render(<MailApp />);
     await exportEmail();
-    expect(primary.downloadBlob).toHaveBeenCalledWith('raw-blob', expect.stringMatching(/\.eml$/), 'message/rfc822', 'nrichmond');
+    expect(primary.downloadBlob).toHaveBeenCalledWith('raw-blob', expect.stringMatching(/\.eml$/), 'message/rfc822', 'nrichmond', { kind: 'export' });
   });
 
   it.each([false, true])('routes Unified selection (automatic=%s) after Email/get replaces the stub', async (automatic) => {
@@ -279,7 +411,7 @@ describe('standard mail UI blob routing', () => {
     await downloadAttachment();
     await exportEmail();
     expect(other.downloadBlob).toHaveBeenCalledWith('same-blob', expect.any(String), 'message/rfc822', 'nrichmond');
-    expect(other.downloadBlob).toHaveBeenCalledWith('raw-blob', expect.any(String), 'message/rfc822', 'nrichmond');
+    expect(other.downloadBlob).toHaveBeenCalledWith('raw-blob', expect.any(String), 'message/rfc822', 'nrichmond', { kind: 'export' });
     expect(primary.downloadBlob).not.toHaveBeenCalled();
     expect(useEmailStore.getState().selectedEmail).toMatchObject({ sourceClientAccountId: 'login-other', sourceAccountId: 'nrichmond', accountLabel: 'Richmond' });
   });
@@ -289,7 +421,7 @@ describe('standard mail UI blob routing', () => {
     const email = message({ attachments: [{ partId: '3', blobId: 'same-blob', name: 'photo.png', type: 'image/png', size: 50 }] });
     useEmailStore.setState({ selectedEmail: email });
     render(<MailApp />);
-    fireEvent.click((await screen.findAllByText('photo.png'))[0]);
+    fireEvent.click(await findAttachmentOpener('photo.png'));
     await screen.findByText('Preview download');
     act(() => {
       useEmailStore.setState({ selectedMailbox: 'inbox', selectedEmail: message() });
@@ -429,7 +561,7 @@ async function openPhoneConversation(ref: Email, threadClient: JMAPClient, selec
   fireEvent.click(await screen.findByText('Routing conversation'));
   await screen.findByRole('button', { name: 'email_viewer.back_to_list' });
   await waitFor(() => expect(threadFetch).toHaveBeenCalled());
-  await screen.findByText('threads.messages_other');
+  await screen.findByText('threads.messages_count');
   return threadFetch;
 }
 
@@ -650,14 +782,14 @@ async function openProMessage(route: typeof proRoutes[number], action: ProBlobAc
     fireEvent.click(await screen.findByText('Pro message'));
   }
   if (action === 'CID') await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-  else await screen.findAllByText('photo.png');
+  else await findAttachmentOpener('photo.png');
   return { a, b, origin, fetchMock, full };
 }
 
 async function actOnProBlob(action: ProBlobAction) {
   if (action === 'download') await downloadAttachment();
   if (action === 'preview click') {
-    fireEvent.click((await screen.findAllByText('photo.png'))[0]);
+    fireEvent.click(await findAttachmentOpener('photo.png'));
     // Preserve Pro's existing action: Preview clicks download, with no modal.
     expect(screen.queryByText('Preview fetch')).not.toBeInTheDocument();
   }
@@ -670,6 +802,25 @@ function expectProBlob(route: typeof proRoutes[number], action: ProBlobAction, i
 }
 
 describe('Pro blob routing', () => {
+  it("opens a compose tab with the typed text for a notification's Reply, once, when the message is in", async () => {
+    const { requestTabReply } = await import('@/lib/pwa-notify/tab-reply');
+    const { useProTabStore } = await import('@/stores/pro-tab-store');
+    const { a } = await conversationClients();
+    vi.spyOn(a, 'getEmail').mockResolvedValue(message());
+    useEmailStore.setState({ emails: [], selectedEmail: null, isUnifiedView: false, selectedMailbox: 'inbox' });
+    useAuthStore.setState({ client: a, activeAccountId: 'login-primary' });
+    const composeTabs = () => useProTabStore.getState().tabs.filter((tab) => tab.kind === 'compose');
+    const before = composeTabs().length;
+
+    requestTabReply('email', 'Typed on the toast');
+    const view = render(<ProEmailTabBody tabId="reader" data={{ accountId: '', emailId: 'email', mailboxId: null, title: 'Loading' }} />);
+    await waitFor(() => expect(composeTabs()).toHaveLength(before + 1));
+    expect(composeTabs().at(-1)?.composeData).toMatchObject({ mode: 'reply', sourceEmailId: 'email', initialDraftText: 'Typed on the toast' });
+
+    view.rerender(<ProEmailTabBody tabId="reader" data={{ accountId: '', emailId: 'email', mailboxId: null, title: 'Hello' }} />);
+    expect(composeTabs()).toHaveLength(before + 1);
+  });
+
   it.each(proRoutes.flatMap(route => proBlobActions.map(action => ({ ...route, action }))))(
     '$label: $action uses the message owner and authenticated client', async route => {
       const { origin, fetchMock } = await openProMessage(route, route.action);

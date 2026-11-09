@@ -1,50 +1,100 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
-import { useTranslations } from "next-intl";
-import { X, Plus, ChevronDown, ChevronRight, User, Building, MapPin, Globe, Cake, Heart, Tag, StickyNote, Mail, Phone, Calendar, UserCircle, Book, Camera, Trash2 } from "@/components/icons";
+import { useState, useMemo, useCallback, useRef, useEffect, useId } from "react";
+import { useCloseBesideControls } from "@/hooks/use-close-beside-controls";
+import { useLocale, useTranslations } from "next-intl";
+import { X, Plus, ChevronDown, ChevronRight, User, Building, MapPin, Globe, Cake, Heart, Tag, StickyNote, Mail, Phone, Calendar, UserCircle, Book, Camera, Trash2, MoreHorizontal } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
-import { normalizeContactPhotoUri } from "@/stores/contact-store";
+import { findContactPhotoEntry, getContactPhotoRef, type ContactPhotoRef } from "@/stores/contact-store";
+import type { ContactSaveOptions } from "@/lib/contact-media";
 import { cn } from "@/lib/utils";
+import { addressStyle, addressToParts, countryCodeFromName, partsToComponents, type AddressStyle } from "@/lib/address-format";
+import { useBottomControls } from "@/hooks/use-bottom-controls";
 import type { ContactCard, ContactOnlineService, ContactAnniversary, ContactPersonalInfo, AddressBook, AnniversaryDate, PartialDate, ContactAddress, ContactMedia } from "@/lib/jmap/types";
+import { useCollectionNames } from "@/hooks/use-collection-names";
+import { AccountGroupedOptions } from "@/components/calendar/calendar-select";
 
+// Each row of a list field keeps the `key` of the card's entry it was read
+// from, so Save can send an entry the user didn't touch back unchanged.
+//
+// `context` is "work", "private", "" or a context the form has no option
+// for, as the card has it: a vCard TYPE such as "car" from an Android
+// phone (#1515). The select then offers it as stored.
 interface EmailEntry {
+  key?: string;
   address: string;
-  context: "work" | "private" | "";
+  context: string;
 }
 
+// `feature` is one of PHONE_FEATURES, "", PHONE_LABEL for a phone with its
+// own label (X-ABLabel), or a feature the form has no option for.
 interface PhoneEntry {
+  key?: string;
   number: string;
-  context: "work" | "private" | "";
-  feature: "voice" | "cell" | "fax" | "pager" | "video" | "text" | "";
+  context: string;
+  feature: string;
+}
+
+const CONTEXTS = ["work", "private"];
+const PHONE_FEATURES = ["voice", "mobile", "fax", "pager", "video", "text"];
+/** The phone type select's value for a phone's own label. No feature starts with "#". */
+const PHONE_LABEL = "#label";
+
+/** The context a row shows: work or private, else the card's own as stored. */
+function contextOf(contexts: Record<string, boolean> | undefined): string {
+  if (contexts?.work) return "work";
+  if (contexts?.private) return "private";
+  return Object.keys(contexts ?? {}).find(k => contexts![k]) ?? "";
+}
+
+/** The type a phone row shows: its label when it has one, else its feature. */
+function phoneTypeOf(phone: NonNullable<ContactCard["phones"]>[string]): string {
+  if (phone.label?.trim()) return PHONE_LABEL;
+  const features = phone.features ?? {};
+  // RFC 9553 calls it "mobile"; cards saved by older versions of this form say "cell".
+  if (features.mobile || features.cell) return "mobile";
+  return ["fax", "pager", "video", "text", "voice"].find(k => features[k])
+    ?? Object.keys(features).find(k => features[k])
+    ?? "";
+}
+
+/** An option for a value the card had that the select doesn't offer, so it shows as stored. */
+function storedOption(value: string | undefined, offered: string[], text?: string) {
+  if (!value || offered.includes(value)) return null;
+  return <option value={value}>{text ?? value}</option>;
 }
 
 interface OnlineServiceEntry {
+  key?: string;
   uri: string;
   service: string;
   label: string;
 }
 
 interface AnniversaryEntry {
+  key?: string;
   date: string;
   kind: "birth" | "death" | "wedding" | "other";
 }
 
 interface PersonalInfoEntry {
+  key?: string;
   value: string;
   kind: "expertise" | "hobby" | "interest" | "other";
   level: "high" | "medium" | "low" | "";
 }
 
 interface AddressEntry {
+  key?: string;
   street: string;
   locality: string;
   region: string;
   postcode: string;
   country: string;
-  context: "work" | "private" | "";
+  context: string;
 }
 
 interface ContactFormProps {
@@ -54,8 +104,134 @@ interface ContactFormProps {
   defaultAddressBookId?: string;
   /** Prefills the create form (ignored when `contact` is set). */
   prefill?: { email?: string; name?: string };
-  onSave: (data: Partial<ContactCard>) => Promise<void>;
+  /** `options.photoKey` names the `media` entry holding a newly picked photo. */
+  onSave: (data: Partial<ContactCard>, options?: ContactSaveOptions) => Promise<void>;
   onCancel: () => void;
+  /**
+   * Reads the card as the server has it now, or null when it can't. When the
+   * photo changed, `media` is rebuilt on it instead of on `contact`, which
+   * may be older.
+   */
+  loadCurrentMedia?: () => Promise<Pick<ContactCard, "media"> | null>;
+  /** Reports whether the form holds changes not yet saved. */
+  onDirtyChange?: (dirty: boolean) => void;
+}
+
+/** What the user did to the photo: nothing, picked a new one (a data: URI), or removed it. */
+type PhotoEdit =
+  | { kind: "unchanged" }
+  | { kind: "new"; uri: string; mediaType: string }
+  | { kind: "removed" };
+
+/** A `media` key for a new photo that no other entry uses. */
+function freeMediaKey(media: Record<string, ContactMedia>): string {
+  let key = "photo";
+  for (let n = 1; key in media; n++) key = `photo${n}`;
+  return key;
+}
+
+/**
+ * The `media` map to send for a photo edit, built on `base`: the card's media
+ * as the server has it now when it could be read, else the form's copy
+ * (`known`). `shownKey` is the photo the form showed.
+ *
+ * - A new photo takes the shown one's key and place, with its `pref`,
+ *   `label` and `contexts`, so on a card with several photos it is still the
+ *   one shown (the lowest pref wins).
+ * - Removing the photo removes every photo the form's copy had, not only the
+ *   shown one: the next would otherwise take its place after the save, while
+ *   the form showed none. Logos and sounds stay; so do photos added
+ *   elsewhere since.
+ */
+function mediaForPhotoEdit(
+  base: Record<string, ContactMedia>,
+  known: Record<string, ContactMedia>,
+  shownKey: string | undefined,
+  edit: Exclude<PhotoEdit, { kind: "unchanged" }>,
+): { media: Record<string, ContactMedia> | null; photoKey?: string } {
+  if (edit.kind === "removed") {
+    const others = Object.fromEntries(Object.entries(base).filter(
+      ([key, entry]) => !(entry?.kind === "photo" && known[key]?.kind === "photo"),
+    ));
+    return { media: Object.keys(others).length > 0 ? others : null };
+  }
+  const shown = shownKey ? (base[shownKey]?.kind === "photo" ? base[shownKey] : known[shownKey]) : undefined;
+  const photoKey = shownKey && (!base[shownKey] || base[shownKey]?.kind === "photo") ? shownKey : freeMediaKey(base);
+  const photo: ContactMedia = {
+    kind: "photo",
+    uri: edit.uri,
+    mediaType: edit.mediaType,
+    ...(shown?.pref !== undefined ? { pref: shown.pref } : {}),
+    ...(shown?.label !== undefined ? { label: shown.label } : {}),
+    ...(shown?.contexts !== undefined ? { contexts: shown.contexts } : {}),
+  };
+  const media: Record<string, ContactMedia> = {};
+  for (const [key, entry] of Object.entries(base)) media[key] = key === photoKey ? photo : entry;
+  media[photoKey] = photo;
+  return { media, photoKey };
+}
+
+/**
+ * The map to save for a list field (emails, phones, addresses...). A row the
+ * user didn't touch goes back exactly as the card had it, under its key. An
+ * edited row is built on the card's entry (`previous`), so properties the
+ * form doesn't show stay; a new row gets a key no other entry uses.
+ */
+function entriesToSave<E extends { key?: string }, V>(
+  rows: E[],
+  initialRows: E[],
+  original: Record<string, V> | undefined,
+  prefix: string,
+  build: (row: E, previous: V | undefined, before: E | undefined) => V,
+): Record<string, V> {
+  const out: Record<string, V> = {};
+  const taken = new Set(rows.map(r => r.key).filter((k): k is string => !!k && !!original?.[k]));
+  let n = 0;
+  const freshKey = () => {
+    let key = `${prefix}${n++}`;
+    while (taken.has(key)) key = `${prefix}${n++}`;
+    taken.add(key);
+    return key;
+  };
+  for (const row of rows) {
+    const previous = row.key ? original?.[row.key] : undefined;
+    const before = previous !== undefined ? initialRows.find(r => r.key === row.key) : undefined;
+    if (previous !== undefined && before && JSON.stringify(before) === JSON.stringify(row)) {
+      out[row.key!] = previous;
+    } else {
+      out[previous !== undefined ? row.key! : freshKey()] = build(row, previous, before);
+    }
+  }
+  return out;
+}
+
+/** A row the card had and the user left as it was. */
+function isUntouchedRow<E extends { key?: string }>(row: E, initialRows: E[], original: Record<string, unknown> | undefined): boolean {
+  if (!row.key || original?.[row.key] === undefined) return false;
+  const before = initialRows.find(r => r.key === row.key);
+  return !!before && JSON.stringify(before) === JSON.stringify(row);
+}
+
+/** `contexts` for a row: the card's own when the select wasn't changed. */
+function contextsToSave(context: string, previous: Record<string, boolean> | undefined, before: { context: string } | undefined): Record<string, boolean> | undefined {
+  if (before && before.context === context) return previous;
+  return context ? { [context]: true } : undefined;
+}
+
+/** A card's first entry of a map with one field changed, the others kept; undefined when none is left. */
+function firstEntryToSave<V extends object>(original: Record<string, V> | undefined, fallbackKey: string, value: V | null): Record<string, V> | undefined {
+  const entries = Object.entries(original ?? {});
+  const [firstKey, first] = entries[0] ?? [fallbackKey, undefined];
+  const rest = entries.slice(1);
+  const out: Record<string, V> = {};
+  if (value) out[firstKey] = { ...(first ?? {}), ...value } as V;
+  for (const [k, v] of rest) out[k] = v;
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** Drops keys whose value is undefined, so a built entry has no empty properties. */
+function compact<T extends object>(obj: T): T {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as T;
 }
 
 function FormSection({ icon: Icon, title, children, collapsible, defaultOpen = true }: {
@@ -79,7 +255,7 @@ function FormSection({ icon: Icon, title, children, collapsible, defaultOpen = t
         tabIndex={collapsible ? 0 : -1}
       >
         <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
-        <h3 className="flex-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h3>
+        <h3 className="flex-1 text-xs font-semibold text-muted-foreground">{title}</h3>
         {collapsible && (
           open ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
         )}
@@ -125,19 +301,23 @@ async function processImageFile(file: File): Promise<{ uri: string; mediaType: s
   });
 }
 
-function Select({ value, onChange, children, className }: {
+function Select({ value, onChange, children, className, id, "aria-label": ariaLabel }: {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   children: React.ReactNode;
   className?: string;
+  id?: string;
+  "aria-label"?: string;
 }) {
   return (
     <select
+      id={id}
+      aria-label={ariaLabel}
       value={value}
       onChange={onChange}
       className={cn(
         "text-sm bg-transparent border border-input rounded-md px-2.5 py-2 text-foreground",
-        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
+        "focus:outline-hidden",
         "hover:border-muted-foreground/50 transition-colors",
         className
       )}
@@ -147,9 +327,18 @@ function Select({ value, onChange, children, className }: {
   );
 }
 
-export function ContactForm({ contact, addressBooks, allKeywords, defaultAddressBookId, prefill, onSave, onCancel }: ContactFormProps) {
+export function ContactForm({ contact, addressBooks, allKeywords, defaultAddressBookId, prefill, onSave, onCancel, loadCurrentMedia, onDirtyChange }: ContactFormProps) {
+  const shownName = useCollectionNames();
   const t = useTranslations("contacts.form");
+  const tx = useTranslations("ux_pim_contact");
+  const locale = useLocale();
   const isEditing = !!contact;
+  // The header's close goes to its start when the window's own close is at its end.
+  const [header, setHeader] = useState<HTMLDivElement | null>(null);
+  const closeFirst = useCloseBesideControls(header);
+  // Ids that tie each visible label to its field.
+  const fieldIdBase = useId();
+  const fieldId = (key: string) => `${fieldIdBase}-${key}`;
 
   // Split a free-form display name into given/surname for prefill.
   const prefillGivenName = (() => {
@@ -205,26 +394,13 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
     return pd;
   }
 
-  // Extract flat address fields from RFC 9553 components format
-  function addressToFlat(a: ContactAddress): AddressEntry {
-    if (a.components && a.components.length > 0) {
-      const findComp = (kind: string) => a.components!.filter(c => c.kind === kind).map(c => c.value).join(' ');
-      return {
-        street: findComp('name') || findComp('number') ? [findComp('number'), findComp('name')].filter(Boolean).join(' ') : '',
-        locality: findComp('locality'),
-        region: findComp('region'),
-        postcode: findComp('postcode'),
-        country: findComp('country'),
-        context: a.contexts?.work ? 'work' : a.contexts?.private ? 'private' : '',
-      };
-    }
+  // The form's fields for an address: street name and house number in one
+  // field, in the order of the address's country ("Hauptstraße 1").
+  function addressToFlat(key: string, a: ContactAddress): AddressEntry {
     return {
-      street: a.street || '',
-      locality: a.locality || '',
-      region: a.region || '',
-      postcode: a.postcode || '',
-      country: a.country || '',
-      context: a.contexts?.work ? 'work' : a.contexts?.private ? 'private' : '',
+      key,
+      ...addressToParts(a, locale),
+      context: contextOf(a.contexts),
     };
   }
 
@@ -240,9 +416,10 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
   const [emails, setEmails] = useState<EmailEntry[]>(() => {
     if (contact?.emails) {
-      return Object.values(contact.emails).map(e => ({
+      return Object.entries(contact.emails).map(([key, e]) => ({
+        key,
         address: e.address,
-        context: e.contexts?.work ? "work" : e.contexts?.private ? "private" : "",
+        context: contextOf(e.contexts),
       }));
     }
     return [{ address: prefill?.email || "", context: "" }];
@@ -250,10 +427,11 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
   const [phones, setPhones] = useState<PhoneEntry[]>(() => {
     if (contact?.phones) {
-      return Object.values(contact.phones).map(p => ({
+      return Object.entries(contact.phones).map(([key, p]) => ({
+        key,
         number: p.number,
-        context: p.contexts?.work ? "work" : p.contexts?.private ? "private" : "",
-        feature: p.features?.cell ? "cell" : p.features?.fax ? "fax" : p.features?.pager ? "pager" : p.features?.video ? "video" : p.features?.text ? "text" : p.features?.voice ? "voice" : "",
+        context: contextOf(p.contexts),
+        feature: phoneTypeOf(p),
       }));
     }
     return [];
@@ -293,14 +471,15 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
   const [addresses, setAddresses] = useState<AddressEntry[]>(() => {
     if (contact?.addresses) {
-      return Object.values(contact.addresses).map(a => addressToFlat(a));
+      return Object.entries(contact.addresses).map(([key, a]) => addressToFlat(key, a));
     }
     return [];
   });
 
   const [onlineServices, setOnlineServices] = useState<OnlineServiceEntry[]>(() => {
     if (contact?.onlineServices) {
-      return Object.values(contact.onlineServices).map(s => ({
+      return Object.entries(contact.onlineServices).map(([key, s]) => ({
+        key,
         uri: s.uri,
         service: s.service || "",
         label: s.label || "",
@@ -311,7 +490,8 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
   const [anniversaries, setAnniversaries] = useState<AnniversaryEntry[]>(() => {
     if (contact?.anniversaries) {
-      return Object.values(contact.anniversaries).map(a => ({
+      return Object.entries(contact.anniversaries).map(([key, a]) => ({
+        key,
         date: anniversaryDateToString(a.date),
         kind: a.kind,
       }));
@@ -321,7 +501,8 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
   const [personalInfoEntries, setPersonalInfoEntries] = useState<PersonalInfoEntry[]>(() => {
     if (contact?.personalInfo) {
-      return Object.values(contact.personalInfo).map(p => ({
+      return Object.entries(contact.personalInfo).map(([key, p]) => ({
+        key,
         value: p.value,
         kind: p.kind,
         level: p.level || "",
@@ -333,6 +514,9 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
   const [keywordsStr, setKeywordsStr] = useState(
     contact?.keywords ? Object.keys(contact.keywords).filter(k => contact.keywords![k]).join(", ") : ""
   );
+  // Text typed in the Categories field but not added with Enter yet: Save
+  // adds it, so it isn't lost.
+  const [categoryDraft, setCategoryDraft] = useState("");
 
   const [note, setNote] = useState(
     contact?.notes ? Object.values(contact.notes)[0]?.note || "" : ""
@@ -369,17 +553,14 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
   }, [contact, defaultAddressBookId, addressBooks]);
   const [selectedBookId, setSelectedBookId] = useState(currentBookId);
 
-  const initialPhotoEntry = useMemo(() => {
-    if (!contact?.media) return null;
-    for (const [key, m] of Object.entries(contact.media)) {
-      if (m.kind === "photo" && m.uri) {
-        return { key, uri: normalizeContactPhotoUri(m.uri, m.mediaType), mediaType: m.mediaType };
-      }
-    }
-    return null;
-  }, [contact]);
-  const [photoUri, setPhotoUri] = useState<string | undefined>(initialPhotoEntry?.uri);
-  const [photoMediaType, setPhotoMediaType] = useState<string | undefined>(initialPhotoEntry?.mediaType);
+  // The stored photo may be a data: URI (Stalwart 0.16) or a blob (1.0); the
+  // form only ever writes the photo the user picks, never the one it shows.
+  const initialPhotoKey = useMemo(() => (contact ? findContactPhotoEntry(contact)?.[0] : undefined), [contact]);
+  const [photoEdit, setPhotoEdit] = useState<PhotoEdit>({ kind: "unchanged" });
+  const previewPhoto: ContactPhotoRef | null =
+    photoEdit.kind === "new" ? { uri: photoEdit.uri }
+      : photoEdit.kind === "unchanged" && contact ? getContactPhotoRef(contact) ?? null
+        : null;
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -387,6 +568,46 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailErrors, setEmailErrors] = useState<Record<number, string>>({});
+
+  // Everything the user can edit, to tell whether anything changed since the
+  // form opened (R5: leaving asks first).
+  const fields = JSON.stringify([
+    prefix, givenName, additionalName, surname, suffix, nickname, emails, phones, organization,
+    department, isOrg, jobTitle, role, addresses, onlineServices, anniversaries, personalInfoEntries,
+    keywordsStr, categoryDraft, note, genderSex, genderIdentity, calendarUri, schedulingUri, freeBusyUri, selectedBookId,
+  ]);
+  const [initialFields] = useState(fields);
+
+  // What each card property is built from. Saving an existing card sends only
+  // the properties whose fields changed, so the rest stay exactly as stored,
+  // structured address parts included (#pim-4).
+  const personNamed = !!(givenName.trim() || surname.trim());
+  const propertyFields: Record<string, unknown> = {
+    name: [prefix, givenName, additionalName, surname, suffix, isOrg, isOrg || !personNamed ? organization : ""],
+    nicknames: nickname,
+    emails,
+    phones,
+    titles: [jobTitle, role],
+    organizations: [organization, department],
+    addresses,
+    onlineServices,
+    anniversaries,
+    personalInfo: personalInfoEntries,
+    keywords: [keywordsStr, categoryDraft],
+    notes: note,
+    speakToAs: [genderSex, genderIdentity],
+    calendarUri: [calendarUri, freeBusyUri],
+    freeBusyUri: [calendarUri, freeBusyUri],
+    schedulingUri,
+    addressBookIds: selectedBookId,
+  };
+  const [initialPropertyFields] = useState(() => JSON.stringify(propertyFields));
+  const [initialRows] = useState(() => ({ emails, phones, addresses, onlineServices, anniversaries, personalInfoEntries, department }));
+  const dirty = fields !== initialFields || photoEdit.kind !== "unchanged";
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  const footerRef = useBottomControls();
+  const [hasMoreFields] = useState(() => onlineServices.length > 0 || personalInfoEntries.length > 0
+    || !!(genderSex || genderIdentity) || !!(calendarUri || schedulingUri || freeBusyUri));
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -404,8 +625,7 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
     setPhotoUploading(true);
     try {
       const { uri, mediaType } = await processImageFile(file);
-      setPhotoUri(uri);
-      setPhotoMediaType(mediaType);
+      setPhotoEdit({ kind: "new", uri, mediaType });
     } catch {
       setPhotoError(t("photo_invalid"));
     } finally {
@@ -414,8 +634,7 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
   };
 
   const handlePhotoRemove = () => {
-    setPhotoUri(undefined);
-    setPhotoMediaType(undefined);
+    setPhotoEdit({ kind: "removed" });
     setPhotoError(null);
   };
 
@@ -456,26 +675,25 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
       }
     }
 
-    const emailsMap: Record<string, { address: string; contexts?: Record<string, boolean> }> = {};
-    validEmails.forEach((entry, i) => {
-      const obj: { address: string; contexts?: Record<string, boolean> } = { address: entry.address.trim() };
-      if (entry.context) {
-        obj.contexts = { [entry.context]: true };
-      }
-      emailsMap[`e${i}`] = obj;
-    });
+    type Email = NonNullable<ContactCard["emails"]>[string];
+    type PhoneValue = NonNullable<ContactCard["phones"]>[string];
+    const emailsMap = entriesToSave<EmailEntry, Email>(validEmails, initialRows.emails, contact?.emails, "e", (row, previous, before) => compact({
+      ...previous,
+      address: row.address.trim(),
+      contexts: contextsToSave(row.context, previous?.contexts, before),
+    }));
 
     const validPhones = phones.filter(p => p.number.trim());
-    const phonesMap: Record<string, { number: string; contexts?: Record<string, boolean>; features?: Record<string, boolean> }> = {};
-    validPhones.forEach((entry, i) => {
-      const obj: { number: string; contexts?: Record<string, boolean>; features?: Record<string, boolean> } = { number: entry.number.trim() };
-      if (entry.context) {
-        obj.contexts = { [entry.context]: true };
-      }
-      if (entry.feature) {
-        obj.features = { [entry.feature]: true };
-      }
-      phonesMap[`p${i}`] = obj;
+    // The phone's features and label stay as stored until another type is picked.
+    const phonesMap = entriesToSave<PhoneEntry, PhoneValue>(validPhones, initialRows.phones, contact?.phones, "p", (row, previous, before) => {
+      const typeKept = !!before && before.feature === row.feature;
+      return compact({
+        ...previous,
+        number: row.number.trim(),
+        contexts: contextsToSave(row.context, previous?.contexts, before),
+        features: typeKept ? previous?.features : row.feature && row.feature !== PHONE_LABEL ? { [row.feature]: true } : undefined,
+        label: typeKept ? previous?.label : undefined,
+      });
     });
 
     // Emit JSContact-standard kinds (RFC 9553) so the JMAP server stores them losslessly.
@@ -506,64 +724,71 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
     if (jobTitle.trim()) titlesMap["t0"] = { name: jobTitle.trim(), kind: "title" };
     if (role.trim()) titlesMap["t1"] = { name: role.trim(), kind: "role" };
 
-    const orgUnits = department.trim() ? [{ name: department.trim() }] : undefined;
+    const firstOrg = Object.values(contact?.organizations ?? {})[0];
+    const orgUnits = firstOrg && department === initialRows.department
+      ? firstOrg.units
+      : department.trim() ? [{ name: department.trim() }] : undefined;
 
-    const addressesMap: Record<string, ContactCard["addresses"] extends Record<string, infer V> ? V : never> = {};
-    addresses.filter(a => a.street.trim() || a.locality.trim() || a.country.trim()).forEach((a, i) => {
-      const components: Array<{ kind: string; value: string }> = [];
-      if (a.street.trim()) components.push({ kind: "name", value: a.street.trim() });
-      if (a.locality.trim()) components.push({ kind: "locality", value: a.locality.trim() });
-      if (a.region.trim()) components.push({ kind: "region", value: a.region.trim() });
-      if (a.postcode.trim()) components.push({ kind: "postcode", value: a.postcode.trim() });
-      if (a.country.trim()) components.push({ kind: "country", value: a.country.trim() });
-      const obj: Record<string, unknown> = { components, isOrdered: true, defaultSeparator: ", " };
-      if (a.context) obj.contexts = { [a.context]: true };
-      // @ts-expect-error - dynamic build
-      addressesMap[`a${i}`] = obj;
-    });
+    // An address the user didn't touch goes back as the card had it. An edited
+    // one is rebuilt in its country's order ("Hauptstraße" + "1", then
+    // postcode and city), keeping the parts the form doesn't show.
+    const addressesMap = entriesToSave<AddressEntry, ContactAddress>(
+      // An address the form can't show (only `full` text, a PO box) has empty
+      // rows here; untouched, it stays.
+      addresses.filter(a => a.street.trim() || a.locality.trim() || a.region.trim() || a.postcode.trim() || a.country.trim()
+        || isUntouchedRow(a, initialRows.addresses, contact?.addresses)),
+      initialRows.addresses, contact?.addresses, "a",
+      (row, previous, before) => {
+        const { components: previousComponents, full: _full, fullAddress: _fullAddress, street: _s, locality: _l, region: _r, postcode: _p, country: _c, ...kept } = previous ?? {};
+        void _full; void _fullAddress; void _s; void _l; void _r; void _p; void _c;
+        const countryCode = before && before.country === row.country
+          ? previous?.countryCode
+          : countryCodeFromName(row.country) ?? undefined;
+        return compact({
+          ...kept,
+          components: partsToComponents(row, previousComponents ?? [], locale, countryCode),
+          isOrdered: true,
+          defaultSeparator: previous?.defaultSeparator ?? ", ",
+          countryCode,
+          contexts: contextsToSave(row.context, previous?.contexts, before),
+        });
+      },
+    );
 
-    const onlineServicesMap: Record<string, ContactOnlineService> = {};
-    onlineServices.filter(s => s.uri.trim()).forEach((s, i) => {
-      const obj: ContactOnlineService = { uri: s.uri.trim() };
-      if (s.service.trim()) obj.service = s.service.trim();
-      if (s.label.trim()) obj.label = s.label.trim();
-      onlineServicesMap[`os${i}`] = obj;
-    });
+    const onlineServicesMap = entriesToSave<OnlineServiceEntry, ContactOnlineService>(
+      onlineServices.filter(s => s.uri.trim()), initialRows.onlineServices, contact?.onlineServices, "os",
+      (row, previous) => compact({
+        ...previous,
+        uri: row.uri.trim(),
+        service: row.service.trim() || undefined,
+        label: row.label.trim() || undefined,
+      }),
+    );
 
-    const anniversariesMap: Record<string, ContactAnniversary> = {};
-    anniversaries.filter(a => a.date.trim()).forEach((a, i) => {
-      anniversariesMap[`an${i}`] = { date: stringToPartialDate(a.date.trim()), kind: a.kind };
-    });
+    const anniversariesMap = entriesToSave<AnniversaryEntry, ContactAnniversary>(
+      anniversaries.filter(a => a.date.trim()), initialRows.anniversaries, contact?.anniversaries, "an",
+      (row, previous) => ({ ...previous, date: stringToPartialDate(row.date.trim()), kind: row.kind }),
+    );
 
-    const personalInfoMap: Record<string, ContactPersonalInfo> = {};
-    personalInfoEntries.filter(p => p.value.trim()).forEach((p, i) => {
-      const obj: ContactPersonalInfo = { value: p.value.trim(), kind: p.kind };
-      if (p.level) obj.level = p.level as "high" | "medium" | "low";
-      personalInfoMap[`pi${i}`] = obj;
-    });
+    const personalInfoMap = entriesToSave<PersonalInfoEntry, ContactPersonalInfo>(
+      personalInfoEntries.filter(p => p.value.trim()), initialRows.personalInfoEntries, contact?.personalInfo, "pi",
+      (row, previous) => compact({
+        ...previous,
+        value: row.value.trim(),
+        kind: row.kind,
+        level: (row.level || undefined) as ContactPersonalInfo["level"],
+      }),
+    );
 
     const keywordsMap: Record<string, boolean> = {};
-    if (keywordsStr.trim()) {
-      keywordsStr.split(",").map(k => k.trim()).filter(Boolean).forEach(k => {
-        keywordsMap[k] = true;
-      });
-    }
-
-    const mediaMap: Record<string, ContactMedia> = {};
-    if (contact?.media) {
-      for (const [key, m] of Object.entries(contact.media)) {
-        if (m.kind !== "photo") mediaMap[key] = m;
-      }
-    }
-    if (photoUri) {
-      const photoKey = initialPhotoEntry?.key || "photo";
-      mediaMap[photoKey] = { kind: "photo", uri: photoUri, mediaType: photoMediaType };
-    }
-
-    // Set mediaVluae to null if we are removing media, so the server removes it
-    const hadMedia = !!contact?.media && Object.keys(contact.media).length > 0;
-    const mediaValue: Record<string, ContactMedia> | null | undefined =
-      Object.keys(mediaMap).length > 0 ? mediaMap : (hadMedia ? null : undefined);
+    keywordsStr.split(",").map(k => k.trim()).filter(Boolean).forEach(k => {
+      keywordsMap[k] = true;
+    });
+    // A typed category that matches an existing one takes its spelling.
+    categoryDraft.split(",").map(k => k.trim()).filter(Boolean).forEach(k => {
+      const existing = (allKeywords || []).find(kw => kw.toLowerCase() === k.toLowerCase());
+      keywordsMap[existing ?? k] = true;
+    });
 
     // Only send `kind` when this form owns the answer: switching a card between
     // person and organization. Leave other kinds (group, location, ...) untouched.
@@ -573,21 +798,18 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
     const data: Partial<ContactCard> = {
       name: nameValue,
       ...(kindValue ? { kind: kindValue } : {}),
-      nicknames: nickname.trim() ? { n0: { name: nickname.trim() } } : undefined,
+      // The form edits the first nickname, note and organization; others stay.
+      nicknames: firstEntryToSave(contact?.nicknames, "n0", nickname.trim() ? { name: nickname.trim() } : null),
       emails: Object.keys(emailsMap).length > 0 ? emailsMap : undefined,
       phones: Object.keys(phonesMap).length > 0 ? phonesMap : undefined,
       titles: Object.keys(titlesMap).length > 0 ? titlesMap : undefined,
-      organizations: orgName
-        ? { o0: { name: orgName, units: orgUnits } }
-        : undefined,
+      organizations: firstEntryToSave(contact?.organizations, "o0", orgName ? { name: orgName, units: orgUnits } : null),
       addresses: Object.keys(addressesMap).length > 0 ? addressesMap : undefined,
       onlineServices: Object.keys(onlineServicesMap).length > 0 ? onlineServicesMap : undefined,
       anniversaries: Object.keys(anniversariesMap).length > 0 ? anniversariesMap : undefined,
       personalInfo: Object.keys(personalInfoMap).length > 0 ? personalInfoMap : undefined,
       keywords: Object.keys(keywordsMap).length > 0 ? keywordsMap : undefined,
-      notes: note.trim()
-        ? { n0: { note: note.trim() } }
-        : undefined,
+      notes: firstEntryToSave(contact?.notes, "n0", note.trim() ? { note: note.trim() } : null),
       speakToAs: (genderSex.trim() || genderIdentity.trim())
         ? {
             grammaticalGender: genderSex.trim() || undefined,
@@ -597,13 +819,37 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
       calendarUri: calendarUri.trim() || undefined,
       schedulingUri: schedulingUri.trim() || undefined,
       freeBusyUri: freeBusyUri.trim() || undefined,
-      media: mediaValue as Record<string, ContactMedia> | undefined,
       ...(selectedBookId ? { addressBookIds: { [selectedBookId]: true } } : {}),
     };
 
+    // An existing card gets only what changed: every property left out stays
+    // on the server exactly as it is.
+    if (contact) {
+      const before = JSON.parse(initialPropertyFields) as Record<string, unknown>;
+      for (const [property, value] of Object.entries(propertyFields)) {
+        if (JSON.stringify(value) === JSON.stringify(before[property])) delete data[property as keyof ContactCard];
+      }
+    }
+
     setIsSaving(true);
     try {
-      await onSave(data);
+      // `media` goes out only when the photo changed. An update without it
+      // keeps every entry on the server, while a map replaces them all, and
+      // `null` deletes them. The other entries go back as the server has them
+      // now: a data: URI on 0.16, a blobId on 1.0, which resolves it again. A
+      // blobId from an older copy of the card, say of a logo changed
+      // elsewhere since, makes 1.0 refuse the whole update ("The following
+      // blobIds do not exist or are not accessible").
+      let photoKey: string | undefined;
+      if (photoEdit.kind === "new" || (photoEdit.kind === "removed" && initialPhotoKey)) {
+        const current = contact && loadCurrentMedia ? await loadCurrentMedia().catch(() => null) : null;
+        const known = contact?.media ?? {};
+        const edited = mediaForPhotoEdit(current ? current.media ?? {} : known, known, initialPhotoKey, photoEdit);
+        // Absent, not undefined: contactToWire sends an undefined key as null.
+        data.media = edited.media as Record<string, ContactMedia>;
+        photoKey = edited.photoKey;
+      }
+      await (photoKey ? onSave(data, { photoKey }) : onSave(data));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("save_failed"));
     } finally {
@@ -614,21 +860,28 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
   const previewName = (isOrg ? "" : [givenName, surname].filter(Boolean).join(" ").trim()) || organization.trim();
   const previewEmail = emails.find(e => e.address.trim())?.address.trim() || "";
 
+  const close = (
+    <IconButton label={t("close")} onClick={onCancel}>
+      <X />
+    </IconButton>
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col h-full bg-background">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-border flex-shrink-0">
-        <h2 className="text-lg font-semibold">
+    // The app checks the fields itself and says what is wrong inline; the
+    // browser's own bubble covered that message.
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col h-full bg-background">
+      <div ref={setHeader} data-window-top-row="" className="flex items-center gap-2 px-6 py-4 border-b border-border flex-shrink-0">
+        {closeFirst && close}
+        <h2 className="min-w-0 flex-1 text-lg font-semibold">
           {isEditing ? t("edit_title") : t("create_title")}
         </h2>
-        <button type="button" onClick={onCancel} className="p-1.5 rounded-md hover:bg-muted transition-colors duration-150 text-muted-foreground hover:text-foreground">
-          <X className="w-5 h-5" />
-        </button>
+        {!closeFirst && close}
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="px-6 py-4 max-w-3xl">
+        <div className="@container px-6 py-4 max-w-3xl">
           {error && (
-            <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 px-3 py-2 rounded-lg border border-red-200 dark:border-red-900 mb-4">
+            <div role="alert" className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md mb-4">
               {error}
             </div>
           )}
@@ -638,14 +891,16 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
               type="button"
               onClick={() => photoInputRef.current?.click()}
               disabled={photoUploading}
-              className="relative group rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60"
+              className="relative group rounded-full focus:outline-hidden disabled:opacity-60"
               title={t("upload_photo")}
               aria-label={t("upload_photo")}
             >
               <Avatar
                 name={previewName || undefined}
                 email={previewEmail || undefined}
-                contactPhotoUri={photoUri}
+                contactPhoto={previewPhoto}
+                // Nothing typed yet: a neutral circle, not a coloured "?".
+                fallbackColor={previewName || previewEmail ? undefined : "var(--color-muted-foreground)"}
                 size="lg"
                 className="!w-20 !h-20 !text-xl"
               />
@@ -654,7 +909,7 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                 className="absolute inset-0 rounded-full bg-black/55 text-white flex flex-col items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity"
               >
                 <Camera className="w-5 h-5" />
-                <span className="text-[10px] font-medium leading-none">{t("change_photo")}</span>
+                <span className="text-[0.625rem] font-medium leading-none">{t("change_photo")}</span>
               </span>
               <input
                 ref={photoInputRef}
@@ -667,9 +922,9 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
             <div className="flex flex-col gap-1 min-w-0 flex-1">
               <p className="text-xs text-muted-foreground">{t("photo_hint")}</p>
               {photoError && (
-                <p className="text-xs text-red-600 dark:text-red-400">{photoError}</p>
+                <p className="text-xs text-destructive">{photoError}</p>
               )}
-              {photoUri && (
+              {previewPhoto && (
                 <button
                   type="button"
                   onClick={handlePhotoRemove}
@@ -685,18 +940,19 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
           <div className="divide-y divide-border/60">
 
           {addressBooks && addressBooks.length > 1 && (
-            <FormSection icon={Book} title={t("section_address_book") || "Directory"}>
+            <FormSection icon={Book} title={t("section_address_book")}>
               <select
+                aria-label={t("section_address_book")}
                 value={selectedBookId}
                 onChange={(e) => setSelectedBookId(e.target.value)}
-                className="w-full px-3 py-2 rounded-md border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2 rounded-md border border-border bg-background text-sm focus:outline-hidden"
               >
-                <option value="">{t("select_address_book") || "Select a directory..."}</option>
-                {addressBooks.map((book) => (
-                  <option key={book.id} value={book.id}>
-                    {book.accountName ? `${book.name} (${book.accountName})` : book.name}
-                  </option>
-                ))}
+                <option value="">{t("select_address_book")}</option>
+                {/* Under each account's address with several (pim-p2-3). A shared book says whose it is, unless its name already does. */}
+                <AccountGroupedOptions
+                  items={addressBooks}
+                  label={(book) => (book.isShared && book.accountName && !shownName.addressBook(book).includes(book.accountName) ? `${shownName.addressBook(book)} (${book.accountName})` : shownName.addressBook(book))}
+                />
               </select>
             </FormSection>
           )}
@@ -731,48 +987,48 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
             {isOrg ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">
-                    {t("organization")} <span className="text-red-500">*</span>
+                  <label htmlFor={fieldId("organization-required")} className="text-xs text-muted-foreground mb-1 block">
+                    {t("organization")} <span className="text-destructive" aria-hidden="true">*</span>
                   </label>
-                  <Input value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder={t("organization_placeholder")} autoFocus />
+                  <Input id={fieldId("organization-required")} aria-required value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder={t("organization_placeholder")} autoFocus />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">{t("nickname")}</label>
-                  <Input value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder={t("nickname_placeholder")} />
+                  <label htmlFor={fieldId("nickname")} className="text-xs text-muted-foreground mb-1 block">{t("nickname")}</label>
+                  <Input id={fieldId("nickname")} value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder={t("nickname_placeholder")} />
                 </div>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-[auto_1fr_1fr_auto] gap-2">
+                {/* Two columns in a narrow pane (title and first name, last name and
+                    suffix), one row once there is room, so no name gets cut. */}
+                <div className="grid grid-cols-2 @lg:grid-cols-[auto_1fr_1fr_auto] gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">{t("prefix")}</label>
-                    <Input value={prefix} onChange={(e) => setPrefix(e.target.value)} placeholder={t("prefix_placeholder")} className="w-20" />
+                    <label htmlFor={fieldId("prefix")} className="text-xs text-muted-foreground mb-1 block">{t("prefix")}</label>
+                    <Input id={fieldId("prefix")} value={prefix} onChange={(e) => setPrefix(e.target.value)} placeholder={t("prefix_placeholder")} className="@lg:w-20" />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">
-                      {t("given_name")} <span className="text-red-500">*</span>
-                    </label>
-                    <Input value={givenName} onChange={(e) => setGivenName(e.target.value)} placeholder={t("given_name")} autoFocus />
+                    <label htmlFor={fieldId("given_name")} className="text-xs text-muted-foreground mb-1 block">{t("given_name")}</label>
+                    <Input id={fieldId("given_name")} value={givenName} onChange={(e) => setGivenName(e.target.value)} placeholder={t("given_name")} autoFocus />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">
-                      {t("surname")} <span className="text-red-500">*</span>
-                    </label>
-                    <Input value={surname} onChange={(e) => setSurname(e.target.value)} placeholder={t("surname")} />
+                    <label htmlFor={fieldId("surname")} className="text-xs text-muted-foreground mb-1 block">{t("surname")}</label>
+                    <Input id={fieldId("surname")} value={surname} onChange={(e) => setSurname(e.target.value)} placeholder={t("surname")} />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">{t("suffix")}</label>
-                    <Input value={suffix} onChange={(e) => setSuffix(e.target.value)} placeholder={t("suffix_placeholder")} className="w-20" />
+                    <label htmlFor={fieldId("suffix")} className="text-xs text-muted-foreground mb-1 block">{t("suffix")}</label>
+                    <Input id={fieldId("suffix")} value={suffix} onChange={(e) => setSuffix(e.target.value)} placeholder={t("suffix_placeholder")} className="@lg:w-20" />
                   </div>
                 </div>
+                {/* Either name is enough (or an organization), so neither is starred. */}
+                <p className="text-xs text-muted-foreground -mt-1">{t("name_required")}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">{t("middle_name")}</label>
-                    <Input value={additionalName} onChange={(e) => setAdditionalName(e.target.value)} placeholder={t("middle_name")} />
+                    <label htmlFor={fieldId("middle_name")} className="text-xs text-muted-foreground mb-1 block">{t("middle_name")}</label>
+                    <Input id={fieldId("middle_name")} value={additionalName} onChange={(e) => setAdditionalName(e.target.value)} placeholder={t("middle_name")} />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">{t("nickname")}</label>
-                    <Input value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder={t("nickname_placeholder")} />
+                    <label htmlFor={fieldId("nickname-1")} className="text-xs text-muted-foreground mb-1 block">{t("nickname")}</label>
+                    <Input id={fieldId("nickname-1")} value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder={t("nickname_placeholder")} />
                   </div>
                 </div>
               </>
@@ -781,10 +1037,10 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
           {/* Email */}
           <FormSection icon={Mail} title={t("email")}>
-            <div className="space-y-2">
+            <div className="space-y-2 @container">
               {emails.map((entry, i) => (
                 <div key={i}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap @md:flex-nowrap items-center gap-2">
                     <Input
                       type="email"
                       inputMode="email"
@@ -799,7 +1055,10 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                       }}
                       onBlur={() => handleEmailBlur(i, entry.address)}
                       placeholder={t("email_placeholder")}
-                      className={cn("flex-1", emailErrors[i] && "border-red-500 focus:ring-red-500")}
+                      aria-label={t("email")}
+                      aria-invalid={emailErrors[i] ? true : undefined}
+                      aria-describedby={emailErrors[i] ? fieldId(`email-error-${i}`) : undefined}
+                      className={cn("grow basis-full @md:basis-0", emailErrors[i] && "border-destructive focus-visible:border-destructive")}
                     />
                     <Select
                       value={entry.context}
@@ -808,19 +1067,21 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                         next[i] = { ...next[i], context: e.target.value as EmailEntry["context"] };
                         setEmails(next);
                       }}
+                      aria-label={t("context_label")}
                     >
                       <option value="">-</option>
                       <option value="work">{t("context_work")}</option>
-                      <option value="private">{t("context_private")}</option>
+                      <option value="private">{tx("context_private")}</option>
+                      {storedOption(entry.key ? initialRows.emails.find(r => r.key === entry.key)?.context : undefined, CONTEXTS)}
                     </Select>
                     {emails.length > 1 && (
-                      <Button type="button" variant="ghost" size="icon" onClick={() => setEmails(emails.filter((_, j) => j !== i))} className="h-8 w-8 shrink-0">
-                        <X className="w-3 h-3" />
-                      </Button>
+                      <IconButton label={t("remove_entry")} onClick={() => setEmails(emails.filter((_, j) => j !== i))} className="shrink-0">
+                        <X />
+                      </IconButton>
                     )}
                   </div>
                   {emailErrors[i] && (
-                    <p className="text-xs text-red-600 dark:text-red-400 mt-1 ms-1">{emailErrors[i]}</p>
+                    <p id={fieldId(`email-error-${i}`)} className="text-xs text-destructive mt-1 ms-1">{emailErrors[i]}</p>
                   )}
                 </div>
               ))}
@@ -833,9 +1094,13 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 
           {/* Phone */}
           <FormSection icon={Phone} title={t("phone")}>
-            <div className="space-y-2">
-              {phones.map((entry, i) => (
-                <div key={i} className="flex items-center gap-2">
+            <div className="space-y-2 @container">
+              {/* In a narrow pane the number takes a line of its own: beside the two selects it was cut to two digits. */}
+              {phones.map((entry, i) => {
+                // A type or context the card had that the selects don't offer stays offered, as stored.
+                const initialPhone = entry.key ? initialRows.phones.find(r => r.key === entry.key) : undefined;
+                return (
+                <div key={i} className="flex flex-wrap @md:flex-nowrap items-center gap-2">
                   <Input
                     type="tel"
                     inputMode="tel"
@@ -846,7 +1111,8 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                       setPhones(next);
                     }}
                     placeholder={t("phone_placeholder")}
-                    className="flex-1"
+                    aria-label={t("phone")}
+                    className="grow basis-full @md:basis-0"
                   />
                   <Select
                     value={entry.feature}
@@ -855,15 +1121,17 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                       next[i] = { ...next[i], feature: e.target.value as PhoneEntry["feature"] };
                       setPhones(next);
                     }}
-                    className="w-[5.5rem]"
+                    className="w-28"
+                    aria-label={t("phone_type")}
                   >
                     <option value="">{t("phone_type")}</option>
-                    <option value="voice">{t("phone_voice")}</option>
-                    <option value="cell">{t("phone_cell")}</option>
+                    <option value="voice">{tx("phone_voice")}</option>
+                    <option value="mobile">{t("phone_cell")}</option>
                     <option value="fax">{t("phone_fax")}</option>
                     <option value="pager">{t("phone_pager")}</option>
                     <option value="video">{t("phone_video")}</option>
                     <option value="text">{t("phone_text")}</option>
+                    {storedOption(initialPhone?.feature, PHONE_FEATURES, initialPhone?.feature === PHONE_LABEL ? contact?.phones?.[initialPhone.key!]?.label : undefined)}
                   </Select>
                   <Select
                     value={entry.context}
@@ -872,16 +1140,19 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                       next[i] = { ...next[i], context: e.target.value as PhoneEntry["context"] };
                       setPhones(next);
                     }}
+                    aria-label={t("context_label")}
                   >
                     <option value="">-</option>
                     <option value="work">{t("context_work")}</option>
-                    <option value="private">{t("context_private")}</option>
+                    <option value="private">{tx("context_private")}</option>
+                    {storedOption(initialPhone?.context, CONTEXTS)}
                   </Select>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setPhones(phones.filter((_, j) => j !== i))} className="h-8 w-8 shrink-0">
-                    <X className="w-3 h-3" />
-                  </Button>
+                  <IconButton label={t("remove_entry")} onClick={() => setPhones(phones.filter((_, j) => j !== i))} className="shrink-0">
+                    <X />
+                  </IconButton>
                 </div>
-              ))}
+                );
+              })}
               <Button type="button" variant="ghost" size="sm" onClick={() => setPhones([...phones, { number: "", context: "", feature: "" }])} className="text-xs">
                 <Plus className="w-3 h-3 me-1" />
                 {t("add_phone")}
@@ -895,21 +1166,21 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
               {/* In organization mode the org name is the card's identity, edited above. */}
               {!isOrg && (
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">{t("organization")}</label>
-                  <Input value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder={t("organization_placeholder")} />
+                  <label htmlFor={fieldId("organization")} className="text-xs text-muted-foreground mb-1 block">{t("organization")}</label>
+                  <Input id={fieldId("organization")} value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder={t("organization_placeholder")} />
                 </div>
               )}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("department")}</label>
-                <Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder={t("department_placeholder")} />
+                <label htmlFor={fieldId("department")} className="text-xs text-muted-foreground mb-1 block">{t("department")}</label>
+                <Input id={fieldId("department")} value={department} onChange={(e) => setDepartment(e.target.value)} placeholder={t("department_placeholder")} />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("job_title")}</label>
-                <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={t("job_title_placeholder")} />
+                <label htmlFor={fieldId("job_title")} className="text-xs text-muted-foreground mb-1 block">{t("job_title")}</label>
+                <Input id={fieldId("job_title")} value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder={t("job_title_placeholder")} />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("role")}</label>
-                <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder={t("role_placeholder")} />
+                <label htmlFor={fieldId("role")} className="text-xs text-muted-foreground mb-1 block">{t("role")}</label>
+                <Input id={fieldId("role")} value={role} onChange={(e) => setRole(e.target.value)} placeholder={t("role_placeholder")} />
               </div>
             </div>
           </FormSection>
@@ -917,62 +1188,65 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
           {/* Addresses */}
           <FormSection icon={MapPin} title={t("addresses")} collapsible defaultOpen={addresses.length > 0}>
             <div className="space-y-3">
-              {addresses.map((addr, i) => (
-                <div key={i} className="rounded-md border border-border/60 bg-muted/20 p-3 space-y-2 relative">
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setAddresses(addresses.filter((_, j) => j !== i))} className="h-6 w-6 absolute top-2 right-2">
-                    <X className="w-3 h-3" />
-                  </Button>
-                  <Input value={addr.street} onChange={(e) => { const n = [...addresses]; n[i] = { ...n[i], street: e.target.value }; setAddresses(n); }} placeholder={t("street")} />
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input value={addr.locality} onChange={(e) => { const n = [...addresses]; n[i] = { ...n[i], locality: e.target.value }; setAddresses(n); }} placeholder={t("city")} />
-                    <Input value={addr.region} onChange={(e) => { const n = [...addresses]; n[i] = { ...n[i], region: e.target.value }; setAddresses(n); }} placeholder={t("region")} />
+              {addresses.map((addr, i) => {
+                const set = (name: keyof Omit<AddressEntry, "key">) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+                  const n = [...addresses];
+                  n[i] = { ...n[i], [name]: e.target.value };
+                  setAddresses(n);
+                };
+                const original = addr.key ? contact?.addresses?.[addr.key] : undefined;
+                const initialCountry = addr.key ? initialRows.addresses.find(a => a.key === addr.key)?.country : undefined;
+                const style: AddressStyle = addressStyle(addr.country, initialCountry === addr.country ? original?.countryCode : null, locale);
+                const field = (name: "locality" | "region" | "postcode", label: string, className?: string) => (
+                  <Input key={name} value={addr[name]} onChange={set(name)} placeholder={label} aria-label={label} className={className} />
+                );
+                const country = <Input key="country" value={addr.country} onChange={set("country")} placeholder={t("country")} aria-label={t("country")} />;
+                const context = (
+                  <Select key="context" value={addr.context} onChange={set("context")} aria-label={t("context_label")}>
+                    <option value="">-</option>
+                    <option value="work">{t("context_work")}</option>
+                    <option value="private">{tx("context_private")}</option>
+                    {storedOption(addr.key ? initialRows.addresses.find(a => a.key === addr.key)?.context : undefined, CONTEXTS)}
+                  </Select>
+                );
+                return (
+                  <div key={addr.key ?? `new-${i}`} data-address-layout={style.town} className="rounded-md border border-border/60 bg-muted/20 p-3 space-y-2 relative">
+                    <IconButton label={t("remove_entry")} onClick={() => setAddresses(addresses.filter((_, j) => j !== i))} className="absolute top-1 end-1">
+                      <X />
+                    </IconButton>
+                    {/* Street and house number in one field, in the order the country writes them. */}
+                    <Input value={addr.street} onChange={set("street")} placeholder={t("street")} aria-label={t("street")} className="pe-10" />
+                    {style.town === "postcode-city" ? (
+                      <>
+                        <div className="grid grid-cols-3 gap-2">
+                          {field("postcode", t("postcode"))}
+                          {field("locality", t("city"), "col-span-2")}
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {field("region", t("region"))}
+                          {country}
+                          {context}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="grid grid-cols-2 gap-2">
+                          {field("locality", t("city"))}
+                          {field("region", t("region"))}
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {field("postcode", t("postcode"))}
+                          {country}
+                          {context}
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <Input value={addr.postcode} onChange={(e) => { const n = [...addresses]; n[i] = { ...n[i], postcode: e.target.value }; setAddresses(n); }} placeholder={t("postcode")} />
-                    <Input value={addr.country} onChange={(e) => { const n = [...addresses]; n[i] = { ...n[i], country: e.target.value }; setAddresses(n); }} placeholder={t("country")} />
-                    <Select
-                      value={addr.context}
-                      onChange={(e) => { const n = [...addresses]; n[i] = { ...n[i], context: e.target.value as AddressEntry["context"] }; setAddresses(n); }}
-                    >
-                      <option value="">-</option>
-                      <option value="work">{t("context_work")}</option>
-                      <option value="private">{t("context_private")}</option>
-                    </Select>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               <Button type="button" variant="ghost" size="sm" onClick={() => setAddresses([...addresses, { street: "", locality: "", region: "", postcode: "", country: "", context: "" }])} className="text-xs">
                 <Plus className="w-3 h-3 me-1" />
                 {t("add_address")}
-              </Button>
-            </div>
-          </FormSection>
-
-          {/* Online Services */}
-          <FormSection icon={Globe} title={t("online_services")} collapsible defaultOpen={onlineServices.length > 0}>
-            <div className="space-y-2">
-              {onlineServices.map((svc, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Input
-                    value={svc.uri}
-                    onChange={(e) => { const n = [...onlineServices]; n[i] = { ...n[i], uri: e.target.value }; setOnlineServices(n); }}
-                    placeholder={t("url_placeholder")}
-                    className="flex-1"
-                  />
-                  <Input
-                    value={svc.service}
-                    onChange={(e) => { const n = [...onlineServices]; n[i] = { ...n[i], service: e.target.value }; setOnlineServices(n); }}
-                    placeholder={t("service_placeholder")}
-                    className="w-24"
-                  />
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setOnlineServices(onlineServices.filter((_, j) => j !== i))} className="h-8 w-8 shrink-0">
-                    <X className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="ghost" size="sm" onClick={() => setOnlineServices([...onlineServices, { uri: "", service: "", label: "" }])} className="text-xs">
-                <Plus className="w-3 h-3 me-1" />
-                {t("add_online_service")}
               </Button>
             </div>
           </FormSection>
@@ -986,20 +1260,22 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
                     type="date"
                     value={ann.date}
                     onChange={(e) => { const n = [...anniversaries]; n[i] = { ...n[i], date: e.target.value }; setAnniversaries(n); }}
+                    aria-label={t("anniversary_date")}
                     className="flex-1"
                   />
                   <Select
                     value={ann.kind}
                     onChange={(e) => { const n = [...anniversaries]; n[i] = { ...n[i], kind: e.target.value as AnniversaryEntry["kind"] }; setAnniversaries(n); }}
+                    aria-label={t("anniversary_kind")}
                   >
                     <option value="birth">{t("anniversary_birth")}</option>
                     <option value="wedding">{t("anniversary_wedding")}</option>
                     <option value="death">{t("anniversary_death")}</option>
                     <option value="other">{t("anniversary_other")}</option>
                   </Select>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setAnniversaries(anniversaries.filter((_, j) => j !== i))} className="h-8 w-8 shrink-0">
-                    <X className="w-3 h-3" />
-                  </Button>
+                  <IconButton label={t("remove_entry")} onClick={() => setAnniversaries(anniversaries.filter((_, j) => j !== i))} className="shrink-0">
+                    <X />
+                  </IconButton>
                 </div>
               ))}
               <Button type="button" variant="ghost" size="sm" onClick={() => setAnniversaries([...anniversaries, { date: "", kind: "birth" }])} className="text-xs">
@@ -1009,96 +1285,18 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
             </div>
           </FormSection>
 
-          {/* Personal Info */}
-          <FormSection icon={Heart} title={t("personal_info")} collapsible defaultOpen={personalInfoEntries.length > 0}>
-            <div className="space-y-2">
-              {personalInfoEntries.map((pi, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Input
-                    value={pi.value}
-                    onChange={(e) => { const n = [...personalInfoEntries]; n[i] = { ...n[i], value: e.target.value }; setPersonalInfoEntries(n); }}
-                    placeholder={t("personal_info_placeholder")}
-                    className="flex-1"
-                  />
-                  <Select
-                    value={pi.kind}
-                    onChange={(e) => { const n = [...personalInfoEntries]; n[i] = { ...n[i], kind: e.target.value as PersonalInfoEntry["kind"] }; setPersonalInfoEntries(n); }}
-                  >
-                    <option value="expertise">{t("personal_expertise")}</option>
-                    <option value="hobby">{t("personal_hobby")}</option>
-                    <option value="interest">{t("personal_interest")}</option>
-                    <option value="other">{t("personal_other")}</option>
-                  </Select>
-                  <Select
-                    value={pi.level}
-                    onChange={(e) => { const n = [...personalInfoEntries]; n[i] = { ...n[i], level: e.target.value as PersonalInfoEntry["level"] }; setPersonalInfoEntries(n); }}
-                  >
-                    <option value="">{t("level")}</option>
-                    <option value="high">{t("level_high")}</option>
-                    <option value="medium">{t("level_medium")}</option>
-                    <option value="low">{t("level_low")}</option>
-                  </Select>
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setPersonalInfoEntries(personalInfoEntries.filter((_, j) => j !== i))} className="h-8 w-8 shrink-0">
-                    <X className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
-              <Button type="button" variant="ghost" size="sm" onClick={() => setPersonalInfoEntries([...personalInfoEntries, { value: "", kind: "hobby", level: "" }])} className="text-xs">
-                <Plus className="w-3 h-3 me-1" />
-                {t("add_personal_info")}
-              </Button>
-            </div>
-          </FormSection>
-
           {/* Categories */}
           <FormSection icon={Tag} title={t("categories")} collapsible defaultOpen={!!keywordsStr}>
             <CategoryComboBox
               keywordsStr={keywordsStr}
               onChange={setKeywordsStr}
+              inputValue={categoryDraft}
+              onInputChange={setCategoryDraft}
               allKeywords={allKeywords || []}
               placeholder={t("categories_placeholder")}
               hint={t("categories_hint")}
               addLabel={t("category_add")}
             />
-          </FormSection>
-
-          {/* Gender */}
-          <FormSection icon={UserCircle} title={t("gender")} collapsible defaultOpen={!!(genderSex || genderIdentity)}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("gender_sex")}</label>
-                <Select value={genderSex} onChange={(e) => setGenderSex(e.target.value)} className="w-full">
-                  <option value="">-</option>
-                  <option value="masculine">{t("gender_male")}</option>
-                  <option value="feminine">{t("gender_female")}</option>
-                  <option value="other">{t("gender_other")}</option>
-                  <option value="none">{t("gender_none")}</option>
-                  <option value="unknown">{t("gender_unknown")}</option>
-                </Select>
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("gender_identity")}</label>
-                <Input value={genderIdentity} onChange={(e) => setGenderIdentity(e.target.value)} placeholder={t("gender_identity_placeholder")} />
-              </div>
-            </div>
-          </FormSection>
-
-          {/* Calendar */}
-          <FormSection icon={Calendar} title={t("calendar")} collapsible defaultOpen={!!(calendarUri || schedulingUri || freeBusyUri)}>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("calendar_uri")}</label>
-                <Input value={calendarUri} onChange={(e) => setCalendarUri(e.target.value)} placeholder="https://..." />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("scheduling_uri")}</label>
-                <Input value={schedulingUri} onChange={(e) => setSchedulingUri(e.target.value)} placeholder="https://..." />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">{t("freebusy_uri")}</label>
-                <Input value={freeBusyUri} onChange={(e) => setFreeBusyUri(e.target.value)} placeholder="https://..." />
-              </div>
-            </div>
           </FormSection>
 
           {/* Notes */}
@@ -1107,15 +1305,136 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={t("note_placeholder")}
-              className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground resize-y outline-none focus:ring-2 focus:ring-ring"
+              aria-label={t("note")}
+              className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground resize-y outline-none"
             />
+          </FormSection>
+
+          {/* Fields most cards don't use, collapsed unless one has a value. */}
+          <FormSection icon={MoreHorizontal} title={tx("more_fields")} collapsible defaultOpen={hasMoreFields}>
+            <div className="divide-y divide-border/60 -my-5">
+            {/* Online Services */}
+            <FormSection icon={Globe} title={t("online_services")}>
+              <div className="space-y-2">
+                {onlineServices.map((svc, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Input
+                      value={svc.uri}
+                      onChange={(e) => { const n = [...onlineServices]; n[i] = { ...n[i], uri: e.target.value }; setOnlineServices(n); }}
+                      placeholder={t("url_placeholder")}
+                      aria-label={t("online_service_url")}
+                      className="flex-1"
+                    />
+                    <Input
+                      value={svc.service}
+                      onChange={(e) => { const n = [...onlineServices]; n[i] = { ...n[i], service: e.target.value }; setOnlineServices(n); }}
+                      placeholder={t("service_placeholder")}
+                      aria-label={t("service_placeholder")}
+                      className="w-24"
+                    />
+                    <IconButton label={t("remove_entry")} onClick={() => setOnlineServices(onlineServices.filter((_, j) => j !== i))} className="shrink-0">
+                      <X />
+                    </IconButton>
+                  </div>
+                ))}
+                <Button type="button" variant="ghost" size="sm" onClick={() => setOnlineServices([...onlineServices, { uri: "", service: "", label: "" }])} className="text-xs">
+                  <Plus className="w-3 h-3 me-1" />
+                  {t("add_online_service")}
+                </Button>
+              </div>
+            </FormSection>
+
+            {/* Personal Info */}
+            <FormSection icon={Heart} title={t("personal_info")}>
+              <div className="space-y-2">
+                {personalInfoEntries.map((pi, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Input
+                      value={pi.value}
+                      onChange={(e) => { const n = [...personalInfoEntries]; n[i] = { ...n[i], value: e.target.value }; setPersonalInfoEntries(n); }}
+                      placeholder={t("personal_info_placeholder")}
+                      aria-label={t("personal_info")}
+                      className="flex-1"
+                    />
+                    <Select
+                      value={pi.kind}
+                      onChange={(e) => { const n = [...personalInfoEntries]; n[i] = { ...n[i], kind: e.target.value as PersonalInfoEntry["kind"] }; setPersonalInfoEntries(n); }}
+                      aria-label={t("personal_info_kind")}
+                    >
+                      <option value="expertise">{t("personal_expertise")}</option>
+                      <option value="hobby">{t("personal_hobby")}</option>
+                      <option value="interest">{t("personal_interest")}</option>
+                      <option value="other">{t("personal_other")}</option>
+                    </Select>
+                    <Select
+                      value={pi.level}
+                      onChange={(e) => { const n = [...personalInfoEntries]; n[i] = { ...n[i], level: e.target.value as PersonalInfoEntry["level"] }; setPersonalInfoEntries(n); }}
+                      aria-label={t("level")}
+                    >
+                      <option value="">{t("level")}</option>
+                      <option value="high">{t("level_high")}</option>
+                      <option value="medium">{t("level_medium")}</option>
+                      <option value="low">{t("level_low")}</option>
+                    </Select>
+                    <IconButton label={t("remove_entry")} onClick={() => setPersonalInfoEntries(personalInfoEntries.filter((_, j) => j !== i))} className="shrink-0">
+                      <X />
+                    </IconButton>
+                  </div>
+                ))}
+                <Button type="button" variant="ghost" size="sm" onClick={() => setPersonalInfoEntries([...personalInfoEntries, { value: "", kind: "hobby", level: "" }])} className="text-xs">
+                  <Plus className="w-3 h-3 me-1" />
+                  {t("add_personal_info")}
+                </Button>
+              </div>
+            </FormSection>
+
+            {/* Gender */}
+            <FormSection icon={UserCircle} title={t("gender")}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor={fieldId("gender_sex")} className="text-xs text-muted-foreground mb-1 block">{t("gender_sex")}</label>
+                  <Select id={fieldId("gender_sex")} value={genderSex} onChange={(e) => setGenderSex(e.target.value)} className="w-full">
+                    <option value="">-</option>
+                    <option value="masculine">{t("gender_male")}</option>
+                    <option value="feminine">{t("gender_female")}</option>
+                    <option value="other">{t("gender_other")}</option>
+                    <option value="none">{t("gender_none")}</option>
+                    <option value="unknown">{t("gender_unknown")}</option>
+                  </Select>
+                </div>
+                <div>
+                  <label htmlFor={fieldId("gender_identity")} className="text-xs text-muted-foreground mb-1 block">{t("gender_identity")}</label>
+                  <Input id={fieldId("gender_identity")} value={genderIdentity} onChange={(e) => setGenderIdentity(e.target.value)} placeholder={t("gender_identity_placeholder")} />
+                </div>
+              </div>
+            </FormSection>
+
+            {/* Calendar */}
+            <FormSection icon={Calendar} title={t("calendar")}>
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor={fieldId("calendar_uri")} className="text-xs text-muted-foreground mb-1 block">{t("calendar_uri")}</label>
+                  <Input id={fieldId("calendar_uri")} value={calendarUri} onChange={(e) => setCalendarUri(e.target.value)} placeholder="https://..." />
+                </div>
+                <div>
+                  <label htmlFor={fieldId("scheduling_uri")} className="text-xs text-muted-foreground mb-1 block">{t("scheduling_uri")}</label>
+                  <Input id={fieldId("scheduling_uri")} value={schedulingUri} onChange={(e) => setSchedulingUri(e.target.value)} placeholder="https://..." />
+                </div>
+                <div>
+                  <label htmlFor={fieldId("freebusy_uri")} className="text-xs text-muted-foreground mb-1 block">{t("freebusy_uri")}</label>
+                  <Input id={fieldId("freebusy_uri")} value={freeBusyUri} onChange={(e) => setFreeBusyUri(e.target.value)} placeholder="https://..." />
+                </div>
+              </div>
+            </FormSection>
+            </div>
           </FormSection>
 
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border flex-shrink-0">
+      {/* Toasts sit above Save and Cancel, not on them. */}
+      <div ref={footerRef} className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border flex-shrink-0">
         <Button type="button" variant="outline" onClick={onCancel} disabled={isSaving}>
           {t("cancel")}
         </Button>
@@ -1130,6 +1449,8 @@ export function ContactForm({ contact, addressBooks, allKeywords, defaultAddress
 function CategoryComboBox({
   keywordsStr,
   onChange,
+  inputValue,
+  onInputChange: setInputValue,
   allKeywords,
   placeholder,
   hint,
@@ -1137,14 +1458,18 @@ function CategoryComboBox({
 }: {
   keywordsStr: string;
   onChange: (value: string) => void;
+  /** The text typed but not added yet; the form adds it on Save. */
+  inputValue: string;
+  onInputChange: (value: string) => void;
   allKeywords: string[];
   placeholder: string;
   hint: string;
   addLabel: string;
 }) {
+  const t = useTranslations("contacts.form");
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const hintId = useId();
 
   // Parse current keywords from comma-separated string
   const currentKeywords = useMemo(() => {
@@ -1171,7 +1496,7 @@ function CategoryComboBox({
     const next = [...currentKeywords, trimmed].join(", ");
     onChange(next);
     setInputValue("");
-  }, [currentKeywords, onChange]);
+  }, [currentKeywords, onChange, setInputValue]);
 
   const removeKeyword = useCallback((keyword: string) => {
     const next = currentKeywords.filter(k => k !== keyword).join(", ");
@@ -1204,6 +1529,8 @@ function CategoryComboBox({
               <button
                 type="button"
                 onClick={() => removeKeyword(kw)}
+                aria-label={t("remove_category", { name: kw })}
+                title={t("remove_category", { name: kw })}
                 className="hover:text-destructive transition-colors"
               >
                 <X className="w-3 h-3" />
@@ -1222,8 +1549,10 @@ function CategoryComboBox({
         onBlur={() => setIsOpen(false)}
         onKeyDown={handleKeyDown}
         placeholder={currentKeywords.length === 0 ? placeholder : ""}
+        aria-label={t("categories")}
+        aria-describedby={hintId}
       />
-      <p className="text-xs text-muted-foreground mt-1.5">{hint}</p>
+      <p id={hintId} className="text-xs text-muted-foreground mt-1.5">{hint}</p>
 
       {/* Dropdown */}
       {isOpen && (suggestions.length > 0 || canAddNew) && (

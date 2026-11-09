@@ -10,6 +10,7 @@ import { NextRequest } from 'next/server';
 const gate = vi.hoisted(() => ({ signedIn: false }));
 vi.mock('@/lib/auth/instance-details', () => ({
   canSeeInstanceDetails: async () => gate.signedIn,
+  signedInIdentity: async () => null,
 }));
 
 const config = vi.hoisted(() => ({ values: {} as Record<string, unknown> }));
@@ -31,6 +32,8 @@ vi.mock('@/lib/admin/config-manager', () => ({
     ensureLoaded: async () => {},
     get: (key: string, fallback: unknown) => (key in config.values ? config.values[key] : fallback),
     getPolicy: () => POLICY,
+    getPolicyVersion: () => 'v1',
+    getPolicyWithVersion() { return { policy: this.getPolicy(), version: 'v1' }; },
   },
 }));
 vi.mock('@/lib/logger', () => ({ logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() } }));
@@ -121,6 +124,6 @@ describe('endpoints for visitors who are not signed in', () => {
     gate.signedIn = true;
     const full = await policy(req('/api/admin/policy'));
     expect(full.headers.get('x-bulwark-policy-scope')).toBeNull();
-    expect(await full.json()).toEqual(POLICY);
+    expect(await full.json()).toEqual({ ...POLICY, scopes: [] });
   });
 });

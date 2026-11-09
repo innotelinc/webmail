@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback } from "react";
-import { emailDisplayDate } from "@/lib/email-date";
+import { emailListDate } from "@/lib/email-date";
 import { useTranslations } from "next-intl";
 import { cleanPreview, formatDate } from "@/lib/utils";
 import { Email } from "@/lib/jmap/types";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
-import { Paperclip, Star, Circle, CheckSquare, Square, Reply, Forward } from "@/components/icons";
+import { useSenderWarning } from "@/hooks/use-sender-warning";
+import { brandIndicatorDomain } from "@/lib/email-headers";
+import { Paperclip, Star, Circle, CheckSquare, Square, Reply, Forward, CalendarClock } from "@/components/icons";
 import { useEmailDrag } from "@/hooks/use-email-drag";
 import { useLongPress } from "@/hooks/use-long-press";
 import { useEmailStore } from "@/stores/email-store";
@@ -16,10 +18,13 @@ import { useSettingsStore } from "@/stores/settings-store";
 import { useUIStore } from "@/stores/ui-store";
 import { emailKeyFor, getEmailTagIds } from "@/lib/thread-utils";
 import { useKeywordFormat } from "@/hooks/use-keyword-format";
+import { useEmailTagScope } from "@/hooks/use-account-tags";
 import { useTagDisplay } from "@/hooks/use-tag-display";
 import { TagBadge } from "./tag-badge";
+import { ROW_TAG_GROUP_CLASS } from "./row-tag-classes";
 import { useListRowShape, LIST_COLUMN_CLASS } from "@/hooks/use-list-row-shape";
 import { SizeCell, listLeadClass } from "./list-columns";
+import { rowA11yProps, rowLabel } from "./list-a11y";
 
 interface ThreadEmailItemProps {
   email: Email;
@@ -39,16 +44,20 @@ export function ThreadEmailItem({
   onContextMenu,
 }: ThreadEmailItemProps) {
   const t = useTranslations('email_viewer');
+  const tBatch = useTranslations('email_list.batch_actions');
+  const tStatus = useTranslations('email_list');
   const isUnread = !email.keywords?.$seen;
   const isStarred = email.keywords?.$flagged;
   const isAnswered = email.keywords?.$answered;
   const isForwarded = email.keywords?.$forwarded;
-  const { sortTagIds } = useKeywordFormat();
+  const tagScope = useEmailTagScope(email);
+  const { sortTagIds } = useKeywordFormat(tagScope);
   const { variant: tagVariant } = useTagDisplay();
   // A message inside an expanded thread carries its own tags; the collapsed
   // header pools them, so without this they disappear on the way in.
   const tagIds = sortTagIds(getEmailTagIds(email.keywords));
   const sender = email.from?.[0];
+  const senderWarning = useSenderWarning(email);
   const { selectedMailbox, selectedEmailKeys, toggleEmailSelection, selectRangeEmails } = useEmailStore(useShallow((state) => ({
     selectedMailbox: state.selectedMailbox,
     selectedEmailKeys: state.selectedEmailKeys,
@@ -101,6 +110,29 @@ export function ThreadEmailItem({
     }
   };
 
+  const senderName = sender?.name || sender?.email?.split('@')[0] || t('unknown_sender');
+  const selectLabel = tBatch('select_row', { sender: senderName, subject: email.subject || t('no_subject') });
+  const a11y = rowA11yProps({
+    rowKey: emailKeyFor(email),
+    label: rowLabel([
+      isUnread && t('unread'),
+      senderName,
+      formatDate(emailListDate(email)),
+      isStarred && tStatus('starred'),
+      isAnswered && tStatus('replied'),
+      isForwarded && tStatus('forwarded'),
+      email.hasAttachment && tStatus('has_attachment'),
+      // The row shows the message's text where the subject would be.
+      cleanPreview(email.preview),
+    ]),
+    selected: !!selected,
+    level: 2,
+    checked: isChecked,
+    selectionMode: selectedEmailKeys.size > 0,
+    onToggleCheck: () => toggleEmailSelection(email),
+    onOpenMenu: onContextMenu ? handleContextMenu : undefined,
+  });
+
   const rowHandlers = {
     onClick: handleClick,
     onDoubleClick: (e: React.MouseEvent) => {
@@ -123,6 +155,7 @@ export function ThreadEmailItem({
         {...dragHandlers}
         {...longPressHandlers}
         {...rowHandlers}
+        {...a11y}
         data-testid="thread-email-row"
         className={cn(
           "relative cursor-pointer select-none px-3 transition-colors duration-150",
@@ -135,7 +168,7 @@ export function ThreadEmailItem({
         )}
         style={{ paddingBlock: 'var(--density-item-py)' }}
       >
-        <div className="flex items-center" style={{ gap: 'var(--density-item-gap)' }}>
+        <div role="gridcell" className="flex items-center" style={{ gap: 'var(--density-item-gap)' }}>
           {lead && (
             <span className={cn(lead, 'flex shrink-0 items-center justify-center')}>
               {selecting ? (
@@ -143,6 +176,7 @@ export function ThreadEmailItem({
                   onClick={handleCheckboxClick}
                   role="checkbox"
                   aria-checked={isChecked}
+                  aria-label={selectLabel}
                   className={cn("rounded p-1 hover:bg-muted/50", isChecked && "text-primary")}
                 >
                   {isChecked ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5 text-muted-foreground" />}
@@ -159,19 +193,24 @@ export function ThreadEmailItem({
                   "min-w-0 truncate",
                   isUnread ? "font-semibold text-foreground" : "font-medium text-muted-foreground"
                 )}>
-                  {sender?.name || sender?.email?.split('@')[0] || "Unknown"}
+                  {sender?.name || sender?.email?.split('@')[0] || t('unknown_sender')}
                 </span>
               </span>
               <div className="flex min-w-0 flex-1 items-center gap-2 text-sm">
-                {tagIds.map((id) => (
-                  <TagBadge key={id} tagId={id} variant={tagVariant} />
-                ))}
-                <span className={cn("min-w-0 truncate", isUnread ? "text-muted-foreground" : "text-muted-foreground/70")}>
+                {tagIds.length > 0 && (
+                  <span className={ROW_TAG_GROUP_CLASS}>
+                    {tagIds.map((id) => (
+                      <TagBadge key={id} tagId={id} variant={tagVariant} scope={tagScope} className="max-w-[min(12rem,100%)]" />
+                    ))}
+                  </span>
+                )}
+                <span className={cn("flex-1 min-w-0 truncate", isUnread ? "text-muted-foreground" : "text-muted-foreground")}>
                   {cleanPreview(email.preview) || t('no_preview_available')}
                 </span>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2.5">
+              {email.isScheduled && <CalendarClock className="w-3.5 h-3.5 text-primary" />}
               {isStarred && <Star className="w-3 h-3 fill-amber-400 text-amber-400" />}
               {isAnswered && <Reply className="w-3 h-3 text-muted-foreground" />}
               {isForwarded && <Forward className="w-3 h-3 text-muted-foreground" />}
@@ -181,7 +220,7 @@ export function ThreadEmailItem({
                 "text-xs tabular-nums",
                 isUnread ? "text-foreground font-medium" : "text-muted-foreground"
               )}>
-                {formatDate(emailDisplayDate(email))}
+                {formatDate(emailListDate(email))}
               </span>
               <SizeCell bytes={email.size} />
             </div>
@@ -195,6 +234,7 @@ export function ThreadEmailItem({
     <div
       {...dragHandlers}
       {...longPressHandlers}
+      {...a11y}
       className={cn(
         "relative cursor-pointer select-none transition-all duration-150",
         "ps-12 pe-4",
@@ -218,11 +258,14 @@ export function ThreadEmailItem({
       onContextMenu={handleContextMenu}
       style={{ paddingBlock: 'var(--density-item-py)' }}
     >
-      <div className="flex items-start gap-3">
+      <div role="gridcell" className="flex items-start gap-3">
         {/* Checkbox - only visible when in selection mode */}
         {selectedEmailKeys.size > 0 && (
           <button
             onClick={handleCheckboxClick}
+            role="checkbox"
+            aria-checked={isChecked}
+            aria-label={selectLabel}
             className={cn(
               "p-1 rounded mt-0.5 flex-shrink-0 transition-all duration-200",
               "hover:bg-muted/50 hover:scale-110",
@@ -258,6 +301,8 @@ export function ThreadEmailItem({
             email={sender?.email}
             size="sm"
             className="flex-shrink-0"
+            senderWarning={senderWarning}
+            brandDomain={brandIndicatorDomain(email)}
           />
         )}
 
@@ -266,16 +311,19 @@ export function ThreadEmailItem({
           {/* Single line: Sender, indicators, preview, date */}
           <div className="flex items-center gap-2">
             <span className={cn(
-              "truncate text-sm flex-shrink-0 max-w-[150px]",
+              "flex-1 min-w-0 truncate text-sm max-w-[150px]",
               isUnread
                 ? "font-semibold text-foreground"
                 : "font-medium text-muted-foreground"
             )}>
-              {sender?.name || sender?.email?.split('@')[0] || "Unknown"}
+              {sender?.name || sender?.email?.split('@')[0] || t('unknown_sender')}
             </span>
 
-            {/* Indicators */}
+            {/* Indicators stay outside the clipped tag suffix. */}
             <div className="flex items-center gap-1 flex-shrink-0">
+              {email.isScheduled && (
+                <CalendarClock className="w-3 h-3 text-primary" />
+              )}
               {isStarred && (
                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
               )}
@@ -294,17 +342,21 @@ export function ThreadEmailItem({
               {email.hasAttachment && (
                 <Paperclip className="w-3 h-3 text-muted-foreground" />
               )}
-              {tagIds.map((id) => (
-                <TagBadge key={id} tagId={id} variant={tagVariant} />
-              ))}
             </div>
+            {tagIds.length > 0 && (
+              <span className={ROW_TAG_GROUP_CLASS}>
+                {tagIds.map((id) => (
+                  <TagBadge key={id} tagId={id} variant={tagVariant} scope={tagScope} className="max-w-[min(12rem,100%)]" />
+                ))}
+              </span>
+            )}
 
             {/* Preview snippet */}
             <span className={cn(
-              "text-sm truncate flex-1 min-w-0",
+              "text-sm flex-1 min-w-0 truncate",
               isUnread
                 ? "text-muted-foreground"
-                : "text-muted-foreground/70"
+                : "text-muted-foreground"
             )}>
               {cleanPreview(email.preview) || t('no_preview_available')}
             </span>
@@ -316,7 +368,7 @@ export function ThreadEmailItem({
                 ? "text-foreground font-medium"
                 : "text-muted-foreground"
             )}>
-              {formatDate(emailDisplayDate(email))}
+              {formatDate(emailListDate(email))}
             </span>
           </div>
         </div>

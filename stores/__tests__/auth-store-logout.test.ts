@@ -215,7 +215,7 @@ describe('auth-store logout redirects', () => {
     expect(sessionStorage.getItem('session_expired')).toBeNull();
     expect(replaceSpy).not.toHaveBeenCalled();
   });
-  it('signs out after five consecutive Bulwark-side refresh failures (500) instead of retrying forever (#972)', async () => {
+  it('signs out after five consecutive Loomix-side refresh failures (500) instead of retrying forever (#972)', async () => {
     vi.useFakeTimers();
 
     const fetchMock = vi.fn(async (input: FetchInput, init?: FetchInit) => {

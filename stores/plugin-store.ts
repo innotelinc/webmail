@@ -1,33 +1,37 @@
 // Plugin store - manages installed plugins and lifecycle. Slot registrations
 // are owned by `lib/plugin-sandbox/registry` (per-iframe), not by the store.
 
+import { setKnownPlugins } from '@/lib/plugin-sandbox/known-plugins';
 import { cancelConnectFor, forgetCredentials } from '@/lib/plugin-sandbox/connect-dialog';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware';
 import type { InstalledPlugin, PluginStatus, PluginTier } from '@/lib/plugin-types';
 import { pluginStorage } from '@/lib/plugin-storage';
-import { extractPlugin } from '@/lib/plugin-validator';
-import { loadPlugin, deactivatePlugin, setPluginStoreAccessor, setupAutoDisable, setSandboxLocale } from '@/lib/plugin-loader';
 import { useLocaleStore } from '@/stores/locale-store';
+import { useSettingsStore } from '@/stores/settings-store';
 import { getEffectiveLocale } from '@/i18n/detect-locale';
 import { removeAllPluginHooks } from '@/lib/plugin-hooks';
 import { requestConsent } from '@/lib/plugin-sandbox/consent';
-import { packageHash, type ValidatedPluginManifest } from '@/lib/extension-package';
-import JSZip from 'jszip';
+import { keystoreCouldReach } from '@/lib/plugin-sandbox/host-api-keystore';
+import type { ValidatedPluginManifest } from '@/lib/extension-package';
 import { sha256Hex } from '@/lib/plugin-sandbox/bundle-integrity';
 import { downloadManagedBundle } from '@/lib/plugin-sandbox/bundle-fetch';
-import { forEachInstance } from '@/lib/plugin-sandbox/host-bridge';
 import { get as getActivePlugin } from '@/lib/plugin-sandbox/registry';
 import { coerceSetting, effectiveSettings } from '@/lib/plugin-settings';
 import { usePolicyStore } from '@/stores/policy-store';
 import { apiFetch } from '@/lib/browser-navigation';
+import { fetchServerPluginList } from '@/lib/server-plugin-list';
 import { IMPLICIT_PERMISSIONS } from '@/lib/plugin-types';
+import type * as PluginRuntimeModule from '@/lib/plugin-runtime';
 import type { Permission } from '@/lib/plugin-types';
 import { IS_LITE } from '@/lib/lite';
+import { PLUGIN_POLICY_REFUSED_ERROR, onDesktopPolicyChange, pluginAllowedByDesktopPolicy, pluginMayRunByDesktopPolicy, pluginUploadsAllowedByDesktopPolicy } from '@/lib/desktop/policy';
+import { onFullSignOut } from '@/lib/sign-out-cleanup';
+import { forgetDeclaredHooks, setSendGuardSource } from '@/lib/plugin-send-guards';
 
 let pluginInitializationPromise: Promise<void> | null = null;
-// One-time guard so we attach the locale->sandbox subscription only once.
-let localeSubscribed = false;
+// One-time guard so we attach the locale and regional subscriptions only once.
+let regionalSubscribed = false;
 
 // ─── Store Interface ─────────────────────────────────────────
 
@@ -37,7 +41,7 @@ let localeSubscribed = false;
  */
 export interface InstallResult {
   success: boolean;
-  reason?: 'invalid' | 'uploads-disabled' | 'managed-id';
+  reason?: 'invalid' | 'uploads-disabled' | 'managed-id' | 'device-policy';
   error?: string;
   warnings?: string[];
   approvalStatus?: InstalledPlugin['approvalStatus'];
@@ -46,6 +50,12 @@ export interface InstallResult {
 interface PluginStoreState {
   plugins: InstalledPlugin[];
   initialized: boolean;
+  /**
+   * The admin's plugin list arrived in full this session (every bundle
+   * fetched). Until then a plugin the admin forces on may be missing here
+   * only because it hasn't reached this browser (plugin-send-guards.ts).
+   */
+  serverPluginsSynced: boolean;
 
   // Management
   installPlugin: (file: File) => Promise<InstallResult>;
@@ -61,19 +71,128 @@ interface PluginStoreState {
   initializePlugins: () => Promise<void>;
 }
 
+// ─── Persistence ─────────────────────────────────────────────
+
+/** How long a change waits before it is written, so a burst becomes one write. */
+export const PLUGIN_PERSIST_DELAY_MS = 250;
+
+/**
+ * localStorage for the plugin list, written once per burst of changes and
+ * only when the stored text changes. The list carries every plugin's locale
+ * tables (about 1 MB with a dozen plugins), and the stock storage serialized
+ * and wrote all of it on every set(): start-up, one status change per plugin,
+ * wrote 13 MB and blocked the page for ~400 ms. Status is not even persisted
+ * (partialize resets it), so most of those writes stored the same text again.
+ * Pending changes are written when the page is hidden or unloaded.
+ */
+function batchedLocalStorage<S>(): PersistStorage<S> {
+  let pending: { name: string; value: StorageValue<S> } | null = null;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const written = new Map<string, string>();
+
+  const flush = () => {
+    if (timer) { clearTimeout(timer); timer = null; }
+    if (!pending) return;
+    const { name, value } = pending;
+    pending = null;
+    try {
+      const text = JSON.stringify(value);
+      if (written.get(name) === text) return;
+      localStorage.setItem(name, text);
+      written.set(name, text);
+    } catch {
+      // Storage full or blocked: the list is still in memory for this page.
+    }
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flush();
+    });
+  }
+
+  return {
+    getItem: (name) => {
+      const text = localStorage.getItem(name);
+      if (text === null) return null;
+      written.set(name, text);
+      return JSON.parse(text) as StorageValue<S>;
+    },
+    setItem: (name, value) => {
+      pending = { name, value };
+      if (!timer) timer = setTimeout(flush, PLUGIN_PERSIST_DELAY_MS);
+    },
+    removeItem: (name) => {
+      if (pending?.name === name) pending = null;
+      written.delete(name);
+      localStorage.removeItem(name);
+    },
+  };
+}
+
 // ─── Store ───────────────────────────────────────────────────
+
+// ─── The sandbox runtime ───────────────────────────────────────
+
+type PluginRuntime = typeof PluginRuntimeModule;
+
+/** Loaded with the first plugin to start; null until then, when no plugin runs. */
+let runtime: PluginRuntime | null = null;
+let runtimeLoading: Promise<PluginRuntime> | null = null;
+
+/**
+ * The plugin loader and the sandbox bridge, as one chunk. Most people run no
+ * plugin, and they were a few hundred kilobytes of the first page load.
+ */
+function pluginRuntime(): Promise<PluginRuntime> {
+  runtimeLoading ??= import('@/lib/plugin-runtime').then((loaded) => {
+    loaded.setPluginStoreAccessor({
+      setPluginStatus: (...args) => usePluginStore.getState().setPluginStatus(...args),
+      markAutoDisabled: (id) => usePluginStore.setState(state => ({
+        plugins: state.plugins.map(p => (p.id === id
+          // enabled: false is persisted, so a reload doesn't start the
+          // failing plugin again behind the user's back.
+          // chosen: the admin's default must not start it again either.
+          ? { ...p, enabled: false, status: 'error' as PluginStatus, error: 'auto-disabled', chosen: true, autoEnabled: false }
+          : p)),
+      })),
+    });
+    loaded.setupAutoDisable();
+    loaded.setSandboxLocale(getEffectiveLocale());
+    runtime = loaded;
+    return loaded;
+  }, (error) => {
+    runtimeLoading = null;
+    throw error;
+  });
+  return runtimeLoading;
+}
+
+async function loadPlugin(plugin: InstalledPlugin): Promise<void> {
+  await (await pluginRuntime()).loadPlugin(plugin);
+}
+
+/** Without the runtime no plugin is running, so there is nothing to stop. */
+function deactivatePlugin(id: string): void {
+  runtime?.deactivatePlugin(id);
+}
 
 export const usePluginStore = create<PluginStoreState>()(
   persist(
     (set, get) => ({
       plugins: [],
       initialized: false,
+      serverPluginsSynced: false,
 
       installPlugin: async (file: File) => {
         const policy = usePolicyStore.getState();
+        if (!pluginUploadsAllowedByDesktopPolicy()) return { success: false, reason: 'device-policy' };
         if (!policy.isFeatureEnabled('pluginsUploadEnabled')) {
           return { success: false, reason: 'uploads-disabled' };
         }
+        // The package reader (ZIP, manifest checks) loads with the first install, not with the page.
+        const { extractPlugin } = await import('@/lib/plugin-validator');
         const result = await extractPlugin(file);
         if (!result.valid || !result.manifest) {
           return { success: false, reason: 'invalid', error: result.errors.join('; '), warnings: result.warnings };
@@ -98,6 +217,7 @@ export const usePluginStore = create<PluginStoreState>()(
         // Compute bundleHash so the admin-approval gate can pin to this
         // specific bundle (server-side state keys on (id, hash) pairs).
         const bundleHash = await sha256Hex(code).catch(() => undefined);
+        const { packageHash } = await import('@/lib/extension-package');
         const approvalHash = await packageHash(manifest as ValidatedPluginManifest, code);
 
         const plugin: InstalledPlugin = {
@@ -162,6 +282,11 @@ export const usePluginStore = create<PluginStoreState>()(
         const plugin = plugins.find(p => p.id === id);
         if (!plugin) return;
 
+        if (!pluginMayRunByDesktopPolicy(plugin)) {
+          set(state => ({ plugins: state.plugins.map(p => (p.id === id ? { ...p, status: 'error', error: PLUGIN_POLICY_REFUSED_ERROR } : p)) }));
+          return;
+        }
+
         // Admin approval gate for plugins the user installed. The server
         // holds the decision, pinned to the package hash (code + manifest).
         if (!plugin.managed && !(await userPluginMayRun(plugin, get, set, { request: true }))) {
@@ -170,7 +295,9 @@ export const usePluginStore = create<PluginStoreState>()(
 
         // Per-user consent gate: prompt for any permission the user has not
         // explicitly approved yet. Managed plugins (admin-pushed) skip this -
-        // the admin has already approved them at install time.
+        // the admin has already approved them at install time - but for what
+        // an admin can't approve for someone else (askManagedKeystore).
+        await askManagedKeystore(plugin, set);
         const implicit = new Set<string>(IMPLICIT_PERMISSIONS);
         const granted = new Set<string>(plugin.grantedPermissions ?? []);
         const missing = (plugin.permissions ?? [])
@@ -191,12 +318,9 @@ export const usePluginStore = create<PluginStoreState>()(
           }));
         }
 
-        // Ensure bridge is wired before loading (may not have run initializePlugins yet)
-        wireLoader(get, set);
-
         set(state => ({
           plugins: state.plugins.map(p =>
-            p.id === id ? { ...p, enabled: true, status: 'enabled' as PluginStatus, error: undefined } : p
+            p.id === id ? { ...p, enabled: true, status: 'enabled' as PluginStatus, error: undefined, chosen: true, autoEnabled: false } : p
           ),
         }));
 
@@ -218,7 +342,7 @@ export const usePluginStore = create<PluginStoreState>()(
 
         set({
           plugins: plugins.map(p =>
-            p.id === id ? { ...p, enabled: false, status: 'disabled' as PluginStatus, error: undefined } : p
+            p.id === id ? { ...p, enabled: false, status: 'disabled' as PluginStatus, error: undefined, chosen: true, autoEnabled: false } : p
           ),
         });
       },
@@ -255,7 +379,11 @@ export const usePluginStore = create<PluginStoreState>()(
         if (get().initialized) return;
 
         if (pluginInitializationPromise) {
-          await pluginInitializationPromise;
+          const joined = pluginInitializationPromise;
+          await joined;
+          // The run this joined may have ended signed out (it started before
+          // the sign-in); then this call starts the plugins itself.
+          if (!get().initialized && pluginInitializationPromise !== joined) await get().initializePlugins();
           return;
         }
 
@@ -266,9 +394,7 @@ export const usePluginStore = create<PluginStoreState>()(
             set({ plugins: deduped });
           }
 
-          // Wire up bridges
-          wireLoader(get, set);
-          setupAutoDisable();
+          // The bridges are wired when the runtime loads (pluginRuntime).
           // Keep the sandbox locale in step with the app locale. Set it
           // synchronously *before* activation so background instances get the
           // right locale in their init payload (the bug: the only wiring lived
@@ -285,14 +411,27 @@ export const usePluginStore = create<PluginStoreState>()(
           // back to English) even when the app itself is fully localized to
           // the visitor's browser language. Found via a plugin dev report:
           // native UI in Hungarian, plugin's own i18n stuck on English.
-          setSandboxLocale(getEffectiveLocale());
-          if (!localeSubscribed) {
-            localeSubscribed = true;
-            useLocaleStore.subscribe(() => setSandboxLocale(getEffectiveLocale()));
+          runtime?.setSandboxLocale(getEffectiveLocale());
+          if (!regionalSubscribed) {
+            regionalSubscribed = true;
+            useLocaleStore.subscribe(() => runtime?.setSandboxLocale(getEffectiveLocale()));
+
+            let lastKey = `${useSettingsStore.getState().dateLocale}|${useSettingsStore.getState().timeFormat}|${useSettingsStore.getState().timeZone}|${useSettingsStore.getState().firstDayOfWeek}`;
+            useSettingsStore.subscribe((state) => {
+              const key = `${state.dateLocale}|${state.timeFormat}|${state.timeZone}|${state.firstDayOfWeek}`;
+              if (key !== lastKey) {
+                lastKey = key;
+                runtime?.setSandboxLocale(getEffectiveLocale());
+              }
+            });
           }
 
-          // Sync server-managed plugins before loading
-          await syncServerPlugins(get, set);
+          // Sync server-managed plugins before loading. The mail view starts
+          // this on mount, before the user has signed in; marking the store
+          // initialized then left every plugin off after the sign-in until
+          // the next page load. Stay uninitialized so the call that follows
+          // the sign-in (plugin-app-events) starts them.
+          if (await syncServerPlugins(get, set) === 'signed-out') return;
 
           // Load all enabled plugins in parallel. Sequential `await` made one
           // hung/slow plugin block every subsequent one; loadSandboxedPlugin
@@ -305,6 +444,17 @@ export const usePluginStore = create<PluginStoreState>()(
           await Promise.allSettled(enabledPlugins.filter((_, i) => allowed[i]).map(plugin => loadPlugin(plugin)));
 
           set({ initialized: true });
+
+          // After the start, which doesn't wait for anyone to answer. A plugin runs without
+          // the keystore until then, and starts again to see what it was given.
+          for (const plugin of get().plugins.filter(p => p.managed && p.enabled && p.status !== 'error')) {
+            void askManagedKeystore(plugin, set).then((granted) => {
+              const latest = get().plugins.find(p => p.id === plugin.id);
+              if (!granted || !latest?.enabled) return;
+              deactivatePlugin(plugin.id);
+              return loadPlugin(latest);
+            }).catch(() => {});
+          }
         })();
 
         try {
@@ -316,6 +466,7 @@ export const usePluginStore = create<PluginStoreState>()(
     }),
     {
       name: 'plugin-storage',
+      storage: batchedLocalStorage(),
       partialize: (state) => ({
         plugins: state.plugins.map(p => ({
           ...p,
@@ -345,6 +496,8 @@ export const usePluginStore = create<PluginStoreState>()(
 function removePluginData(id: string): void {
   deactivatePlugin(id);
   removeAllPluginHooks(id);
+  runtime?.forgetSlotOffers(id);
+  forgetDeclaredHooks(id);
   void pluginStorage.deleteCode(id).catch(() => {});
   void pluginStorage.deletePreview(id).catch(() => {});
   // Accounts the user connected for it live on the server (this mail account's).
@@ -361,22 +514,25 @@ function removePluginData(id: string): void {
   }
 }
 
-/** Give the loader its way back into the store. */
-function wireLoader(
-  get: () => PluginStoreState,
+/**
+ * An admin's install doesn't cover the certificates on this person's computer, so they're
+ * asked for that alone, also when an update adds it. Runs with or without it, as with any
+ * optional permission. Says whether this added a grant.
+ */
+async function askManagedKeystore(
+  plugin: InstalledPlugin,
   set: (partial: Partial<PluginStoreState> | ((state: PluginStoreState) => Partial<PluginStoreState>)) => void,
-): void {
-  setPluginStoreAccessor({
-    setPluginStatus: get().setPluginStatus,
-    markAutoDisabled: (id) => set(state => ({
-      plugins: state.plugins.map(p => (p.id === id
-        // enabled: false is persisted, so a reload doesn't start the
-        // failing plugin again behind the user's back.
-        ? { ...p, enabled: false, status: 'error' as PluginStatus, error: 'auto-disabled' }
-        : p)),
-    })),
-  });
+): Promise<boolean> {
+  if (!plugin.managed || !plugin.permissions?.includes('keystore') || !keystoreCouldReach(plugin)) return false;
+  if (plugin.grantedPermissions?.includes('keystore') || plugin.declinedPermissions?.includes('keystore')) return false;
+  const accepted = await requestConsent(plugin.id, plugin.name, ['keystore' as Permission]);
+  const field = accepted ? 'grantedPermissions' : 'declinedPermissions';
+  set(state => ({
+    plugins: state.plugins.map(p => (p.id === plugin.id ? { ...p, [field]: [...new Set([...(p[field] ?? []), 'keystore'])] } : p)),
+  }));
+  return accepted;
 }
+
 
 // ─── Server Plugin Sync ──────────────────────────────────────
 
@@ -392,11 +548,15 @@ interface ServerPluginInfo {
   permissions: string[];
   entrypoint: string;
   forceEnabled: boolean;
+  /** On for users who haven't chosen; absent from older servers, which counts as on. */
+  defaultOn?: boolean;
   /** Content hash of the bundle - changes whenever code changes, even if the version doesn't */
   bundleHash?: string;
   updatedAt?: string;
   /** True when the plugin was loaded from the server's PLUGIN_DEV_DIR */
   dev?: boolean;
+  /** The device's OS policy refuses it. Its data stays, and it doesn't run. */
+  refused?: boolean;
   /** Allowlist of origins this plugin may target via api.http.fetch(). */
   httpOrigins?: string[];
   /** Allowlist of same-origin /api/* paths this plugin may target via api.http.post(). */
@@ -426,6 +586,7 @@ function serverMeta(sp: ServerPluginInfo) {
     ...(sp.tier ? { tier: sp.tier } : {}),
     managed: true as const,
     forceEnabled: sp.forceEnabled,
+    defaultOn: sp.defaultOn !== false,
     bundleHash: sp.bundleHash,
     httpOrigins: sp.httpOrigins,
     apiPostPaths: sp.apiPostPaths,
@@ -492,13 +653,17 @@ function markServerManagedPlugins(plugins: InstalledPlugin[]): InstalledPlugin[]
 async function syncServerPlugins(
   get: () => PluginStoreState,
   set: (partial: Partial<PluginStoreState> | ((state: PluginStoreState) => Partial<PluginStoreState>)) => void,
-): Promise<void> {
+): Promise<'signed-out' | void> {
   try {
-    const res = await apiFetch('/api/plugins');
-    if (!res.ok) return;
+    const res = await fetchServerPluginList();
+    if (res.status === 401) return 'signed-out';
+    if (!res.ok) {
+      set({ serverPluginsSynced: false });
+      return;
+    }
 
-    const data: { plugins: ServerPluginInfo[] } = await res.json();
-    if (!data.plugins || !Array.isArray(data.plugins)) return;
+    const data = res.data as { plugins: ServerPluginInfo[] };
+    if (!data?.plugins || !Array.isArray(data.plugins)) return;
 
     const serverPlugins = data.plugins;
     const serverPluginIds = new Set(serverPlugins.map(p => p.id));
@@ -506,31 +671,28 @@ async function syncServerPlugins(
     // Track which plugins came from the server (so we can clean up stale ones)
     const prevServerIds = getServerManagedPluginIds();
 
-    // Install or update server plugins that are missing/outdated locally
-    for (const sp of serverPlugins) {
+    // Which bundles this browser has, in one IndexedDB request. The loop used
+    // to read every bundle in full, one plugin after another, only to see
+    // whether it was there; with a dozen plugins that held up the start by
+    // most of a second. A storage error counts as "none cached" (#636).
+    const cachedIds = new Set(await pluginStorage.codeIds().catch(() => [] as string[]));
+
+    // Install or update server plugins that are missing/outdated locally.
+    // Downloads run side by side; the store is updated afterwards in the
+    // server's order, so the list keeps that order.
+    const outcomes = await Promise.all(serverPlugins.map(async (sp) => {
       const local = get().plugins.find(p => p.id === sp.id);
+
+      // Refused by the device's policy: fetch nothing and change nothing. It stays in
+      // serverPluginIds below, so it isn't taken for removed and its data stays.
+      if (sp.refused || !pluginAllowedByDesktopPolicy(sp.id)) return { sp, isNew: false, needsBundle: false, refused: true };
 
       if (!local) {
         // New server plugin - download bundle and install.
         const code = await downloadPluginBundle(sp.id, sp.bundleHash, sp.tier);
-        if (!code) continue;
-        await pluginStorage.saveCode(sp.id, code);
-
-        const plugin: InstalledPlugin = {
-          id: sp.id,
-          type: sp.type as InstalledPlugin['type'],
-          enabled: sp.forceEnabled,
-          status: sp.forceEnabled ? 'enabled' : 'installed',
-          adminApproved: true, // Server-managed plugins are always approved
-          settings: {},
-          ...serverMeta(sp),
-        };
-        set(state =>
-          state.plugins.some(p => p.id === sp.id)
-            ? {}
-            : { plugins: [...state.plugins, plugin] },
-        );
-        continue;
+        if (!code) return null;
+        await cacheManagedBundle(sp.id, code);
+        return { sp, isNew: true, needsBundle: true };
       }
 
       // Existing plugin. Re-download the bundle only when the code actually
@@ -545,11 +707,8 @@ async function syncServerPlugins(
       // The loader used to strand such plugins on "No bundle in storage" with
       // no way for a non-admin to recover (#636); a missing local copy is
       // treated exactly like a changed one instead.
-      const hasLocalBundle = await pluginStorage.getCode(sp.id)
-        .then((code) => !!code)
-        .catch(() => false);
       const needsBundle =
-        !hasLocalBundle ||
+        !cachedIds.has(sp.id) ||
         local.version !== sp.version ||
         // bundleHash mismatch covers re-uploads of the same version with new
         // code; a falsy local hash (older installs) also forces a refresh so
@@ -558,17 +717,53 @@ async function syncServerPlugins(
 
       if (needsBundle) {
         const code = await downloadPluginBundle(sp.id, sp.bundleHash, sp.tier);
-        if (!code) continue;
-        await pluginStorage.saveCode(sp.id, code);
+        if (!code) return null;
+        await cacheManagedBundle(sp.id, code);
+      }
+      return { sp, isNew: false, needsBundle };
+    }));
+
+    for (const outcome of outcomes) {
+      if (!outcome || outcome.refused) continue;
+      const { sp, isNew, needsBundle } = outcome;
+      const local = get().plugins.find(p => p.id === sp.id);
+
+      if (isNew || !local) {
+        // An admin's plugin is on for everyone unless the admin chose
+        // "Off until users turn it on".
+        const on = sp.forceEnabled || sp.defaultOn !== false;
+        const plugin: InstalledPlugin = {
+          id: sp.id,
+          type: sp.type as InstalledPlugin['type'],
+          enabled: on,
+          status: on ? 'enabled' : 'installed',
+          ...(on && !sp.forceEnabled ? { autoEnabled: true } : {}),
+          adminApproved: true, // Server-managed plugins are always approved
+          settings: {},
+          ...serverMeta(sp),
+        };
+        set(state =>
+          state.plugins.some(p => p.id === sp.id)
+            ? {}
+            : { plugins: [...state.plugins, plugin] },
+        );
+        continue;
       }
 
       // Force-enable in the same pass when the server flips it on, so the user
-      // doesn't need a second refresh for it to run.
-      const shouldAutoEnable = sp.forceEnabled && !local.enabled;
+      // doesn't need a second refresh for it to run. Until the user chooses,
+      // the admin's default decides: on, or off ("Off until users turn it
+      // on"), which only takes back what the default turned on.
+      const followsDefault = !local.chosen && !sp.forceEnabled;
+      const defaultOn = sp.defaultOn !== false;
+      const shouldAutoEnable = !local.enabled && (sp.forceEnabled || (followsDefault && defaultOn));
+      const shouldAutoDisable = local.enabled && followsDefault && !defaultOn && !!local.autoEnabled;
+      if (shouldAutoDisable) deactivatePlugin(sp.id);
       const next: InstalledPlugin = {
         ...local,
         ...serverMeta(sp),
-        ...(shouldAutoEnable ? { enabled: true, status: 'enabled' as const } : {}),
+        ...(shouldAutoEnable ? { enabled: true, status: 'enabled' as const, ...(sp.forceEnabled ? {} : { autoEnabled: true }) } : {}),
+        ...(shouldAutoDisable ? { enabled: false, status: 'installed' as const, autoEnabled: false } : {}),
       };
       if (needsBundle || JSON.stringify(next) !== JSON.stringify(local)) {
         set(state => ({
@@ -594,9 +789,12 @@ async function syncServerPlugins(
 
     // Persist current server plugin IDs for future cleanup
     setServerManagedPluginIds(serverPluginIds);
+    // A bundle that couldn't be fetched leaves its plugin out: not in full.
+    set({ serverPluginsSynced: outcomes.every((outcome) => outcome !== null) });
   } catch {
     // Sync failure is non-fatal - client continues with local plugins
     console.warn('[plugin-store] Server plugin sync failed, using local plugins only');
+    set({ serverPluginsSynced: false });
   }
 }
 
@@ -612,6 +810,19 @@ async function downloadPluginBundle(pluginId: string, bundleHash?: string, tier?
   } catch (err) {
     console.error(`[plugin-store] ${err instanceof Error ? err.message : String(err)}`);
     return null;
+  }
+}
+
+/**
+ * Caching is best effort. Where IndexedDB can't be written (some private
+ * windows, storage disabled) the plugin must still be listed: the loader
+ * fetches a managed bundle again when no local copy exists (#1327).
+ */
+async function cacheManagedBundle(pluginId: string, code: string): Promise<void> {
+  try {
+    await pluginStorage.saveCode(pluginId, code);
+  } catch (err) {
+    console.warn(`[plugin-store] Could not cache bundle for "${pluginId}":`, err);
   }
 }
 
@@ -642,6 +853,7 @@ async function submitApprovalRequest(
   try {
     const source = code ?? await pluginStorage.getCode(plugin.id);
     if (!source) return undefined;
+    const { default: JSZip } = await import('jszip');
     const zip = new JSZip();
     zip.file('manifest.json', JSON.stringify(plugin.packageManifest));
     zip.file(String(plugin.packageManifest.entrypoint ?? plugin.entrypoint), source);
@@ -695,6 +907,23 @@ async function userPluginMayRun(
   return false;
 }
 
+// The device's OS policy changed while the app runs: what it now refuses stops, with
+// its record and data left alone, and what it allows again starts as the user left it.
+function applyDesktopPluginPolicy(): void {
+  const { plugins, setPluginStatus } = usePluginStore.getState();
+  for (const plugin of plugins) {
+    const allowed = pluginMayRunByDesktopPolicy(plugin);
+    if (!allowed && getActivePlugin(plugin.id)) {
+      deactivatePlugin(plugin.id);
+      setPluginStatus(plugin.id, 'error', PLUGIN_POLICY_REFUSED_ERROR);
+    } else if (allowed && plugin.error === PLUGIN_POLICY_REFUSED_ERROR) {
+      setPluginStatus(plugin.id, plugin.enabled ? 'enabled' : 'installed');
+      if (plugin.enabled) void loadPlugin(plugin);
+    }
+  }
+}
+onDesktopPolicyChange(applyDesktopPluginPolicy);
+
 // Whatever changed a plugin's settings (Settings, a server sync, an
 // import), the running plugin hears it right away, and slots it opens later
 // start with the new values: they are built from the running plugin's record.
@@ -706,6 +935,74 @@ usePluginStore.subscribe((state, prev) => {
     const active = getActivePlugin(plugin.id);
     if (active) active.plugin = { ...active.plugin, settings: plugin.settings };
     const next = effectiveSettings(plugin);
-    forEachInstance(plugin.id, (instance) => instance.setSettings(next));
+    runtime?.forEachInstance(plugin.id, (instance) => instance.setSettings(next));
   }
 });
+
+// A plugin the user installed runs on that user's consent and settings. Once
+// everyone has signed out, the next person at this browser must be asked
+// again: the code stays, the grants and settings go, and it is left off.
+// The admin's plugins are the admin's choice and stay as they are, but for
+// what that person answered about their own certificates.
+onFullSignOut(() => {
+  const { plugins } = usePluginStore.getState();
+  for (const plugin of plugins) {
+    if (!plugin.managed && plugin.enabled) deactivatePlugin(plugin.id);
+  }
+  usePluginStore.setState({
+    plugins: plugins.map((plugin) => {
+      if (plugin.managed) {
+        // The next person here starts from the admin's default again.
+        const { grantedPermissions: _kept, declinedPermissions: _declined, chosen: _chosen, ...kept } = plugin;
+        return kept;
+      }
+      const { grantedPermissions: _granted, ...rest } = plugin;
+      return { ...rest, enabled: false, status: 'disabled' as PluginStatus, error: undefined, settings: {} };
+    }),
+  });
+});
+
+// Send guards the admin requires hold sends while they aren't running
+// (lib/plugin-send-guards.ts). No plugins run in Lite.
+if (!IS_LITE) {
+  setSendGuardSource({
+    snapshot: () => {
+      const state = usePluginStore.getState();
+      const policy = usePolicyStore.getState();
+      return {
+        plugins: state.plugins,
+        forced: (plugin) => !!plugin.forceEnabled || policy.isPluginForceEnabled(plugin.id),
+        pluginsOff: !policy.isFeatureEnabled('pluginsEnabled'),
+        complete: state.initialized && state.serverPluginsSynced,
+        forcedIds: policy.policy.forceEnabledPlugins ?? [],
+      };
+    },
+    subscribe: (listener) => {
+      const offPlugins = usePluginStore.subscribe(listener);
+      const offPolicy = usePolicyStore.subscribe(listener);
+      return () => { offPlugins(); offPolicy(); };
+    },
+  });
+}
+
+/**
+ * Resolves once this page started its plugins (initializePlugins ran, so
+ * their hooks are registered), or after `timeoutMs`: whatever waits for
+ * them never waits for ever, also where plugins are off.
+ */
+export function whenPluginsStarted(timeoutMs = 20_000): Promise<void> {
+  if (usePluginStore.getState().initialized) return Promise.resolve();
+  return new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      off();
+      resolve();
+    };
+    const timer = setTimeout(done, timeoutMs);
+    const off = usePluginStore.subscribe((state) => { if (state.initialized) done(); });
+  });
+}
+
+// The list for code that shouldn't import this store (lib/plugin-sandbox/known-plugins.ts).
+setKnownPlugins(usePluginStore.getState().plugins);
+usePluginStore.subscribe((state) => setKnownPlugins(state.plugins));

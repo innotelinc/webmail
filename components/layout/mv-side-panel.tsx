@@ -4,14 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { addDays, endOfDay, format, isSameDay, startOfDay } from "date-fns";
 import {
-  BookUser,
-  Calendar as CalendarIcon,
+  CalendarEvent as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   ListTodo,
   Plus,
   Search,
+  Users,
   X,
 } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
@@ -24,8 +24,12 @@ import { useTaskStore } from "@/stores/task-store";
 import { getTimedEventBoundsForDay } from "@/lib/calendar-utils";
 import { requestInternalMailto } from "@/lib/protocol-handlers/mailto";
 import { formatDateTime, cn } from "@/lib/utils";
+import { readableTextOn } from "@/lib/color-transform";
 import { Avatar } from "@/components/ui/avatar";
 import type { CalendarEvent } from "@/lib/jmap/types";
+import { useCvdColor } from "@/hooks/use-cvd-color";
+import { useCloseBesideControls } from "@/hooks/use-close-beside-controls";
+import { PluginSidePanelBody, SidePanelButton, usePluginSidePanel } from "@/components/plugins/plugin-side-panels";
 
 export type MvSidePanelId = "calendar" | "tasks" | "contacts";
 
@@ -44,6 +48,18 @@ export function MvSidePanel() {
   const contactsEnabled = usePolicyStore((s) => s.isFeatureEnabled("contactsEnabled"));
   const tasksEnabled = useSettingsStore((s) => s.enableCalendarTasks);
   const [open, setOpen] = useState<MvSidePanelId | null>(null);
+  // Plugins' panels (the side-panel slot), their buttons below the apps'.
+  // A plugin's panel opening (a click, or the plugin's openPanel) shuts the app's, and the other way round.
+  const plugins = usePluginSidePanel(() => setOpen(null));
+  const pluginOpen = plugins.entries.find((e) => e.pluginId === plugins.open) ?? null;
+  const openApp = (id: MvSidePanelId | null) => {
+    if (id) plugins.choose(null);
+    setOpen(id);
+  };
+  const openPlugin = (pluginId: string | null) => {
+    if (pluginId) setOpen(null);
+    plugins.choose(pluginId);
+  };
 
   const showCalendar = supportsCalendar && calendarEnabled;
   const showContacts = (client?.supportsContacts() ?? false) && contactsEnabled;
@@ -52,17 +68,20 @@ export function MvSidePanel() {
   const buttons: Array<{ id: MvSidePanelId; label: string; icon: typeof CalendarIcon; color: string }> = [
     ...(showCalendar ? [{ id: "calendar" as const, label: t("calendar"), icon: CalendarIcon, color: "text-[#1a73e8]" }] : []),
     ...(showTasks ? [{ id: "tasks" as const, label: t("mv_tasks"), icon: ListTodo, color: "text-[#1a73e8]" }] : []),
-    ...(showContacts ? [{ id: "contacts" as const, label: t("contacts"), icon: BookUser, color: "text-[#1a73e8]" }] : []),
+    ...(showContacts ? [{ id: "contacts" as const, label: t("contacts"), icon: Users, color: "text-[#1a73e8]" }] : []),
   ];
 
-  if (buttons.length === 0) return null;
+  if (buttons.length === 0 && plugins.entries.length === 0) return null;
+  // A plugin's panel without a rail button (setSidePanel's rail: false) opens on its request only.
+  const pluginButtons = plugins.entries.filter((e) => e.inRail);
   // A panel whose app went away (policy change, account switch) stays shut.
-  const active = open && buttons.some((b) => b.id === open) ? open : null;
+  const active = open && !pluginOpen && buttons.some((b) => b.id === open) ? open : null;
 
   return (
     <>
       {active && (
         <aside
+          data-simple-hide=""
           data-mv-side-panel={active}
           className="mb-4 me-2 flex w-[300px] shrink-0 flex-col overflow-hidden rounded-2xl bg-background"
           aria-label={buttons.find((b) => b.id === active)?.label}
@@ -72,7 +91,17 @@ export function MvSidePanel() {
           {active === "contacts" && <ContactsPanel onClose={() => setOpen(null)} />}
         </aside>
       )}
-      <nav
+      {pluginOpen && (
+        <aside
+          data-simple-hide=""
+          data-plugin-side-panel={pluginOpen.pluginId}
+          className="mb-4 me-2 flex w-[300px] shrink-0 flex-col overflow-hidden rounded-2xl bg-background"
+          aria-label={pluginOpen.title}
+        >
+          <PluginSidePanelBody entry={pluginOpen} focusRequest={plugins.focusRequest} onClose={() => plugins.choose(null)} />
+        </aside>
+      )}
+      {(buttons.length > 0 || pluginButtons.length > 0) && <nav
         data-mv-side-rail=""
         className="flex w-14 shrink-0 flex-col items-center gap-2 pt-3"
         aria-label={t("mv_side_panel")}
@@ -81,7 +110,7 @@ export function MvSidePanel() {
           <button
             key={id}
             type="button"
-            onClick={() => setOpen((cur) => (cur === id ? null : id))}
+            onClick={() => openApp(active === id ? null : id)}
             className={cn(
               "relative grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-[var(--mv-nav-hover)]",
               active === id && "bg-[var(--mv-nav-selected)]",
@@ -93,8 +122,18 @@ export function MvSidePanel() {
             <Icon className={cn("h-5 w-5", color)} />
           </button>
         ))}
+        {pluginButtons.map((entry) => (
+          <SidePanelButton
+            key={entry.pluginId}
+            entry={entry}
+            pressed={pluginOpen?.pluginId === entry.pluginId}
+            onClick={() => openPlugin(pluginOpen?.pluginId === entry.pluginId ? null : entry.pluginId)}
+            className="h-10 w-10 rounded-full hover:bg-[var(--mv-nav-hover)]"
+            pressedClassName="bg-[var(--mv-nav-selected)] text-foreground"
+          />
+        ))}
         <div className="my-1 h-px w-5 bg-border" aria-hidden />
-      </nav>
+      </nav>}
     </>
   );
 }
@@ -108,10 +147,25 @@ function PanelHeader({ title, subtitle, href, onClose, children }: {
 }) {
   const t = useTranslations("sidebar");
   const tCommon = useTranslations("common");
+  // Right under the window's own close, at the window's end: this one goes to the start.
+  const [head, setHead] = useState<HTMLDivElement | null>(null);
+  const closeFirst = useCloseBesideControls(head);
+  const close = (
+    <button
+      type="button"
+      onClick={onClose}
+      className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+      title={tCommon("close")}
+      aria-label={tCommon("close")}
+    >
+      <X className="h-[18px] w-[18px]" />
+    </button>
+  );
   return (
-    <div className="flex items-start gap-1 px-4 pt-4 pb-2">
+    <div ref={setHead} data-window-pane-head="" className={cn("flex items-start gap-1 pt-4 pb-2", closeFirst ? "ps-2 pe-4" : "px-4")}>
+      {closeFirst && close}
       <div className="min-w-0 flex-1">
-        <div className={cn(subtitle ? "text-[11px] font-medium uppercase tracking-wider text-muted-foreground" : "text-[22px] leading-7")}>{title}</div>
+        <div className={cn(subtitle ? "text-[0.6875rem] font-medium text-muted-foreground" : "text-[1.375rem] leading-7")}>{title}</div>
         {subtitle && <div className="text-sm font-medium text-primary">{subtitle}</div>}
       </div>
       {children}
@@ -123,15 +177,7 @@ function PanelHeader({ title, subtitle, href, onClose, children }: {
       >
         <ExternalLink className="h-[18px] w-[18px]" />
       </Link>
-      <button
-        type="button"
-        onClick={onClose}
-        className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-        title={tCommon("close")}
-        aria-label={tCommon("close")}
-      >
-        <X className="h-[18px] w-[18px]" />
-      </button>
+      {!closeFirst && close}
     </div>
   );
 }
@@ -171,9 +217,10 @@ function CalendarPanel({ onClose }: { onClose: () => void }) {
     if (scrollRef.current) scrollRef.current.scrollTop = hour * HOUR_PX;
   }, [day]);
 
+  const paint = useCvdColor();
   const colorOf = (event: CalendarEvent) => {
     const calId = Object.keys(event.calendarIds ?? {})[0];
-    return event.color || calendars.find((c) => c.id === calId)?.color || "var(--color-primary)";
+    return paint(event.color || calendars.find((c) => c.id === calId)?.color || "var(--color-primary)");
   };
 
   const visible = events.filter((e) => {
@@ -210,7 +257,7 @@ function CalendarPanel({ onClose }: { onClose: () => void }) {
       {allDay.length > 0 && (
         <div className="space-y-1 border-b border-border px-3 pb-2">
           {allDay.map((e) => (
-            <div key={e.id} className="truncate rounded px-2 py-0.5 text-xs font-medium text-white" style={{ backgroundColor: colorOf(e) }}>
+            <div key={e.id} className="truncate rounded px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: colorOf(e), color: readableTextOn(colorOf(e)) }}>
               {e.title || tCal("tasks.no_title")}
             </div>
           ))}
@@ -220,7 +267,7 @@ function CalendarPanel({ onClose }: { onClose: () => void }) {
         <div className="relative" style={{ height: 24 * HOUR_PX }}>
           {Array.from({ length: 24 }, (_, h) => (
             <div key={h} className="absolute inset-x-0 flex" style={{ top: h * HOUR_PX }}>
-              <span className="w-14 shrink-0 -translate-y-2 pe-2 text-end text-[10px] text-muted-foreground">
+              <span className="w-14 shrink-0 -translate-y-2 pe-2 text-end text-[0.625rem] text-muted-foreground">
                 {h === 0 ? "" : new Date(2000, 0, 1, h).toLocaleTimeString(undefined, { hour: "numeric", hour12: timeFormat === "12h" })}
               </span>
               <span className="flex-1 border-t border-border" />
@@ -230,12 +277,13 @@ function CalendarPanel({ onClose }: { onClose: () => void }) {
             <div
               key={e.id}
               data-mv-panel-event=""
-              className="absolute end-2 overflow-hidden rounded px-1.5 py-0.5 text-xs leading-tight text-white"
+              className="absolute end-2 overflow-hidden rounded px-1.5 py-0.5 text-xs leading-tight"
               style={{
                 top: (b.startMinutes / 60) * HOUR_PX,
                 height: Math.max(18, ((b.endMinutes - b.startMinutes) / 60) * HOUR_PX - 2),
                 insetInlineStart: 56,
                 backgroundColor: colorOf(e),
+                color: readableTextOn(colorOf(e)),
               }}
               title={e.title}
             >
@@ -377,6 +425,7 @@ function ContactsPanel({ onClose }: { onClose: () => void }) {
       {searching && (
         <div className="px-4 pb-2">
           <input
+            aria-label={tContacts("search_placeholder")}
             autoFocus
             type="search"
             value={query}

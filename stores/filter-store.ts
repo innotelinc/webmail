@@ -93,6 +93,30 @@ interface FilterStore {
  */
 let fetchGeneration = 0;
 
+/** What the filter view holds for a parsed script, on load and after a raw save. */
+function stateFromScript(result: ReturnType<typeof parseScript>, vacationActive: boolean) {
+  if (result.isOpaque) {
+    return {
+      isOpaque: true,
+      rules: [] as FilterRule[],
+      vacationSettings: result.vacation || null,
+      externalRequires: result.externalRequires,
+      includeVacation: false,
+      vacationForward: null,
+      vacationAudience: null,
+    };
+  }
+  return {
+    isOpaque: false,
+    rules: result.rules,
+    vacationSettings: result.vacation || null,
+    externalRequires: result.externalRequires,
+    includeVacation: !!result.includeVacation || vacationActive,
+    vacationForward: result.vacationForward ?? null,
+    vacationAudience: result.vacationAudience ?? null,
+  };
+}
+
 export const useFilterStore = create<FilterStore>()((set, get) => ({
   rules: [],
   isLoading: false,
@@ -163,34 +187,10 @@ export const useFilterStore = create<FilterStore>()((set, get) => ({
       set({ rawScript: content });
 
       const result = parseScript(content);
-
-      if (result.isOpaque) {
-        debug.log('filters', 'Sieve script is opaque (hand-edited)');
-        emitFiltersLoaded([]);
-        set({
-          isLoading: false,
-          isOpaque: true,
-          rules: [],
-          vacationSettings: result.vacation || null,
-          externalRequires: result.externalRequires,
-          includeVacation: false,
-          vacationForward: null,
-          vacationAudience: null,
-        });
-      } else {
-        debug.log('filters', 'Parsed', result.rules.length, 'filter rules');
-        emitFiltersLoaded(result.rules);
-        set({
-          isLoading: false,
-          isOpaque: false,
-          rules: result.rules,
-          vacationSettings: result.vacation || null,
-          externalRequires: result.externalRequires,
-          includeVacation: !!result.includeVacation || vacationActive,
-          vacationForward: result.vacationForward ?? null,
-          vacationAudience: result.vacationAudience ?? null,
-        });
-      }
+      if (result.isOpaque) debug.log('filters', 'Sieve script is opaque (hand-edited)');
+      else debug.log('filters', 'Parsed', result.rules.length, 'filter rules');
+      emitFiltersLoaded(result.isOpaque ? [] : result.rules);
+      set({ isLoading: false, ...stateFromScript(result, vacationActive) });
     } catch (error) {
       if (stale()) return;
       debug.error('Failed to fetch filters:', error);
@@ -245,7 +245,14 @@ export const useFilterStore = create<FilterStore>()((set, get) => ({
       const written = await writeFiltersScript(client, selectedAccountId || null, content, activeScriptId);
       if (!activeScriptId) set({ activeScriptId: written.scriptId });
 
-      set({ isSaving: false, rawScript: written.content });
+      if (isOpaque) {
+        // A script saved from the raw editor is read the way a page load
+        // reads it: one the builder understands shows its rules again.
+        const result = parseScript(written.content);
+        set({ isSaving: false, rawScript: written.content, ...stateFromScript(result, includeVacation) });
+      } else {
+        set({ isSaving: false, rawScript: written.content });
+      }
       debug.log('filters', 'Filters saved successfully');
     } catch (error) {
       debug.error('Failed to save filters:', error);
@@ -322,7 +329,7 @@ export const useFilterStore = create<FilterStore>()((set, get) => ({
   },
 
   addRule: (rule) => {
-    // Insert new bulwark rules before external/opaque rules so Bulwark's
+    // Insert new bulwark rules before external/opaque rules so Loomix's
     // managed section stays contiguous.
     set((state) => {
       const bulwark = state.rules.filter(r => !r.origin || r.origin === 'bulwark');
@@ -434,7 +441,7 @@ export interface VacationFilters {
   forward: VacationForward | null;
   /**
    * Forwarding can be set up: it runs from the filters script next to the
-   * included vacation script, so it needs `include`, a script Bulwark can
+   * included vacation script, so it needs `include`, a script Loomix can
    * read, a server that allows a redirect and what the block uses besides
    * (its period, its spam check, the copy). Forwarding that is on is offered
    * all the same, so that it can be switched off.
@@ -444,7 +451,7 @@ export interface VacationFilters {
   audience: VacationAudience | null;
   /**
    * The auto-reply can be narrowed to some senders: it then runs from the
-   * filters script, so this needs `include`, `envelope` and a script Bulwark
+   * filters script, so this needs `include`, `envelope` and a script Loomix
    * can read.
    */
   audienceAvailable: boolean;

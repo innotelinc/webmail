@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { cn } from "@/lib/utils";
 import { MvComposeWindowContext, type MvComposeWindowState } from "@/components/email/mv-compose-context";
 
@@ -16,6 +17,19 @@ export function MvComposeWindow({ children }: { children: ReactNode }) {
   const minimized = state === "minimized";
   const maximized = state === "maximized";
   const controls = useMemo(() => ({ variant: "window" as const, state, setState }), [state]);
+  // Opened up, the window covers the page behind a backdrop: a modal dialog
+  // then, named by the composer's title bar, with Tab kept inside. Escape is
+  // left to the composer.
+  const windowRef = useFocusTrap({ isActive: maximized, restoreFocus: true, initialFocus: () => document.activeElement as HTMLElement | null });
+  const fallbackTitleId = useId();
+  const [titleId, setTitleId] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (!maximized) return;
+    const heading = windowRef.current?.querySelector<HTMLElement>("[data-mv-compose-titlebar] h1, [data-mv-compose-titlebar] h2, [data-mv-compose-titlebar] h3");
+    if (!heading) return;
+    if (!heading.id) heading.id = fallbackTitleId;
+    setTitleId(heading.id);
+  }, [maximized, fallbackTitleId, windowRef]);
 
   return (
     <MvComposeWindowContext.Provider value={controls}>
@@ -27,14 +41,18 @@ export function MvComposeWindow({ children }: { children: ReactNode }) {
         />
       )}
       <div
+        ref={windowRef}
+        role={maximized ? "dialog" : undefined}
+        aria-modal={maximized ? true : undefined}
+        aria-labelledby={maximized ? titleId : undefined}
         data-mv-compose-window=""
         data-state={state}
         className={cn(
           "fixed z-40 flex flex-col overflow-hidden bg-background shadow-[0_8px_10px_1px_rgb(0_0_0/0.14),0_3px_14px_2px_rgb(0_0_0/0.12),0_5px_5px_-3px_rgb(0_0_0/0.2)]",
           maximized
             ? "inset-x-[8vw] inset-y-[6vh] rounded-lg"
-            : "bottom-0 end-4 w-[min(560px,calc(100vw-2rem))] rounded-t-lg",
-          minimized && "h-10 w-[min(280px,calc(100vw-2rem))]",
+            : "bottom-0 end-[var(--mv-compose-end,1rem)] w-[min(560px,calc(100vw-var(--mv-compose-end,1rem)-1rem))] rounded-t-lg",
+          minimized && "h-10 w-[min(280px,calc(100vw-var(--mv-compose-end,1rem)-1rem))]",
           state === "normal" && "h-[min(600px,calc(100dvh-5rem))]",
         )}
       >

@@ -77,13 +77,14 @@ function TemplateEditor({
       <div className="flex flex-col gap-2">
         <div className="flex items-stretch gap-2">
           <input
+            aria-label={label}
             ref={inputRef}
             type="text"
             value={value}
             placeholder={placeholder}
             onChange={(e) => onChange(e.target.value)}
             spellCheck={false}
-            className="flex-1 px-3 py-1.5 text-sm rounded-md bg-muted border border-border text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-ring transition-colors duration-150"
+            className="flex-1 px-3 py-1.5 text-sm rounded-md bg-muted border border-border text-foreground font-mono focus:outline-hidden transition-colors duration-150"
           />
           <button
             type="button"
@@ -146,7 +147,10 @@ export function DownloadsSettings() {
   // With the Archive action off a stored "archive" keeps the message, so it shows as "keep".
   const postExportShown = archiveActionEnabled || postExportAction !== "archive" ? postExportAction : "keep";
 
-  const sampleEmail = useMemo(() => buildSampleEmail(), []);
+  const tWording = useTranslations("uxs_wording");
+  // A subject in the user's language, with a letter or two the "plain letters" option changes.
+  const sampleSubject = tWording("sample_subject");
+  const sampleEmail = useMemo(() => buildSampleEmail(sampleSubject), [sampleSubject]);
   const sampleAttachment = useMemo(() => ({ name: "Invoice-2026-05.pdf", type: "application/pdf" }), []);
 
   const transform = useMemo(

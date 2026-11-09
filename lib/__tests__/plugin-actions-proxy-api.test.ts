@@ -17,6 +17,10 @@ import { actionsFor, resetActions, runAction, checkActions } from '../plugin-san
 import { dayLabelsByDate, resetDayLabels } from '../plugin-sandbox/day-labels';
 import { allPages, resetPages } from '../plugin-sandbox/pages';
 import { onPanelRequest, resetPanelRequests } from '../plugin-sandbox/panel-requests';
+import { onPageNavigation, resetPageNavigation } from '../plugin-sandbox/page-navigation';
+import { onOpenTask, resetOpenTask } from '../plugin-sandbox/open-task';
+import { useCalendarStore } from '@/stores/calendar-store';
+import { useSettingsStore } from '@/stores/settings-store';
 import type { StreamSink } from '../plugin-sandbox/proxy-client';
 import '../plugin-sandbox/loader';
 
@@ -90,6 +94,23 @@ describe('ui.setActions', () => {
     expect(() => checkActions([{ id: 'x', label: 'X', icon: '<svg>' }])).toThrow(/icon/);
   });
 
+  it("takes a row badge's key as hasBadge and notBadge", () => {
+    expect(checkActions([{ id: 'x', label: 'X', hasBadge: 'follow-up', notBadge: 'done:1' }])[0])
+      .toMatchObject({ hasBadge: 'follow-up', notBadge: 'done:1' });
+    expect(() => checkActions([{ id: 'x', label: 'X', hasBadge: '' }])).toThrow(/hasBadge/);
+    expect(() => checkActions([{ id: 'x', label: 'X', notBadge: 'a b' }])).toThrow(/notBadge/);
+    expect(() => checkActions([{ id: 'x', label: 'X', hasBadge: 3 }])).toThrow(/hasBadge/);
+  });
+
+  it('takes a badge as a whole number from 0, none for 0', () => {
+    expect(checkActions([{ id: 'x', label: 'X', badge: 3 }])[0].badge).toBe(3);
+    expect(checkActions([{ id: 'x', label: 'X', badge: 250 }])[0].badge).toBe(250);
+    expect(checkActions([{ id: 'x', label: 'X', badge: 0 }])[0]).not.toHaveProperty('badge');
+    for (const badge of [-1, 1.5, '2', Number.NaN, Infinity, null]) {
+      expect(() => checkActions([{ id: 'x', label: 'X', badge }])).toThrow(/badge/);
+    }
+  });
+
   it('sends a click to the plugin with only the context it may see', async () => {
     const invokeHook = vi.fn().mockResolvedValue(undefined);
     const p = plugin({ permissions: ['ui:message-list'] });
@@ -121,6 +142,114 @@ describe('day labels and pages', () => {
 
     expect(allPages()).toEqual([expect.objectContaining({ pluginId: 'p1', id: 'files', title: 'Nextcloud' })]);
     await expect(dispatchApiCall(plugin({ permissions: ['ui:app-page'] }), 'ui.setPages', [[{ id: 'A B', title: 'x' }]])).rejects.toThrow(/id/);
+  });
+
+  describe('ui.openPage', () => {
+    const paged = plugin({ permissions: ['ui:app-page'] });
+    const seen: string[] = [];
+    beforeEach(async () => {
+      resetPageNavigation();
+      seen.length = 0;
+      await dispatchApiCall(paged, 'ui.setPages', [[{ id: 'files', title: 'Nextcloud' }]]);
+    });
+
+    it('moves the tab to the plugin\'s own page, each path segment encoded once', async () => {
+      onPageNavigation((href) => { seen.push(href); });
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['files'])).resolves.toBe(true);
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['files', '/docs/a b/x?tab=1'])).resolves.toBe(true);
+      expect(seen).toEqual(['/apps/p1/files', '/apps/p1/files/docs/a%20b/x%3Ftab%3D1']);
+    });
+
+    it('needs ui:app-page and refuses another plugin\'s page or a page it did not set', async () => {
+      onPageNavigation((href) => { seen.push(href); });
+      await expect(dispatchApiCall(plugin(), 'ui.openPage', ['files'])).rejects.toThrow(/lacks permission/);
+      await expect(dispatchApiCall(plugin({ id: 'p2', permissions: ['ui:app-page'] }), 'ui.openPage', ['files'])).rejects.toThrow(/not a page of this plugin/);
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['other'])).rejects.toThrow(/not a page of this plugin/);
+      expect(seen).toEqual([]);
+    });
+
+    it('refuses a path that would leave the page', async () => {
+      onPageNavigation((href) => { seen.push(href); });
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['files', '../../settings'])).rejects.toThrow(/\.\./);
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['files', 42])).rejects.toThrow(/string/);
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['files', 'x'.repeat(2001)])).rejects.toThrow(/longer/);
+      expect(seen).toEqual([]);
+    });
+
+    it('answers false while nothing can move the tab', async () => {
+      await expect(dispatchApiCall(paged, 'ui.openPage', ['files'])).resolves.toBe(false);
+    });
+  });
+
+  describe('ui.openTask', () => {
+    beforeEach(() => { resetOpenTask(); });
+
+    it('opens the task in the calendar\'s editor and says whether it did', async () => {
+      const seen: string[] = [];
+      onOpenTask((id) => { seen.push(id); return id === 't1'; });
+      const tasky = plugin({ id: 'ot1', permissions: ['ui:tasks'] });
+      await expect(dispatchApiCall(tasky, 'ui.openTask', ['t1'])).resolves.toBe(true);
+      await expect(dispatchApiCall(plugin({ id: 'ot1', permissions: ['tasks:read'] }), 'ui.openTask', ['gone'])).resolves.toBe(false);
+      expect(seen).toEqual(['t1', 'gone']);
+    });
+
+    it('answers false while no calendar is on screen', async () => {
+      await expect(dispatchApiCall(plugin({ id: 'ot2', permissions: ['ui:tasks'] }), 'ui.openTask', ['t1'])).resolves.toBe(false);
+    });
+
+    it('needs ui:tasks or tasks:read and a task id', async () => {
+      const seen: string[] = [];
+      onOpenTask((id) => { seen.push(id); return true; });
+      await expect(dispatchApiCall(plugin({ id: 'ot3', permissions: ['calendar:read'] }), 'ui.openTask', ['t1'])).rejects.toThrow(/lacks permission/);
+      await expect(dispatchApiCall(plugin({ id: 'ot3', permissions: ['ui:tasks'] }), 'ui.openTask', [42])).rejects.toThrow(/taskId/);
+      expect(seen).toEqual([]);
+    });
+  });
+
+  describe('ui.openCalendar', () => {
+    const seen: string[] = [];
+    beforeEach(() => {
+      resetPageNavigation();
+      seen.length = 0;
+      useSettingsStore.setState({ enableCalendarTasks: true });
+      useCalendarStore.setState({ viewMode: 'month' });
+    });
+
+    it('opens the task view: the calendar\'s view set, the tab moved to its permalink', async () => {
+      onPageNavigation((href) => { seen.push(href); });
+      await expect(dispatchApiCall(plugin({ id: 'tv1', permissions: ['ui:tasks'] }), 'ui.openCalendar', [{ view: 'tasks' }])).resolves.toBe(true);
+      expect(useCalendarStore.getState().viewMode).toBe('tasks');
+      await expect(dispatchApiCall(plugin({ id: 'tv1', permissions: ['calendar:read'] }), 'ui.openCalendar', [{ view: 'week' }])).resolves.toBe(true);
+      expect(seen).toEqual(['/calendar/tasks', '/calendar/week']);
+    });
+
+    it('needs the view\'s permission and refuses any other view', async () => {
+      onPageNavigation((href) => { seen.push(href); });
+      await expect(dispatchApiCall(plugin({ id: 'tv2', permissions: ['calendar:read'] }), 'ui.openCalendar', [{ view: 'tasks' }])).rejects.toThrow(/lacks permission/);
+      await expect(dispatchApiCall(plugin({ id: 'tv2', permissions: ['ui:tasks'] }), 'ui.openCalendar', [{ view: 'month' }])).rejects.toThrow(/lacks permission/);
+      await expect(dispatchApiCall(plugin({ id: 'tv2', permissions: ['ui:tasks'] }), 'ui.openCalendar', [{ view: 'settings' }])).rejects.toThrow(/view must be one of/);
+      await expect(dispatchApiCall(plugin({ id: 'tv2', permissions: ['ui:tasks'] }), 'ui.openCalendar', [{ view: 'tasks', date: 'x' }])).rejects.toThrow(/unknown property/);
+      expect(seen).toEqual([]);
+      expect(useCalendarStore.getState().viewMode).toBe('month');
+    });
+
+    it('answers false while nothing can move the tab or the user has tasks off', async () => {
+      const tasky = plugin({ id: 'tv3', permissions: ['ui:tasks'] });
+      await expect(dispatchApiCall(tasky, 'ui.openCalendar', [{ view: 'tasks' }])).resolves.toBe(false);
+      onPageNavigation((href) => { seen.push(href); });
+      useSettingsStore.setState({ enableCalendarTasks: false });
+      await expect(dispatchApiCall(tasky, 'ui.openCalendar', [{ view: 'tasks' }])).resolves.toBe(false);
+      expect(seen).toEqual([]);
+      expect(useCalendarStore.getState().viewMode).toBe('month');
+    });
+
+    it('moves the tab at most 10 times a minute', async () => {
+      onPageNavigation((href) => { seen.push(href); });
+      const busy = plugin({ id: 'tv4', permissions: ['ui:tasks'] });
+      for (let i = 0; i < 10; i++) await dispatchApiCall(busy, 'ui.openCalendar', [{ view: 'tasks' }]);
+      await expect(dispatchApiCall(busy, 'ui.openCalendar', [{ view: 'tasks' }])).rejects.toThrow(/a minute/);
+      expect(seen).toHaveLength(10);
+    });
   });
 });
 

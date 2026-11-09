@@ -7,11 +7,26 @@ import { configManager } from '@/lib/admin/config-manager';
 import { isConfigReadOnly, ConfigReadOnlyError } from '@/lib/admin/paths';
 import { auditLog } from '@/lib/admin/audit';
 import { logger } from '@/lib/logger';
+import { configWriteErrorResponse } from '@/lib/admin/config-read-only-response';
 import { locales as ALL_LOCALES } from '@/i18n/routing';
+import {
+  STALWART_SCOPE_FULL,
+  STALWART_SCOPE_SECURITY,
+  STALWART_SCOPE_SETTINGS,
+  withStalwartScopes,
+} from '@/lib/oauth/scopes';
 
 const CLIENT_ID = 'bulwark-webmail';
 const CLIENT_DESCRIPTION = 'Loomix Mail (auto-configured)';
+// Loomix Mobile's own client (#1459). The webmail's can't serve the app: it
+// has a secret, which Stalwart wants at the token endpoint and the app
+// doesn't have. The redirect is the app's App Store and Play id as a
+// private-use scheme (RFC 8252), which the iOS and Android apps register.
+const MOBILE_CLIENT_ID = 'bulwark-mobile';
+const MOBILE_CLIENT_DESCRIPTION = 'Loomix Mobile (auto-configured)';
+const MOBILE_REDIRECT_URI = 'org.bulwarkmail.mobile:/auth/callback';
 const JMAP_TIMEOUT_MS = 10_000;
+const STALWART_USING = ['urn:ietf:params:jmap:core', 'urn:stalwart:jmap'];
 
 interface JmapMethodCall {
   using: string[];
@@ -67,10 +82,15 @@ async function getStalwartAccountId(creds: ServerCreds): Promise<string | null> 
     ?? null;
 }
 
+/**
+ * The callback URIs the sign-in sends, one per locale. A build with
+ * NEXT_PUBLIC_BASE_PATH serves them under that path (#1551).
+ */
 function buildRedirectUris(origin: string, localeList: readonly string[]): Record<string, true> {
+  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/\/+$/, '');
   const out: Record<string, true> = {};
   for (const loc of localeList) {
-    out[`${origin}/${loc}/auth/callback`] = true;
+    out[`${origin}${basePath}/${loc}/auth/callback`] = true;
   }
   return out;
 }
@@ -82,8 +102,140 @@ interface SetupRequestBody {
   oauthOnly?: boolean;
 }
 
+interface SetError {
+  type?: string;
+  properties?: unknown[];
+}
+
+/**
+ * Stalwart refused the set over `property`: 0.16 answers a field it doesn't
+ * know (firstParty) with invalidPatch, 1.0.3 a scope the account may not
+ * allow (full) with invalidProperties.
+ */
+function refusedProperty(res: JmapMethodResponse, property: string): boolean {
+  const body = res.methodResponses?.[0]?.[1] as
+    | { notCreated?: Record<string, SetError>; notUpdated?: Record<string, SetError> }
+    | undefined;
+  return Object.values({ ...body?.notCreated, ...body?.notUpdated }).some((error) =>
+    (error?.type === 'invalidPatch' || error?.type === 'invalidProperties')
+    && Array.isArray(error.properties)
+    && error.properties.some((p) => {
+      const path = String(p).replace(/^\//, '');
+      return path === property || path.startsWith(`${property}/`);
+    }));
+}
+
+/**
+ * How the clients get at the account beyond mail, contacts, calendars and
+ * files, and the Stalwart scopes the webmail then has to ask for.
+ * - Stalwart 1.0.3 dropped firstParty (#1527): a token is unrestricted only
+ *   with the `full` scope, which the client must allow and the sign-in must
+ *   request. Only a superuser may allow it, so an admin who isn't one gets
+ *   `security` and `settings` (Settings > Security works, the admin panel
+ *   doesn't). The data scopes are allowed explicitly too: the webmail asks
+ *   for them, and a scope the client doesn't allow fails the sign-in.
+ * - Stalwart 1.0.0 to 1.0.2 give a first-party client everything.
+ * - 0.16 has neither and gives every client everything.
+ */
+interface ClientAccess {
+  fields: Record<string, unknown>;
+  request: string[];
+}
+const DATA_SCOPES = { mail: true, contacts: true, calendars: true, files: true };
+const FULL_SCOPES: ClientAccess = {
+  fields: { scopes: { ...DATA_SCOPES, full: true } },
+  request: [STALWART_SCOPE_FULL],
+};
+const ACCOUNT_SCOPES: ClientAccess = {
+  fields: { scopes: { ...DATA_SCOPES, security: true, settings: true } },
+  request: [STALWART_SCOPE_SECURITY, STALWART_SCOPE_SETTINGS],
+};
+const FIRST_PARTY: ClientAccess = { fields: { firstParty: true }, request: [] };
+const NO_EXTRA_ACCESS: ClientAccess = { fields: {}, request: [] };
+
+/**
+ * Whether the server has Stalwart 1.0.3's scopes. Stalwart publishes no
+ * version, but it lists the scopes in its discovery document from 1.0.3 on.
+ */
+async function hasStalwartScopes(creds: ServerCreds): Promise<boolean> {
+  try {
+    const res = await fetchWithTimeout(`${creds.serverUrl}/.well-known/oauth-authorization-server`, {
+      method: 'GET',
+    }, creds.trusted);
+    if (!res.ok) return false;
+    const metadata = await res.json() as { scopes_supported?: unknown };
+    return Array.isArray(metadata.scopes_supported) && metadata.scopes_supported.includes(STALWART_SCOPE_FULL);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * A public client for Loomix Mobile with the webmail's access, so the app's
+ * own sign-in reaches the account's Stalwart settings too. The client the
+ * app registers for itself otherwise gets the data scopes only. An existing
+ * one is taken over as the webmail's is, its secret dropped.
+ */
+async function setUpMobileClient(
+  creds: ServerCreds,
+  accountId: string,
+  contact: string,
+  access: ClientAccess,
+): Promise<'created' | 'updated' | 'failed'> {
+  try {
+    const queryRes = await jmapCall(creds, {
+      using: STALWART_USING,
+      methodCalls: [['x:OAuthClient/query', { accountId, filter: { clientId: MOBILE_CLIENT_ID } }, '0']],
+    });
+    const queryEntry = queryRes.methodResponses?.[0];
+    if (!queryEntry || queryEntry[0] === 'error') return 'failed';
+    const existingId = ((queryEntry[1].ids as string[] | undefined) ?? [])[0];
+
+    const fields = {
+      description: MOBILE_CLIENT_DESCRIPTION,
+      redirectUris: { [MOBILE_REDIRECT_URI]: true },
+      ...access.fields,
+    };
+    const setRes = await jmapCall(creds, {
+      using: STALWART_USING,
+      methodCalls: [['x:OAuthClient/set', existingId
+        ? { accountId, update: { [existingId]: { ...fields, secret: null } } }
+        : { accountId, create: { mobile: { clientId: MOBILE_CLIENT_ID, contacts: { [contact]: true }, ...fields } } },
+      '0']],
+    });
+    const setEntry = setRes.methodResponses?.[0];
+    const setBody = setEntry?.[1] as { notCreated?: Record<string, unknown>; notUpdated?: Record<string, unknown> } | undefined;
+    if (!setEntry || setEntry[0] === 'error'
+      || Object.keys(setBody?.notCreated ?? {}).length > 0
+      || Object.keys(setBody?.notUpdated ?? {}).length > 0) {
+      logger.warn('Admin OAuth setup: mobile client refused', { detail: JSON.stringify(setEntry?.[1] ?? null).slice(0, 300) });
+      return 'failed';
+    }
+    return existingId ? 'updated' : 'created';
+  } catch (error) {
+    logger.warn('Admin OAuth setup: mobile client failed', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    return 'failed';
+  }
+}
+
 function isValidOriginUrl(value: string): boolean {
   return /^https?:\/\/[^/]+$/.test(value);
+}
+
+// The setup acts as the mail account signed in to this webmail, not as the
+// admin: a login to the Stalwart web admin sets no cookie here.
+const NOT_SIGNED_IN =
+  'Sign in to this webmail with a Stalwart admin account in this browser, then retry. '
+  + 'A login to the Stalwart web admin does not count.';
+
+/** Which mail account the setup would run as, so the page can say before it starts. */
+export async function GET(request: NextRequest) {
+  const auth = await requireAdminAuth(request);
+  if ('error' in auth) return auth.error;
+  const creds = await getStalwartCredentials(request);
+  return NextResponse.json(creds ? { signedIn: true, username: creds.username } : { signedIn: false });
 }
 
 export async function POST(request: NextRequest) {
@@ -104,10 +256,7 @@ export async function POST(request: NextRequest) {
     const ip = getClientIP(request);
     const creds = await getStalwartCredentials(request);
     if (!creds) {
-      return NextResponse.json(
-        { error: 'No Stalwart session available. Sign in to your mail account in another tab and retry.' },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: NOT_SIGNED_IN }, { status: 400 });
     }
 
     const body = await request.json() as SetupRequestBody;
@@ -142,7 +291,7 @@ export async function POST(request: NextRequest) {
     }
 
     const queryRes = await jmapCall(creds, {
-      using: ['urn:ietf:params:jmap:core', 'urn:stalwart:jmap'],
+      using: STALWART_USING,
       methodCalls: [[
         'x:OAuthClient/query',
         { accountId, filter: { clientId: CLIENT_ID } },
@@ -162,41 +311,52 @@ export async function POST(request: NextRequest) {
     const secret = randomBytes(32).toString('base64url');
     const redirectUris = buildRedirectUris(origin, localeList);
 
-    let setArgs: Record<string, unknown>;
-    let action: 'created' | 'updated';
-    if (existingIds.length > 0) {
-      const targetId = existingIds[0];
-      action = 'updated';
-      setArgs = {
-        accountId,
-        update: {
-          [targetId]: {
-            secret,
-            redirectUris,
-            description: CLIENT_DESCRIPTION,
+    const action: 'created' | 'updated' = existingIds.length > 0 ? 'updated' : 'created';
+    // See ClientAccess. 0.16 refuses firstParty as an invalid patch, and a
+    // 1.0.3 admin who isn't a superuser the full scope, so the setup retries
+    // with less there.
+    const buildSetArgs = (access: ClientAccess): Record<string, unknown> => {
+      const extra = access.fields;
+      return action === 'updated'
+        ? {
+          accountId,
+          update: {
+            [existingIds[0]]: {
+              secret,
+              redirectUris,
+              description: CLIENT_DESCRIPTION,
+              ...extra,
+            },
           },
-        },
-      };
-    } else {
-      action = 'created';
-      setArgs = {
-        accountId,
-        create: {
-          new: {
-            clientId: CLIENT_ID,
-            description: CLIENT_DESCRIPTION,
-            secret,
-            redirectUris,
-            contacts: { [creds.username]: true },
+        }
+        : {
+          accountId,
+          create: {
+            new: {
+              clientId: CLIENT_ID,
+              description: CLIENT_DESCRIPTION,
+              secret,
+              redirectUris,
+              contacts: { [creds.username]: true },
+              ...extra,
+            },
           },
-        },
-      };
-    }
-
-    const setRes = await jmapCall(creds, {
-      using: ['urn:ietf:params:jmap:core', 'urn:stalwart:jmap'],
-      methodCalls: [['x:OAuthClient/set', setArgs, '0']],
+        };
+    };
+    const callSet = (access: ClientAccess) => jmapCall(creds, {
+      using: STALWART_USING,
+      methodCalls: [['x:OAuthClient/set', buildSetArgs(access), '0']],
     });
+
+    const [preferred, fallback, refusable]: [ClientAccess, ClientAccess, string] = await hasStalwartScopes(creds)
+      ? [FULL_SCOPES, ACCOUNT_SCOPES, 'scopes']
+      : [FIRST_PARTY, NO_EXTRA_ACCESS, 'firstParty'];
+    let access = preferred;
+    let setRes = await callSet(access);
+    if (refusedProperty(setRes, refusable)) {
+      access = fallback;
+      setRes = await callSet(access);
+    }
 
     const setEntry = setRes.methodResponses?.[0];
     if (!setEntry || setEntry[0] === 'error') {
@@ -231,6 +391,16 @@ export async function POST(request: NextRequest) {
       oauthIssuerUrl: issuerUrl,
     };
     if (oauthOnly) updates.oauthOnly = true;
+    // Ask for the Stalwart scopes the client now allows, and none it doesn't.
+    // An explicit scope list replaces the extra scopes, so they go there.
+    if (access.request.length > 0) {
+      const explicit = configManager.get<string>('oauthScopes', '');
+      if (explicit) {
+        updates.oauthScopes = withStalwartScopes(explicit, access.request);
+      } else {
+        updates.oauthExtraScopes = withStalwartScopes(configManager.get<string>('oauthExtraScopes', ''), access.request);
+      }
+    }
     try {
       await configManager.setAdminConfig(updates);
     } catch (error) {
@@ -241,7 +411,7 @@ export async function POST(request: NextRequest) {
         const createdId = setBody.created?.new?.id;
         if (createdId) {
           await jmapCall(creds, {
-            using: ['urn:ietf:params:jmap:core', 'urn:stalwart:jmap'],
+            using: STALWART_USING,
             methodCalls: [['x:OAuthClient/set', { accountId, destroy: [createdId] }, '0']],
           }).catch((rollbackError) => {
             logger.error('Admin OAuth setup rollback failed', {
@@ -253,6 +423,13 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
+    // Only Stalwart 1.0 restricts clients, so 0.16 needs no mobile client. The
+    // webmail is set up by now, so a refused mobile client is reported, not
+    // an error.
+    const mobileClient = access !== NO_EXTRA_ACCESS
+      ? await setUpMobileClient(creds, accountId, creds.username, access)
+      : 'skipped';
+
     await auditLog('admin.oauth_setup', {
       action,
       clientId: CLIENT_ID,
@@ -260,6 +437,8 @@ export async function POST(request: NextRequest) {
       issuer: issuerUrl,
       redirectUriCount: localeList.length,
       oauthOnly,
+      mobileClient,
+      stalwartScopes: access.request,
     }, ip);
 
     logger.info('Admin OAuth setup', {
@@ -268,6 +447,8 @@ export async function POST(request: NextRequest) {
       origin,
       issuer: issuerUrl,
       locales: localeList.length,
+      mobileClient,
+      stalwartScopes: access.request,
     });
 
     return NextResponse.json({
@@ -277,8 +458,14 @@ export async function POST(request: NextRequest) {
       origin,
       issuerUrl,
       redirectUriCount: localeList.length,
+      mobileClient,
+      mobileClientId: MOBILE_CLIENT_ID,
+      mobileRedirectUri: MOBILE_REDIRECT_URI,
+      stalwartScopes: access.request,
     });
   } catch (error) {
+    const refused = configWriteErrorResponse(error);
+    if (refused) return refused;
     logger.error('Admin OAuth setup error', { error: error instanceof Error ? error.message : 'Unknown error' });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },

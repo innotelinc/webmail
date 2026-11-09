@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, DragEvent } from "react";
 import { Email } from "@/lib/jmap/types";
 import { IJMAPClient } from "@/lib/jmap/client-interface";
-import { resolveEmailBlobContext, resolveSelectedEmails, useEmailStore } from "@/stores/email-store";
+import { emailLinkSource, resolveEmailBlobContext, resolveSelectedEmails, useEmailStore } from "@/stores/email-store";
 import { emailKeyFor } from "@/lib/thread-utils";
 import { useAuthStore } from "@/stores/auth-store";
 import { useDragDropContext } from "@/contexts/drag-drop-context";
 import { useUIStore } from "@/stores/ui-store";
 import { isDragOutSupported } from "@/hooks/use-attachment-drag";
+import { canDragNativeFiles, forgetDragBlob, keepDragBlob, keptDragBlob, startNativeFileDrag } from "@/lib/desktop/file-drag";
+import { canExport } from "@/lib/device-policy";
 import { appUrl, buildMailPath } from "@/lib/deep-links";
 import {
   bundleExportFilename,
@@ -19,6 +21,8 @@ import {
   type EmailFilenameOptions,
 } from "@/lib/download-filename";
 import { useSettingsStore } from "@/stores/settings-store";
+import { useTranslations } from "next-intl";
+import { toast } from "@/stores/toast-store";
 
 interface UseEmailDragOptions {
   email: Email;
@@ -72,7 +76,9 @@ type BundleEntry = {
   promise: Promise<string | null> | null;
 };
 
-let currentBundle: BundleEntry | null = null;
+type EmailBundleEntry = BundleEntry & { onError?: () => void };
+
+let currentBundle: EmailBundleEntry | null = null;
 
 // Object identity also distinguishes a reconnected/replaced client for the same login.
 const clientKeys = new WeakMap<IJMAPClient, number>();
@@ -98,60 +104,74 @@ function selectionKey(emails: RoutedEmail[], bundleOptions: EmailFilenameOptions
 
 function revokeLater(url: string): void {
   // Chromium may read the URL asynchronously after the drop completes.
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    forgetDragBlob(url);
+  }, 60_000);
 }
 
-async function buildEmailZip(emails: RoutedEmail[]): Promise<string | null> {
-  const eligible = emails.filter(({ email, client }) => !!email.blobId && !!client);
-  if (eligible.length === 0) return null;
+async function buildEmailZip(emails: RoutedEmail[]): Promise<string> {
+  if (emails.length === 0 || emails.some(({ email, client }) => !email.blobId || !client)) {
+    throw new Error("Every selected message must have a blob and source client to export a ZIP");
+  }
   const { default: JSZip } = await import("jszip");
   const zip = new JSZip();
   const used = new Set<string>();
   await Promise.all(
-    eligible.map(async ({ email: em, client, accountId, name: filename }) => {
+    emails.map(async ({ email: em, client, accountId, name: filename }) => {
       const base = filename.replace(/\.eml$/, "");
       // Full id, not a prefix: messages in one thread share their leading
       // characters (Stalwart packs the thread id into the high bits), and a
       // prefix collision here used to spin the main thread forever (#1039).
       const name = uniqueFilename(used, base, ".eml", em.id);
       used.add(name);
-      try {
-        const blob = await client!.fetchBlob(em.blobId!, name, "message/rfc822", accountId);
-        zip.file(name, blob);
-      } catch {
-        // Skip individual failures; remaining messages still bundle.
-      }
+      const blob = await client!.fetchBlob(em.blobId!, name, "message/rfc822", accountId);
+      zip.file(name, blob);
     }),
   );
   const zipBlob = await zip.generateAsync({ type: "blob", mimeType: "application/zip" });
-  return URL.createObjectURL(zipBlob);
+  return keepDragBlob(URL.createObjectURL(zipBlob), zipBlob);
 }
 
 function prefetchEmailBundle(
   emails: RoutedEmail[],
   bundleOptions: EmailFilenameOptions,
+  onError?: () => void,
 ): void {
   const key = selectionKey(emails, bundleOptions);
-  if (currentBundle && currentBundle.key === key) return;
+  if (currentBundle?.key === key && (currentBundle.url || currentBundle.promise)) {
+    // Hover is silent. The first drag joining this build owns its one error
+    // notification, even when several selected rows join the same promise.
+    currentBundle.onError ??= onError;
+    return;
+  }
   if (currentBundle?.url) {
     const old = currentBundle.url;
     revokeLater(old);
   }
-  const entry: BundleEntry = {
+  const entry: EmailBundleEntry = {
     key,
     name: bundleFilename(emails.length, bundleOptions),
     url: null,
     promise: null,
+    onError,
   };
   entry.promise = buildEmailZip(emails)
     .then((url) => {
-      if (url) {
-        if (currentBundle === entry) entry.url = url;
-        else revokeLater(url);
-      }
+      if (currentBundle === entry) entry.url = url;
+      else revokeLater(url);
       return url;
     })
-    .catch(() => null);
+    .catch(() => {
+      // An obsolete failure must not retire a newer build or notify over it.
+      // Clearing this entry lets the next pointer/drag event really retry.
+      if (currentBundle === entry) {
+        currentBundle = null;
+        entry.onError?.();
+      }
+      return null;
+    })
+    .finally(() => { entry.promise = null; });
   currentBundle = entry;
 }
 
@@ -164,6 +184,7 @@ function getReadyBundle(emails: RoutedEmail[], bundleOptions: EmailFilenameOptio
 }
 
 export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailDragOptions): UseEmailDragReturn {
+  const tNotifications = useTranslations("notifications");
   // The selection and the list are read when a drag starts, not subscribed
   // to: every message row runs this hook, and a subscription to the list
   // re-rendered every row on each list update (new results, a snippet, a
@@ -198,7 +219,8 @@ export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailD
   }, [email.id, email.blobId, email.sourceClientAccountId, email.sourceAccountId, client, filenameOptions]);
 
   const prefetchSingle = useCallback((target: Email) => {
-    if (!dragOutEnabled || !target.blobId) return;
+    // Dragging a message out is an export: not under the account's "No export".
+    if (!dragOutEnabled || !target.blobId || !canExport(target)) return;
     const route = routeEmail(target, filenameOptions);
     if (!route.client) return;
     const previous = singleRef.current;
@@ -206,8 +228,11 @@ export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailD
     if (previous?.url) revokeLater(previous.url);
     const entry: BundleEntry = { key: route.key, name: route.name, url: null, promise: null };
     singleRef.current = entry;
-    entry.promise = route.client
-      .fetchBlobAsObjectUrl(target.blobId, route.name, "message/rfc822", route.accountId)
+    // The desktop app's native drag needs the bytes as well as the address.
+    const fetched = canDragNativeFiles()
+      ? route.client.fetchBlob(target.blobId, route.name, "message/rfc822", route.accountId).then((blob) => keepDragBlob(URL.createObjectURL(blob), blob))
+      : route.client.fetchBlobAsObjectUrl(target.blobId, route.name, "message/rfc822", route.accountId);
+    entry.promise = fetched
       .then((url) => {
         if (url) {
           if (singleRef.current === entry && routeEmail(target, filenameOptions).key === entry.key) entry.url = url;
@@ -225,6 +250,7 @@ export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailD
     const selected = state.selectedEmailKeys.has(emailKeyFor(email))
       ? resolveSelectedEmails(state)
       : threadEmails || [email];
+    if (!selected.every((em) => canExport(em))) return;
     if (selected.length > 1) {
       if (selected.some((em) => em.blobId)) {
         prefetchEmailBundle(selected.map((em) => routeEmail(em, filenameOptions)), bundleOptions);
@@ -264,17 +290,26 @@ export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailD
     e.dataTransfer.setData(
       "text/uri-list",
       emailsToDrag
-        .map(em => `${appUrl(buildMailPath({ mailboxId: null, emailId: em.id, threadId: null }))}?view=fullscreen`)
+        .map(em => appUrl(buildMailPath({ mailboxId: null, emailId: em.id, threadId: null, ...emailLinkSource(em), fullscreen: true })))
         .join("\r\n")
     );
 
-    // Drag-out to file explorer.
-    if (dragOutEnabled && client) {
+    // Drag-out to file explorer, unless a device policy turned export off
+    // for one of the messages' accounts. Moving to a folder still works.
+    if (dragOutEnabled && client && emailsToDrag.every((em) => canExport(em))) {
       if (emailsToDrag.length === 1 && emailsToDrag[0].blobId) {
         const route = routeEmail(emailsToDrag[0], filenameOptions);
         const url = singleRef.current?.key === route.key ? singleRef.current.url : null;
         if (url) {
           const name = emailExportFilename(emailsToDrag[0], filenameOptions);
+          // Desktop app, Alt held: the OS's own drag with the real file. A plain drag has
+          // to stay the page's, because it also moves the message to a folder.
+          const blob = e.altKey ? keptDragBlob(url) : undefined;
+          if (blob) {
+            e.preventDefault();
+            void startNativeFileDrag([{ name, blob }]);
+            return;
+          }
           // `DownloadURL` format: <mime>:<filename>:<url>. Chromium expects
           // the filename raw - URL-encoding it ends up literally on disk
           // (e.g. `%20` instead of a space). The sanitiser already removed
@@ -293,13 +328,19 @@ export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailD
         const routed = emailsToDrag.map((em) => routeEmail(em, filenameOptions));
         const ready = getReadyBundle(routed, bundleOptions);
         if (ready) {
+          const blob = e.altKey ? keptDragBlob(ready.url) : undefined;
+          if (blob) {
+            e.preventDefault();
+            void startNativeFileDrag([{ name: ready.name, blob }]);
+            return;
+          }
           e.dataTransfer.setData(
             "DownloadURL",
             `application/zip:${ready.name}:${ready.url}`,
           );
         } else {
           // Kick off the bundle build for the next attempt.
-          prefetchEmailBundle(routed, bundleOptions);
+          prefetchEmailBundle(routed, bundleOptions, () => toast.error(tNotifications("export_email_error")));
         }
       }
     }
@@ -314,7 +355,7 @@ export function useEmailDrag({ email, sourceMailboxId, threadEmails }: UseEmailD
     });
 
     startDrag(emailsToDrag, sourceMailboxId);
-  }, [email, sourceMailboxId, startDrag, threadEmails, dragOutEnabled, client, prefetchSingle, filenameOptions, bundleOptions]);
+  }, [email, sourceMailboxId, startDrag, threadEmails, dragOutEnabled, client, prefetchSingle, filenameOptions, bundleOptions, tNotifications]);
 
   const handleDragEnd = useCallback(() => {
     endDrag();

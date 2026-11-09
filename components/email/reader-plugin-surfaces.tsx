@@ -5,11 +5,12 @@
 // frame between a reply's own text and the quote under it.
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useQuietState } from "@/hooks/use-quiet-state";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { iconForName, MoreHorizontal, Puzzle } from "@/components/icons";
+import { iconForName, MoreVertical, Puzzle } from "@/components/icons";
 import { ContextMenu } from "@/components/ui/context-menu";
-import { PluginActions, usePluginActions } from "@/components/plugins/plugin-actions";
+import { PluginActions, usePluginActions, type MessageActionTarget } from "@/components/plugins/plugin-actions";
 import { PluginSlot } from "@/components/plugins/plugin-slot";
 import { usePluginSlotOffers } from "@/hooks/use-plugin-slot-offers";
 import { useContextMenu } from "@/hooks/use-context-menu";
@@ -68,7 +69,7 @@ export function AttachmentPluginMenu({
         data-attachment-plugin-menu=""
         onClick={(e) => openContextMenu(e, true)}
       >
-        <MoreHorizontal className={cn(iconClassName, "text-foreground")} />
+        <MoreVertical className={cn(iconClassName, "text-foreground")} />
       </button>
       <ContextMenu ref={menuRef} isOpen={contextMenu.isOpen} position={contextMenu.position} onClose={closeContextMenu}>
         <PluginActions
@@ -128,14 +129,18 @@ export function PluginPanelEntries({
   surface,
   context,
   mailboxRole,
+  target,
   onRan,
 }: {
   surface: string;
   context: Record<string, unknown>;
   mailboxRole?: string | null;
+  /** The open message (useMessageActionTarget). */
+  target?: MessageActionTarget;
   onRan?: () => void;
 }) {
-  const actions = usePluginActions(surface, { mailboxRole });
+  const actions = usePluginActions(surface, { mailboxRole, accountKind: target?.accountKind ?? null, keywords: target?.keywords ?? null });
+  const clickContext = target?.accountId ? { ...context, accountId: target.accountId } : context;
   if (actions.length === 0) return null;
   return (
     <>
@@ -147,7 +152,7 @@ export function PluginPanelEntries({
             key={`${action.pluginId}:${action.id}`}
             role="menuitem"
             title={action.pluginName}
-            onClick={() => { onRan?.(); void runAction(action, surface, context); }}
+            onClick={() => { onRan?.(); void runAction(action, surface, clickContext); }}
             className={cn(
               "w-full px-4 py-3 min-h-[44px] text-sm text-start hover:bg-muted flex items-center gap-3",
               action.danger ? "text-destructive" : "text-foreground",
@@ -212,7 +217,8 @@ export function ReaderAboveQuoteSlot({
   version?: unknown;
 }) {
   const offered = usePluginSlotOffers("reader-above-quote").length > 0;
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  // Without a plugin for the slot the anchor stays null on every open: no draw for it.
+  const [anchor, setAnchor] = useQuietState<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
     if (!offered || !root) {
@@ -224,7 +230,7 @@ export function ReaderAboveQuoteSlot({
     return () => {
       next?.remove();
     };
-  }, [offered, root, version]);
+  }, [offered, root, version, setAnchor]);
 
   if (!anchor) return null;
   const slot = <PluginSlot name="reader-above-quote" className="w-full" extraProps={extraProps} />;

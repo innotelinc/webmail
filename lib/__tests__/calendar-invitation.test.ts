@@ -412,6 +412,31 @@ describe('getInvitationTrustAssessment', () => {
     expect(result.reason).toBe('authentication_failed');
   });
 
+  it('trusts an invitation a relay broke SPF for when DKIM and DMARC still pass (#1403)', () => {
+    const event: Partial<CalendarEvent> = {
+      participants: {
+        org: makeParticipant({ roles: { owner: true }, email: 'alice@example.com' }),
+      },
+    };
+    const from = [{ email: 'alice@example.com' }];
+
+    const relayed = getInvitationTrustAssessment(event, makeEmail({
+      from,
+      authenticationResults: {
+        spf: { result: 'fail', domain: 'example.com' },
+        dkim: { result: 'pass', domain: 'example.com' },
+        dmarc: { result: 'pass', domain: 'example.com' },
+      },
+    }), 'request');
+    expect(relayed.level).toBe('trusted');
+
+    const unsigned = getInvitationTrustAssessment(event, makeEmail({
+      from,
+      authenticationResults: { spf: { result: 'fail', domain: 'example.com' } },
+    }), 'request');
+    expect(unsigned.reason).toBe('authentication_failed');
+  });
+
   it('warns when sender and organizer differ without verified authentication', () => {
     const event: Partial<CalendarEvent> = {
       participants: {
@@ -478,6 +503,28 @@ describe('getInvitationTrustAssessment', () => {
     expect(result.reason).toBeNull();
   });
 
+  // A reply comes from the attendee, and the organizer is the user reading
+  // it: comparing with the organizer warned on every genuine reply, and a
+  // forged one looked just the same.
+  it.each(['reply', 'counter', 'refresh'] as const)('compares the sender of a %s with the attendee who answers', (method) => {
+    const event: Partial<CalendarEvent> = {
+      participants: {
+        // As Stalwart parses it: the organizer is an attendee too, addresses as mailto:.
+        org: makeParticipant({ roles: { owner: true, attendee: true }, email: undefined, calendarAddress: 'mailto:me@example.com', participationStatus: 'accepted' }),
+        bob: makeParticipant({ roles: { attendee: true }, email: undefined, calendarAddress: 'mailto:Bob@example.net', participationStatus: 'accepted' }),
+      },
+    };
+    const aligned = { dkim: { result: 'pass', domain: 'example.net', selector: 's' } } as const;
+
+    const genuine = getInvitationTrustAssessment(event, makeEmail({ from: [{ email: 'bob@example.net' }], authenticationResults: aligned }), method);
+    expect(genuine.level).toBe('trusted');
+
+    const forged = getInvitationTrustAssessment(event, makeEmail({ from: [{ email: 'mallory@evil.example' }] }), method);
+    expect(forged).toMatchObject({
+      level: 'warning', reason: 'attendee_mismatch_unverified', senderEmail: 'mallory@evil.example', attendeeEmail: 'bob@example.net',
+    });
+  });
+
   it('does not trust an SPF or DKIM pass for a domain other than the From domain', () => {
     // MAIL FROM at the attacker's domain (SPF pass there), From and ORGANIZER
     // at the victim's; the victim publishes no DMARC policy, so dmarc=none.
@@ -502,6 +549,40 @@ describe('getInvitationTrustAssessment', () => {
     }), 'request');
     expect(dkim.level).toBe('caution');
     expect(dkim.reason).toBe('authentication_missing');
+  });
+
+  // Mail a signed-in user hands in never passes port 25, so Stalwart adds no
+  // Authentication-Results header to it (#1374).
+  describe('mail between users of the reader\'s own domains', () => {
+    const event: Partial<CalendarEvent> = {
+      participants: {
+        org: makeParticipant({ roles: { owner: true }, email: 'alice@example.com' }),
+      },
+    };
+    const own = ['bob@example.com', 'Bob@Example.org'];
+
+    it('trusts an invitation without an Authentication-Results header', () => {
+      const result = getInvitationTrustAssessment(event, makeEmail({ from: [{ email: 'alice@example.com' }] }), 'request', own);
+      expect(result.level).toBe('trusted');
+    });
+
+    it('still cautions when the sender is on another domain', () => {
+      const result = getInvitationTrustAssessment(event, makeEmail({ from: [{ email: 'alice@example.com' }] }), 'request', ['bob@example.net']);
+      expect(result.reason).toBe('authentication_missing');
+    });
+
+    it('still cautions when the header is there but nothing in it passed', () => {
+      const result = getInvitationTrustAssessment(event, makeEmail({
+        from: [{ email: 'alice@example.com' }],
+        authenticationResults: { dmarc: { result: 'none', domain: 'example.com' } },
+      }), 'request', own);
+      expect(result.reason).toBe('authentication_missing');
+    });
+
+    it('still warns when the sender is not the organizer', () => {
+      const result = getInvitationTrustAssessment(event, makeEmail({ from: [{ email: 'carol@example.com' }] }), 'request', own);
+      expect(result.reason).toBe('sender_mismatch_unverified');
+    });
   });
 });
 
@@ -574,9 +655,10 @@ describe('invitation times across time zones (#1252)', () => {
     else process.env.TZ = originalTZ;
   });
 
-  // What next-intl's format.dateTime does with the provider's display zone.
-  const formatIn = (timeZone: string) => (date: Date, options: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat('en-US', { timeZone, ...options }).format(date);
+  // The banner's options for a user in `timeZone`. Intl writes ranges with
+  // thin spaces around the dash; the expectations use plain ones.
+  const formatIn = (timeZone: string, hour12 = false) => ({ locale: 'en-US', timeZone, hour12 });
+  const plain = (text: string) => text.replace(/[\u2009\u202f]/g, ' ');
 
   // CalendarEvent/parse output for the Exchange invite in the issue.
   const londonInvite: Partial<CalendarEvent> = {
@@ -593,12 +675,27 @@ describe('invitation times across time zones (#1252)', () => {
     expect(summary.isFloating).toBe(false);
   });
 
-  it('shows the invite in the viewer zone with a zone label', () => {
+  it('shows the invite in the viewer zone, the date once, and its own times after it (pim-23)', () => {
     const summary = formatEventSummary(londonInvite);
-    expect(formatInvitationSchedule(summary, formatIn('Europe/Warsaw'), false))
-      .toBe('Tue, Oct 20, 16:00 – Tue, Oct 20, 16:25 GMT+2');
-    expect(formatInvitationSchedule(summary, formatIn('America/New_York'), true))
-      .toBe('Tue, Oct 20, 10:00 AM – Tue, Oct 20, 10:25 AM EDT');
+    expect(plain(formatInvitationSchedule(summary, formatIn('Europe/Warsaw'))))
+      .toBe('Tue, Oct 20, 16:00 – 16:25 (15:00 – 15:25 London)');
+    expect(plain(formatInvitationSchedule(summary, formatIn('America/New_York', true))))
+      .toBe('Tue, Oct 20, 10:00 – 10:25 AM (3:00 – 3:25 PM London)');
+  });
+
+  it('shows no zone for an invite on the viewer clock (pim-23)', () => {
+    const berlin = formatEventSummary({ title: 'Sprint planning', start: '2026-11-05T10:00:00', timeZone: 'Europe/Berlin', duration: 'PT1H30M' });
+    expect(plain(formatInvitationSchedule(berlin, formatIn('Europe/Berlin')))).toBe('Thu, Nov 5, 10:00 – 11:30');
+    // Another zone with the same clock that day says nothing either.
+    expect(plain(formatInvitationSchedule(berlin, formatIn('Europe/Paris')))).toBe('Thu, Nov 5, 10:00 – 11:30');
+  });
+
+  it('gives the event zone its date when its day there is another (pim-23)', () => {
+    const tokyo = formatEventSummary({ start: '2026-11-06T08:00:00', timeZone: 'Asia/Tokyo', duration: 'PT1H' });
+    expect(plain(formatInvitationSchedule(tokyo, formatIn('Europe/Berlin'))))
+      .toBe('Fri, Nov 6, 00:00 – 01:00 (08:00 – 09:00 Tokyo)');
+    expect(plain(formatInvitationSchedule(tokyo, formatIn('America/New_York'))))
+      .toBe('Thu, Nov 5, 18:00 – 19:00 (Fri, Nov 6, 08:00 – 09:00 Tokyo)');
   });
 
   it('treats a UTC start as UTC', () => {
@@ -617,14 +714,14 @@ describe('invitation times across time zones (#1252)', () => {
   it('shows floating times as the same wall clock everywhere, without a zone label', () => {
     const summary = formatEventSummary({ start: '2026-10-20T15:00:00', timeZone: null, duration: 'PT30M' });
     expect(summary.isFloating).toBe(true);
-    expect(formatInvitationSchedule(summary, formatIn('Asia/Tokyo'), false))
-      .toBe('Tue, Oct 20, 15:00 – Tue, Oct 20, 15:30');
+    expect(plain(formatInvitationSchedule(summary, formatIn('Asia/Tokyo'))))
+      .toBe('Tue, Oct 20, 15:00 – 15:30');
   });
 
   it('does not shift all-day dates in zones west or east of UTC', () => {
     const oneDay = formatEventSummary({ start: '2026-03-16T00:00:00', duration: 'P1D', showWithoutTime: true, timeZone: 'Europe/London' });
-    expect(formatInvitationSchedule(oneDay, formatIn('America/Los_Angeles'), false)).toBe('Mon, Mar 16');
-    expect(formatInvitationSchedule(oneDay, formatIn('Pacific/Auckland'), false)).toBe('Mon, Mar 16');
+    expect(formatInvitationSchedule(oneDay, formatIn('America/Los_Angeles'))).toBe('Mon, Mar 16');
+    expect(formatInvitationSchedule(oneDay, formatIn('Pacific/Auckland'))).toBe('Mon, Mar 16');
 
     const threeDays = formatEventSummary({
       start: '2026-03-16T00:00:00',
@@ -632,7 +729,7 @@ describe('invitation times across time zones (#1252)', () => {
       utcStart: '2026-03-16T00:00:00Z',
       utcEnd: '2026-03-19T00:00:00Z',
     });
-    expect(formatInvitationSchedule(threeDays, formatIn('America/Los_Angeles'), false)).toBe('Mon, Mar 16 – Wed, Mar 18');
+    expect(plain(formatInvitationSchedule(threeDays, formatIn('America/Los_Angeles')))).toBe('Mon, Mar 16 – Wed, Mar 18');
   });
 
   it('shows only the start for a zero-duration event', () => {
@@ -642,8 +739,8 @@ describe('invitation times across time zones (#1252)', () => {
       utcStart: '2026-10-20T14:00:00Z',
       utcEnd: '2026-10-20T14:00:00Z',
     });
-    expect(formatInvitationSchedule(summary, formatIn('Europe/Warsaw'), false))
-      .toBe('Tue, Oct 20, 16:00 GMT+2');
+    expect(plain(formatInvitationSchedule(summary, formatIn('Europe/Warsaw'))))
+      .toBe('Tue, Oct 20, 16:00 (15:00 London)');
   });
 
   it('still prefers the server utcStart/utcEnd when present', () => {
@@ -652,7 +749,7 @@ describe('invitation times across time zones (#1252)', () => {
       utcStart: '2026-10-20T14:00:00Z',
       utcEnd: '2026-10-20T14:25:00Z',
     });
-    expect(formatInvitationSchedule(summary, formatIn('UTC'), false))
-      .toBe('Tue, Oct 20, 14:00 – Tue, Oct 20, 14:25 UTC');
+    expect(plain(formatInvitationSchedule(summary, formatIn('UTC'))))
+      .toBe('Tue, Oct 20, 14:00 – 14:25 (15:00 – 15:25 London)');
   });
 });

@@ -9,22 +9,33 @@ import { useAuthStore } from '@/stores/auth-store';
 import { getActiveAccountSlotHeaders } from '@/lib/auth/active-account-slot';
 import { toast } from '@/stores/toast-store';
 import { SettingsSection } from './settings-section';
-import { Plus, Pencil, Trash2, Calendar as CalendarIcon, Copy, Link, Upload, Globe, RefreshCw, Eraser, Users, Bell, ArrowUp, ArrowDown, GripVertical } from '@/components/icons';
+import { Plus, Pencil, Trash2, Calendar as CalendarIcon, Copy, Link, Upload, Globe, RefreshCw, Eraser, Users, Bell, ArrowUp, ArrowDown, GripVertical, MoreVertical } from '@/components/icons';
+import { IconButton } from '@/components/ui/icon-button';
+import { ContextMenu, ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu';
+import { useContextMenu } from '@/hooks/use-context-menu';
 import { AlertListEditor } from '@/components/calendar/alert-list-editor';
 import { alertsToRows, rowsToAlerts, type AlertRow } from '@/lib/calendar-alerts';
 import { ShareCollectionDialog } from './share-collection-dialog';
 import type { CalendarRights } from '@/lib/jmap/types';
 import { cn, formatDateTime, redactUrlCredentials } from '@/lib/utils';
+import { collectionDisplayName } from '@/lib/default-collection-name';
 import { ICalImportModal } from '@/components/calendar/ical-import-modal';
 import { ICalSubscriptionModal } from '@/components/calendar/ical-subscription-modal';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useManagedAccountStore } from '@/stores/managed-account-store';
 import { useAccountStore } from '@/stores/account-store';
+import { groupCalendarsByAccount } from '@/lib/calendar-targets';
+import { useProMultiAccountCalendars } from '@/hooks/use-pro-multi-account-calendars';
 import { apiFetch } from '@/lib/browser-navigation';
 import { CALENDAR_COLORS, sharedCalendarColorKey } from '@/lib/shared-calendar-colors';
 import { IS_LITE } from '@/lib/lite';
 import { shareRecipientNames, useShareRecipientLabels } from '@/hooks/use-share-recipient-labels';
 import { calendarAccountKey, moveCalendar } from '@/lib/calendar-sort';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { TOUCH_HIT_AREA } from '@/components/ui/button';
+import { TermInfo } from '@/components/ui/term';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { useConfig } from '@/hooks/use-config';
 
 function CalendarColorPicker({
   value,
@@ -36,6 +47,23 @@ function CalendarColorPicker({
   allowCustom?: boolean;
 }) {
   const selectedIsPreset = CALENDAR_COLORS.includes(value);
+  const customRef = useRef<HTMLInputElement>(null);
+  const onChangeRef = useRef(onChange);
+  useEffect(() => { onChangeRef.current = onChange; });
+  // Take the custom color when the system dialog confirms it (`change`), not
+  // at every step (`input`, React's onChange): the first step closed the
+  // calendar menu around the picker and saved a color the user passed by
+  // (#1366).
+  useEffect(() => {
+    const input = customRef.current;
+    if (!input) return;
+    const commit = () => onChangeRef.current(input.value);
+    input.addEventListener('change', commit);
+    return () => input.removeEventListener('change', commit);
+  }, [allowCustom]);
+  useEffect(() => {
+    if (customRef.current) customRef.current.value = value || "#3b82f6";
+  }, [value]);
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
@@ -45,7 +73,7 @@ function CalendarColorPicker({
           type="button"
           onClick={() => onChange(color)}
           className={cn(
-            "w-6 h-6 rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "w-6 h-6 rounded-full transition-transform hover:scale-110 focus-visible:outline-hidden",
             value === color && "ring-2 ring-offset-2 ring-offset-background ring-foreground"
           )}
           style={{ backgroundColor: color }}
@@ -62,9 +90,9 @@ function CalendarColorPicker({
           title="Custom color"
         >
           <input
+            ref={customRef}
             type="color"
-            value={value || "#3b82f6"}
-            onChange={(e) => onChange(e.target.value)}
+            defaultValue={value || "#3b82f6"}
             className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
           />
           {(selectedIsPreset || !value) && (
@@ -81,11 +109,14 @@ export function CalendarEditForm({
   onSave,
   onCancel,
   isLoading,
+  extraActions,
 }: {
   initial?: { name: string; color: string };
   onSave: (data: { name: string; color: string; components?: CalendarComponentType[] }) => void;
   onCancel: () => void;
   isLoading: boolean;
+  /** More of the calendar's settings, under the colour (pim-20). */
+  extraActions?: React.ReactNode;
 }) {
   const t = useTranslations('calendar.management');
   const [name, setName] = useState(initial?.name || '');
@@ -108,6 +139,7 @@ export function CalendarEditForm({
           {t('name')}
         </label>
         <input
+          aria-label={t('name')}
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -116,7 +148,7 @@ export function CalendarEditForm({
             if (e.key === 'Escape') onCancel();
           }}
           placeholder={t('name_placeholder')}
-          className="w-full px-3 py-1.5 text-sm rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full px-3 py-1.5 text-sm rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-hidden"
           autoFocus
           disabled={isLoading}
         />
@@ -132,6 +164,8 @@ export function CalendarEditForm({
       {!initial && (
         <CalendarKindPicker value={kind} onChange={setKind} disabled={isLoading} />
       )}
+
+      {extraActions && <div className="flex flex-wrap items-center gap-2">{extraActions}</div>}
 
       <div className="flex items-center gap-2 pt-1">
         <button
@@ -159,16 +193,20 @@ type DefaultAlertsUpdate = Pick<Calendar, 'defaultAlertsWithTime' | 'defaultAler
 
 export function CalendarDefaultAlertsForm({
   calendar,
+  otherAlertIds = [],
   onSave,
   onCancel,
   isLoading,
 }: {
   calendar: Calendar;
+  /** Default alert ids of the account's other calendars. */
+  otherAlertIds?: string[];
   onSave: (updates: DefaultAlertsUpdate) => void;
   onCancel: () => void;
   isLoading: boolean;
 }) {
   const t = useTranslations('calendar.management');
+  const tWording = useTranslations('uxs_wording');
   // Alerts the rows can't show are written back unchanged.
   const [timed] = useState(() => alertsToRows(calendar.defaultAlertsWithTime));
   const [allDay] = useState(() => alertsToRows(calendar.defaultAlertsWithoutTime));
@@ -176,15 +214,21 @@ export function CalendarDefaultAlertsForm({
   const [allDayRows, setAllDayRows] = useState<AlertRow[]>(allDay.rows);
 
   // An emptied list is sent as {}: Stalwart refuses null for these maps.
-  const submit = () => onSave({
-    defaultAlertsWithTime: rowsToAlerts(timedRows, timed.preserved),
-    defaultAlertsWithoutTime: rowsToAlerts(allDayRows, allDay.preserved),
-  });
+  // Stalwart 1.0 wants every default alert id in the account to be unique,
+  // across both lists and all calendars (#1435), so the ids carry the
+  // calendar and the list and skip any id another calendar already uses.
+  const submit = () => {
+    const taken = [...otherAlertIds, ...Object.keys(timed.preserved), ...Object.keys(allDay.preserved)];
+    onSave({
+      defaultAlertsWithTime: rowsToAlerts(timedRows, timed.preserved, { prefix: `${calendar.id}-timed-`, taken }),
+      defaultAlertsWithoutTime: rowsToAlerts(allDayRows, allDay.preserved, { prefix: `${calendar.id}-allday-`, taken }),
+    });
+  };
 
   return (
     <div className="space-y-3 p-3 rounded-md border border-primary/30 bg-accent/30">
       <div>
-        <h4 className="text-sm font-medium">{t('default_alerts_title', { name: calendar.name })}</h4>
+        <h4 className="text-sm font-medium">{t('default_alerts_title', { name: collectionDisplayName(calendar.name, 'calendar', tWording('default_calendar')) })}</h4>
         <p className="text-xs text-muted-foreground mt-0.5">{t('default_alerts_hint')}</p>
       </div>
 
@@ -234,6 +278,9 @@ export function CalendarDefaultAlertsForm({
 
 export function CalendarManagementSettings() {
   const t = useTranslations('calendar.management');
+  const tUx = useTranslations('ux_pim_calendar');
+  const tWording = useTranslations('uxs_wording');
+  const calName = (cal: { name: string }) => collectionDisplayName(cal.name, 'calendar', tWording('default_calendar'));
   const { client, serverUrl, username } = useAuthStore();
   const managedAccountId = useManagedAccountStore((s) => s.managedAccountId);
   const { calendars, updateCalendar, reorderCalendars, shareCalendar, createCalendar, removeCalendar, clearCalendarEvents, fetchCalendars, icalSubscriptions: allSubs, removeICalSubscription, refreshICalSubscription, isSubscriptionCalendar } = useCalendarStore();
@@ -256,6 +303,8 @@ export function CalendarManagementSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [colorPickerId, setColorPickerId] = useState<string | null>(null);
   const [sharingId, setSharingId] = useState<string | null>(null);
+  // The account's CalDAV addresses wait behind "Use in other apps".
+  const [caldavShown, setCaldavShown] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [editingSubscription, setEditingSubscription] = useState<typeof icalSubscriptions[0] | null>(null);
@@ -263,11 +312,17 @@ export function CalendarManagementSettings() {
   const [refreshingSubId, setRefreshingSubId] = useState<string | null>(null);
   const tImport = useTranslations('calendar.import');
   const tSub = useTranslations('calendar.subscription');
+  const tConfirm = useTranslations('settings.calendar_management');
   const timeFormat = useSettingsStore((s) => s.timeFormat);
   const sharedCalendarColors = useSettingsStore((s) => s.sharedCalendarColors);
   const setSharedCalendarColor = useSettingsStore((s) => s.setSharedCalendarColor);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const { contextMenu, openContextMenu, openContextMenuFrom, closeContextMenu, menuRef } = useContextMenu<Calendar>();
+  // No right-click on a touch screen, so the hint about it goes there.
+  const touch = useMediaQuery('(pointer: coarse)');
+  // The demo has no server to import into or subscribe from, as in Calendar.
+  const { demoMode } = useConfig();
 
   const listedCalendars = calendars
     .filter(cal => !isSubscriptionCalendar(cal.id))
@@ -279,18 +334,23 @@ export function CalendarManagementSettings() {
   // Principal ids belong to one server: only calendars of the account
   // `client` talks to get their recipients named.
   const activeLocalAccountId = useAccountStore((s) => s.activeAccountId);
+  const localAccounts = useAccountStore((s) => s.accounts);
+  // Under each account's address when several are signed in (pim-p2-3).
+  const calendarGroups = groupCalendarsByAccount(listedCalendars, localAccounts, activeLocalAccountId);
   const resolvesShares = (cal: Calendar) => !cal.localAccountId || cal.localAccountId === activeLocalAccountId;
   const shareLabels = useShareRecipientLabels(
     client,
     calendars.some(cal => !cal.isShared && Object.keys(cal.shareWith ?? {}).length > 0 && resolvesShares(cal)),
   );
 
-  // Load calendars if not yet loaded
+  // With several accounts signed in, every account's calendars, as in
+  // Calendar (pim-p2-3); else load them if not yet loaded.
+  const { enabled: allAccounts } = useProMultiAccountCalendars(null, null);
   useEffect(() => {
-    if (client && calendars.length === 0) {
+    if (client && calendars.length === 0 && !allAccounts) {
       fetchCalendars(client);
     }
-  }, [client, calendars.length, fetchCalendars]);
+  }, [client, calendars.length, fetchCalendars, allAccounts]);
 
   useEffect(() => {
     // CalDAV discovery runs through /api/caldav/discover, absent in the static build.
@@ -342,7 +402,8 @@ export function CalendarManagementSettings() {
         setDiscoveredCalDavUrls(next);
       })
       .catch(() => {
-        const fallbackWellKnown = new URL('/.well-known/caldav', serverUrl).toString();
+        // Below the server address, which may carry a path (https://host/stalwart).
+        const fallbackWellKnown = `${serverUrl.replace(/\/+$/, '')}/.well-known/caldav`;
         setDiscoveredCalDavUrls({});
         setWellKnownCalDavUrl(fallbackWellKnown);
       });
@@ -415,11 +476,21 @@ export function CalendarManagementSettings() {
     }
   };
 
-  const handleUpdate = async (calendarId: string, data: { name: string; color: string }) => {
+  const handleUpdate = async (
+    calendarId: string,
+    data: { name: string; color: string },
+    shownColor: string,
+  ) => {
     if (!client) return;
     setIsLoading(true);
     try {
-      await updateCalendar(client, calendarId, { name: data.name, color: data.color });
+      // The colour only when the user changed it: Stalwart 1.0 accepts only
+      // #rgb, #rrggbb or a CSS colour name, so sending back one another
+      // client stored (an 8-digit hex from Apple Calendar) failed the rename.
+      await updateCalendar(client, calendarId, {
+        name: data.name,
+        ...(data.color !== shownColor ? { color: data.color } : {}),
+      });
       setEditingId(null);
       toast.success(t('calendar_updated'));
     } catch {
@@ -512,6 +583,16 @@ export function CalendarManagementSettings() {
     return discoveredCalDavUrls[accountKey] || wellKnownCalDavUrl;
   };
 
+  // The CalDAV address is the account's, the same for each of its
+  // calendars: once per account, not under every calendar (pim-26).
+  const caldavAddresses: Array<{ url: string; owner: string | null }> = [];
+  for (const cal of listedCalendars) {
+    const url = buildCalDavUrl(cal.id);
+    if (!url || caldavAddresses.some((a) => a.url === url)) continue;
+    caldavAddresses.push({ url, owner: cal.isShared ? (cal.accountName || cal.accountId || null) : null });
+  }
+  caldavAddresses.sort((a, b) => Number(!!a.owner) - Number(!!b.owner));
+
   const handleCopyUrl = async (url: string) => {
     try {
       await navigator.clipboard.writeText(url);
@@ -530,26 +611,101 @@ export function CalendarManagementSettings() {
     }
   };
 
+  // Each row shows one "Edit…" (name, colour, then reminders and sharing
+  // from there) and a ⋮ with the rest; right-click opens the same menu.
+  // Seven icons on hover hid what they did (pim-20).
+  const canEditAlerts = (cal: Calendar) => !cal.isShared;
+  const canShareCalendar = (cal: Calendar) => !!cal.myRights?.mayShare && !cal.isShared && !isSubscriptionCalendar(cal.id);
+  const calendarActions = (cal: Calendar) => {
+    const actions: Array<{ id: string; label: string; icon: typeof Pencil; run: () => void; destructive?: boolean }> = [
+      { id: 'clear', label: tUx('clear_all_events'), icon: Eraser, run: () => setClearingId(cal.id), destructive: true },
+    ];
+    if (!cal.isDefault) {
+      actions.push({ id: 'delete', label: tUx('delete_calendar'), icon: Trash2, run: () => setDeletingId(cal.id), destructive: true });
+    }
+    return actions;
+  };
+
+  const renderRowMenu = () => {
+    const cal = contextMenu.data;
+    if (!cal) return null;
+    const run = (fn: () => void) => () => { closeContextMenu(); fn(); };
+    const siblings = cal.isShared ? [] : orderableCalendars.filter(c => calendarAccountKey(c) === calendarAccountKey(cal));
+    const orderIndex = siblings.indexOf(cal);
+    const previousId = siblings[orderIndex - 1]?.id;
+    const nextId = siblings[orderIndex + 1]?.id;
+    const destructive = calendarActions(cal);
+    return (
+      <ContextMenu ref={menuRef} isOpen={contextMenu.isOpen} position={contextMenu.position} onClose={closeContextMenu}>
+        <ContextMenuItem icon={Pencil} label={tUx('edit_calendar')} onClick={run(() => setEditingId(cal.id))} />
+        {/* Without a mouse there is no drag: the order changes from here. */}
+        {siblings.length > 1 && (
+          <>
+            <ContextMenuSeparator />
+            <ContextMenuItem icon={ArrowUp} label={t('move_up')} disabled={!previousId} onClick={run(() => void handleMove(cal.id, previousId))} />
+            <ContextMenuItem icon={ArrowDown} label={t('move_down')} disabled={!nextId} onClick={run(() => void handleMove(cal.id, nextId))} />
+          </>
+        )}
+        <ContextMenuSeparator />
+        {destructive.map((a) => (
+          <ContextMenuItem key={a.id} icon={a.icon} label={a.label} destructive={a.id === 'delete'} onClick={run(a.run)} />
+        ))}
+      </ContextMenu>
+    );
+  };
+
   return (
-    <SettingsSection id="calendars" title={t('title')} description={t('description')}>
+    <SettingsSection id="calendars" title={t('title')} description={touch ? t('description_touch') : t('description')}>
+      {renderRowMenu()}
       <div className="space-y-2">
-        {listedCalendars.map((cal) => {
+        {calendarGroups.map((group) => (
+          <div key={group.key || 'own'} className="space-y-2" data-testid="calendar-settings-group">
+            {group.label && (
+              <h4 className="pt-2 text-xs font-semibold text-muted-foreground truncate" data-testid="calendar-settings-account" title={group.label}>
+                {group.label}
+              </h4>
+            )}
+        {group.calendars.map((cal) => {
           const color = (cal.isShared && sharedCalendarColors[sharedCalendarColorKey(cal)]) || cal.color || '#3b82f6';
           // Up and down step over the neighbours of the same account.
           const siblings = cal.isShared ? [] : orderableCalendars.filter(c => calendarAccountKey(c) === calendarAccountKey(cal));
-          const orderIndex = siblings.indexOf(cal);
           const isOrderable = siblings.length > 1;
-          const previousId = siblings[orderIndex - 1]?.id;
-          const nextId = siblings[orderIndex + 1]?.id;
 
           if (editingId === cal.id) {
+            const alerts = canEditAlerts(cal);
+            const share = canShareCalendar(cal);
             return (
               <CalendarEditForm
                 key={cal.id}
-                initial={{ name: cal.name, color }}
-                onSave={(data) => handleUpdate(cal.id, data)}
+                initial={{ name: calName(cal), color }}
+                // Saved unchanged, the shown name keeps the server's own.
+                onSave={(data) => handleUpdate(cal.id, { ...data, name: data.name === calName(cal) ? cal.name : data.name }, color)}
                 onCancel={() => setEditingId(null)}
                 isLoading={isLoading}
+                extraActions={alerts || share ? (
+                  <>
+                    {alerts && (
+                      <button
+                        type="button"
+                        onClick={() => { setEditingId(null); setAlertsEditingId(cal.id); }}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md border border-border hover:bg-muted"
+                      >
+                        <Bell className="w-3.5 h-3.5" aria-hidden="true" />
+                        {tUx('default_alerts_open')}
+                      </button>
+                    )}
+                    {share && (
+                      <button
+                        type="button"
+                        onClick={() => setSharingId(cal.id)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md border border-border hover:bg-muted"
+                      >
+                        <Users className="w-3.5 h-3.5" aria-hidden="true" />
+                        {tUx('share_open')}
+                      </button>
+                    )}
+                  </>
+                ) : undefined}
               />
             );
           }
@@ -559,58 +715,14 @@ export function CalendarManagementSettings() {
               <CalendarDefaultAlertsForm
                 key={cal.id}
                 calendar={cal}
+                otherAlertIds={calendars.filter((c) => c.id !== cal.id).flatMap((c) => [
+                  ...Object.keys(c.defaultAlertsWithTime ?? {}),
+                  ...Object.keys(c.defaultAlertsWithoutTime ?? {}),
+                ])}
                 onSave={(updates) => handleDefaultAlertsSave(cal.id, updates)}
                 onCancel={() => setAlertsEditingId(null)}
                 isLoading={isLoading}
               />
-            );
-          }
-
-          if (deletingId === cal.id) {
-            return (
-              <div key={cal.id} className="flex items-center gap-3 py-2.5 px-3 bg-destructive/5 rounded-md border border-destructive/20">
-                <Trash2 className="w-4 h-4 text-destructive flex-shrink-0" />
-                <p className="text-sm text-foreground flex-1">
-                  {t('confirm_delete', { name: cal.name })}
-                </p>
-                <button
-                  onClick={() => handleDelete(cal.id)}
-                  disabled={isLoading}
-                  className="px-3 py-1 text-xs font-medium bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 disabled:opacity-50"
-                >
-                  {t('delete')}
-                </button>
-                <button
-                  onClick={() => setDeletingId(null)}
-                  className="px-3 py-1 text-xs bg-muted text-foreground rounded-md hover:bg-accent"
-                >
-                  {t('cancel')}
-                </button>
-              </div>
-            );
-          }
-
-          if (clearingId === cal.id) {
-            return (
-              <div key={cal.id} className="flex items-center gap-3 py-2.5 px-3 bg-amber-500/5 rounded-md border border-amber-500/20">
-                <Eraser className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-                <p className="text-sm text-foreground flex-1">
-                  {t('confirm_clear', { name: cal.name })}
-                </p>
-                <button
-                  onClick={() => handleClear(cal.id)}
-                  disabled={isLoading}
-                  className="px-3 py-1 text-xs font-medium bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50"
-                >
-                  {t('clear_events')}
-                </button>
-                <button
-                  onClick={() => setClearingId(null)}
-                  className="px-3 py-1 text-xs bg-muted text-foreground rounded-md hover:bg-accent"
-                >
-                  {t('cancel')}
-                </button>
-              </div>
             );
           }
 
@@ -629,13 +741,14 @@ export function CalendarManagementSettings() {
               onDragOver={isOrderable && draggingId ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; } : undefined}
               onDrop={isOrderable && draggingId ? (e) => { e.preventDefault(); void handleMove(draggingId, cal.id); setDraggingId(null); } : undefined}
               onDragEnd={() => setDraggingId(null)}
+              onContextMenu={(e) => openContextMenu(e, cal)}
               className={cn(
-                "flex items-center gap-3 py-2.5 px-3 rounded-md border border-border bg-background group",
+                "flex items-center gap-2 sm:gap-3 py-2.5 px-3 rounded-md border border-border bg-background group",
                 draggingId === cal.id && "opacity-50",
               )}
             >
               {isOrderable && (
-                // No HTML drag and drop on touch screens: the arrows do it there.
+                // No HTML drag and drop on touch screens: the ⋮ moves it there.
                 <GripVertical className="w-4 h-4 -me-1.5 text-muted-foreground/60 cursor-grab flex-shrink-0 pointer-coarse:hidden" aria-hidden="true" />
               )}
               {/* Color swatch - clickable to change color */}
@@ -643,9 +756,13 @@ export function CalendarManagementSettings() {
                 <button
                   type="button"
                   onClick={() => setColorPickerId(colorPickerId === cal.id ? null : cal.id)}
-                  className="w-5 h-5 rounded-full shrink-0 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className={cn(
+                    "block w-5 h-5 rounded-full shrink-0 transition-transform hover:scale-110 focus-visible:outline-hidden",
+                    TOUCH_HIT_AREA,
+                  )}
                   style={{ backgroundColor: color }}
                   title={t('change_color')}
+                  aria-label={t('change_color')}
                 />
 
                 {/* Inline color picker popover */}
@@ -666,34 +783,11 @@ export function CalendarManagementSettings() {
               <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
 
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium truncate block">{cal.name}</span>
-                {(() => {
-                  const caldavUrl = buildCalDavUrl(cal.id);
-                  if (!caldavUrl) return null;
-                  return (
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <Link className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                      <span className="text-xs text-muted-foreground truncate" title={caldavUrl}>
-                        {caldavUrl}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCopyUrl(caldavUrl);
-                        }}
-                        className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                        title={t('copy_url')}
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
-                    </div>
-                  );
-                })()}
+                <span id={`calendar-name-${cal.id}`} className="text-sm font-medium truncate block" title={calName(cal)} dir="auto">{calName(cal)}</span>
               </div>
 
               {cal.isDefault && (
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                <span className="flex-shrink-0 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                   {t('default')}
                 </span>
               )}
@@ -707,7 +801,7 @@ export function CalendarManagementSettings() {
                   : t('shared_with_count', { count: shareCount });
                 return (
                   <span
-                    className="flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full"
+                    className="flex flex-shrink-0 items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full"
                     title={label}
                     data-testid="calendar-shared-indicator"
                   >
@@ -718,85 +812,29 @@ export function CalendarManagementSettings() {
                 );
               })()}
 
-              {/* Shown for touch too: there is no hover, and no HTML drag and drop. */}
-              {isOrderable && (
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
-                  <button
-                    type="button"
-                    onClick={() => handleMove(cal.id, previousId)}
-                    disabled={!previousId}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                    title={t('move_up')}
-                    aria-label={t('move_up')}
-                  >
-                    <ArrowUp className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMove(cal.id, nextId)}
-                    disabled={!nextId}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none"
-                    title={t('move_down')}
-                    aria-label={t('move_down')}
-                  >
-                    <ArrowDown className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  type="button"
-                  onClick={() => setEditingId(cal.id)}
-                  className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                  title={t('edit')}
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </button>
-                {/* The owner's defaults; a sharee can't write the calendar. */}
-                {!cal.isShared && (
-                  <button
-                    type="button"
-                    onClick={() => setAlertsEditingId(cal.id)}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                    title={t('default_alerts')}
-                    aria-label={t('default_alerts')}
-                  >
-                    <Bell className="w-3.5 h-3.5" />
-                  </button>
+              <button
+                type="button"
+                onClick={() => setEditingId(cal.id)}
+                aria-describedby={`calendar-name-${cal.id}`}
+                className={cn(
+                  "flex-shrink-0 px-2.5 py-1 text-xs rounded-md border border-border text-foreground hover:bg-muted",
+                  TOUCH_HIT_AREA,
                 )}
-                {cal.myRights?.mayShare && !cal.isShared && !isSubscriptionCalendar(cal.id) && (
-                  <button
-                    type="button"
-                    onClick={() => setSharingId(cal.id)}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                    title={t('share')}
-                  >
-                    <Users className="w-3.5 h-3.5" />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setClearingId(cal.id)}
-                  className="p-1.5 rounded-md hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                  title={t('clear_events')}
-                >
-                  <Eraser className="w-3.5 h-3.5" />
-                </button>
-                {!cal.isDefault && (
-                  <button
-                    type="button"
-                    onClick={() => setDeletingId(cal.id)}
-                    className="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                    title={t('delete')}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
+              >
+                {tUx('edit_calendar')}
+              </button>
+              <IconButton
+                label={t('row_actions', { name: calName(cal) })}
+                className="flex-shrink-0 text-muted-foreground"
+                onClick={(e) => openContextMenuFrom(e.currentTarget, cal, 'end')}
+              >
+                <MoreVertical />
+              </IconButton>
             </div>
           );
         })}
+          </div>
+        ))}
 
         {isCreating ? (
           <CalendarEditForm
@@ -805,29 +843,35 @@ export function CalendarManagementSettings() {
             isLoading={isLoading}
           />
         ) : (
-          <div className="flex gap-2">
+          // Stacked on a phone: side by side the three labels wrapped. Too
+          // narrow for all three in a row (800 px), the last one goes under.
+          <div data-testid="calendar-create-buttons" className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setIsCreating(true)}
-              className="flex items-center gap-2 flex-1 py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border border-dashed border-border transition-colors"
+              className="flex items-center gap-2 flex-1 py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border border-dashed border-border transition-colors whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               {t('add_calendar')}
             </button>
-            <button
-              type="button"
-              onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-2 py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border border-dashed border-border transition-colors"
-            >
-              <Upload className="w-4 h-4" />
-              {tImport('title')}
-            </button>
-            {/* ICS URL subscriptions refresh via /api/fetch-ical, absent in the static build. */}
-            {!IS_LITE && (
+            {!demoMode && (
               <button
                 type="button"
+                data-search-label={tImport('title')}
+                onClick={() => setShowImportModal(true)}
+                className="flex items-center gap-2 py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border border-dashed border-border transition-colors whitespace-nowrap"
+              >
+                <Upload className="w-4 h-4" />
+                {tImport('title')}
+              </button>
+            )}
+            {/* ICS URL subscriptions refresh via /api/fetch-ical, absent in the static build. */}
+            {!IS_LITE && !demoMode && (
+              <button
+                type="button"
+                data-search-label={tSub('title')}
                 onClick={() => setShowSubscriptionModal(true)}
-                className="flex items-center gap-2 py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border border-dashed border-border transition-colors"
+                className="flex items-center gap-2 py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border border-dashed border-border transition-colors whitespace-nowrap"
               >
                 <Globe className="w-4 h-4" />
                 {tSub('title')}
@@ -837,38 +881,51 @@ export function CalendarManagementSettings() {
         )}
       </div>
 
+      {caldavAddresses.length > 0 && (
+        <div className="mt-4 space-y-1.5" data-testid="caldav-addresses">
+          <h4 className="text-sm font-medium text-foreground">{tUx('caldav_title')}</h4>
+          <p className="text-xs text-muted-foreground">{tUx('caldav_hint')}</p>
+          {!caldavShown && (
+            <button
+              type="button"
+              aria-expanded={false}
+              data-testid="calendar-use-in-other-apps"
+              onClick={() => setCaldavShown(true)}
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+            >
+              <Link className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
+              {tWording('use_in_other_apps')}
+            </button>
+          )}
+          {caldavShown && caldavAddresses.map(({ url, owner }) => (
+            <div key={url} className="flex items-center gap-1.5 min-w-0">
+              <Link className="w-3 h-3 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+              {owner && <span className="text-xs text-muted-foreground flex-shrink-0">{tUx('caldav_shared_by', { name: owner })}</span>}
+              {/* An address reads left to right in Arabic too, cut at its end. */}
+              <span dir="ltr" className="text-xs text-muted-foreground truncate" title={url}>{url}</span>
+              <IconButton
+                label={t('copy_url')}
+                onClick={() => handleCopyUrl(url)}
+                className="-my-1.5 flex-shrink-0 text-muted-foreground"
+              >
+                <Copy className="w-3.5 h-3.5" />
+              </IconButton>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* iCal Subscriptions */}
       {icalSubscriptions.length > 0 && (
         <div className="mt-6 space-y-2">
-          <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
-            <Globe className="w-4 h-4 text-muted-foreground" />
-            {tSub('section_title')}
-          </h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              {tSub('section_title')}
+            </h4>
+            <TermInfo id="icalendar" />
+          </div>
           {icalSubscriptions.map((sub) => {
-            if (deletingSubId === sub.id) {
-              return (
-                <div key={sub.id} className="flex items-center gap-3 py-2.5 px-3 bg-destructive/5 rounded-md border border-destructive/20">
-                  <Trash2 className="w-4 h-4 text-destructive flex-shrink-0" />
-                  <p className="text-sm text-foreground flex-1">
-                    {tSub('confirm_delete', { name: sub.name })}
-                  </p>
-                  <button
-                    onClick={() => handleDeleteSubscription(sub.id)}
-                    disabled={isLoading}
-                    className="px-3 py-1 text-xs font-medium bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 disabled:opacity-50"
-                  >
-                    {t('delete')}
-                  </button>
-                  <button
-                    onClick={() => setDeletingSubId(null)}
-                    className="px-3 py-1 text-xs bg-muted text-foreground rounded-md hover:bg-accent"
-                  >
-                    {t('cancel')}
-                  </button>
-                </div>
-              );
-            }
-
             return (
               <div
                 key={sub.id}
@@ -884,7 +941,7 @@ export function CalendarManagementSettings() {
                   {(() => {
                     const safeUrl = redactUrlCredentials(sub.url);
                     return (
-                      <span className="text-xs text-muted-foreground truncate block" title={safeUrl}>
+                      <span dir="ltr" className="text-xs text-muted-foreground truncate block rtl:text-right" title={safeUrl}>
                         {safeUrl}
                       </span>
                     );
@@ -895,38 +952,60 @@ export function CalendarManagementSettings() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    type="button"
-                    onClick={() => setEditingSubscription(sub)}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                    title={tSub('edit')}
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
+                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100 transition-opacity">
+                  <IconButton label={tSub('edit')} onClick={() => setEditingSubscription(sub)} className="text-muted-foreground">
+                    <Pencil />
+                  </IconButton>
+                  <IconButton
+                    label={tSub('refresh')}
                     onClick={() => handleRefreshSubscription(sub.id)}
                     disabled={refreshingSubId === sub.id}
-                    className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-                    title={tSub('refresh')}
+                    className="text-muted-foreground"
                   >
-                    <RefreshCw className={cn("w-3.5 h-3.5", refreshingSubId === sub.id && "animate-spin")} />
-                  </button>
-                  <button
-                    type="button"
+                    <RefreshCw className={cn("w-4 h-4", refreshingSubId === sub.id && "animate-spin [animation-direction:reverse]")} />
+                  </IconButton>
+                  <IconButton
+                    label={tSub('unsubscribe')}
                     onClick={() => setDeletingSubId(sub.id)}
-                    className="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                    title={tSub('unsubscribe')}
+                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                    <Trash2 />
+                  </IconButton>
                 </div>
               </div>
             );
           })}
         </div>
       )}
+
+      {/* Not reversible, so each asks first (R3). */}
+      <ConfirmDialog
+        isOpen={!!deletingId}
+        onClose={() => setDeletingId(null)}
+        onConfirm={() => { if (deletingId) void handleDelete(deletingId); }}
+        title={tConfirm('delete_title')}
+        message={t('confirm_delete', { name: calName(calendars.find((cal) => cal.id === deletingId) ?? { name: '' }) })}
+        confirmText={t('delete')}
+        variant="destructive"
+      />
+      <ConfirmDialog
+        isOpen={!!clearingId}
+        onClose={() => setClearingId(null)}
+        onConfirm={() => { if (clearingId) void handleClear(clearingId); }}
+        title={tConfirm('clear_title')}
+        message={t('confirm_clear', { name: calName(calendars.find((cal) => cal.id === clearingId) ?? { name: '' }) })}
+        confirmText={t('clear_events')}
+        variant="destructive"
+      />
+      <ConfirmDialog
+        isOpen={!!deletingSubId}
+        onClose={() => setDeletingSubId(null)}
+        onConfirm={() => { if (deletingSubId) void handleDeleteSubscription(deletingSubId); }}
+        title={tConfirm('unsubscribe_title')}
+        message={tSub('confirm_delete', { name: icalSubscriptions.find((sub) => sub.id === deletingSubId)?.name ?? '' })}
+        confirmText={tSub('unsubscribe')}
+        variant="destructive"
+      />
 
       {showImportModal && client && (
         <ICalImportModal
@@ -958,7 +1037,7 @@ export function CalendarManagementSettings() {
           <ShareCollectionDialog
             client={client}
             kind="calendar"
-            collectionName={cal.name}
+            collectionName={calName(cal)}
             shareWith={cal.shareWith}
             ownAccountId={client.getAccountId()}
             onShare={async (principalId, rights) => {

@@ -1,15 +1,78 @@
+import type { ProAppTabKind } from "@/stores/pro-tab-store";
+
 export interface TourStep {
   id: string;
   target: string;
   titleKey: string;
   descriptionKey: string;
+  /** The text on a phone, where the layout it describes ("on the right") isn't there. */
+  phoneDescriptionKey?: string;
   placement: "top" | "bottom" | "left" | "right";
   interactive?: boolean;
   spotlight?: "rect" | "circle";
+  /** The app the step is in; none means Mail. */
   page?: string;
+  /**
+   * "reader": the step is in Mail's reading pane, which on a phone covers the
+   * list and the tab bar. Every other Mail step closes the reader there.
+   */
+  view?: "reader";
+  /** false: the target only exists in the rail or the folder drawer, so a phone never shows it. */
+  phone?: false;
   demoOnly?: boolean;
   beforeAction?: () => void;
 }
+
+/**
+ * The first element for the selector that the user can see: not in a closed
+ * drawer (inert), with a size, on screen sideways and not covered by
+ * something else (the open message over the phone's tab bar). The same anchor
+ * can exist twice (the rail and the phone's tab bar).
+ */
+export function findTourTarget(selector: string): Element | null {
+  for (const el of document.querySelectorAll(selector)) {
+    if (el.closest("[inert]")) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) continue;
+    if (r.right <= 0 || r.left >= window.innerWidth) continue;
+    if (isCovered(el, r)) continue;
+    return el;
+  }
+  return null;
+}
+
+/** Whether the middle of an on-screen element is under another element (the tour's own layers aside). */
+function isCovered(el: Element, r: DOMRect): boolean {
+  if (typeof document.elementsFromPoint !== "function") return false;
+  const x = r.left + r.width / 2;
+  const y = r.top + r.height / 2;
+  // Below or above the fold: scrolled into view before it is shown.
+  if (y < 0 || y > window.innerHeight || x < 0 || x > window.innerWidth) return false;
+  const top = document.elementsFromPoint(x, y).find((hit) => !hit.closest("[data-tour-layer]"));
+  return !!top && top !== el && !el.contains(top) && !top.contains(el);
+}
+
+/** The Pro tab that holds the app the step is about. */
+export function proTabOfTourStep(step: Pick<TourStep, "page" | "target">): ProAppTabKind | null {
+  // The composer has a tab of its own, which the step just opened.
+  if (step.target === COMPOSER_TARGET) return null;
+  const page = step.page?.replace(/^\//, "");
+  return page === "calendar" || page === "contacts" || page === "files" || page === "settings" ? page : "mail";
+}
+
+/** Whether the user is in the app the step is about. */
+export function isTourStepOnPage(step: Pick<TourStep, "page">, pathname: string): boolean {
+  const page = step.page && step.page !== "/" ? step.page : null;
+  if (!page) return pathname === "/" || pathname === "" || pathname === "/mail" || pathname.startsWith("/mail/");
+  return pathname === page || pathname.startsWith(page + "/");
+}
+
+/** Clicks the visible copy of a tour anchor (the phone's compose button, not the closed drawer's). */
+function clickTourTarget(selector: string): void {
+  (findTourTarget(selector) as HTMLElement | null)?.click();
+}
+
+const COMPOSER_TARGET = '[data-tour="composer"]';
 
 export const BASE_TOUR_STEPS: TourStep[] = [
   {
@@ -18,6 +81,7 @@ export const BASE_TOUR_STEPS: TourStep[] = [
     titleKey: "tour.sidebar_title",
     descriptionKey: "tour.sidebar_desc",
     placement: "right",
+    phone: false,
   },
   {
     id: "compose",
@@ -40,6 +104,7 @@ export const BASE_TOUR_STEPS: TourStep[] = [
     target: '[data-tour="email-list"]',
     titleKey: "tour.email_list_title",
     descriptionKey: "tour.email_list_desc",
+    phoneDescriptionKey: "tour.email_list_desc_phone",
     placement: "right",
   },
   {
@@ -48,6 +113,7 @@ export const BASE_TOUR_STEPS: TourStep[] = [
     titleKey: "tour.email_viewer_title",
     descriptionKey: "tour.email_viewer_desc",
     placement: "left",
+    view: "reader",
     beforeAction: () => {
       // Click the "Welcome to Loomix Mail!" email (or the first email) to open the viewer
       const emailList = document.querySelector('[data-tour="email-list"]');
@@ -72,6 +138,7 @@ export const BASE_TOUR_STEPS: TourStep[] = [
     titleKey: "tour.keywords_title",
     descriptionKey: "tour.keywords_desc",
     placement: "right",
+    phone: false,
   },
   {
     id: "nav-calendar",
@@ -107,16 +174,13 @@ export const BASE_TOUR_STEPS: TourStep[] = [
 export const DEMO_TOUR_STEPS: TourStep[] = [
   {
     id: "compose-open",
-    target: '[data-tour="composer"]',
+    target: COMPOSER_TARGET,
     titleKey: "tour.compose_open_title",
     descriptionKey: "tour.compose_open_desc",
     placement: "left",
+    view: "reader",
     demoOnly: true,
-    beforeAction: () => {
-      // Click the compose button to open the composer
-      const btn = document.querySelector('[data-tour="compose-button"]') as HTMLElement | null;
-      if (btn) btn.click();
-    },
+    beforeAction: () => clickTourTarget('[data-tour="compose-button"]'),
   },
   {
     id: "calendar-view",
@@ -146,17 +210,14 @@ export const DEMO_TOUR_STEPS: TourStep[] = [
     page: "/calendar",
     interactive: true,
     demoOnly: true,
-    beforeAction: () => {
-      // Click the create event button to open the modal
-      const btn = document.querySelector('[data-tour="create-event-button"]') as HTMLElement | null;
-      if (btn) btn.click();
-    },
+    beforeAction: () => clickTourTarget('[data-tour="create-event-button"]'),
   },
   {
     id: "contacts-list",
     target: '[data-tour="contacts-list"]',
     titleKey: "tour.contacts_list_title",
     descriptionKey: "tour.contacts_list_desc",
+    phoneDescriptionKey: "tour.contacts_list_desc_phone",
     placement: "right",
     page: "/contacts",
     demoOnly: true,
@@ -176,6 +237,8 @@ export const DEMO_TOUR_STEPS: TourStep[] = [
     titleKey: "tour.files_title",
     descriptionKey: "tour.files_desc",
     placement: "right",
+    // Shown over the Files app, pointing at its place in the rail or tab bar.
+    page: "/files",
     demoOnly: true,
   },
   {
@@ -184,7 +247,7 @@ export const DEMO_TOUR_STEPS: TourStep[] = [
     titleKey: "tour.demo_banner_title",
     descriptionKey: "tour.demo_banner_desc",
     placement: "bottom",
-    page: "/",
+    phone: false,
     demoOnly: true,
   },
   {
@@ -193,6 +256,7 @@ export const DEMO_TOUR_STEPS: TourStep[] = [
     titleKey: "tour.quota_title",
     descriptionKey: "tour.quota_desc",
     placement: "right",
+    phone: false,
     demoOnly: true,
   },
 ];
@@ -201,11 +265,23 @@ export function getTourSteps(options: {
   isDemoMode: boolean;
   supportsCalendar: boolean;
   supportsWebDAV: boolean;
+  /** Contacts available and allowed; defaults to true. */
+  supportsContacts?: boolean;
+  /** A touch screen: no keyboard to use the shortcuts with. */
+  touch?: boolean;
+  /** The phone layout: no rail, the folders in a drawer. */
+  phone?: boolean;
 }): TourStep[] {
   let steps = [...BASE_TOUR_STEPS];
 
   if (!options.supportsCalendar) {
     steps = steps.filter((s) => s.id !== "nav-calendar");
+  }
+  if (options.supportsContacts === false) {
+    steps = steps.filter((s) => s.id !== "nav-contacts");
+  }
+  if (options.touch) {
+    steps = steps.filter((s) => s.id !== "shortcuts");
   }
 
   if (options.isDemoMode) {
@@ -215,6 +291,10 @@ export function getTourSteps(options: {
       return true;
     });
     steps = [...steps, ...demoSteps];
+  }
+
+  if (options.phone) {
+    steps = steps.filter((s) => s.phone !== false);
   }
 
   return steps;

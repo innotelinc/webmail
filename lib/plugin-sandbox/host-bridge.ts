@@ -7,13 +7,23 @@
 // `event.source === iframe.contentWindow`. The iframe's runtime pins the
 // parent on the first inbound message.
 
-import type { InstalledPlugin, SlotName, PluginTier } from '../plugin-types';
+import type { HostFeaturesView, InstalledPlugin, SlotName, PluginTier } from '../plugin-types';
 import { dispatchApiCall } from './host-api';
-import { SANDBOX_PATH, SANDBOX_PRIVILEGED_PATH } from './protocol';
+import { SANDBOX_PATH, SANDBOX_PRIVILEGED_PATH, type RegionalSnapshot } from './protocol';
+export type { RegionalSnapshot };
 import { withBasePath } from '../browser-navigation';
 import { snapshotHostTheme, type ThemeSnapshot } from './host-theme';
+import { snapshotHostFeatures, watchHostFeatures } from './host-features';
+import { assistantFeatures } from './assistant';
+import { keystoreFeature } from './host-api-keystore';
 import { effectiveSettings } from '../plugin-settings';
 import { clampSlotHeight, clampSlotWidth, isInlineSlot, MAX_INLINE_SLOT_WIDTH } from './slot-layout';
+import { resolveDateLocale } from '../utils';
+import { tablesFor } from './plugin-i18n';
+import { getEffectiveTimeZone } from '../timezone';
+import { getEffectiveLocale } from '@/i18n/detect-locale';
+import { reportFrameActivity } from '@/lib/session-policy/frame-activity';
+import { useSettingsStore, type DateLocale } from '@/stores/settings-store';
 import type {
   SandboxToHost, HostToSandbox, InitMsg, InitPayload, StreamChunkMsg, StreamEndMsg, StreamProgressMsg,
   FloatingDropdownOpenMsg, FloatingDropdownUpdateMsg, FloatingDropdownCloseMsg,
@@ -140,12 +150,44 @@ function encodeCallbacks(
   return out;
 }
 
+// ─── Regional settings ───────────────────────────────────────
+
+/**
+ * Resolves the user's current regional formatting preferences (date locale,
+ * time format, effective time zone, first day of week) so sandboxed plugin
+ * runtimes can format dates and times consistently without needing
+ * privileged `settings:read` permissions or duplicating formatting logic.
+ */
+export function snapshotRegionalSettings(localeOverride?: string): RegionalSnapshot {
+  const appLocale = localeOverride ?? (typeof getEffectiveLocale === 'function' ? getEffectiveLocale() : 'en');
+  const settings = typeof useSettingsStore?.getState === 'function' ? useSettingsStore.getState() : ({} as Record<string, unknown>);
+  const dateLocale = resolveDateLocale(settings?.dateLocale as DateLocale | undefined, appLocale) ?? appLocale;
+  const hour12 = settings?.timeFormat === '12h';
+  const timeZone = typeof getEffectiveTimeZone === 'function'
+    ? getEffectiveTimeZone()
+    : (typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' : 'UTC');
+  const rawFirstDay = settings?.firstDayOfWeek;
+  const firstDayOfWeek: 0 | 1 | 6 = (rawFirstDay === 0 || rawFirstDay === 6 || rawFirstDay === 1)
+    ? rawFirstDay
+    : 1;
+
+  return {
+    locale: appLocale,
+    dateLocale,
+    hour12,
+    timeZone,
+    firstDayOfWeek,
+  };
+}
+
 // ─── Public option types ─────────────────────────────────────
 
 export interface BackgroundOptions {
   plugin: InstalledPlugin;
   code: string;
   locale: string;
+  /** Resolved presentation/regional preferences (time format, date locale, time zone). */
+  regional?: RegionalSnapshot;
   /** Resolved execution tier (from `resolvePluginTier`). */
   tier: PluginTier;
   /** Where the hidden iframe should attach. Defaults to document.body. */
@@ -157,6 +199,8 @@ export interface SlotOptions {
   slot: SlotName;
   code: string;
   locale: string;
+  /** Resolved presentation/regional preferences (time format, date locale, time zone). */
+  regional?: RegionalSnapshot;
   /** Resolved execution tier (from `resolvePluginTier`). */
   tier: PluginTier;
   extraProps: Record<string, unknown>;
@@ -212,6 +256,14 @@ function pushThemeToFrames(): void {
   }
 }
 
+/** Every frame hears about a Loomix feature that replaces plugins turning on or off. */
+function pushHostFeaturesToFrames(features: HostFeaturesView): void {
+  for (const instance of liveInstances) {
+    // Some of the assistant's flags depend on the plugin's grants (host-features.ts).
+    try { instance.setHostFeatures({ ...features, ...instance.ownHostFeatures() }); } catch { /* one broken iframe must not stop the rest */ }
+  }
+}
+
 function ensureThemeWatcher(): void {
   if (themeWatcher || typeof MutationObserver === 'undefined' || typeof document === 'undefined') return;
   let scheduled = false;
@@ -250,6 +302,14 @@ export class SandboxInstance {
   private rejectInit!: (err: Error) => void;
   private listener: (ev: MessageEvent) => void;
   private destroyed = false;
+  /** The frame has said sandbox-ready. */
+  private ready = false;
+  /** The runtime's activity reports (see ReadyMsg). */
+  private activityPort: MessagePort | null = null;
+  /** Own notification cleanup for exactly this sandbox frame. */
+  private readonly toastLifetime = new AbortController();
+  /** The frame has answered init-done: its hooks and slots are in place. */
+  private initialized = false;
 
   private pendingHookInvokes = new Map<string, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
   private pendingShouldShow = new Map<string, (show: boolean) => void>();
@@ -286,6 +346,8 @@ export class SandboxInstance {
       this.resolveInit = res;
       this.rejectInit = rej;
     });
+    // Nobody waits on a slot frame's init; its rejection is not an error.
+    this.initPromise.catch(() => {});
 
     this.iframe = document.createElement('iframe');
     // Privileged tier: same-origin in BOTH dev and prod so the iframe gets real
@@ -311,17 +373,29 @@ export class SandboxInstance {
     this.iframe.style.border = 'none';
     // The frame's document declares the theme's color-scheme (themeSnapshotToCSS).
     // When the iframe element's own color-scheme differs, the browser paints
-    // an opaque canvas behind the frame (white in a dark theme), so the two
-    // are always set together.
-    if (initPayload.mode === 'slot') this.iframe.style.colorScheme = initPayload.theme.dark ? 'dark' : 'light';
+    // an opaque canvas behind the frame (white in a dark theme). Until init,
+    // the document is about:blank and then the bare sandbox page, neither of
+    // which declares one, so a dark-theme panel showed white for the ~0.5 s a
+    // frame takes to boot. The frame stays hidden until init-done: by then it
+    // has applied the theme, and it has nothing to show any earlier. Later
+    // theme changes switch the element when the frame confirms them
+    // (theme-applied).
+    if (initPayload.mode === 'slot') {
+      this.iframe.style.colorScheme = initPayload.theme.dark ? 'dark' : 'light';
+      this.iframe.style.visibility = 'hidden';
+    }
     this.iframe.style.display = 'block';
     if (initPayload.mode === 'background') {
-      this.iframe.style.position = 'absolute';
+      // In the corner, 1px, invisible: far off to one side it widened a
+      // right-to-left page by as much, with blank space to scroll into.
+      this.iframe.style.position = 'fixed';
       this.iframe.style.width = '1px';
       this.iframe.style.height = '1px';
       this.iframe.style.opacity = '0';
       this.iframe.style.pointerEvents = 'none';
-      this.iframe.style.left = '-9999px';
+      this.iframe.style.left = '0px';
+      this.iframe.style.top = '0px';
+      this.iframe.tabIndex = -1;
       this.iframe.setAttribute('aria-hidden', 'true');
     } else if (this.inline) {
       // Starts at the widest it may get; the first resize shrinks it.
@@ -340,7 +414,10 @@ export class SandboxInstance {
     // "/plugin-sandbox" would hit the origin root and 404, breaking plugins.
     // Privileged plugins load the same-origin route so the CSP/allow-same-origin
     // pairing is consistent.
-    this.iframe.src = withBasePath(this.privileged ? SANDBOX_PRIVILEGED_PATH : SANDBOX_PATH);
+    // ?frame=slot: the document then loads React DOM and the UI kit with the
+    // runtime; a background frame never needs them (sandbox-document.ts).
+    this.iframe.src = withBasePath(this.privileged ? SANDBOX_PRIVILEGED_PATH : SANDBOX_PATH)
+      + (initPayload.mode === 'slot' ? '?frame=slot' : '');
 
     this.listener = (ev) => this.onMessage(ev);
     window.addEventListener('message', this.listener);
@@ -359,6 +436,7 @@ export class SandboxInstance {
     hostContainer.appendChild(this.iframe);
     liveInstances.add(this);
     if (this.mode === 'slot') ensureThemeWatcher();
+    watchHostFeatures(pushHostFeaturesToFrames);
 
     // Send init after the iframe runtime signals it's ready.
     this.readyPromise.then(() => {
@@ -399,14 +477,28 @@ export class SandboxInstance {
 
     switch (msg.type) {
       case 'sandbox-ready':
+        // Only the first one is the runtime's, posted before any plugin code
+        // ran; the plugin could post another, with a port of its own.
+        if (this.ready) return;
+        this.ready = true;
+        this.listenForActivity(ev.ports?.[0]);
         this.resolveReady();
         return;
 
       case 'init-done':
+        this.initialized = true;
+        if (this.mode === 'slot') this.iframe.style.visibility = '';
         this.resolveInit({ hooks: msg.hooks, slots: msg.slots, shortcuts: msg.shortcuts ?? [] });
         return;
 
+      case 'theme-applied':
+        if (this.mode === 'slot') this.iframe.style.colorScheme = msg.dark === true ? 'dark' : 'light';
+        return;
+
       case 'init-error':
+        // The loader reports a background frame's failure; nobody waits on a
+        // slot frame's init, so say it here or it fails without a trace.
+        if (this.mode === 'slot') console.error(`[plugin-sandbox] "${this.pluginId}" slot failed to start: ${msg.error}`);
         this.rejectInit(new Error(msg.error));
         return;
 
@@ -414,7 +506,7 @@ export class SandboxInstance {
         const { id, method, args } = msg;
         void (async () => {
           try {
-            const result = await dispatchApiCall(this.plugin, method, args ?? [], { privileged: this.privileged, sink: this });
+            const result = await dispatchApiCall(this.plugin, method, args ?? [], { privileged: this.privileged, sink: this, toastSignal: this.toastLifetime.signal, frame: this.mode });
             this.send({ type: 'api-response', id, ok: true, result });
           } catch (err) {
             this.send({ type: 'api-response', id, ok: false, error: (err as Error).message ?? String(err) });
@@ -460,6 +552,15 @@ export class SandboxInstance {
         return;
       }
 
+      case 'frame-escape': {
+        // Only for a dialog's own frame: elsewhere Escape in a frame means
+        // nothing to the host, and shouldn't close the message around it.
+        if (this.iframe.closest('[data-plugin-dialog], [data-plugin-dialog-popover]')) {
+          this.iframe.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+        }
+        return;
+      }
+
       case 'slot-resize': {
         // The iframe has no intrinsic height - sync it to the content height
         // the sandbox reported, otherwise the wrapper reserves space but the
@@ -488,11 +589,28 @@ export class SandboxInstance {
     }
   }
 
+  /**
+   * Input in the frame counts for the idle timeout like input in the host
+   * window. The runtime throttles its reports; the session timeout guard
+   * throttles again and decides what counts.
+   */
+  private listenForActivity(port: MessagePort | undefined): void {
+    if (!port) return;
+    this.activityPort = port;
+    port.onmessage = () => {
+      if (!this.destroyed) reportFrameActivity();
+    };
+  }
+
   // ─── Public ─────────────────────────────────────────────────
 
   /** Dispatch a hook handler inside the sandbox; resolves with its return value. */
   invokeHook(hookName: string, args: unknown[]): Promise<unknown> {
     if (this.destroyed) return Promise.reject(new Error('sandbox destroyed'));
+    // A plugin offering remembered slots is in the registry before its frame
+    // has booted; a click on one of its actions waits for it (a message
+    // posted before init is lost).
+    if (!this.initialized) return this.initPromise.then(() => this.invokeHook(hookName, args));
     const id = uid();
     const p = new Promise<unknown>((resolve, reject) => {
       // The bus gives up on a slow handler, but the entry used to stay here
@@ -518,6 +636,9 @@ export class SandboxInstance {
   /** Ask the background instance whether a slot should mount for this context. */
   evaluateShouldShow(slot: SlotName, context: unknown): Promise<boolean> {
     if (this.destroyed) return Promise.resolve(false);
+    if (!this.initialized) {
+      return this.initPromise.then(() => this.evaluateShouldShow(slot, context), () => false);
+    }
     const id = uid();
     const p = new Promise<boolean>((resolve) => {
       this.pendingShouldShow.set(id, resolve);
@@ -540,16 +661,45 @@ export class SandboxInstance {
     this.send(msg);
   }
 
-  setLocale(locale: string): void {
+  setLocale(locale: string, regional?: RegionalSnapshot): void {
     if (this.destroyed) return;
-    this.send({ type: 'locale-change', locale });
+    this.send({
+      type: 'locale-change',
+      locale,
+      regional: regional ?? snapshotRegionalSettings(locale),
+      locales: tablesFor(this.plugin.locales, locale),
+    });
   }
 
   /** Push a new resolved theme so the slot iframe re-injects its theme CSS. */
   setTheme(theme: ThemeSnapshot): void {
     if (this.destroyed) return;
-    this.iframe.style.colorScheme = theme.dark ? 'dark' : 'light';
+    // Before init the frame is not listening yet and the message was lost,
+    // so it booted with the theme of the moment it was created.
+    if (this.pendingInit?.mode === 'slot') {
+      this.pendingInit.theme = theme;
+      this.iframe.style.colorScheme = theme.dark ? 'dark' : 'light';
+      return;
+    }
+    // The element's color-scheme follows when the frame has applied the
+    // theme (theme-applied). Switching it first left a light document in a
+    // dark element for a frame or two: a white flash on every switch to dark.
     this.send({ type: 'theme-change', theme });
+  }
+
+  /** Push what api.host.features says now; before init it goes into the init payload. */
+  /** The flags of api.host.features that depend on this plugin. */
+  ownHostFeatures(): Partial<HostFeaturesView> {
+    return { ...assistantFeatures(this.plugin), ...keystoreFeature(this.plugin) };
+  }
+
+  setHostFeatures(features: HostFeaturesView): void {
+    if (this.destroyed) return;
+    if (this.pendingInit) {
+      this.pendingInit.hostFeatures = features;
+      return;
+    }
+    this.send({ type: 'host-change', features });
   }
 
   /** Push the plugin's current settings (see effectiveSettings). */
@@ -582,11 +732,21 @@ export class SandboxInstance {
     this.send(msg);
   }
 
+  /** True once destroy() ran. */
+  get closed(): boolean {
+    return this.destroyed;
+  }
+
   destroy(): void {
     if (this.destroyed) return;
     this.destroyed = true;
+    this.toastLifetime.abort();
+    // Whoever waits for init (the loader, calls held back below) stops waiting.
+    this.rejectInit(new Error('sandbox destroyed'));
     liveInstances.delete(this);
     window.removeEventListener('message', this.listener);
+    this.activityPort?.close();
+    this.activityPort = null;
     this.iframe.remove();
     for (const { reject } of this.pendingHookInvokes.values()) {
       reject(new Error('sandbox destroyed'));
@@ -637,11 +797,13 @@ export function createBackgroundInstance(opts: BackgroundOptions): SandboxInstan
       version: opts.plugin.version,
       permissions: opts.plugin.permissions,
       settings: effectiveSettings(opts.plugin),
-      locales: opts.plugin.locales,
+      locales: tablesFor(opts.plugin.locales, opts.locale),
       httpOrigins: opts.plugin.httpOrigins,
     },
     code: opts.code,
     locale: opts.locale,
+    regional: opts.regional ?? snapshotRegionalSettings(opts.locale),
+    hostFeatures: snapshotHostFeatures(opts.plugin),
   };
   return new SandboxInstance(
     opts.plugin,
@@ -663,13 +825,15 @@ export function createSlotInstance(opts: SlotOptions): SandboxInstance {
       version: opts.plugin.version,
       permissions: opts.plugin.permissions,
       settings: effectiveSettings(opts.plugin),
-      locales: opts.plugin.locales,
+      locales: tablesFor(opts.plugin.locales, opts.locale),
       httpOrigins: opts.plugin.httpOrigins,
     },
     extraProps: opts.extraProps,
     ...(opts.fill ? { fill: true } : {}),
     locale: opts.locale,
+    regional: opts.regional ?? snapshotRegionalSettings(opts.locale),
     theme: snapshotHostTheme(),
+    hostFeatures: snapshotHostFeatures(opts.plugin),
   };
   return new SandboxInstance(opts.plugin, payload, opts.hostContainer, opts.onResize, opts.onFloatingDropdown);
 }

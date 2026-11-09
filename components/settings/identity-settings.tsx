@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { SettingsSection, SettingItem, Select } from './settings-section';
 import { IdentityManagerModal } from '@/components/identity/identity-manager-modal';
+import { SignatureDetailsSection } from './signature-details-section';
 import { useIdentityStore } from '@/stores/identity-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import {
@@ -26,40 +27,35 @@ export function EmailAddressesSection() {
   const t = useTranslations('settings.identities');
   const tAccount = useTranslations('settings.account');
   const tEmail = useTranslations('settings.email_behavior');
+  const tAddr = useTranslations('uxs2_ident.addresses');
   const { identities } = useIdentityStore();
   const { subAddressDelimiter, updateSetting } = useSettingsStore();
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <SettingsSection id="addresses" title={tAccount('sections.addresses')} description={t('description')}>
-        {/* Identity Count */}
-        <SettingItem
-          label={t('identities_count.label')}
-          description={t('identities_count.description')}
-        >
+      {/* The section says what the addresses are; the row under it doesn't
+          say it again (settings-p2-18). No "identity": a developer word. */}
+      <SettingsSection id="addresses" title={tAccount('sections.addresses')} description={tAddr('description')}>
+        <SettingItem label={tAddr('label')}>
           <div className="flex items-center gap-2">
             <span className="text-sm text-foreground">
-              {identities.length === 0
-                ? t('identities_count.count_zero')
-                : identities.length === 1
-                ? t('identities_count.count_one')
-                : t('identities_count.count_other', { count: identities.length })}
+              {tAddr('count', { count: identities.length })}
             </span>
             <Button onClick={() => setShowModal(true)} size="sm">
-              {t('manage')}
+              {tAddr('manage')}
             </Button>
           </div>
         </SettingItem>
 
-        {/* Sub-Addressing Info */}
+        {/* Sub-Addressing Info: the description says it all. Its "Learn
+            more" opened the identity manager, which says nothing about it. */}
         <SettingItem
           label={t('sub_addressing.label')}
           description={t('sub_addressing.description')}
+          term="sub_addressing"
         >
-          <Button variant="outline" size="sm" onClick={() => setShowModal(true)}>
-            {t('sub_addressing.learn_more')}
-          </Button>
+          {null}
         </SettingItem>
 
         <SettingItem
@@ -101,12 +97,15 @@ export function EmailAddressesSection() {
                 }}
                 aria-label={tEmail('sub_address_delimiter.custom_input_label')}
                 placeholder={DEFAULT_CUSTOM_DELIMITER}
-                className="w-16 px-2 py-1 text-sm font-mono text-center bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-16 px-2 py-1 text-sm font-mono text-center bg-background border border-border rounded-md focus:outline-hidden"
               />
             )}
           </div>
         </SettingItem>
       </SettingsSection>
+
+      {/* The details the organisation signature asks for, if it asks. */}
+      <SignatureDetailsSection />
 
       {/* Identity Manager Modal */}
       <IdentityManagerModal

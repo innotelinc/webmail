@@ -5,12 +5,15 @@ import { logger } from '@/lib/logger';
 import { decryptSession } from '@/lib/auth/crypto';
 import { sessionCookieName } from '@/lib/auth/session-cookie';
 import { readStalwartAuthContextFromStore } from '@/lib/stalwart/auth-context';
-import { saveUserSettings, loadUserSettings, deleteUserSettings } from '@/lib/settings-sync';
+import { updateUserSettings, loadUserSettings, deleteUserSettings } from '@/lib/settings-sync';
 import { configManager } from '@/lib/admin/config-manager';
+import { resolvePolicy } from '@/lib/admin/policy-scopes';
 import { hasSessionSecret } from '@/lib/auth/session-secret';
 import { MAX_ACCOUNT_SLOTS } from '@/lib/account-utils';
 import { mergeStoredTemplates } from '@/lib/template-merge';
 import { mergeStoredSubscriptions } from '@/lib/calendar-subscription-sync';
+import { mergeStoredSettingStamps } from '@/lib/settings-sync-stamps';
+import { storedDataUnavailableResponse } from '@/lib/stored-data-errors';
 
 /** Largest settings blob a client may store (templates and signatures included). */
 const SETTINGS_MAX_BYTES = 2 * 1024 * 1024;
@@ -65,6 +68,16 @@ function isEnabled(): boolean {
 /** Strip trailing slashes so differently-formatted URLs still match. */
 function normalizeUrl(url: string): string {
   return url.replace(/\/+$/, '');
+}
+
+/**
+ * The server address settings are stored under. Identity matching ignores
+ * trailing slashes, so every extra one would key another blob of up to
+ * SETTINGS_MAX_BYTES on disk. Clients send the address with or without a
+ * single slash, and both keep the key they have always had.
+ */
+function storageServerUrl(url: string): string {
+  return url.replace(/\/{2,}$/, '/');
 }
 
 /**
@@ -124,12 +137,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const settings = await loadUserSettings(accountName, serverUrl);
+    const settings = await loadUserSettings(accountName, storageServerUrl(serverUrl));
     return NextResponse.json({ settings: settings || null });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     const code = (error as NodeJS.ErrnoException).code;
     logger.error('Settings load error', { error: message, code });
+    const unavailable = storedDataUnavailableResponse(error);
+    if (unavailable) return unavailable;
     const classified = classifyError(error);
     return NextResponse.json({ error: classified.message }, { status: classified.status });
   }
@@ -170,7 +185,9 @@ export async function POST(request: NextRequest) {
 
     // Enforce admin policy - strip locked settings so users can't override them
     await configManager.ensureLoaded();
-    const policy = configManager.getPolicy();
+    // With the account's domain scopes applied; group scopes need the
+    // account's session, which only the client has, so the client enforces those.
+    const policy = resolvePolicy(configManager.getPolicy(), { email: accountName, groups: [] }).policy;
     const filteredSettings = { ...settings };
     for (const key of Object.keys(filteredSettings)) {
       const restriction = policy.restrictions[key];
@@ -197,17 +214,26 @@ export async function POST(request: NextRequest) {
 
     // Templates and iCal subscriptions are merged into the stored blob rather
     // than replaced, so a stale tab or device cannot drop ones another added.
-    const stored = await loadUserSettings(accountName, serverUrl);
-    await saveUserSettings(
+    // A setting changed later on another device keeps that value (per-setting
+    // stamps). In one step against what is stored now: two saves at once (two
+    // tabs, two replicas) each keep the other's additions.
+    await updateUserSettings(
       accountName,
-      serverUrl,
-      mergeStoredSubscriptions(stored, mergeStoredTemplates(stored, filteredSettings)),
+      storageServerUrl(serverUrl),
+      (stored) => mergeStoredSubscriptions(
+        stored,
+        mergeStoredTemplates(stored, mergeStoredSettingStamps(stored, filteredSettings)),
+      ),
     );
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     const code = (error as NodeJS.ErrnoException).code;
     logger.error('Settings save error', { error: message, code });
+    // Stored settings that don't decrypt, or no store: write nothing, so
+    // the user's real settings survive and the client keeps its copy.
+    const unavailable = storedDataUnavailableResponse(error);
+    if (unavailable) return unavailable;
     const classified = classifyError(error);
     return NextResponse.json({ error: classified.message }, { status: classified.status });
   }
@@ -233,12 +259,14 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Identity mismatch' }, { status: 403 });
     }
 
-    await deleteUserSettings(accountName, serverUrl);
+    await deleteUserSettings(accountName, storageServerUrl(serverUrl));
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     const code = (error as NodeJS.ErrnoException).code;
     logger.error('Settings delete error', { error: message, code });
+    const unavailable = storedDataUnavailableResponse(error);
+    if (unavailable) return unavailable;
     const classified = classifyError(error);
     return NextResponse.json({ error: classified.message }, { status: classified.status });
   }

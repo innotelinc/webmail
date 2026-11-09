@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useId } from "react";
-import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
+import { askInWindow, dialogWindowsAvailable } from "@/lib/desktop/dialog-window";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { useDialogSurfaceContext } from "@/components/ui/dialog-surface";
 import { AlertTriangle } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +22,85 @@ interface ConfirmDialogProps {
   variant?: "default" | "destructive";
 }
 
+const noChanges = () => () => {};
+
+interface WindowConfirm {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  confirmText: string;
+  cancelText: string;
+  variant: "default" | "destructive";
+  onConfirm: () => void;
+  onClose: () => void;
+}
+
+/**
+ * Asks in a window of the app's own while `isOpen`, where the desktop shell can
+ * (lib/desktop/dialog-window.ts). True while it does, so the caller draws nothing; false
+ * in the browser, on an older shell, or once the shell refused, so the caller draws the
+ * in-page dialog. Closing it from the page (isOpen false, unmount) takes the window back.
+ */
+export function useConfirmInWindow({ isOpen, title, message, confirmText, cancelText, variant, onConfirm, onClose }: WindowConfirm): boolean {
+  const [refused, setRefused] = useState(false);
+  const handlers = useRef({ onConfirm, onClose });
+  useEffect(() => {
+    handlers.current = { onConfirm, onClose };
+  });
+  const available = useSyncExternalStore(noChanges, dialogWindowsAvailable, () => false);
+  // Asked from inside a dialog window: the Dialog below opens its window over that one,
+  // where the shell's question window would hang on the page behind.
+  const inSurface = useDialogSurfaceContext() !== null;
+  const asking = isOpen && !refused && available && !inSurface;
+
+  useEffect(() => {
+    if (!asking) return;
+    const destructive = variant === "destructive";
+    const asked = askInWindow({
+      title,
+      message,
+      ...(destructive ? { icon: "warning" as const } : {}),
+      buttons: [
+        { label: cancelText, variant: "secondary" },
+        { label: confirmText, variant: destructive ? "destructive" : "primary" },
+      ],
+      // Enter says yes, except to something that can't be undone: there the focus starts on Cancel.
+      defaultIndex: destructive ? 0 : 1,
+    });
+    if (!asked) return;
+    let live = true;
+    void asked.answer.then((answer) => {
+      if (!live) return;
+      live = false;
+      if (answer === "failed") {
+        setRefused(true);
+        return;
+      }
+      if (answer && "button" in answer && answer.button === 1) {
+        try {
+          handlers.current.onConfirm();
+        } finally {
+          handlers.current.onClose();
+        }
+      } else {
+        handlers.current.onClose();
+      }
+    });
+    return () => {
+      if (!live) return;
+      live = false;
+      asked.cancel();
+    };
+  }, [asking, title, message, confirmText, cancelText, variant]);
+
+  // The next question tries the window again.
+  useEffect(() => {
+    if (!isOpen) setRefused(false);
+  }, [isOpen]);
+
+  return asking;
+}
+
 export function ConfirmDialog({
   isOpen,
   onClose,
@@ -32,68 +113,40 @@ export function ConfirmDialog({
   variant = "default",
 }: ConfirmDialogProps) {
   const t = useTranslations("confirm_dialog");
-  const id = useId();
-
-  const dialogRef = useFocusTrap({
-    isActive: isOpen,
-    onEscape: onClose,
-    restoreFocus: true,
-  });
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleBackdropClick = (e: MouseEvent) => {
-      if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("mousedown", handleBackdropClick);
-    return () => document.removeEventListener("mousedown", handleBackdropClick);
-  }, [isOpen, onClose, dialogRef]);
-
-  if (!isOpen) return null;
 
   const resolvedConfirmText = confirmText || t("confirm");
   const resolvedCancelText = cancelText || t("cancel");
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center z-[60] p-4 animate-in fade-in duration-150">
-      <div
-        ref={dialogRef}
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby={`${id}-title`}
-        aria-describedby={`${id}-message`}
-        className="bg-background border border-border rounded-lg shadow-xl w-full max-w-md animate-in zoom-in-95 duration-200"
-      >
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            {variant === "destructive" && (
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-destructive" />
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <h2
-                id={`${id}-title`}
-                className="text-lg font-semibold text-foreground"
-              >
-                {title}
-              </h2>
-              <p
-                id={`${id}-message`}
-                className="mt-2 text-sm text-muted-foreground"
-              >
-                {message}
-              </p>
-              {details}
-            </div>
-          </div>
-        </div>
+  // In the desktop app a plain question (no rich details) gets a window of its own.
+  const inWindow = useConfirmInWindow({
+    isOpen: isOpen && details == null,
+    title,
+    message,
+    confirmText: resolvedConfirmText,
+    cancelText: resolvedCancelText,
+    variant,
+    onConfirm,
+    onClose,
+  });
+  if (inWindow) return null;
 
-        <div className="flex items-center justify-end gap-3 px-6 pb-6">
+  return (
+    <Dialog
+      isOpen={isOpen}
+      onClose={onClose}
+      role="alertdialog"
+      title={title}
+      description={message}
+      showClose={false}
+      icon={
+        variant === "destructive" ? (
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 text-destructive" />
+          </div>
+        ) : undefined
+      }
+      footer={
+        <>
           <Button variant="outline" onClick={onClose}>
             {resolvedCancelText}
           </Button>
@@ -112,8 +165,10 @@ export function ConfirmDialog({
           >
             {resolvedConfirmText}
           </Button>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      {details}
+    </Dialog>
   );
 }

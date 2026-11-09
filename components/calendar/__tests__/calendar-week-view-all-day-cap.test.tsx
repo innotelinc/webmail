@@ -107,7 +107,7 @@ describe('CalendarWeekView all-day and tasks height cap', () => {
       ],
     });
 
-    const toggle = screen.getByRole('button', { name: /all-day-expand/i });
+    const toggle = screen.getByRole('button', { name: /events.show_more|events.show_less/ });
     expect(toggle).toBeInTheDocument();
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
 
@@ -137,7 +137,7 @@ describe('CalendarWeekView all-day and tasks height cap', () => {
       ],
     });
 
-    expect(screen.queryByRole('button', { name: /all-day-expand/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /events.show_more|events.show_less/ })).toBeNull();
     expect(document.querySelector('[data-testid="all-day-grid"]')).toBeNull();
   });
 
@@ -156,7 +156,7 @@ describe('CalendarWeekView all-day and tasks height cap', () => {
 
     const allDayGrid = document.querySelector<HTMLElement>('[data-testid="all-day-grid"]');
     expect(allDayGrid?.style.height).toBe('28px');
-    expect(screen.queryByRole('button', { name: /all-day-expand/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: /events.show_more|events.show_less/ })).toBeNull();
   });
 
   it('resizes the all-day area when scrolling to a crowded week (#1293)', async () => {
@@ -183,6 +183,23 @@ describe('CalendarWeekView all-day and tasks height cap', () => {
 
     const allDayGrid = await screen.findByTestId('all-day-grid');
     expect(allDayGrid.style.height).toBe('76px');
-    expect(screen.getByRole('button', { name: /all-day-expand/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /events.show_more|events.show_less/ })).toBeInTheDocument();
+  });
+});
+
+describe('CalendarWeekView column width', () => {
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+
+  // Rounded down, the columns left a few pixels at the edge, where next Monday showed through.
+  it('fills the pane with exactly seven columns when the width does not divide evenly', () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1000);
+    renderView();
+    const columns = document.querySelector<HTMLElement>('[style*="grid-template-columns"]')!;
+    const colWidth = parseFloat(/([\d.]+)px/.exec(columns.style.gridTemplateColumns)![1]);
+    // 1000px less the 56px hour gutter
+    expect(colWidth * 7).toBeCloseTo(944, 1);
   });
 });

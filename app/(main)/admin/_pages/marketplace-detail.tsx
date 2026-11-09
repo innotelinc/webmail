@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   ArrowUpCircle,
   Download,
@@ -28,6 +28,7 @@ import { apiFetch } from '@/lib/browser-navigation';
 import { compareVersions, isVersionSatisfied } from '@/lib/version-compare';
 import type { MarketplaceListing } from '@/lib/admin/marketplace-directory';
 import { adminPath } from '@/lib/admin/admin-nav';
+import { declaredPermissions, HIGH_RISK_PERMISSIONS } from '@/lib/plugin-sandbox/permission-text';
 import { cn } from '@/lib/utils';
 import { SettingsSection } from '@/components/settings/settings-section';
 import { Button } from '@/components/ui/button';
@@ -35,8 +36,16 @@ import { AdminPageHeader } from '@/components/admin/page-header';
 import { AdminLink } from '@/components/admin/admin-link';
 import { AdminButtonLink } from '@/components/admin/button-link';
 import { Badge } from '@/components/admin/badge';
-import { Flash, useFlash } from '@/components/admin/flash-message';
+import { ScreenshotGallery } from '@/components/admin/screenshot-gallery';
+import { useAdminFeedback } from '@/components/admin/feedback';
 import { installVersion } from './marketplace';
+import { offerToTurnOnPlugins, turnOnNote, type TurnOnOutcome } from './turn-on-plugins';
+import { pluginTypeLabel } from './plugin-type-label';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
+import { scrollBehavior } from '@/lib/reduced-motion';
+import { ChangelogBadges, ChangelogEntries, ChangelogNotes, type ChangelogFlags } from '@/components/admin/changelog';
+import { versionsBetween } from '@/lib/admin/changelog-range';
 
 const CURRENT_APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0';
 
@@ -51,6 +60,7 @@ interface VersionRow {
   sha256: string;
   yanked: { at: string; reason: string | null } | null;
   changelog: string | null;
+  notes: ChangelogFlags | null;
   downloads: number;
   signed: boolean;
   commit: string | null;
@@ -90,6 +100,8 @@ interface PreviewData {
   requestedVersionMissing: string | null;
   bundle: {
     manifest: Record<string, unknown> | null;
+    /** What this version asks for that the installed one doesn't. */
+    addedPermissions?: string[];
     source: { name: string; content: string; truncated: boolean } | null;
     size: number;
     error: string | null;
@@ -129,13 +141,15 @@ const tdClass = 'px-4 py-2 align-top';
 const smallButtonClass = 'h-8 gap-1 text-xs';
 
 export function MarketplaceDetailPage({ slug }: { slug: string }) {
+  const { dialogProps: confirmProps, confirm } = useConfirmDialog();
+  const pageRef = useRef<HTMLDivElement>(null);
 
   const [data, setData] = useState<PreviewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [uninstalling, setUninstalling] = useState(false);
-  const [message, setMessage] = useFlash();
+  const setMessage = useAdminFeedback();
   const [showSource, setShowSource] = useState(false);
   const [showManifest, setShowManifest] = useState(false);
   // The version being previewed, from the install link (?version=) or a row
@@ -177,6 +191,9 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
     window.history.replaceState(null, '', url.toString());
     setSelected(version);
     setMessage(null);
+    // What a pick changes is at the top: the notices and the install button.
+    // From a row of the versions table it would all happen out of sight.
+    pageRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
   }
 
   async function handleInstall(version: string) {
@@ -184,7 +201,7 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
     const isUpdate = data.installed;
     setBusy(`install:${version}`);
     setMessage(null);
-    const result = await installVersion({ slug: data.extension.slug, version, type: data.extension.type });
+    const result = await installVersion({ slug: data.extension.slug, version, type: data.extension.type }, confirm);
     setBusy(null);
     if (!result.ok) {
       setMessage({ type: 'error', text: result.error });
@@ -192,18 +209,25 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
     }
     const warnings = result.warnings.length ? ` (${result.warnings.length} warning${result.warnings.length === 1 ? '' : 's'})` : '';
     const signed = result.signature === 'verified' ? ', signed by the directory' : '';
+    const outcome: TurnOnOutcome = !isUpdate && data.extension.type === 'plugin' ? await offerToTurnOnPlugins(confirm) : 'already-on';
     setMessage({
       type: 'success',
       text: isUpdate
         ? `"${data.extension.name}" is now v${version}${signed}${warnings}`
-        : `"${data.extension.name}" installed (v${version})${signed}${warnings}`,
+        : `"${data.extension.name}" installed (v${version})${signed}${warnings}.${turnOnNote(outcome)}`,
     });
     fetchPreview(selected ?? null);
   }
 
   async function handleRollback(version: string) {
     if (!data) return;
-    if (!confirm(`Put v${version} of "${data.extension.name}" back in place of v${data.installedVersion}? The copy kept on this server is used; the directory is not asked.`)) return;
+    const ok = await confirm({
+      title: `Roll back to v${version}?`,
+      message: `"${data.extension.name}" v${version} replaces v${data.installedVersion}. The copy kept on this server is used; the directory is not asked.`,
+      confirmText: 'Roll back',
+      cancelText: 'Cancel',
+    });
+    if (!ok) return;
     setBusy(`rollback:${version}`);
     setMessage(null);
     try {
@@ -228,7 +252,14 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
 
   async function handleUninstall() {
     if (!data) return;
-    if (!confirm(`Remove "${data.extension.name}"? Its kept versions are removed too; this cannot be undone.`)) return;
+    const ok = await confirm({
+      title: `Remove "${data.extension.name}"?`,
+      message: 'The versions kept on this server are removed too. This cannot be undone.',
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
+      variant: 'destructive',
+    });
+    if (!ok) return;
 
     setUninstalling(true);
     setMessage(null);
@@ -282,8 +313,10 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
   const bundle = data.bundle;
   const preview = data.preview;
   const isPlugin = ext.type === 'plugin';
-  const manifestPerms = (bundle.manifest?.permissions as string[] | undefined) || preview && ext.versions.find((v) => v.version === preview.version)?.permissions || ext.permissions || [];
+  // Optional permissions are granted like the others, so they count here too.
+  const manifestPerms = bundle.manifest ? declaredPermissions(bundle.manifest) : (preview && ext.versions.find((v) => v.version === preview.version)?.permissions) || ext.permissions || [];
   const permissionText = new Map(ext.permissionDetails.map((p) => [p.id, p]));
+  const addedPermissions = new Set(bundle.addedPermissions ?? []);
   const frameOrigins = (bundle.manifest?.frameOrigins as string[] | undefined) || [];
   const settingsSchema = bundle.manifest?.settingsSchema as Record<string, { type: string; label: string; description?: string; default?: unknown }> | undefined;
 
@@ -293,6 +326,15 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
     ? compareVersions(preview.version, data.installedVersion)
     : 0;
   const installedRow = data.installedVersion ? ext.versions.find((v) => v.version === data.installedVersion) ?? null : null;
+  // The notes for the previewed version: everything an update to it brings,
+  // or everything going back to it undoes, or just its own.
+  const comparing = !!preview && data.installed && !!data.installedVersion && !previewIsInstalled;
+  const changeRows = !preview ? []
+    : comparing ? versionsBetween(ext.versions, data.installedVersion!, preview.version, data.channel)
+      : ext.versions.filter((v) => v.version === preview.version);
+  const changesTitle = !comparing ? `Changelog of v${preview?.version}`
+    : previewDirection > 0 ? `What's new since v${data.installedVersion}`
+      : `What going back to v${preview!.version} undoes`;
   const suspended = ext.status === 'suspended';
   const historyVersions = new Set(data.history.map((h) => h.version));
   const canInstallPreview = !!preview && !bundle.error && previewFits && !suspended && bundle.signature?.status !== 'invalid';
@@ -313,7 +355,7 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
   const updateAvailable = data.installed && !!ext.latest && !!data.installedVersion && compareVersions(ext.latest.version, data.installedVersion) > 0;
 
   return (
-    <div>
+    <div ref={pageRef}>
       <AdminPageHeader
         back={BACK}
         leading={(
@@ -345,7 +387,7 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
         )}
         description={(
           <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <Badge tone={isPlugin ? 'info' : 'accent'}>{isPlugin ? (ext.pluginType || 'plugin') : 'theme'}</Badge>
+            <Badge tone={isPlugin ? 'info' : 'accent'}>{isPlugin ? pluginTypeLabel(ext.pluginType) : 'Theme'}</Badge>
             {ext.author && (
               <span className="inline-flex items-center gap-1">
                 by {ext.author.displayName}
@@ -413,7 +455,7 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
         </div>
       )}
 
-      <Flash message={message} onDismiss={() => setMessage(null)} />
+      <ConfirmDialog {...confirmProps} />
 
       <div className="mb-6 space-y-3 empty:hidden">
         {data.requestedVersionMissing && (
@@ -513,13 +555,26 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
           </div>
         </SettingsSection>
 
+        {ext.screenshots.length > 0 && (
+          <SettingsSection id="screenshots" title="Screenshots">
+            <ScreenshotGallery images={ext.screenshots} name={ext.name} />
+          </SettingsSection>
+        )}
+
+        {changeRows.some((r) => r.changelog) && (
+          <SettingsSection id="changes" title={changesTitle}>
+            <ChangelogEntries entries={changeRows.map((r) => ({ version: r.version, publishedAt: r.publishedAt, changelog: r.changelog, notes: r.notes ?? undefined }))} />
+          </SettingsSection>
+        )}
+
         <SettingsSection
           id="versions"
           title="Versions"
           description="Every published version. Versions this server still has a copy of can be put back without the directory."
         >
-          <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-sm">
+          {/* relative: the header's sr-only text is absolute, and only a positioned scroller clips it. Left free, it widens a phone's layout viewport and every dialog goes with it. */}
+          <div className="relative overflow-x-auto rounded-lg border border-border">
+            <table className="w-full min-w-[40rem] text-sm">
               <thead>
                 <tr className="border-b border-border">
                   <th className={thClass}>Version</th>
@@ -544,8 +599,14 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
                           <code className="font-mono text-xs text-foreground">v{v.version}</code>
                           {v.channel === 'beta' && <Badge tone="info">beta</Badge>}
                           {v.signed && <ShieldCheck className="h-3 w-3 text-muted-foreground" aria-label="signed" />}
+                          <ChangelogBadges flags={v.notes ?? undefined} />
                         </div>
-                        {v.changelog && <p className="mt-0.5 line-clamp-2 max-w-xs whitespace-pre-wrap text-xs text-muted-foreground">{v.changelog}</p>}
+                        {v.changelog && (
+                          <details className="mt-1 max-w-md">
+                            <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">Changelog</summary>
+                            <ChangelogNotes markdown={v.changelog} className="mt-1.5" />
+                          </details>
+                        )}
                       </td>
                       <td className={cn(tdClass, 'whitespace-nowrap text-xs text-muted-foreground')}>{fmtDate(v.publishedAt)}</td>
                       <td className={cn(tdClass, 'whitespace-nowrap text-xs text-muted-foreground')}>
@@ -623,22 +684,6 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
           </div>
         </SettingsSection>
 
-        {ext.screenshots.length > 0 && (
-          <SettingsSection id="screenshots" title="Screenshots">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {ext.screenshots.map((s, i) => (
-                <img
-                  key={i}
-                  src={s.url}
-                  alt={s.altText || `Screenshot ${i + 1}`}
-                  className="w-full rounded-md border border-border bg-muted"
-                  loading="lazy"
-                />
-              ))}
-            </div>
-          </SettingsSection>
-        )}
-
         {!isPlugin && ext.themePreviews.length > 0 && (
           <SettingsSection id="theme-preview" title="Theme preview">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -662,13 +707,13 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
             title="Permissions"
             description={manifestPerms.length === 0
               ? 'This plugin requests no permissions.'
-              : `What ${preview ? `v${preview.version}` : 'the plugin'} may do in each user's mailbox.`}
+              : `What ${ext.name}${preview ? ` ${preview.version}` : ''} may do in each user's mailbox.`}
           >
             {manifestPerms.length > 0 && (
               <ul className="space-y-1.5">
                 {manifestPerms.map(perm => {
                   const text = permissionText.get(perm);
-                  const risky = text?.highRisk || RISKY_PERMISSIONS.has(perm);
+                  const risky = text?.highRisk || RISKY_PERMISSIONS.has(perm) || HIGH_RISK_PERMISSIONS.has(perm);
                   return (
                     <li
                       key={perm}
@@ -684,6 +729,7 @@ export function MarketplaceDetailPage({ slug }: { slug: string }) {
                         <div className="flex flex-wrap items-center gap-2">
                           {text && <span className="font-medium">{text.title}</span>}
                           <code className="font-mono text-xs opacity-80">{perm}</code>
+                          {addedPermissions.has(perm) && <Badge tone="warning">New in this version</Badge>}
                         </div>
                         {text?.body && <p className="mt-0.5 text-xs opacity-90">{text.body}</p>}
                       </div>

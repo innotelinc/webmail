@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Share2, Users } from "@/components/icons";
-import { cn } from "@/lib/utils";
+import { cn, formatFileSize } from "@/lib/utils";
 import { getEffectiveTimeZone } from "@/lib/timezone";
+import { getEffectiveLocale } from "@/i18n/detect-locale";
+import { useSettingsStore } from "@/stores/settings-store";
 import type { FileResource } from "@/stores/file-store";
-import { getFileIconByName, getFolderIcon, isImageFile, type FileIconSize } from "@/components/files/file-icons";
+import { getFileIconByName, getFolderIcon, getSymlinkIcon, isImageFile, type FileIconSize } from "@/components/files/file-icons";
 
 /** How list and grid items draw their icon, from Settings > Files. */
 export interface IconOptions {
@@ -24,6 +27,7 @@ const thumbnailCache = new Map<string, Promise<string>>();
 export function canShowThumbnail(resource: FileResource, options: IconOptions): boolean {
   return options.showThumbnails
     && !resource.isDirectory
+    && !resource.isSymlink
     && !!resource.blobId
     && isImageFile(resource.name)
     && resource.contentLength <= MAX_THUMBNAIL_BYTES;
@@ -83,16 +87,17 @@ export function Thumbnail({ resource, getImageUrl, className, wrapperClassName, 
   );
 }
 
-/** A folder or file icon, or nothing when icons are turned off. */
+/** A folder, symlink or file icon, or nothing when icons are turned off. */
 export function ResourceIcon({ resource, size, options }: {
   resource: FileResource;
   size: FileIconSize;
   options: Pick<IconOptions, "showIcons" | "coloredIcons">;
 }) {
+  const t = useTranslations("files");
   if (!options.showIcons) return null;
-  return resource.isDirectory
-    ? getFolderIcon(size, options.coloredIcons)
-    : getFileIconByName(resource.name, size, options.coloredIcons);
+  if (resource.isDirectory) return getFolderIcon(size, options.coloredIcons);
+  if (resource.isSymlink) return getSymlinkIcon(size, t("symlink"));
+  return getFileIconByName(resource.name, size, options.coloredIcons);
 }
 
 // A node shared out by the user (shareWith has entries) or a node shared
@@ -121,17 +126,33 @@ export function ShareBadge({ resource, t, className }: {
   return null;
 }
 
+/**
+ * A size that keeps its number before its unit ("6.7 KB") in a right-to-left
+ * layout too, where the bidi algorithm would otherwise show "KB 6.7".
+ */
+export function FileSize({ bytes }: { bytes: number }) {
+  return <bdi dir="ltr">{formatFileSize(bytes)}</bdi>;
+}
+
+/** Dates follow the app's language and 12/24-hour setting, as Mail's list does, not the browser's. */
+function dateLocale(): { locale: string; hour12: boolean } {
+  const locale = getEffectiveLocale();
+  return { locale: locale === "en" ? "en-US" : locale, hour12: useSettingsStore.getState().timeFormat === "12h" };
+}
+
 /** Full date and time, for tooltips and the details panel. */
 export function formatFullDate(value: string): string {
   if (!value) return "";
   try {
-    return new Date(value).toLocaleString(undefined, {
+    const { locale, hour12 } = dateLocale();
+    return new Date(value).toLocaleString(locale, {
       timeZone: getEffectiveTimeZone(),
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12,
     });
   } catch {
     return value;
@@ -146,12 +167,13 @@ export function formatShortDate(value: string, now = new Date()): string {
   const timeZone = getEffectiveTimeZone();
   const dayKey = (d: Date) => d.toLocaleDateString("en-CA", { timeZone });
   try {
+    const { locale, hour12 } = dateLocale();
     if (dayKey(date) === dayKey(now)) {
-      return date.toLocaleTimeString(undefined, { timeZone, hour: "2-digit", minute: "2-digit" });
+      return date.toLocaleTimeString(locale, { timeZone, hour: "2-digit", minute: "2-digit", hour12 });
     }
     const sameYear = date.toLocaleDateString("en-CA", { timeZone, year: "numeric" })
       === now.toLocaleDateString("en-CA", { timeZone, year: "numeric" });
-    return date.toLocaleDateString(undefined, {
+    return date.toLocaleDateString(locale, {
       timeZone,
       day: "numeric",
       month: "short",
@@ -181,15 +203,30 @@ export function readDraggedNames(e: React.DragEvent): string[] {
   }
 }
 
-/** Open a shared context menu as a dropdown under a button. */
-export function anchorEvent(el: HTMLElement, align: "start" | "end" = "start"): React.MouseEvent {
-  const rect = el.getBoundingClientRect();
-  const rtl = typeof document !== "undefined" && document.dir === "rtl";
-  const alignEnd = (align === "end") !== rtl;
-  return {
-    clientX: alignEnd ? rect.right - 200 : rect.left,
-    clientY: rect.bottom + 4,
-    preventDefault: () => {},
-    stopPropagation: () => {},
-  } as unknown as React.MouseEvent;
+/**
+ * A file name split for cutting in the middle: the start gives way, the end
+ * stays, so "IMG_20250611_1003.png" reads "IMG_20250…1003.png" and the
+ * extension and the part that tells similar names apart stay in view. Short
+ * names and folders' names (no extension) keep a shorter tail.
+ */
+export function splitNameForMiddleCut(name: string): { head: string; tail: string } {
+  const dot = name.lastIndexOf(".");
+  const ext = dot > 0 && name.length - dot <= 10 ? name.slice(dot) : "";
+  const tailLength = Math.min(ext.length + 4, Math.floor(name.length / 2));
+  if (name.length < 12 || tailLength <= 0) return { head: name, tail: "" };
+  return { head: name.slice(0, name.length - tailLength), tail: name.slice(name.length - tailLength) };
+}
+
+/**
+ * A name cut in the middle when there is no room (pim-21). The whole name is
+ * the title; screen readers read it as one text.
+ */
+export function MiddleCutName({ name, title, className }: { name: string; title?: string; className?: string }) {
+  const { head, tail } = splitNameForMiddleCut(name);
+  return (
+    <span className={cn("flex min-w-0", className)} title={title ?? name} dir="auto">
+      <span className="truncate whitespace-pre">{head}</span>
+      {tail && <span className="shrink-0 whitespace-pre">{tail}</span>}
+    </span>
+  );
 }

@@ -6,6 +6,9 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useTemplateStore } from '@/stores/template-store';
 import { useIdentityStore } from '@/stores/identity-store';
 import { useVacationStore } from '@/stores/vacation-store';
+import { usePolicyStore } from '@/stores/policy-store';
+import { emptyPartition, useAccountTemplatesStore } from '@/stores/account-templates-store';
+import { DEFAULT_POLICY } from '../admin/types';
 import { HIGH_RISK_PERMISSIONS } from '../plugin-sandbox/permission-text';
 import { clearAllHooks, identityHooks } from '../plugin-hooks';
 
@@ -44,6 +47,10 @@ beforeEach(() => {
       subject: 'Away', textBody: 'Back in June', htmlBody: null,
     })),
     setVacationResponse: vi.fn(async () => undefined),
+    // The out-of-office calendar sync (lib/vacation-calendar.ts) reads the
+    // account and skips servers without calendars.
+    getAccountId: vi.fn(() => 'acc1'),
+    supportsCalendars: vi.fn(() => false),
   };
   useAuthStore.setState({ client: client as unknown as IJMAPClient });
   useTemplateStore.setState({ templates: [greeting], recentTemplateIds: [], deletedTemplateIds: {} });
@@ -53,7 +60,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  useAuthStore.setState({ client: null });
+  useAuthStore.setState({ client: null, activeAccountId: null });
+  useAccountTemplatesStore.setState({ personal: {} });
+  usePolicyStore.setState({ policy: DEFAULT_POLICY });
   useTemplateStore.setState({ templates: [], deletedTemplateIds: {} });
   useIdentityStore.setState({ identities: [] });
   useVacationStore.getState().clearState();
@@ -98,6 +107,33 @@ describe('api.templates', () => {
     await expect(call(ALL, 'templates.update', 'nope', { name: 'x' })).rejects.toThrow(/no template with id "nope"/);
     useTemplateStore.setState({ templates: Array.from({ length: 500 }, (_, i) => ({ ...greeting, id: `t${i}` })) });
     await expect(call(ALL, 'templates.create', { name: 'one more' })).rejects.toThrow(/already 500 templates/);
+  });
+});
+
+describe('api.templates and organisation settings', () => {
+  it('works on the account\'s own copy when the account keeps its templates (Stalwart 1.0)', async () => {
+    const inAccount = { ...greeting, id: 'acc-1', name: 'In the account' };
+    useAuthStore.setState({ activeAccountId: 'ann@mail' });
+    useAccountTemplatesStore.setState({ personal: { 'ann@mail': { ...emptyPartition(), templates: [inAccount] } } });
+    expect((await call(ALL, 'templates.list') as Array<{ name: string }>).map((t) => t.name)).toEqual(['In the account']);
+    const created = await call(ALL, 'templates.create', { name: 'From a plugin' }) as { id: string };
+    await call(ALL, 'templates.update', 'acc-1', { subject: 'Changed' });
+    await call(ALL, 'templates.delete', created.id);
+    const copy = useAccountTemplatesStore.getState().personal['ann@mail'];
+    expect(copy.templates.map((t) => t.subject)).toEqual(['Changed']);
+    expect(copy.deletedTemplateIds).toHaveProperty(created.id);
+    // The browser's list is left alone.
+    expect(useTemplateStore.getState().templates.map((t) => t.id)).toEqual(['tpl-1']);
+  });
+
+  it('shows and accepts nothing when the admin hid personal templates', async () => {
+    usePolicyStore.setState({ policy: { ...DEFAULT_POLICY, restrictions: { personalTemplates: { hidden: true } } } });
+    expect(await call(ALL, 'templates.list')).toEqual([]);
+    expect(await call(ALL, 'templates.get', 'tpl-1')).toBeNull();
+    await expect(call(ALL, 'templates.create', { name: 'x' })).rejects.toThrow(/turned personal templates off/);
+    await expect(call(ALL, 'templates.update', 'tpl-1', { name: 'x' })).rejects.toThrow(/turned personal templates off/);
+    await expect(call(ALL, 'templates.delete', 'tpl-1')).rejects.toThrow(/turned personal templates off/);
+    expect(useTemplateStore.getState().templates.map((t) => t.name)).toEqual(['Greeting']);
   });
 });
 
@@ -149,6 +185,8 @@ describe('api.vacation', () => {
   it('reads the reply', async () => {
     expect(await call(READ_ONLY, 'vacation.get')).toEqual({
       isEnabled: true, subject: 'Away', textBody: 'Back in June', htmlBody: '', fromDate: null, toDate: '2026-06-01T00:00:00Z',
+      // No forward is set up for the out-of-office.
+      forwardActive: false,
     });
   });
 

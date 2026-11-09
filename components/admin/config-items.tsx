@@ -3,6 +3,7 @@
 import { useId, type ReactNode } from 'react';
 import { RotateCcw } from '@/components/icons';
 import { SettingItem, ToggleSwitch } from '@/components/settings/settings-section';
+import type { GlossaryId } from '@/components/ui/term';
 import { cn } from '@/lib/utils';
 import { Badge } from './badge';
 
@@ -16,7 +17,7 @@ export type ConfigSource = 'admin' | 'env' | 'default';
 
 export const inputClass =
   'h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground ' +
-  'hover:border-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring ' +
+  'hover:border-muted-foreground focus-visible:outline-hidden focus-visible:border-ring ' +
   'disabled:cursor-not-allowed disabled:opacity-50 transition-colors';
 
 export function SourceBadge({ source, label }: { source?: string; label?: string }) {
@@ -52,6 +53,8 @@ interface ConfigItemBase {
   /** Rows that only matter in unusual setups, hidden behind the Advanced switch. */
   advanced?: boolean;
   disabled?: boolean;
+  /** A technical term in the label that gets an info button with its explanation. */
+  term?: GlossaryId;
 }
 
 interface ConfigTextItemProps extends ConfigItemBase {
@@ -63,10 +66,10 @@ interface ConfigTextItemProps extends ConfigItemBase {
   wide?: boolean;
 }
 
-export function ConfigTextItem({ label, description, configKey, value, source, onChange, onRevert, placeholder, type = 'text', mono, wide, advanced, disabled }: ConfigTextItemProps) {
+export function ConfigTextItem({ label, description, configKey, value, source, onChange, onRevert, placeholder, type = 'text', mono, wide, advanced, disabled, term }: ConfigTextItemProps) {
   const id = useId();
   return (
-    <SettingItem label={label} description={description} advanced={advanced}>
+    <SettingItem label={label} description={description} advanced={advanced} term={term}>
       <div className="flex w-full items-center gap-1.5 sm:w-auto">
         <SourceBadge source={source} />
         <input
@@ -91,9 +94,9 @@ interface ConfigToggleItemProps extends ConfigItemBase {
   value: boolean | undefined | null;
 }
 
-export function ConfigToggleItem({ label, description, configKey, value, source, onChange, onRevert, advanced, disabled }: ConfigToggleItemProps) {
+export function ConfigToggleItem({ label, description, configKey, value, source, onChange, onRevert, advanced, disabled, term }: ConfigToggleItemProps) {
   return (
-    <SettingItem label={label} description={description} advanced={advanced}>
+    <SettingItem label={label} description={description} advanced={advanced} term={term}>
       <div className="flex items-center gap-1.5">
         <SourceBadge source={source} />
         <ToggleSwitch checked={!!value} disabled={disabled} onChange={(checked) => onChange(configKey, checked)} />
@@ -108,10 +111,10 @@ interface ConfigSelectItemProps extends ConfigItemBase {
   options: ReadonlyArray<string | { value: string; label: string }>;
 }
 
-export function ConfigSelectItem({ label, description, configKey, value, source, options, onChange, onRevert, advanced, disabled }: ConfigSelectItemProps) {
+export function ConfigSelectItem({ label, description, configKey, value, source, options, onChange, onRevert, advanced, disabled, term }: ConfigSelectItemProps) {
   const normalized = options.map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
   return (
-    <SettingItem label={label} description={description} advanced={advanced}>
+    <SettingItem label={label} description={description} advanced={advanced} term={term}>
       <div className="flex items-center gap-1.5">
         <SourceBadge source={source} />
         <select
@@ -138,7 +141,7 @@ export function ConfigNote({ tone = 'info', children }: { tone?: 'info' | 'warni
       className={cn(
         'rounded-md px-3 py-2.5 text-xs leading-relaxed',
         tone === 'warning'
-          ? 'border-s-2 border-amber-400 bg-amber-50 text-amber-800 dark:border-amber-600 dark:bg-amber-950/30 dark:text-amber-300'
+          ? 'start-bar ps-3.5 [--start-bar-width:2px] [--start-bar:var(--color-amber-400)] bg-amber-50 text-amber-800 dark:[--start-bar:var(--color-amber-600)] dark:bg-amber-950/30 dark:text-amber-300'
           : 'bg-muted/50 text-muted-foreground',
       )}
     >

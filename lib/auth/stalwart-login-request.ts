@@ -38,6 +38,8 @@ export interface StalwartLoginRequest {
   codeChallenge: string;
   /** Echoed back in 1.0's redirect location. */
   state: string;
+  /** Defaults to STALWART_LOGIN_SCOPE. */
+  scope?: string;
 }
 
 export function stalwartLoginBody(req: StalwartLoginRequest): Record<string, unknown> {
@@ -46,7 +48,7 @@ export function stalwartLoginBody(req: StalwartLoginRequest): Record<string, unk
     client_id: req.clientId,
     redirect_uri: req.redirectUri,
     state: req.state,
-    scope: STALWART_LOGIN_SCOPE,
+    scope: req.scope || STALWART_LOGIN_SCOPE,
     code_challenge: req.codeChallenge,
     code_challenge_method: 'S256',
   });
@@ -124,7 +126,7 @@ export function readStalwartLoginResponse(body: unknown, state: string): Stalwar
 }
 
 /**
- * Redirect URI of the client Bulwark registers at a Stalwart 1.0 that knows
+ * Redirect URI of the client Loomix registers at a Stalwart 1.0 that knows
  * none of its own (see {@link stalwartClientRegistration}). No browser is ever
  * sent there: /api/auth hands the redirect location back in its answer and
  * the code is read from it. 1.0 lets a public client register only a loopback
@@ -133,7 +135,7 @@ export function readStalwartLoginResponse(body: unknown, state: string): Stalwar
 export const STALWART_LOOPBACK_REDIRECT_URI = 'http://127.0.0.1/bulwark-webmail/callback';
 
 /**
- * Body of the RFC 7591 registration (POST /auth/register) of Bulwark as a
+ * Body of the RFC 7591 registration (POST /auth/register) of Loomix as a
  * public client, which Stalwart 1.0 accepts without credentials. Its client
  * ids are stateless, sealed with the server's key: the same metadata registers
  * to the same id again, so nothing has to be stored or cleaned up. Tokens for
@@ -143,7 +145,7 @@ export const STALWART_LOOPBACK_REDIRECT_URI = 'http://127.0.0.1/bulwark-webmail/
  */
 export function stalwartClientRegistration(): Record<string, unknown> {
   return {
-    client_name: 'Bulwark Webmail',
+    client_name: 'Loomix Mail',
     redirect_uris: [STALWART_LOOPBACK_REDIRECT_URI],
     token_endpoint_auth_method: 'none',
     grant_types: ['authorization_code', 'refresh_token'],

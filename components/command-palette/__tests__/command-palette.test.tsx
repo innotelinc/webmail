@@ -53,6 +53,9 @@ describe('command palette', () => {
     const input = screen.getByRole('combobox');
     expect(input).toHaveFocus();
     expect(input).toHaveAttribute('aria-controls', screen.getByRole('listbox').id);
+    // The field fills the header of a dialog that clips its overflow: the
+    // focus outline goes inside it, or the dialog cuts its top edge off.
+    expect(input).toHaveClass('focus-inset');
 
     act(() => { fireEvent.keyDown(input, { key: 'Escape' }); });
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -88,12 +91,67 @@ describe('command palette', () => {
     render(<CommandPaletteHost />);
     pressCtrlK();
 
-    const labels = screen.getAllByRole('option').map((o) => o.textContent);
+    // The label, without the key hint after it.
+    const labels = screen.getAllByRole('option').map((o) => o.querySelector('.flex-1')?.textContent);
     expect(labels).toContain('go_to(mail)');
     expect(labels).toContain('go_to(settings)');
     expect(labels).toContain('compose');
     expect(labels).toContain('shortcuts');
     expect(screen.queryByText('group_plugins')).toBeNull();
+  });
+
+  it("shows Mail's c and / hints only in Mail, where those keys compose and search", () => {
+    const hint = (label: string) => {
+      const row = screen.getAllByRole('option').find((o) => o.querySelector('.flex-1')?.textContent === label)!;
+      return [...row.querySelectorAll('kbd')].map((k) => k.textContent).join(' ');
+    };
+    const { unmount } = render(<CommandPaletteHost />);
+    pressCtrlK();
+    expect(hint('compose')).toBe('c');
+    expect(hint('search')).toBe('/');
+    unmount();
+
+    // Calendar has its own c (new event) and / (search events).
+    nav.pathname = '/calendar/week/2026-10-28';
+    render(<CommandPaletteHost />);
+    pressCtrlK();
+    expect(hint('compose')).toBe('');
+    expect(hint('search')).toBe('');
+  });
+
+  it('shows no single-key hints while single-key shortcuts are off, since those keys do nothing then', async () => {
+    const { useSettingsStore } = await import('@/stores/settings-store');
+    const hint = (label: string) => {
+      const row = screen.getAllByRole('option').find((o) => o.querySelector('.flex-1')?.textContent === label)!;
+      return [...row.querySelectorAll('kbd')].map((k) => k.textContent).join(' ');
+    };
+    useSettingsStore.setState({ singleKeyShortcuts: false });
+    try {
+      render(<CommandPaletteHost />);
+      pressCtrlK();
+      expect(hint('compose')).toBe('');
+      expect(hint('shortcuts')).toBe('');
+    } finally {
+      useSettingsStore.setState({ singleKeyShortcuts: true });
+    }
+  });
+
+  it('names the account Sign out leaves, as the account menu does', async () => {
+    const { useAccountStore } = await import('@/stores/account-store');
+    const before = useAccountStore.getState().accounts;
+    useAccountStore.setState({ accounts: [
+      { id: 'a1', email: 'one@example.org', username: 'one@example.org' },
+      { id: 'a2', email: 'two@example.org', username: 'two@example.org' },
+    ] } as never);
+    useAuthStore.setState({ activeAccountId: 'a2' } as never);
+    try {
+      render(<CommandPaletteHost />);
+      pressCtrlK();
+      expect(screen.getByText('sign_out_of(two@example.org)')).toBeInTheDocument();
+      expect(screen.queryByText('sign_out')).toBeNull();
+    } finally {
+      useAccountStore.setState({ accounts: before } as never);
+    }
   });
 
   it('shows plugin entries with the plugin name and runs them with Enter', async () => {
@@ -161,7 +219,7 @@ describe('command palette', () => {
     expect(appCommands.peekParkedAppCommand()).toBe('compose');
   });
 
-  it('switches the theme and shows the keyboard shortcuts', () => {
+  it('switches the theme and shows the keyboard shortcuts', async () => {
     useThemeStore.setState({ resolvedTheme: 'light' } as never);
     const setTheme = vi.fn();
     useThemeStore.setState({ setTheme } as never);
@@ -172,7 +230,8 @@ describe('command palette', () => {
 
     pressCtrlK();
     act(() => { fireEvent.click(screen.getByRole('option', { name: 'shortcuts' })); });
-    expect(screen.getByText('shortcuts help')).toBeInTheDocument();
+    // The help's code comes with its first open.
+    expect(await screen.findByText('shortcuts help')).toBeInTheDocument();
   });
 
   it('offers no theme switch while the theme policy locks the color mode (#1280)', () => {
@@ -181,5 +240,75 @@ describe('command palette', () => {
     pressCtrlK();
     expect(screen.queryByRole('option', { name: /^theme_/ })).toBeNull();
     expect(screen.getByRole('option', { name: 'shortcuts' })).toBeInTheDocument();
+  });
+});
+
+describe('command palette on a phone', () => {
+  const realMatchMedia = window.matchMedia;
+  beforeEach(() => {
+    window.matchMedia = ((query: string) => ({
+      matches: query === '(pointer: coarse)',
+      media: query, onchange: null,
+      addListener: () => {}, removeListener: () => {}, addEventListener: () => {}, removeEventListener: () => {},
+      dispatchEvent: () => false,
+    })) as unknown as typeof window.matchMedia;
+  });
+  afterEach(() => { window.matchMedia = realMatchMedia; });
+
+  it('has a close button, as it fills the screen with nothing to tap around it', () => {
+    render(<CommandPaletteHost />);
+    act(() => appCommands.openCommandPalette());
+    act(() => { fireEvent.click(screen.getByRole('button', { name: 'close' })); });
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('offers no keyboard shortcuts on a touch screen', () => {
+    render(<CommandPaletteHost />);
+    act(() => appCommands.openCommandPalette());
+    expect(screen.queryByRole('option', { name: 'shortcuts' })).toBeNull();
+    expect(screen.getByRole('option', { name: 'compose' })).toBeInTheDocument();
+  });
+});
+
+describe('command palette and plugin pages', () => {
+  it('goes to a plugin page like to the built-in apps', async () => {
+    const pages = await import('@/lib/plugin-sandbox/pages');
+    act(() => pages.setPluginPages('kanban', 'Kanban', [{ id: 'board', title: 'Board' }]));
+    render(<CommandPaletteHost />);
+    pressCtrlK();
+    act(() => { fireEvent.click(screen.getByRole('option', { name: /go_to\(Board\)/ })); });
+    expect(nav.push).toHaveBeenCalledWith('/apps/kanban/board');
+    pages.resetPages();
+  });
+});
+
+// MO-04 / MO-05: "?" opens the help, except with single-key shortcuts off or
+// with a menu or dialog open.
+describe('the ? key', () => {
+  const pressQuestion = () =>
+    act(() => { fireEvent.keyDown(document.body, { key: '?', code: 'Slash', shiftKey: true }); });
+
+  it('opens the shortcuts help', () => {
+    render(<CommandPaletteHost />);
+    pressQuestion();
+    expect(screen.getByText('shortcuts help')).toBeInTheDocument();
+  });
+
+  it('does nothing with single-key shortcuts off', async () => {
+    const { useSettingsStore } = await import('@/stores/settings-store');
+    useSettingsStore.setState({ singleKeyShortcuts: false });
+    try {
+      render(<CommandPaletteHost />);
+      pressQuestion();
+      expect(screen.queryByText('shortcuts help')).toBeNull();
+    } finally {
+      useSettingsStore.setState({ singleKeyShortcuts: true });
+    }
+  });
+
+  it('does nothing while a menu is open', () => {
+    render(<><div role="menu" /><CommandPaletteHost /></>);
+    pressQuestion();
+    expect(screen.queryByText('shortcuts help')).toBeNull();
   });
 });

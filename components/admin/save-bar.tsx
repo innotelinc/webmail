@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Loader2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+import { useBottomControls } from '@/hooks/use-bottom-controls';
 import { useAdminShell } from './shell-context';
 
 interface AdminSaveBarProps {
@@ -13,7 +14,7 @@ interface AdminSaveBarProps {
   /** Drops the edits; without it the bar offers only Save. */
   onDiscard?: () => void;
   saveLabel?: string;
-  /** What the save does, e.g. "Users see the change on their next login". */
+  /** What the save does, e.g. "Users get the change within 15 minutes". */
   note?: ReactNode;
 }
 
@@ -21,9 +22,12 @@ interface AdminSaveBarProps {
  * The one place a page saves from. It appears at the bottom of the panel
  * while something is unsaved (through the shell's portal host, so it sits
  * below the scrolling content and above the mobile rail) and takes Ctrl+S.
+ * It registers as a bottom bar, so toasts sit above it instead of over its
+ * buttons.
  */
 export function AdminSaveBar({ dirty, saving = false, onSave, onDiscard, saveLabel = 'Save changes', note }: AdminSaveBarProps) {
   const host = useAdminShell()?.saveBarHost ?? null;
+  const barRef = useBottomControls(dirty);
 
   useEffect(() => {
     if (!dirty) return;
@@ -41,6 +45,7 @@ export function AdminSaveBar({ dirty, saving = false, onSave, onDiscard, saveLab
 
   const bar = (
     <div
+      ref={barRef}
       role="region"
       aria-label="Unsaved changes"
       data-testid="admin-save-bar"

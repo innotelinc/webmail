@@ -5,19 +5,32 @@ import { headers } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { FaviconBadge } from "@/components/favicon-badge";
+import { ErrorReportingRoot } from "@/components/error/error-reporting-root";
 import { ThemeColorSync } from "@/components/theme-color-sync";
 import { IosViewportHeal } from "@/components/ios-viewport-heal";
 import { configManager } from "@/lib/admin/config-manager";
 import {
+  brandPaletteCss,
   matchDomainBranding,
   parseDomainBranding,
   pickRequestHost,
   type BrandingOverrideKey,
 } from "@/lib/admin/domain-branding";
 import { withBasePath } from "@/lib/browser-navigation";
+import { loginBackdropAttributes, loginBackdropCss, resolveLoginBackdrop, type LoginBackdrop } from "@/lib/login-backdrop";
 import { locales, defaultLocale } from "@/i18n/routing";
 import { IS_LITE, LITE_MOUNT_GLOBAL } from "@/lib/lite";
+import { accessibilityBootScript } from "@/lib/accessibility-settings";
+import { bootSkeletonScript } from "@/lib/boot-skeleton/boot-script";
+import { WindowControlsHost } from "@/components/layout/window-controls-host";
 import "../globals.css";
+import "../print.css";
+import "../desktop.css";
+import { desktopBootScript } from "@/lib/desktop/boot";
+import { appLockBootScript } from "@/lib/app-lock/state";
+import { signedOutStartScript } from "@/lib/signed-out-start";
+import "../app-lock.css";
+import "../login.css";
 
 // This layout renders <html> and sits ABOVE the [locale] segment, so
 // next-intl's getLocale() returns the default locale here - emitting
@@ -64,6 +77,31 @@ async function brandedValue(key: BrandingOverrideKey, fallback: string): Promise
   return configManager.get<string>(key, fallback);
 }
 
+/** The requesting host's colour palette (DOMAIN_BRANDING `palette`) as CSS. */
+async function brandPaletteStyle(): Promise<string> {
+  const host = pickRequestHost(await headers());
+  const entry = matchDomainBranding(
+    host,
+    parseDomainBranding(configManager.get<unknown>("domainBranding", [])),
+  );
+  return brandPaletteCss(entry.palette);
+}
+
+/** The login page's layout and background for the requesting host. */
+async function loginBackdrop(): Promise<LoginBackdrop> {
+  const host = pickRequestHost(await headers());
+  const entry = matchDomainBranding(
+    host,
+    parseDomainBranding(configManager.get<unknown>("domainBranding", [])),
+  );
+  return resolveLoginBackdrop((key) => {
+    const override = entry[key as BrandingOverrideKey];
+    if (typeof override === "string" && override.length > 0) return override;
+    const value = configManager.get<unknown>(key, "");
+    return typeof value === "string" ? value : "";
+  });
+}
+
 /**
  * Whether an admin explicitly set a PWA theme colour (per-domain override, or
  * an admin/env value rather than the built-in default). When they have, it wins
@@ -99,16 +137,11 @@ async function requestOrigin(): Promise<URL | null> {
   const proto = forwardedProto === "http" || forwardedProto === "https" ? forwardedProto : "https";
 
   // A proxy (and Next's own dev server) may carry the port separately, leaving
-  // X-Forwarded-Host portless. Re-attach it unless it's the default for the scheme,
-  // or it is the port this process listens on: Next itself fills X-Forwarded-Port
-  // with that port for a request no proxy fronted, and behind a proxy that sends
-  // no port of its own (NPM) it would otherwise put the container's 3000 into
-  // every absolute URL and link preview.
+  // X-Forwarded-Host portless. Re-attach it unless it's the default for the scheme.
   if (!authority.includes(":")) {
     const port = first("x-forwarded-port");
     const isDefaultPort = (proto === "https" && port === "443") || (proto === "http" && port === "80");
-    const isInternalPort = port === (process.env.PORT || "3000");
-    if (/^\d+$/.test(port) && !isDefaultPort && !isInternalPort) authority += `:${port}`;
+    if (/^\d+$/.test(port) && !isDefaultPort) authority += `:${port}`;
   }
 
   try {
@@ -120,11 +153,11 @@ async function requestOrigin(): Promise<URL | null> {
 
 /** App name, resolved exactly like app/manifest.ts so <head> and manifest agree. */
 async function brandedAppName(): Promise<string> {
-  if (IS_LITE) return process.env.NEXT_PUBLIC_APP_NAME || "Loomix Mail";
+  if (IS_LITE) return process.env.NEXT_PUBLIC_APP_NAME || "Webmail";
   return (
     (await brandedValue("appName", "")) ||
     process.env.NEXT_PUBLIC_APP_NAME ||
-    "Loomix Mail"
+    "Webmail"
   );
 }
 
@@ -142,7 +175,7 @@ export async function generateViewport(): Promise<Viewport> {
     width: "device-width",
     initialScale: 1,
     viewportFit: "cover",
-    themeColor: (await brandedValue("pwaThemeColor", "")) || "#4f46e5",
+    themeColor: (await brandedValue("pwaThemeColor", "")) || "#ffffff",
   };
 }
 
@@ -161,11 +194,6 @@ async function liteMetadata(): Promise<Metadata> {
     applicationName: appName,
     robots: { index: false, follow: false },
     manifest: withBasePath("/manifest.webmanifest"),
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "black-translucent",
-      title: appName,
-    },
     formatDetection: {
       telephone: false,
     },
@@ -231,11 +259,6 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: [withBasePath("/api/og-image")],
     },
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "black-translucent",
-      title: appName,
-    },
     formatDetection: {
       telephone: false,
     },
@@ -272,33 +295,48 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const parentOrigin = process.env.NEXT_PUBLIC_PARENT_ORIGIN || "";
-
+  let parentOrigin: string;
   let locale: string;
   let nonce: string | undefined;
   let themeColorConfigured: boolean;
+  let paletteCss = "";
+  let backdropCss = "";
+  let backdropAttrs: Record<string, string> = {};
   if (IS_LITE) {
     // Static export: no request, no nonce, no admin config.
+    parentOrigin = process.env.NEXT_PUBLIC_PARENT_ORIGIN || "";
     locale = defaultLocale;
     nonce = undefined;
     themeColorConfigured = false;
   } else {
     await configManager.ensureLoaded();
+    // Admin setting, then NEXT_PUBLIC_PARENT_ORIGIN, read per request. The
+    // iframe bridge only posts to the origin named in this meta tag.
+    parentOrigin = configManager.get<string>("parentOrigin", "") || "";
     locale = await resolveRequestLocale();
     nonce = (await headers()).get("x-nonce") ?? "";
     themeColorConfigured = await hasExplicitThemeColor();
+    paletteCss = await brandPaletteStyle();
+    const backdrop = await loginBackdrop();
+    backdropCss = loginBackdropCss(backdrop, withBasePath);
+    backdropAttrs = loginBackdropAttributes(backdrop);
   }
   const appName = await brandedAppName();
 
   return (
-    <html lang={locale} dir={getLocaleDirection(locale)} suppressHydrationWarning>
+    <html lang={locale} dir={getLocaleDirection(locale)} {...backdropAttrs} suppressHydrationWarning>
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content={appName} />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         {parentOrigin && (
           <meta name="parent-origin" content={parentOrigin} />
+        )}
+        {paletteCss && (
+          <style id="brand-palette" nonce={nonce} dangerouslySetInnerHTML={{ __html: paletteCss }} />
+        )}
+        {backdropCss && (
+          <style id="login-backdrop" nonce={nonce} dangerouslySetInnerHTML={{ __html: backdropCss }} />
         )}
         <script
           nonce={nonce}
@@ -306,6 +344,9 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {${IS_LITE ? liteLocaleBootstrap() : ""}
+                ${desktopBootScript()}
+                ${IS_LITE ? "" : appLockBootScript()}
+                ${IS_LITE ? "" : signedOutStartScript(process.env.NEXT_PUBLIC_BASE_PATH ?? "")}
                 try {
                   const stored = localStorage.getItem('theme-storage');
                   const theme = stored ? JSON.parse(stored).state.theme : 'system';
@@ -313,9 +354,12 @@ export default async function RootLayout({
                   const resolved = theme === 'system' ? systemTheme : theme;
                   document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(resolved);
+                  document.documentElement.style.colorScheme = resolved;
                 } catch (e) {
                   document.documentElement.classList.add('light');
                 }
+                ${accessibilityBootScript()}
+                ${bootSkeletonScript()}
               })();
             `,
           }}
@@ -325,8 +369,10 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${hankenGrotesk.variable} antialiased`}
       >
         <ServiceWorkerRegistration />
+        <WindowControlsHost />
         {!themeColorConfigured && <ThemeColorSync />}
         <FaviconBadge />
+        <ErrorReportingRoot />
         <IosViewportHeal />
         {children}
       </body>

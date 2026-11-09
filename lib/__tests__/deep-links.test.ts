@@ -13,6 +13,7 @@ import {
   buildContactsPath,
   parseContactsPath,
   buildFilesPath,
+  buildSharedFilesPath,
   parseFilesPath,
   buildSettingsPath,
   parseSettingsPath,
@@ -184,6 +185,16 @@ describe('mail paths', () => {
     expect(parseMailPath(['thread', 't1'])).toEqual({ kind: 'thread', id: 't1', accountId: undefined });
   });
 
+  it("reads a notification's reply flag on a message link, and only there", () => {
+    expect(parseMailPath(['message', 'm1'], new URLSearchParams('slot=1&owner=a&reply=1'))).toMatchObject({
+      kind: 'message', id: 'm1', slot: 1, ownerAccountId: 'a', reply: true,
+    });
+    expect(parseMailPath(['message', 'm1'], new URLSearchParams('reply=0'))).not.toHaveProperty('reply');
+    expect(parseMailPath(['message', 'm1'])).not.toHaveProperty('reply');
+    expect(parseMailPath(['folder', 'inbox'], new URLSearchParams('reply=1'))).not.toHaveProperty('reply');
+    expect(parseMailPath(['thread', 't1'], new URLSearchParams('reply=1'))).not.toHaveProperty('reply');
+  });
+
   it('reads the fullscreen marker on message links', () => {
     expect(parseMailPath(['message', 'm1'], new URLSearchParams('view=fullscreen'))).toEqual({
       kind: 'message',
@@ -239,6 +250,24 @@ describe('mail paths', () => {
   it('carries the account disambiguator', () => {
     const link = parseMailPath(['message', 'm1'], new URLSearchParams('account=acc-2'));
     expect(link).toEqual({ kind: 'message', id: 'm1', accountId: 'acc-2' });
+  });
+
+  // Email ids repeat across accounts: a link to a shared account's message
+  // names that account, or it opens the own message with the same id (#1351).
+  it('names the account owning a message or conversation outside the own one', () => {
+    const message = buildMailPath({ mailboxId: null, emailId: 'm1', threadId: null, ownerAccountId: 'cn', loginId: 'bob@x', fullscreen: true });
+    expect(message).toBe('/mail/message/m1?account=bob%40x&owner=cn&view=fullscreen');
+    const [, query] = message.split('?');
+    expect(parseMailPath(['message', 'm1'], new URLSearchParams(query))).toEqual({
+      kind: 'message', id: 'm1', accountId: 'bob@x', ownerAccountId: 'cn', fullscreen: true,
+    });
+    expect(buildMailPath({ mailboxId: null, emailId: null, threadId: 't1', ownerAccountId: 'cn' })).toBe('/mail/thread/t1?owner=cn');
+    expect(parseMailPath(['thread', 't1'], new URLSearchParams('owner=cn'))).toEqual({
+      kind: 'thread', id: 't1', accountId: undefined, ownerAccountId: 'cn',
+    });
+    // Only a message link opens fullscreen; a folder link names no owner.
+    expect(buildMailPath({ mailboxId: null, emailId: null, threadId: 't1', fullscreen: true })).toBe('/mail/thread/t1');
+    expect(buildMailPath({ mailboxId: 'c', emailId: null, threadId: null, ownerAccountId: 'cn' }, MAILBOXES)).toBe('/mail/folder/c');
   });
 
   it('still understands the legacy ?email= notification link', () => {
@@ -333,6 +362,17 @@ describe('files paths', () => {
     expect(buildFilesPath('/Documents', 'report.pdf')).toBe('/files/Documents?preview=report.pdf');
     expect(parseFilesPath(['Documents'], new URLSearchParams('preview=report.pdf')))
       .toEqual({ path: '/Documents', preview: 'report.pdf' });
+  });
+
+  it('names a node of a shared drive by id, since it has no path under the user\'s root', () => {
+    const link = buildSharedFilesPath('owner1:n5', 'Q3 plan.pdf');
+    expect(link).toBe('/files?shared=owner1%3An5&preview=Q3%20plan.pdf');
+    const [, query] = link.split('?');
+    expect(parseFilesPath([], new URLSearchParams(query)))
+      .toEqual({ path: '/', preview: 'Q3 plan.pdf', shared: 'owner1:n5' });
+    // An owner's page of files shared on their own.
+    expect(parseFilesPath([], new URLSearchParams(buildSharedFilesPath('owner1:*').split('?')[1])))
+      .toEqual({ path: '/', preview: undefined, shared: 'owner1:*' });
   });
 });
 
