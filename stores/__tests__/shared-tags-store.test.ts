@@ -55,13 +55,13 @@ function member(server: FakeServer, options: { type?: string | null; advertised?
     getAccountInfo: vi.fn(() => ({ isPersonal: false })),
     getPrincipalTypes: vi.fn(async (ids: string[]) =>
       options.type === null ? null : Object.fromEntries(ids.map((id) => [id, options.type ?? 'group']))),
-    advertisesBulwarkMetadata: vi.fn(() => options.advertised !== false),
-    supportsBulwarkMetadata: vi.fn(() => options.advertised !== false && !paused),
-    getBulwarkMetadata: vi.fn(async () => {
+    advertisesLoomixMetadata: vi.fn(() => options.advertised !== false),
+    supportsLoomixMetadata: vi.fn(() => options.advertised !== false && !paused),
+    getLoomixMetadata: vi.fn(async () => {
       if (server.failReads) { paused = true; return null; }
       return server.namespace ? { tags: structuredClone(server.namespace) } : {};
     }),
-    patchBulwarkMetadata: vi.fn(async (_id: string | undefined, _key: string, patches: Array<{ path: string[]; value: unknown }>) => server.patch(patches)),
+    patchLoomixMetadata: vi.fn(async (_id: string | undefined, _key: string, patches: Array<{ path: string[]; value: unknown }>) => server.patch(patches)),
     discoverKeywords: vi.fn(async () => ({ keywords: options.keywords ?? {}, scanned: 0, total: 0, complete: true })),
     endPause: () => { paused = false; },
   };
@@ -84,7 +84,7 @@ describe('loading', () => {
   it('reads the shared definitions of a confirmed group and scans its messages', async () => {
     const client = member(server, { keywords: { '$label:found': 3, $seen: 9 } });
     await loadSharedTags(KEY, 'team', client);
-    expect(client.getBulwarkMetadata).toHaveBeenCalledWith('team');
+    expect(client.getLoomixMetadata).toHaveBeenCalledWith('team');
     expect(entry()).toMatchObject({ status: 'ready', tags: [{ id: 'urgent', ...URGENT }] });
     expect(client.discoverKeywords).toHaveBeenCalledWith(expect.objectContaining({ accountId: 'team' }));
     expect(entry().discovered).toEqual({ '$label:found': 3 });
@@ -94,7 +94,7 @@ describe('loading', () => {
     const client = member(server, { type: 'individual' });
     await loadSharedTags(KEY, 'team', client);
     expect(entry().status).toBe('personal');
-    expect(client.getBulwarkMetadata).not.toHaveBeenCalled();
+    expect(client.getLoomixMetadata).not.toHaveBeenCalled();
   });
 
   it('never guesses a group when the principal lookup fails, and asks again later', async () => {
@@ -102,7 +102,7 @@ describe('loading', () => {
     const client = member(server, { type: null });
     await loadSharedTags(KEY, 'team', client);
     expect(entry().status).toBe('loading');
-    expect(client.getBulwarkMetadata).not.toHaveBeenCalled();
+    expect(client.getLoomixMetadata).not.toHaveBeenCalled();
 
     client.getPrincipalTypes.mockImplementation(async (ids: string[]) => Object.fromEntries(ids.map((id) => [id, 'group'])));
     await vi.advanceTimersByTimeAsync(GROUP_CHECK_RETRY_MS);
@@ -113,7 +113,7 @@ describe('loading', () => {
     const client = member(server, { advertised: false });
     await loadSharedTags(KEY, 'team', client);
     expect(entry().status).toBe('unsupported');
-    expect(client.getBulwarkMetadata).not.toHaveBeenCalled();
+    expect(client.getLoomixMetadata).not.toHaveBeenCalled();
   });
 
   it('tells a failed read apart from no metadata, and reads again after the client\'s pause', async () => {
@@ -126,7 +126,7 @@ describe('loading', () => {
     server.failReads = false;
     becomeVisible();
     await Promise.resolve();
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(1);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(1);
 
     client.endPause();
     becomeVisible();
@@ -146,7 +146,7 @@ describe('loading', () => {
     const client = member(server);
     await loadSharedTags(KEY, 'team', client);
     await loadSharedTags(KEY, 'team', client);
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(1);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(1);
     server.namespace = { tags: {} };
     await loadSharedTags(KEY, 'team', member(server));
     expect(entry().tags).toEqual([]);
@@ -166,10 +166,10 @@ describe('refreshing', () => {
     await vi.advanceTimersByTimeAsync(2_000);
     push(client, 's3');
     await vi.advanceTimersByTimeAsync(PUSH_DEBOUNCE_MS - 1);
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(1);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(1);
     await vi.waitFor(() => expect(entry().tags.map((t) => t.id)).toEqual(['later', 'urgent']));
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(2);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(2);
   });
 
   it('skips the push of its own save', async () => {
@@ -179,7 +179,7 @@ describe('refreshing', () => {
     vi.useFakeTimers();
     push(client, `s${server.state}`);
     await vi.advanceTimersByTimeAsync(PUSH_DEBOUNCE_MS * 2);
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(1);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(1);
   });
 
   it('reloads only the definitions when the tab comes back, and scans the messages at most every 30 minutes', async () => {
@@ -194,7 +194,7 @@ describe('refreshing', () => {
     await vi.waitFor(() => expect(entry().loadedAt).toBe(now));
     // Let that load finish before the tab comes back again.
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(2);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(2);
     expect(client.discoverKeywords).toHaveBeenCalledTimes(1);
 
     now += DISCOVERY_INTERVAL_MS;
@@ -227,7 +227,7 @@ describe('saving', () => {
       urgent: { label: 'Very urgent', color: 'red-dark' },
       other: { label: 'Renamed', color: 'chartreuse', icon: 'flame' },
     } });
-    expect(client.patchBulwarkMetadata.mock.calls.map((c) => c[2])).toEqual([
+    expect(client.patchLoomixMetadata.mock.calls.map((c) => c[2])).toEqual([
       [{ path: ['tags', 'urgent'], value: { label: 'Very urgent', color: 'red-dark' } }],
       [{ path: ['tags', 'other'], value: { label: 'Renamed', color: 'chartreuse', icon: 'flame' } }],
     ]);
@@ -240,7 +240,7 @@ describe('saving', () => {
     await saveSharedTags(KEY, 'team', client, [{ id: 'later', value: { label: 'Later', color: 'blue' } }]);
     expect(server.namespace).toEqual({ tags: { urgent: URGENT, later: { label: 'Later', color: 'blue' } } });
     await saveSharedTags(KEY, 'team', client, [{ id: 'later', value: null }]);
-    expect(client.patchBulwarkMetadata.mock.calls[1][2]).toEqual([{ path: ['tags', 'later'], value: null }]);
+    expect(client.patchLoomixMetadata.mock.calls[1][2]).toEqual([{ path: ['tags', 'later'], value: null }]);
     expect(server.namespace).toEqual({ tags: { urgent: URGENT } });
   });
 
@@ -266,7 +266,7 @@ describe('saving', () => {
     await loadSharedTags(KEY, 'team', client);
     const many = Array.from({ length: 200 }, (_, i) => ({ id: `tag-number-${i}`, value: { label: `Tag number ${i}`, color: 'blue' } }));
     await expect(saveSharedTags(KEY, 'team', client, many)).rejects.toBeInstanceOf(MetadataTooLargeError);
-    expect(client.patchBulwarkMetadata).not.toHaveBeenCalled();
+    expect(client.patchLoomixMetadata).not.toHaveBeenCalled();
     expect(entry().pending).toEqual([]);
   });
 

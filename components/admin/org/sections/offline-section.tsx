@@ -55,7 +55,7 @@ export function OfflineSection({ draft }: { draft: OrgPolicyDraft }) {
     <SettingsSection
       id="offline"
       title="Offline mode"
-      description="People can keep mail on a device to read and write it without a connection. In browsers it is off until someone turns on “Keep mail on this device” in Settings > Offline. In the Bulwark desktop app it is on unless you forbid it here."
+      description="People can keep mail on a device to read and write it without a connection. In browsers it is off until someone turns on “Keep mail on this device” in Settings > Offline. In the Loomix desktop app it is on unless you forbid it here."
     >
       <SettingItem
         label="Don't let people keep mail on their devices"
@@ -124,7 +124,7 @@ export function OfflineSection({ draft }: { draft: OrgPolicyDraft }) {
         scopes apply, the lowest value counts, so a scope can&apos;t raise what another one lowered. The app holds itself to
         them when it fetches the policy; the server can&apos;t check what is on a device. A sign-out someone asks for deletes everything.
         One that nobody asked for hides it, as the switch above says. With several accounts signed in, each account follows its own settings.
-        Bulwark Lite reads the same policy but has no offline mode.{' '}
+        Loomix Lite reads the same policy but has no offline mode.{' '}
         <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="font-medium underline underline-offset-2">
           How offline mode works
         </a>

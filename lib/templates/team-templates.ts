@@ -58,7 +58,7 @@ export async function loadTeamTemplates(localAccountId: string, client: Template
   const teams: TeamTemplates[] = [];
   for (const group of await groupAccounts(client)) {
     if (!hasMetadata(client, group.id)) continue;
-    const entries = await client.getBulwarkMetadata(group.id);
+    const entries = await client.getLoomixMetadata(group.id);
     if (!entries) continue;
     teams.push({
       accountId: group.id,
@@ -104,12 +104,12 @@ function refusal(error: unknown, template: EmailTemplate | null): TemplateSaveRe
  */
 async function checkUnchanged(
   localAccountId: string,
-  client: TemplateClient & Required<Pick<TemplateClient, 'getBulwarkMetadata'>>,
+  client: TemplateClient & Required<Pick<TemplateClient, 'getLoomixMetadata'>>,
   groupAccountId: string,
   id: string,
   base: string | null,
 ): Promise<Record<string, EmailTemplate> | TemplateSaveResult> {
-  const entries = await client.getBulwarkMetadata(groupAccountId);
+  const entries = await client.getLoomixMetadata(groupAccountId);
   if (!entries) return 'failed';
   const current = templatesFromMetadata(entries);
   if ((current[id]?.updatedAt ?? null) !== base) {
@@ -146,7 +146,7 @@ export async function saveTeamTemplate(
   const current = await checkUnchanged(localAccountId, client, groupAccountId, shared.id, base);
   if (typeof current === 'string') return current;
   try {
-    await client.setBulwarkMetadata(groupAccountId, templateKey(shared.id), templateValue(shared));
+    await client.setLoomixMetadata(groupAccountId, templateKey(shared.id), templateValue(shared));
   } catch (error) {
     return refusal(error, shared);
   }
@@ -161,7 +161,7 @@ export async function deleteTeamTemplate(localAccountId: string, groupAccountId:
   const current = await checkUnchanged(localAccountId, client, groupAccountId, id, base);
   if (typeof current === 'string') return current;
   try {
-    await client.setBulwarkMetadata(groupAccountId, templateKey(id), null);
+    await client.setLoomixMetadata(groupAccountId, templateKey(id), null);
   } catch (error) {
     return refusal(error, null);
   }

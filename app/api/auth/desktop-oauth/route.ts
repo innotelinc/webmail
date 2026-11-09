@@ -34,7 +34,7 @@ async function postRegistration(endpoint: string, redirectUri: string, scope: st
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      client_name: 'Bulwark',
+      client_name: 'Loomix',
       redirect_uris: [redirectUri],
       token_endpoint_auth_method: 'none',
       grant_types: ['authorization_code', 'refresh_token'],

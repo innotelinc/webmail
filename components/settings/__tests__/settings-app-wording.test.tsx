@@ -12,7 +12,7 @@ import { useAccountStore } from '@/stores/account-store';
 // people read them, once in the app (its bridge there) and once in a browser.
 
 vi.unmock('next-intl');
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark', settingsSyncEnabled: false }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix', settingsSyncEnabled: false }) }));
 vi.mock('@/lib/web-push', () => ({
   WebPushUnsupportedError: class WebPushUnsupportedError extends Error {},
   isWebPushSupported: () => false,
@@ -100,7 +100,7 @@ describe('settings words in the desktop app', () => {
 
   it('Appearance names the product', async () => {
     installBridge();
-    expect(await textOf(<AppearanceSettings />)).toContain('Change how Bulwark looks.');
+    expect(await textOf(<AppearanceSettings />)).toContain('Change how Loomix looks.');
   });
 
   it('names the taskbar and the tray for the unread count of all accounts', async () => {

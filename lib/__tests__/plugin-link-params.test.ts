@@ -6,7 +6,7 @@ import { parseMailto } from '../protocol-handlers/mailto';
 import { parseLaunchLanding, stripLandingParams } from '../launch-handoff';
 
 // Parameters for plugins in a link that opens the composer:
-// `x-<plugin id>-<name>=<value>` in a mailto: link or a Bulwark link goes to
+// `x-<plugin id>-<name>=<value>` in a mailto: link or a Loomix link goes to
 // that plugin only, as onComposeFromLink({ composerId, params }), prefix gone.
 
 afterEach(() => {
@@ -42,7 +42,7 @@ describe('plugin parameters in a mailto: link', () => {
   });
 });
 
-describe('plugin parameters in a Bulwark link', () => {
+describe('plugin parameters in a Loomix link', () => {
   it('ride along with a new message from the address bar, and leave it with it', () => {
     expect(parseLaunchLanding('?compose=1&x-akte-case=01%2F2026&other=1', '')).toEqual({ type: 'new-message', linkParams: { 'x-akte-case': '01/2026' } });
     expect(parseLaunchLanding('?compose=1', '')).toEqual({ type: 'new-message' });

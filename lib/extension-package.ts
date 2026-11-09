@@ -439,7 +439,7 @@ export function checkPluginManifest(m: Record<string, unknown>, opts: { appVersi
         permissions = permissions.filter((p) => !DEPRECATED_PERMISSIONS.includes(p));
       }
       const unknown = permissions.filter((p) => !KNOWN_PERMISSIONS.has(p));
-      if (unknown.length > 0) errors.push(`Unknown permissions: ${unknown.join(', ')} (this Bulwark version does not offer them)`);
+      if (unknown.length > 0) errors.push(`Unknown permissions: ${unknown.join(', ')} (this Loomix version does not offer them)`);
     }
   }
   // Permissions a plugin uses when the webmail offers them: the ones this
@@ -452,7 +452,7 @@ export function checkPluginManifest(m: Record<string, unknown>, opts: { appVersi
     } else {
       const asked = [...new Set(m.optionalPermissions as string[])].filter((p) => !DEPRECATED_PERMISSIONS.includes(p));
       const unknown = asked.filter((p) => !KNOWN_PERMISSIONS.has(p));
-      if (unknown.length > 0) warnings.push(`Left out optional permissions this Bulwark version does not offer: ${unknown.join(', ')}`);
+      if (unknown.length > 0) warnings.push(`Left out optional permissions this Loomix version does not offer: ${unknown.join(', ')}`);
       permissions = [...new Set([...permissions, ...asked.filter((p) => KNOWN_PERMISSIONS.has(p))])];
     }
   }
@@ -470,7 +470,7 @@ export function checkPluginManifest(m: Record<string, unknown>, opts: { appVersi
   const minAppVersion = optionalString(m, 'minAppVersion', errors, 32);
   if (minAppVersion !== undefined && !VERSION_RE.test(minAppVersion)) errors.push('"minAppVersion" must look like 1.2.3');
   if (minAppVersion && opts.appVersion && VERSION_RE.test(opts.appVersion) && compareVersions(opts.appVersion, minAppVersion) < 0) {
-    errors.push(`Needs Bulwark ${minAppVersion} or later (this is ${opts.appVersion})`);
+    errors.push(`Needs Loomix ${minAppVersion} or later (this is ${opts.appVersion})`);
   }
 
   const settingsSchema = validateSettingsSchema(m.settingsSchema, errors);

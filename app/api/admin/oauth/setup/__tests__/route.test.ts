@@ -128,7 +128,7 @@ describe('POST /api/admin/oauth/setup', () => {
     expect((setCalls()[0].create as Record<string, Record<string, unknown>>).new.clientId).toBe('bulwark-webmail');
   });
 
-  it('registers a public first-party client for Bulwark Mobile on Stalwart 1.0 (#1459)', async () => {
+  it('registers a public first-party client for Loomix Mobile on Stalwart 1.0 (#1459)', async () => {
     const res = await setup();
     expect(res.status).toBe(200);
     expect((await res.json()).mobileClient).toBe('created');
@@ -142,7 +142,7 @@ describe('POST /api/admin/oauth/setup', () => {
     expect(mobile).not.toHaveProperty('secret');
   });
 
-  it('takes over an existing Bulwark Mobile client and drops its secret', async () => {
+  it('takes over an existing Loomix Mobile client and drops its secret', async () => {
     existing = { 'bulwark-mobile': 'm' };
     const res = await setup();
     expect((await res.json()).mobileClient).toBe('updated');

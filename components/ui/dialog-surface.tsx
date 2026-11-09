@@ -82,7 +82,7 @@ export function useDialogSurface(isOpen: boolean, { title, onClose, inPage = fal
   }, [wanted, parent]);
 
   useEffect(() => {
-    if (surface) surface.doc.title = title || "Bulwark";
+    if (surface) surface.doc.title = title || "Loomix";
   }, [surface, title]);
 
   // The next time it opens, try the window again.

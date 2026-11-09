@@ -18,7 +18,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// Bulwark Lite has no server, so it never posts to /api/errors, whatever
+// Loomix Lite has no server, so it never posts to /api/errors, whatever
 // the settings say; reports go to the DSN only.
 describe('error reporting in Lite', () => {
   it('sends to the DSN and never to /api/errors', () => {

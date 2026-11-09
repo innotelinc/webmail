@@ -70,8 +70,8 @@
     "demo_tagline": "Wypróbuj w pełni funkcjonalnego klienta poczty. Konto nie jest wymagane.",
     "demo_no_signup": "Bez rejestracji - eksploruj swobodnie z przykładowymi danymi",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Ta nazwa jest za długa.",
     "loading": "Ładowanie…",
     "unsupported": "Ten serwer poczty nie może przechowywać wspólnych etykiet, dlatego ta skrzynka pokazuje Twoje własne etykiety.",
-    "unavailable": "Nie udało się wczytać wspólnych etykiet tej skrzynki, dlatego pokazuje ona Twoje własne etykiety. Bulwark spróbuje ponownie później.",
+    "unavailable": "Nie udało się wczytać wspólnych etykiet tej skrzynki, dlatego pokazuje ona Twoje własne etykiety. Loomix spróbuje ponownie później.",
     "no_rights": "Możesz używać tych etykiet, ale nie możesz ich zmieniać w tej skrzynce.",
     "too_many": "Jest za dużo wspólnych etykiet. Usuń kilka, zanim dodasz kolejne.",
-    "save_failed": "Nie udało się zapisać wspólnych etykiet. Bulwark spróbuje ponownie, gdy serwer odpowie.",
-    "save_pending": "Jeszcze nie zapisano. Bulwark spróbuje ponownie, gdy serwer odpowie."
+    "save_failed": "Nie udało się zapisać wspólnych etykiet. Loomix spróbuje ponownie, gdy serwer odpowie.",
+    "save_pending": "Jeszcze nie zapisano. Loomix spróbuje ponownie, gdy serwer odpowie."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1109,7 +1109,7 @@
     "show_less": "Pokaż mniej",
     "send_failed": "Nie udało się wysłać wiadomości",
     "send_timeout": "Serwer przestał odpowiadać. Przed ponownym wysłaniem sprawdź folder Wysłane — wiadomość mogła już zostać wysłana.",
-    "submission_quota": "Serwer przechowuje zbyt wiele rekordów wysłanych wiadomości dla tego konta. Bulwark usunął te, które mógł; jeśli to się powtarza, poproś administratora o podniesienie limitu wysyłek e-mail.",
+    "submission_quota": "Serwer przechowuje zbyt wiele rekordów wysłanych wiadomości dla tego konta. Loomix usunął te, które mógł; jeśli to się powtarza, poproś administratora o podniesienie limitu wysyłek e-mail.",
     "submission_limit": "Serwer odmówił wysłania wiadomości, ponieważ osiągnięto limit: {reason}",
     "recipients_refused": "Nie wysłano: serwer odrzucił {recipients}.",
     "recipients_partly_refused": "Serwer odrzucił {recipients}. Pozostali odbiorcy otrzymają wiadomość.",
@@ -1890,13 +1890,13 @@
       "push": {
         "confirm_disable_message": "To urządzenie przestanie otrzymywać powiadomienia, gdy strona jest zamknięta.",
         "confirm_disable_title": "Wyłączyć powiadomienia w tle?",
-        "description": "Otrzymuj powiadomienia systemowe o nowych wiadomościach, gdy ta strona jest zamknięta. Dostarczane przez przekaźnik push Bulwark; przekaźnik nigdy nie widzi treści wiadomości.",
+        "description": "Otrzymuj powiadomienia systemowe o nowych wiadomościach, gdy ta strona jest zamknięta. Dostarczane przez przekaźnik push Loomix; przekaźnik nigdy nie widzi treści wiadomości.",
         "disable": "Wyłącz",
         "enable": "Włącz na tym urządzeniu",
         "dismiss_aria": "Zamknij monit powiadomień",
         "ios_hint": "W systemie iOS najpierw zainstaluj stronę na ekranie głównym – Safari dostarcza Web Push tylko zainstalowanym PWA.",
         "reenable": "Zarejestruj ponownie",
-        "relay_desc": "Domyślnie używa hostowanego przekaźnika Bulwark. Zmień tylko jeśli hostujesz samodzielnie.",
+        "relay_desc": "Domyślnie używa hostowanego przekaźnika Loomix. Zmień tylko jeśli hostujesz samodzielnie.",
         "relay_label": "Przekaźnik push",
         "relay_locked": "Ustawione przez administratora",
         "relay_locked_desc": "Adres URL przekaźnika push został ustawiony przez administratora i nie można go zmienić.",
@@ -1904,7 +1904,7 @@
         "status_busy": "Przetwarzanie…",
         "status_inactive": "Niewłączone na tym urządzeniu",
         "status_unsupported": "Ta przeglądarka nie obsługuje Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "Powiadomienia w tle nie są dostępne w wersji demonstracyjnej.",
         "title": "Powiadomienia, gdy {appName} jest zamknięty",
         "devices_title": "Zarejestrowane urządzenia",
@@ -2481,10 +2481,10 @@
       },
       "link_device": {
         "title": "Połącz aplikację mobilną",
-        "description": "Zaloguj się do aplikacji Bulwark Mail na telefonie bez wpisywania w niej hasła. Telefon otrzymuje własne logowanie, więc wylogowanie się tutaj go nie wyloguje.",
+        "description": "Zaloguj się do aplikacji Loomix Mail na telefonie bez wpisywania w niej hasła. Telefon otrzymuje własne logowanie, więc wylogowanie się tutaj go nie wyloguje.",
         "generate": "Pokaż kod QR",
         "regenerate": "Pokaż nowy kod",
-        "instructions": "Otwórz aplikację Bulwark Mail i na ekranie logowania stuknij \"Scan a sign-in code\" (lub \"Add account\" → \"Scan a sign-in code\", jeśli już jesteś zalogowany), a następnie skieruj aparat tutaj.",
+        "instructions": "Otwórz aplikację Loomix Mail i na ekranie logowania stuknij \"Scan a sign-in code\" (lub \"Add account\" → \"Scan a sign-in code\", jeśli już jesteś zalogowany), a następnie skieruj aparat tutaj.",
         "expires_in": "Ten kod wygaśnie za {seconds} sekund. Można go użyć tylko raz.",
         "expired": "Ten kod wygasł.",
         "error": "Nie udało się utworzyć kodu parowania. Spróbuj ponownie.",
@@ -2750,7 +2750,7 @@
         "button": "Importuj"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Kod źródłowy"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Wyszukiwanie u góry, wiadomości otwierają się na całą szerokość"
   },
   "setup": {
-    "title": "Konfiguracja Bulwark Webmail",
+    "title": "Konfiguracja Loomix Mail",
     "subtitle": "Skonfiguruj swoją instancję poczty w przeglądarce.",
     "loading": "Wczytywanie…",
     "back": "Wstecz",
@@ -3734,7 +3734,7 @@
       "regenerate": "Wygeneruj ponownie",
       "sync": "Synchronizuj ustawienia użytkowników między urządzeniami",
       "sync_hint": "Przechowuje preferencje użytkowników na serwerze, zaszyfrowane sekretem sesji.",
-      "telemetry": "Wysyłaj anonimowe statystyki użycia, aby pomóc ulepszać Bulwark",
+      "telemetry": "Wysyłaj anonimowe statystyki użycia, aby pomóc ulepszać Loomix",
       "telemetry_hint": "Domyślnie wyłączone. Jeden anonimowy sygnał dziennie z wersją, platformą i listą włączonych funkcji; nigdy adresy e-mail, nazwy hostów ani adresy IP. Możesz to zmienić w każdej chwili w ustawieniach administracyjnych."
     },
     "logging": {
@@ -5407,7 +5407,7 @@
     "start_tour": "Rozpocznij przewodnik"
   },
   "demo_welcome": {
-    "title": "Witaj w Bulwark Mail",
+    "title": "Witaj w Loomix Mail",
     "description": "Poznaj w pełni funkcjonalnego klienta poczty webowej - bezpośrednio w przeglądarce. Wszystkie dane pozostają na Twoim urządzeniu, więc możesz śmiało wszystko przetestować.",
     "feature_email": "Czytaj i pisz wiadomości e-mail",
     "feature_organize": "Etykiety, gwiazdki i foldery",
@@ -5841,9 +5841,9 @@
     "cancelled_hint": "Aby kontynuować później, zaimportuj te same pliki ponownie do tego samego folderu.",
     "close": "Zamknij",
     "pst_note": "Z plików programu Outlook przenoszona jest tylko poczta. Kontakty, elementy kalendarza i zadania są liczone i pomijane.",
-    "pst_error_encrypted": "Ten plik programu Outlook używa silnego szyfrowania, którego Bulwark nie potrafi odczytać. W programie Outlook wyeksportuj pocztę do nowego pliku .pst bez szyfrowania.",
-    "pst_error_not_pst": "Ten plik nie jest plikiem danych programu Outlook, który Bulwark potrafi odczytać.",
-    "pst_error_unreadable": "Bulwark nie mógł odczytać tego pliku programu Outlook.",
+    "pst_error_encrypted": "Ten plik programu Outlook używa silnego szyfrowania, którego Loomix nie potrafi odczytać. W programie Outlook wyeksportuj pocztę do nowego pliku .pst bez szyfrowania.",
+    "pst_error_not_pst": "Ten plik nie jest plikiem danych programu Outlook, który Loomix potrafi odczytać.",
+    "pst_error_unreadable": "Loomix nie mógł odczytać tego pliku programu Outlook.",
     "pst_error_worker": "Czytnik plików programu Outlook się nie wczytał. Odśwież stronę i spróbuj ponownie.",
     "error_over_quota": "Skrzynka jest pełna, więc import się zatrzymał. Zwolnij miejsce i zaimportuj te same pliki ponownie do tego samego folderu, aby kontynuować.",
     "error_forbidden": "Nie możesz dodawać poczty do tego folderu, więc import się zatrzymał.",
@@ -5904,7 +5904,7 @@
   },
   "desktopImport": {
     "find": "Znajdź dane Thunderbirda i Outlooka…",
-    "find_hint": "Szuka w typowych miejscach na tym komputerze. Bulwark najpierw zapyta.",
+    "find_hint": "Szuka w typowych miejscach na tym komputerze. Loomix najpierw zapyta.",
     "scan_declined": "Nic nie wyszukano, bo na to nie zezwolono.",
     "scan_failed": "Wyszukiwanie się nie udało. Spróbuj ponownie.",
     "read_declined": "Nie odczytano żadnych plików, bo na to nie zezwolono.",
@@ -5960,7 +5960,7 @@
     "restore": "Przywróć",
     "restored": "{count, plural, one {# wiadomość wraca} few {# wiadomości wracają} many {# wiadomości wraca} other {# wiadomości wraca}} do folderu Odebrane.",
     "restore_partial": "{count, plural, one {Nie udało się przywrócić # wiadomości. Pozostaje zaznaczona, więc możesz spróbować ponownie.} few {Nie udało się przywrócić # wiadomości. Pozostają zaznaczone, więc możesz spróbować ponownie.} many {Nie udało się przywrócić # wiadomości. Pozostają zaznaczone, więc możesz spróbować ponownie.} other {Nie udało się przywrócić # wiadomości. Pozostają zaznaczone, więc możesz spróbować ponownie.}}",
-    "restore_hint": "Przywrócone wiadomości wracają do folderu Odebrane jako nieprzeczytane, posortowane według pierwotnej daty, więc mogą być daleko na liście. Serwer przywraca je w tle. Jeśli tam się to nie uda, wiadomość przepada, a Bulwark nie może tego wykryć.",
+    "restore_hint": "Przywrócone wiadomości wracają do folderu Odebrane jako nieprzeczytane, posortowane według pierwotnej daty, więc mogą być daleko na liście. Serwer przywraca je w tle. Jeśli tam się to nie uda, wiadomość przepada, a Loomix nie może tego wykryć.",
     "unknown_sender": "Nieznany nadawca",
     "no_subject": "(brak tematu)",
     "deleted_on": "Usunięto {date}",
@@ -5995,7 +5995,7 @@
     "label": "Zablokuj mój kalendarz",
     "description": "Dodaje zajęte wydarzenie na czas Twojej nieobecności, żeby nikt nie umawiał wtedy z Tobą spotkań.",
     "no_access_managed": "Nie można zablokować kalendarza tego konta: nie masz do niego prawa zapisu.",
-    "no_calendar": "Nie można zablokować kalendarza: Bulwark nie znalazł kalendarza, do którego można dodać wydarzenie.",
+    "no_calendar": "Nie można zablokować kalendarza: Loomix nie znalazł kalendarza, do którego można dodać wydarzenie.",
     "filter_warning": "Włączenie tego wyłącza Twój własny skrypt filtrów, dopóki odpowiedź jest aktywna."
   },
   "calendar_delegate": {
@@ -6098,20 +6098,20 @@
   "find_time": {
     "suggest": "Zaproponuj terminy",
     "searching": "Szukanie wolnych terminów",
-    "slots_title": "Wolne dla wszystkich, których Bulwark mógł sprawdzić",
+    "slots_title": "Wolne dla wszystkich, których Loomix mógł sprawdzić",
     "slot": "{day}, od {start} do {end}",
     "none": "Brak wolnego czasu w ciągu najbliższych 10 dni roboczych.",
     "picked": "Wydarzenie przeniesione na {slot}",
     "rate_limited": "Za dużo zapytań w ostatniej minucie. Spróbuj ponownie za minutę.",
-    "unavailable": "Informacje o dostępności nie są dostępne na tym serwerze, więc Bulwark nie może zaproponować terminów.",
+    "unavailable": "Informacje o dostępności nie są dostępne na tym serwerze, więc Loomix nie może zaproponować terminów.",
     "not_checked": "Nie sprawdzono:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "spoza Twojej organizacji",
     "reason_unknown": "zajęte terminy nieznane",
     "reason_not_found": "nie znaleziono na tym serwerze",
     "reason_error": "nie udało się sprawdzić",
-    "unknown_note": "Bulwark widzi zajęte terminy tylko w kalendarzach udostępnionych Tobie. U tych osób nie odróżni wolnego czasu od braku udostępnienia.",
-    "directory_off": "Bulwark nie może wyszukiwać osób na tym serwerze. Administrator może włączyć zapytania do katalogu w Stalwart.",
+    "unknown_note": "Loomix widzi zajęte terminy tylko w kalendarzach udostępnionych Tobie. U tych osób nie odróżni wolnego czasu od braku udostępnienia.",
+    "directory_off": "Loomix nie może wyszukiwać osób na tym serwerze. Administrator może włączyć zapytania do katalogu w Stalwart.",
     "not_looked_up": "Nie udało się wyszukać adresu",
     "found": "Znalezione wolne terminy: {count}"
   },
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Wyczyść",
     "persist_refused": "Ta przeglądarka może usunąć przechowywaną pocztę, gdy zabraknie miejsca. Zainstalowanie aplikacji zwykle temu zapobiega.",
     "persist_retry": "Poproś przeglądarkę o zachowanie",
-    "safari_hint": "Safari usuwa dane witryny po 7 dniach bez odwiedzin. Dodaj Bulwark do ekranu początkowego lub do Docka, aby zachować pocztę na tym urządzeniu.",
+    "safari_hint": "Safari usuwa dane witryny po 7 dniach bez odwiedzin. Dodaj Loomix do ekranu początkowego lub do Docka, aby zachować pocztę na tym urządzeniu.",
     "evicted": "Przeglądarka usunęła pocztę przechowywaną na tym urządzeniu. Jest pobierana ponownie.",
     "evicted_lost": "{count, plural, one {Utracono # niewysłaną wiadomość lub zmianę.} few {Utracono # niewysłane wiadomości lub zmiany.} many {Utracono # niewysłanych wiadomości lub zmian.} other {Utracono # niewysłanej wiadomości lub zmiany.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Pamięć urządzenia jest pełna.",
-    "storage_full_text": "Bulwark przestał tu zapisywać pocztę. Przechowuj mniej poczty albo wyczyść to konto, aby zwolnić miejsce.",
+    "storage_full_text": "Loomix przestał tu zapisywać pocztę. Przechowuj mniej poczty albo wyczyść to konto, aby zwolnić miejsce.",
     "open_settings": "Otwórz ustawienia",
-    "default_on": "Bulwark przechowuje Twoją pocztę na tym urządzeniu, żeby działała bez połączenia. Możesz to zmienić w Ustawieniach.",
+    "default_on": "Loomix przechowuje Twoją pocztę na tym urządzeniu, żeby działała bez połączenia. Możesz to zmienić w Ustawieniach.",
     "conflict_calendar": "Wydarzenie w kalendarzu",
     "conflict_contacts": "Kontakt",
     "kept_files_title": "Pliki przechowywane offline",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Elementy w widoku zadań",
-        "body": "Pokazuje własne sekcje w szczegółach zadania, przyciski na liście zadań i własną listę zadań zamiast listy Bulwarka."
+        "body": "Pokazuje własne sekcje w szczegółach zadania, przyciski na liście zadań i własną listę zadań zamiast listy Loomixa."
       },
       "ui_files": {
         "title": "Elementy w widoku plików",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Skróty klawiszowe",
       "docs": "Dokumentacja",
       "settings": "Ustawienia…",
-      "about": "O programie Bulwark",
+      "about": "O programie Loomix",
       "from_plugins": "Więcej z wtyczek…",
       "pick_gone": "To menu było nieaktualne. Otwórz je ponownie i spróbuj jeszcze raz.",
       "bar_label": "Menu"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Jeśli zamkniesz teraz, utracisz wszystko, co zostało napisane od ostatniego zapisu.",
       "close_anyway": "Zamknij mimo to",
       "unsent_title": "Część poczty nie została jeszcze wysłana",
-      "unsent_one": "Jedna wiadomość czeka na wysłanie. Zostanie wysłana przy następnym uruchomieniu Bulwark.",
-      "unsent_many": "Wiadomości czekające na wysłanie: {count}. Zostaną wysłane przy następnym uruchomieniu Bulwark.",
+      "unsent_one": "Jedna wiadomość czeka na wysłanie. Zostanie wysłana przy następnym uruchomieniu Loomix.",
+      "unsent_many": "Wiadomości czekające na wysłanie: {count}. Zostaną wysłane przy następnym uruchomieniu Loomix.",
       "quit": "Zakończ",
       "leave_title": "Opuścić stronę bez zapisania zmian?",
       "leave_detail": "Zmiany wprowadzone na tej stronie nie zostały jeszcze zapisane.",
@@ -7383,7 +7383,7 @@
       "stay": "Zostań"
     },
     "spellcheck": {
-      "offer": "Sprawdzanie pisowni dla języka {language} wymaga słownika. Bulwark może go pobrać od Google. Twój tekst nie jest wysyłany.",
+      "offer": "Sprawdzanie pisowni dla języka {language} wymaga słownika. Loomix może go pobrać od Google. Twój tekst nie jest wysyłany.",
       "download": "Pobierz"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "Na 1 godzinę",
     "tray_pause_tomorrow": "Do jutra",
     "tray_resume": "Włącz powiadomienia z powrotem",
-    "tray_open": "Otwórz Bulwark",
-    "tray_quit": "Zakończ Bulwark",
-    "tray_exit": "Zakończ Bulwark"
+    "tray_open": "Otwórz Loomix",
+    "tray_quit": "Zakończ Loomix",
+    "tray_exit": "Zakończ Loomix"
   },
   "desktopMenus": {
     "save_draft": "Zapisz wersję roboczą",
@@ -7581,25 +7581,25 @@
     "cancel": "Anuluj",
     "or_here": "lub zaloguj się tutaj",
     "timed_out": "Logowanie w przeglądarce trwało zbyt długo. Spróbuj ponownie.",
-    "no_browser": "Bulwark nie może otworzyć przeglądarki. Spróbuj ponownie lub zaloguj się tutaj.",
+    "no_browser": "Loomix nie może otworzyć przeglądarki. Spróbuj ponownie lub zaloguj się tutaj.",
     "failed": "Logowanie przez przeglądarkę nie powiodło się. Spróbuj ponownie.",
-    "handoff_banner": "Program na tym komputerze poprosił o to logowanie dla aplikacji Bulwark. Ta przeglądarka pozostaje wylogowana z Bulwark. Jeśli to nie Ty, zamknij tę kartę.",
-    "consent_title": "Zalogować się w aplikacji Bulwark?",
-    "consent_description": "Program na tym komputerze, na porcie {port}, prosi o logowanie dla {username}. Kontynuuj tylko wtedy, gdy przed chwilą kliknięto „Zaloguj się w przeglądarce…” w aplikacji Bulwark na tym komputerze. Jeśli nie, ktoś może próbować dostać się na Twoje konto: wybierz Nie teraz.",
+    "handoff_banner": "Program na tym komputerze poprosił o to logowanie dla aplikacji Loomix. Ta przeglądarka pozostaje wylogowana z Loomix. Jeśli to nie Ty, zamknij tę kartę.",
+    "consent_title": "Zalogować się w aplikacji Loomix?",
+    "consent_description": "Program na tym komputerze, na porcie {port}, prosi o logowanie dla {username}. Kontynuuj tylko wtedy, gdy przed chwilą kliknięto „Zaloguj się w przeglądarce…” w aplikacji Loomix na tym komputerze. Jeśli nie, ktoś może próbować dostać się na Twoje konto: wybierz Nie teraz.",
     "consent_confirm": "Zaloguj się w aplikacji",
     "consent_cancel": "Nie teraz",
-    "page_done": "Możesz zamknąć tę kartę i wrócić do Bulwark.",
-    "page_failed": "Logowanie nie powiodło się. Wróć do Bulwark i spróbuj ponownie.",
-    "page_link_used": "Ten link działa tylko raz. Wróć do Bulwark i zacznij od nowa.",
+    "page_done": "Możesz zamknąć tę kartę i wrócić do Loomix.",
+    "page_failed": "Logowanie nie powiodło się. Wróć do Loomix i spróbuj ponownie.",
+    "page_link_used": "Ten link działa tylko raz. Wróć do Loomix i zacznij od nowa.",
     "page_title": "Zaloguj się na {server}",
-    "page_intro": "Ta strona pochodzi z aplikacji Bulwark na tym komputerze. Twoje hasło trafia na {server} i nigdzie indziej.",
+    "page_intro": "Ta strona pochodzi z aplikacji Loomix na tym komputerze. Twoje hasło trafia na {server} i nigdzie indziej.",
     "page_username": "Adres e-mail lub nazwa użytkownika",
     "page_password": "Hasło",
     "page_code": "Kod dwuskładnikowy",
     "page_submit": "Zaloguj się",
     "page_wrong_password": "Serwer nie przyjął tej nazwy użytkownika i hasła.",
     "page_code_needed": "To konto wymaga też kodu dwuskładnikowego. Wpisz ponownie hasło i kod.",
-    "page_no_answer": "Bulwark nie może się zalogować. Sprawdź, czy serwer jest dostępny, i spróbuj ponownie.",
+    "page_no_answer": "Loomix nie może się zalogować. Sprawdź, czy serwer jest dostępny, i spróbuj ponownie.",
     "declined": "Odmówiono w przeglądarce, więc nic nie zostało zalogowane.",
     "too_many": "Zbyt wiele prób logowania z tej sieci. Poczekaj kilka minut i spróbuj ponownie.",
     "page_declined": "Nic nie zostało przekazane. Możesz zamknąć tę kartę."
@@ -7619,7 +7619,7 @@
     "other_ways": "Inne sposoby logowania",
     "trouble": "Masz problem?",
     "trouble_cors": "Twój serwer poczty musi zezwalać na logowanie z tej witryny. Jeśli logowanie się nie udaje, poproś osobę, która zarządza serwerem poczty, o zezwolenie.",
-    "provider_unsupported": "{provider} nie oferuje JMAP, czyli sposobu, w jaki Bulwark rozmawia z serwerami poczty, więc Bulwark nie może jeszcze połączyć się z nim bezpośrednio."
+    "provider_unsupported": "{provider} nie oferuje JMAP, czyli sposobu, w jaki Loomix rozmawia z serwerami poczty, więc Loomix nie może jeszcze połączyć się z nim bezpośrednio."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock jest włączony",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Zmienić sposób łączenia Bulwark?",
-      "message": "Bulwark uruchomi się ponownie i zapyta, jak się połączyć: za pomocą Twojego adresu e-mail lub przez Bulwark Twojej organizacji. Twoje konta na tym komputerze pozostaną zalogowane.",
+      "title": "Zmienić sposób łączenia Loomix?",
+      "message": "Loomix uruchomi się ponownie i zapyta, jak się połączyć: za pomocą Twojego adresu e-mail lub przez Loomix Twojej organizacji. Twoje konta na tym komputerze pozostaną zalogowane.",
       "confirm": "Zmień",
-      "org_link": "Użyj zamiast tego Bulwark mojej organizacji",
+      "org_link": "Użyj zamiast tego Loomix mojej organizacji",
       "add_account": "Dodaj konto…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Wstaw"
     },
     "sign_in_page": {
-      "open_app": "Otwórz Bulwark",
+      "open_app": "Otwórz Loomix",
       "done_as": "Zalogowano jako {address}. Możesz zamknąć tę kartę."
     }
   },
   "desktop_updates": {
     "title": "Aktualizacje",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark sam szuka aktualizacji.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix sam szuka aktualizacji.",
     "status_checking": "Szukanie aktualizacji…",
     "status_up_to_date": "Masz najnowszą wersję.",
     "status_downloading": "Pobieranie wersji {version}…",
     "status_ready": "Wersja {version} jest gotowa. Zainstaluje się przy następnym zamknięciu albo uruchom ponownie teraz.",
     "status_available": "Dostępna jest wersja {version}.",
-    "status_available_per_machine": "Dostępna jest wersja {version}. Bulwark jest zainstalowany dla wszystkich na tym komputerze, więc aktualizacje instaluje administrator.",
-    "status_older": "Masz wersję beta. Stabilna wersja {version} jest starsza, więc Bulwark zostaje na tej wersji, dopóki stabilna jej nie dogoni.",
-    "status_error": "Nie udało się sprawdzić aktualizacji. Bulwark spróbuje ponownie później.",
+    "status_available_per_machine": "Dostępna jest wersja {version}. Loomix jest zainstalowany dla wszystkich na tym komputerze, więc aktualizacje instaluje administrator.",
+    "status_older": "Masz wersję beta. Stabilna wersja {version} jest starsza, więc Loomix zostaje na tej wersji, dopóki stabilna jej nie dogoni.",
+    "status_error": "Nie udało się sprawdzić aktualizacji. Loomix spróbuje ponownie później.",
     "status_off": "Twoja organizacja wyłączyła aktualizacje w aplikacji.",
     "check": "Sprawdź teraz",
     "restart": "Uruchom ponownie, aby zaktualizować",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Uruchom ponownie, aby zaktualizować",
     "shell_check": "Sprawdź aktualizacje…",
-    "shell_available": "Dostępny jest Bulwark {version}",
-    "shell_ready_title": "Bulwark jest gotowy do aktualizacji",
+    "shell_available": "Dostępny jest Loomix {version}",
+    "shell_ready_title": "Loomix jest gotowy do aktualizacji",
     "shell_ready_body": "Wersja {version} zainstaluje się przy następnym zamknięciu. Kliknij, aby uruchomić ponownie teraz. Wersje robocze zostaną najpierw zapisane.",
-    "shell_available_title": "Dostępna jest nowa wersja Bulwark",
-    "shell_none_title": "Bulwark jest aktualny",
+    "shell_available_title": "Dostępna jest nowa wersja Loomix",
+    "shell_none_title": "Loomix jest aktualny",
     "shell_none_detail": "Masz wersję {version}.",
-    "shell_failed_title": "Bulwark nie mógł sprawdzić aktualizacji",
+    "shell_failed_title": "Loomix nie mógł sprawdzić aktualizacji",
     "shell_failed_detail": "Sprawdź połączenie i spróbuj później. Nic się nie zmieniło.",
     "shell_beta_title": "Przejść na wersje beta?",
     "shell_beta_detail": "Nowe wersje dostajesz wcześniej i mogą mieć więcej problemów. Aby wrócić, instalujesz starszą wersję stabilną lub czekasz, aż stabilna dogoni betę.",
     "shell_beta_confirm": "Przejdź na betę",
-    "shell_older_title": "Wrócić do Bulwark {version}?",
+    "shell_older_title": "Wrócić do Loomix {version}?",
     "shell_older_detail": "Masz betę {current}. Stabilna {target} jest starsza i może nie odczytać tego, co beta zapisała na tym komputerze. Poczta zostaje na serwerze, ale poczta zapisana offline może pobrać się ponownie, a niewysłane zmiany mogą przepaść. Jeśli poczekasz, stabilna dogoni betę i przejdziesz na nią bez tego kroku.",
     "shell_older_confirm": "Zainstaluj starszą wersję"
   },
@@ -7982,7 +7982,7 @@
       "progress": "Wysłano {done} z {total}",
       "cannot_offline": "Nie można połączyć się z serwerem. Jeszcze niewysłane: {names}",
       "cannot_other": "Nie można wysłać: {names}. Ostatnia aktywność w ustawieniach podaje powód.",
-      "go_note_drive": "Jeśli przejdziesz dalej teraz, to, czego nie wysłano, zostanie skopiowane do Dokumenty\\Bulwark – not uploaded. Nic nie zginie.",
+      "go_note_drive": "Jeśli przejdziesz dalej teraz, to, czego nie wysłano, zostanie skopiowane do Dokumenty\\Loomix – not uploaded. Nic nie zginie.",
       "go_note_folder": "Jeśli przejdziesz dalej teraz, to, czego nie wysłano, zostanie w folderze na tym komputerze.",
       "keep_turn_off": "Zostaw dysk włączony",
       "keep_sign_out": "Pozostań zalogowany",
@@ -7996,22 +7996,22 @@
       "rescued": "Niewysłane pliki ({count}) są teraz w {folder}.",
       "rescued_open": "Otwórz folder",
       "rescued_dismiss": "Ukryj",
-      "start_at_login": "Uruchamiaj Bulwark po zalogowaniu do Windows",
-      "start_at_login_why": "Dysk potrzebuje działającego Bulwark, tak jak OneDrive.",
-      "closed_warning": "Pliki na dysku nie otworzą się, gdy Bulwark jest zamknięty.",
-      "where": "W Eksploratorze plików jako Bulwark Files",
-      "where_letter": "W Eksploratorze plików jako Bulwark Files ({letter}:)",
+      "start_at_login": "Uruchamiaj Loomix po zalogowaniu do Windows",
+      "start_at_login_why": "Dysk potrzebuje działającego Loomix, tak jak OneDrive.",
+      "closed_warning": "Pliki na dysku nie otworzą się, gdy Loomix jest zamknięty.",
+      "where": "W Eksploratorze plików jako Loomix Files",
+      "where_letter": "W Eksploratorze plików jako Loomix Files ({letter}:)",
       "open": "Otwórz",
-      "letter_note": "Przez literę Eksplorator plików nie pokazuje stanu synchronizacji ani „Zawsze zachowuj na tym urządzeniu”. Widać je pod Bulwark Files w Eksploratorze.",
+      "letter_note": "Przez literę Eksplorator plików nie pokazuje stanu synchronizacji ani „Zawsze zachowuj na tym urządzeniu”. Widać je pod Loomix Files w Eksploratorze.",
       "letter_failed": "Nie udało się ustawić litery dysku. Spróbuj ponownie."
     },
     "tray": {
-      "idle": "Bulwark Files: Aktualne",
-      "syncing": "Bulwark Files: Synchronizacja. Pozostało: {count}",
-      "paused": "Bulwark Files: Wstrzymano",
-      "offline": "Bulwark Files: Offline. Czeka: {count}",
-      "question": "Bulwark Files: Czeka na Twoją odpowiedź",
-      "error": "Bulwark Files: Błąd"
+      "idle": "Loomix Files: Aktualne",
+      "syncing": "Loomix Files: Synchronizacja. Pozostało: {count}",
+      "paused": "Loomix Files: Wstrzymano",
+      "offline": "Loomix Files: Offline. Czeka: {count}",
+      "question": "Loomix Files: Czeka na Twoją odpowiedź",
+      "error": "Loomix Files: Błąd"
     },
     "notify": {
       "conflict_title": "Plik zmieniono w dwóch miejscach",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Raz dziennie: losowy identyfikator, numery wersji aplikacji, system operacyjny, jak długo działa aplikacja i jak się łączy. Przy własnym serwerze poczty także włączone funkcje, przybliżona liczba kont oraz liczba wtyczek i motywów. Nigdy poczta, adresy ani nazwy serwerów.",
     "crash_label": "Wysyłaj raporty o awariach",
     "crash_description": "Błędy aplikacji są wysyłane z losowym identyfikatorem, nazwami plików z kodu samej aplikacji i krótkimi, oczyszczonymi komunikatami. Jeśli sama aplikacja ulegnie awarii, plik awarii zostaje na tym komputerze i opuszcza go tylko wtedy, gdy go wyślesz.",
-    "crash_memory": "Plik awarii to kopia części pamięci aplikacji z chwili awarii. Bulwark usuwa nazwy użytkowników, adresy i tokeny logowania, które znajdzie, ale plik awarii nadal może zawierać tekst Twojej poczty.",
-    "instance_note": "Na serwerze Bulwark jego administrator osobno decyduje, co strony mu zgłaszają.",
+    "crash_memory": "Plik awarii to kopia części pamięci aplikacji z chwili awarii. Loomix usuwa nazwy użytkowników, adresy i tokeny logowania, które znajdzie, ale plik awarii nadal może zawierać tekst Twojej poczty.",
+    "instance_note": "Na serwerze Loomix jego administrator osobno decyduje, co strony mu zgłaszają.",
     "forced_off": "Twoja organizacja to wyłączyła.",
     "url_label": "Dokąd trafiają pliki awarii",
-    "url_description": "Adres https, który odbiera plik awarii. Bulwark nie ma własnego.",
+    "url_description": "Adres https, który odbiera plik awarii. Loomix nie ma własnego.",
     "url_invalid": "Wpisz pełny adres https.",
     "url_save": "Zapisz",
     "files_label": "Pliki awarii na tym komputerze",
-    "files_description": "Bulwark zachowuje kilka najnowszych i usuwa starsze niż miesiąc.",
+    "files_description": "Loomix zachowuje kilka najnowszych i usuwa starsze niż miesiąc.",
     "files_empty": "Brak plików awarii.",
     "file_size": "{size} KB",
     "send": "Wyślij raport o awarii…",

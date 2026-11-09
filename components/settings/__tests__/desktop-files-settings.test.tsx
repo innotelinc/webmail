@@ -130,7 +130,7 @@ describe('Files on this computer settings page', () => {
     expect(controller.flushRoot).toHaveBeenCalledWith('d1', expect.anything());
     expect(dialog).toHaveTextContent('Still to upload: notes.txt, unsynced new.txt');
     expect(within(dialog).getByRole('progressbar', { name: '1 of 3 uploaded' })).toBeInTheDocument();
-    expect(dialog).toHaveTextContent('Documents\\Bulwark – not uploaded');
+    expect(dialog).toHaveTextContent('Documents\\Loomix – not uploaded');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Keep the drive on' }));
     await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
     finish('cancelled');
@@ -153,7 +153,7 @@ describe('Files on this computer settings page', () => {
   });
 
   it("says where the files that weren't uploaded went, and opens that folder", () => {
-    const folder = 'C:\\Users\\ann\\Documents\\Bulwark – not uploaded\\2026-11-04';
+    const folder = 'C:\\Users\\ann\\Documents\\Loomix – not uploaded\\2026-11-04';
     setup({ drive: drive(), rescued: { folder, count: 2, failed: 0 } });
     renderPage();
     const notice = screen.getByTestId('files-sync-rescued');
@@ -513,14 +513,14 @@ describe('whose Files, and adding a folder with the one on this computer first (
 });
 
 describe('opening, pausing and the letter (files-p3-7, p3-10, p3-14 to p3-19, settings-p3-3)', () => {
-  const driveRoot = () => folderRoot({ id: 'd1', kind: 'drive', remoteId: null, remoteLabel: 'acc', path: 'C:\\Users\\ann\\Bulwark Files\\ann@example.org' });
+  const driveRoot = () => folderRoot({ id: 'd1', kind: 'drive', remoteId: null, remoteLabel: 'acc', path: 'C:\\Users\\ann\\Loomix Files\\ann@example.org' });
 
   it('says where the drive is, with its letter, and opens it', () => {
     setup({ drive: drive({ wanted: ['acc'], letter: { letter: 'Z', chosen: 'Z', locked: false, available: ['X'] } }), roots: [driveRoot()] });
     renderPage();
     const where = screen.getByTestId('files-sync-drive-where');
-    expect(where).toHaveTextContent('In File Explorer as Bulwark Files (Z:)');
-    expect(where).toHaveTextContent('C:\\Users\\ann\\Bulwark Files\\ann@example.org');
+    expect(where).toHaveTextContent('In File Explorer as Loomix Files (Z:)');
+    expect(where).toHaveTextContent('C:\\Users\\ann\\Loomix Files\\ann@example.org');
     fireEvent.click(within(where).getByRole('button', { name: 'Open' }));
     expect(controller.openRoot).toHaveBeenCalledWith('d1');
     // The letter option says what Explorer shows through it.
@@ -604,7 +604,7 @@ describe('the drive and starting with Windows (files-p3-4)', () => {
     delete (window as unknown as { bulwarkDesktop?: unknown }).bulwarkDesktop;
   });
 
-  it('turning the drive on also starts Bulwark with Windows, from the same click', async () => {
+  it('turning the drive on also starts Loomix with Windows, from the same click', async () => {
     const os = osBridge(false);
     setup({ drive: drive() });
     renderPage();
@@ -619,13 +619,13 @@ describe('the drive and starting with Windows (files-p3-4)', () => {
     const os = osBridge(true);
     setup({ drive: drive({ wanted: ['acc'] }) });
     renderPage();
-    const box = await screen.findByRole('checkbox', { name: /Start Bulwark when you sign in to Windows/ });
+    const box = await screen.findByRole('checkbox', { name: /Start Loomix when you sign in to Windows/ });
     expect(box).toBeChecked();
-    expect(screen.getByText('The drive needs Bulwark running, as OneDrive does.')).toBeInTheDocument();
+    expect(screen.getByText('The drive needs Loomix running, as OneDrive does.')).toBeInTheDocument();
     expect(screen.queryByTestId('files-sync-closed-warning')).toBeNull();
     fireEvent.click(box);
     expect(os.setSettings).toHaveBeenCalledWith({ startAtLogin: false });
-    expect(await screen.findByTestId('files-sync-closed-warning')).toHaveTextContent("Files in the drive can't open while Bulwark is closed.");
+    expect(await screen.findByTestId('files-sync-closed-warning')).toHaveTextContent("Files in the drive can't open while Loomix is closed.");
   });
 });
 

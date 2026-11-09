@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { PluginIframeSlot } from './plugin-iframe-slot';
 
 // The `calendar-task-view` slot: a plugin drawing the calendar's task view
-// below its toolbar, in place of Bulwark's task list. One plugin at a time,
+// below its toolbar, in place of Loomix's task list. One plugin at a time,
 // the first offering it (by its offer's order, then the plugins' order);
 // none, and the calendar shows its own list. So does a plugin whose
 // shouldShow says no or whose frame fails to start.
@@ -23,7 +23,7 @@ export function usePluginTaskView(): { pluginId: string; fill: boolean } | null 
  * The plugin's frame in the area below the task toolbar: filled when the
  * plugin asks for it (it scrolls inside), else the area scrolls. Its props:
  * the toolbar's filter and the calendars ticked in the sidebar. `fallback`
- * (Bulwark's list) stands in while the frame is not drawn.
+ * (Loomix's list) stands in while the frame is not drawn.
  */
 export function PluginTaskView({ pluginId, fill, filter, calendarIds, fallback }: {
   pluginId: string;

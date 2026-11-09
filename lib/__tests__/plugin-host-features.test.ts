@@ -1,5 +1,5 @@
 /**
- * api.host.features tells plugins which of Bulwark's own features replace
+ * api.host.features tells plugins which of Loomix's own features replace
  * them (externalSenderLabel and externalRecipientWarning: the
  * organisation's External label and recipient warning). The host sends it with init and again on every
  * change; the runtime keeps one object up to date.

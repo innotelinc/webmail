@@ -32,7 +32,7 @@ export const DEFAULT_DELEGATE_SCOPE: DelegateScope = { mail: 'all', calendars: '
 
 export const ACCESS_LEVELS: readonly AccessLevel[] = ['read', 'write'];
 
-// Bulwark's own list of senders whose images load (stores/contact-store.ts,
+// Loomix's own list of senders whose images load (stores/contact-store.ts,
 // TRUSTED_SENDERS_BOOK_NAME). It is an address book on the server, but not
 // one a delegate needs.
 const TRUSTED_SENDERS_BOOK_NAME = 'Trusted Senders';

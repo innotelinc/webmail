@@ -11,7 +11,7 @@ import { matchesSubResult, settingsSubResults, type SettingsSearchTab } from '@/
 // at the top; Accessibility keeps a link. The stored setting is still doNotDisturb.
 // Strings are keys here (next-intl mock).
 
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 vi.mock('@/lib/web-push', () => ({
   WebPushUnsupportedError: class WebPushUnsupportedError extends Error {},
   isWebPushSupported: () => false,
@@ -107,7 +107,7 @@ describe('Do not disturb on Notifications', () => {
 
 describe('settings search', () => {
   const pagesFor = (query: string) => (['notifications', 'accessibility'] as SettingsSearchTab[])
-    .filter((tab) => settingsSubResults(en, tab, 'Bulwark').some((result) => matchesSubResult(result, query)));
+    .filter((tab) => settingsSubResults(en, tab, 'Loomix').some((result) => matchesSubResult(result, query)));
 
   it.each(['do not disturb', 'quiet hours', 'pause notifications'])('"%s" leads to Notifications only', (query) => {
     expect(pagesFor(query)).toEqual(['notifications']);

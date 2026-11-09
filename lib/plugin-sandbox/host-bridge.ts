@@ -256,7 +256,7 @@ function pushThemeToFrames(): void {
   }
 }
 
-/** Every frame hears about a Bulwark feature that replaces plugins turning on or off. */
+/** Every frame hears about a Loomix feature that replaces plugins turning on or off. */
 function pushHostFeaturesToFrames(features: HostFeaturesView): void {
   for (const instance of liveInstances) {
     // Some of the assistant's flags depend on the plugin's grants (host-features.ts).

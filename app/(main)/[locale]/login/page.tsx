@@ -272,7 +272,7 @@ function LoginPageContent() {
   const { login, loginWithToken, loginDemo, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const { theme, setTheme, initializeTheme } = useThemeStore(useShallow((s) => ({ theme: s.theme, setTheme: s.setTheme, initializeTheme: s.initializeTheme })));
   const { appName, jmapServerUrl: configuredServerUrl, oauthEnabled, oauthOnly, oauthPasswordFallbackEnabled, oauthClientId: globalOauthClientId, oauthIssuerUrl: globalOauthIssuerUrl, oauthScopes, oauthResource, rememberMeEnabled, devMode, demoMode, loginLogoLightUrl, loginLogoDarkUrl, loginCompanyName, loginImprintUrl, loginPrivacyPolicyUrl, loginWebsiteUrl, loginUsernamePlaceholder, loginLogoMaxHeight, loginLogoMaxWidth, loginShowHeading, loginShowSubtitle, loginShowTotp, loginShowTokenLogin, loginShowRememberMe, loginShowVersion, isLoading: configLoading, error: configError, autoSsoEnabled, embeddedMode: _embeddedMode, allowCustomJmapEndpoint: configAllowsCustomEndpoint, jmapServers: configuredServers, jmapServerAutoPickByDomain } = useConfig();
-  // The device's OS policy narrows what the server offers. A forced Bulwark server hides
+  // The device's OS policy narrows what the server offers. A forced Loomix server hides
   // the field for a server of one's own, unless that field is the only way to sign in there.
   const allowCustomJmapEndpoint = configAllowsCustomEndpoint && (customServerAllowedByDesktopPolicy(desktopPolicy) || !configuredServerUrl);
   const jmapServers = useMemo(
@@ -499,7 +499,7 @@ function LoginPageContent() {
 
   // The tab says what the page is for, not only whose it is (WCAG 2.4.2).
   // With or without a server set up: a page that came here from the mail view
-  // would otherwise keep that view's title ("Mail - Bulwark").
+  // would otherwise keep that view's title ("Mail - Loomix").
   useDocumentTitle(isAddAccountMode ? t("add_account_title") : t("sign_in"), { showAccount: false });
 
   useEffect(() => {
@@ -2321,7 +2321,7 @@ function LoginPageContent() {
           )}
 
           {/* The desktop app on its own, first sign-in: the way back to "My organisation
-              gave me a Bulwark web address" (settings-p3-1). It asks before the restart. */}
+              gave me a Loomix web address" (settings-p3-1). It asks before the restart. */}
           {IS_DESKTOP_BUILD && customServerMode && !isAddAccountMode && orgLinkOffered && (
             <p className="mt-4 text-center text-xs text-muted-foreground">
               <button

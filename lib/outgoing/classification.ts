@@ -123,7 +123,7 @@ export function resolveLabel(
 
 /**
  * The pick a message opened again in the composer starts with: a draft's
- * X-Bulwark-Label, else the label its headers carry (a sent message
+ * X-Loomix-Label, else the label its headers carry (a sent message
  * brought back by Undo, "Cancel and edit" or edit-as-new carries SIO-Label
  * only), read with the labels of the account it is in.
  */

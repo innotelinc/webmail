@@ -191,7 +191,7 @@ export function MonitoringPage() {
             {state?.tracing?.active
               ? <>On. Spans go to <code className="font-mono">{state.tracing.endpointHost ?? 'the OTLP endpoint'}</code> over OTLP/HTTP.</>
               : state?.tracing?.configured
-                ? <>Configured, but not running in this process. Restart Bulwark after setting the <code className="font-mono">OTEL_*</code> variables.</>
+                ? <>Configured, but not running in this process. Restart Loomix after setting the <code className="font-mono">OTEL_*</code> variables.</>
                 : <>Off. Set <code className="font-mono">OTEL_EXPORTER_OTLP_ENDPOINT</code> (and the other standard <code className="font-mono">OTEL_*</code> variables you need) to send traces.</>}
           </p>
           <ConfigNote>

@@ -41,7 +41,7 @@ function DaysInput({ id, label, value, onChange }: { id: string; label: string; 
 /**
  * Organisation > Notices > Trash and Junk (enterprise pack item 12): the
  * days the mail server keeps mail there, as the admin set them in the
- * server, for one quiet line in those folders. Bulwark can't read the
+ * server, for one quiet line in those folders. Loomix can't read the
  * server's value as a normal user, so the admin types it.
  */
 export function RetentionSection({ draft }: { draft: OrgPolicyDraft }) {
@@ -54,9 +54,9 @@ export function RetentionSection({ draft }: { draft: OrgPolicyDraft }) {
       description="One quiet line in Trash and in Junk: “Messages here are deleted 30 days after they were moved here.” Empty shows no line."
     >
       <div className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground" data-testid="org-retention-stalwart">
-        Enter what your mail server does: Bulwark only shows the number. Stalwart uses one setting for both folders,
+        Enter what your mail server does: Loomix only shows the number. Stalwart uses one setting for both folders,
         Data Retention &gt; Trash (expungeTrashAfter, 30 days unless you changed it), counted from when a message was moved
-        into Trash or Junk. Bulwark can&apos;t read it with a user&apos;s sign-in, so type the same number here. Give Junk a
+        into Trash or Junk. Loomix can&apos;t read it with a user&apos;s sign-in, so type the same number here. Give Junk a
         smaller number only if something else (a filter or a clean-up job) really deletes it sooner.{' '}
         <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline-offset-2 hover:underline">
           More about this

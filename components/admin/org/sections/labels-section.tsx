@@ -41,8 +41,8 @@ function VsNfdWarning() {
       <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
       <p>
         A label only marks the message. It doesn&apos;t make mail meet the VS-NfD handling rules (VSA § 50, § 55): that
-        needs approved IT and BSI-approved encryption. Bulwark&apos;s S/MIME and PGP plugins and Stalwart are not
-        BSI-approved products. Anyone can forge a received label, so Bulwark only shows it and never relaxes anything because of it.
+        needs approved IT and BSI-approved encryption. Loomix&apos;s S/MIME and PGP plugins and Stalwart are not
+        BSI-approved products. Anyone can forge a received label, so Loomix only shows it and never relaxes anything because of it.
       </p>
     </div>
   );
@@ -308,7 +308,7 @@ export function LabelsSection({ draft }: { draft: OrgPolicyDraft }) {
                   />
                   {headerInvalid && (
                     <p className="text-xs text-red-600 dark:text-red-400" role="alert">
-                      A header name has no spaces or colons. Bulwark writes this one itself, or the mail server won't take it.
+                      A header name has no spaces or colons. Loomix writes this one itself, or the mail server won't take it.
                     </p>
                   )}
                 </div>

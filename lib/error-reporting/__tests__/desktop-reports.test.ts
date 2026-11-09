@@ -66,8 +66,8 @@ describe('main-process frames', () => {
   });
 
   it.each([
-    'C:\\Users\\linus\\AppData\\Local\\Programs\\Bulwark\\resources\\app.asar\\dist\\main.mjs',
-    'file:///C:/Users/linus/AppData/Local/Programs/Bulwark/resources/app.asar/dist/main.mjs',
+    'C:\\Users\\linus\\AppData\\Local\\Programs\\Loomix\\resources\\app.asar\\dist\\main.mjs',
+    'file:///C:/Users/linus/AppData/Local/Programs/Loomix/resources/app.asar/dist/main.mjs',
     '/home/linus/.local/bin/bulwark/resources/app.asar/dist/main.mjs',
     '/desktop/../../Users/linus/secret.js',
     '/desktop/C:\\Users\\linus\\x.js',
@@ -95,9 +95,9 @@ describe('a server install', () => {
 
 describe('what a report says', () => {
   it.each([
-    ["ENOENT: no such file or directory, open 'C:\\Users\\linus\\AppData\\Roaming\\Bulwark\\crash.dmp'", ['linus', 'AppData', 'crash']],
+    ["ENOENT: no such file or directory, open 'C:\\Users\\linus\\AppData\\Roaming\\Loomix\\crash.dmp'", ['linus', 'AppData', 'crash']],
     ['EPERM: operation not permitted, mkdir C:\\Users\\linus\\mail', ['linus']],
-    ['failed to read /home/linus/.config/Bulwark/state', ['linus', '.config']],
+    ['failed to read /home/linus/.config/Loomix/state', ['linus', '.config']],
     ['Subject Merger plans for Acme failed from ceo.private@acme-corp.example', ['Merger', 'Acme', 'ceo.private', 'acme-corp']],
     ['request failed Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0In0.abcdef sealed', ['eyJ', 'abcdef']],
     ['token 0123456789abcdef0123456789abcdef0123 refused', ['0123456789']],

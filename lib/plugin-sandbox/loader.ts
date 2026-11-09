@@ -326,7 +326,7 @@ async function startSandboxedPlugin(plugin: InstalledPlugin, retried = false): P
       }
       // The bus records a failure once; recording it here too made the
       // three-strikes breaker trip on the second error.
-      // While Bulwark does a retired plugin's job itself, that plugin's
+      // While Loomix does a retired plugin's job itself, that plugin's
       // hook is skipped: copies older than the release that steps back on
       // its own would ask twice (host-features.ts). Asked per call, so
       // turning the core switch off gives the plugin its hook back.

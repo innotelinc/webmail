@@ -2,14 +2,14 @@
  * Where an import stopped, per file, so a cancelled, crashed or paused import
  * of a large file continues instead of importing every message again
  * (Email/import doesn't skip duplicates). Kept in IndexedDB, keyed by the
- * Bulwark account, the target and the file's name, size and date; removed
+ * Loomix account, the target and the file's name, size and date; removed
  * when the import finishes, when the account signs out and on a full
  * sign-out. Falls back to memory where IndexedDB isn't available.
  */
 
 export interface ImportCheckpoint {
   key: string;
-  /** The Bulwark account that ran the import. */
+  /** The Loomix account that ran the import. */
   scope: string;
   fileName: string;
   /** Items done for good (imported or skipped) from the start of the file, without a gap. */
@@ -99,7 +99,7 @@ async function withStore<T>(mode: IDBTransactionMode, run: (store: IDBObjectStor
 
 /**
  * In IndexedDB rather than localStorage, which Chromium writes to disk late: an import
- * killed in its first minute would come back as if it had never started. One per Bulwark
+ * killed in its first minute would come back as if it had never started. One per Loomix
  * account, so one account's import doesn't overwrite another's.
  */
 export async function readStoredJob<T>(scope: string): Promise<T | null> {
@@ -179,7 +179,7 @@ export async function deleteCheckpoint(key: string): Promise<void> {
   }
 }
 
-/** Removes the checkpoints of one Bulwark account (it signs out). */
+/** Removes the checkpoints of one Loomix account (it signs out). */
 export async function clearCheckpointsFor(scope: string): Promise<void> {
   for (const [key, value] of memory) if (value.scope === scope) memory.delete(key);
   forgetSeenInMemory(scope);

@@ -119,7 +119,7 @@ describe('GET /api/admin/marketplace/[slug]', () => {
 
     appName.value = 'Webmail';
     body = await (await preview()).json();
-    expect(body.extension.permissionDetails[0].body).toBe("Send requests through Bulwark's server.");
+    expect(body.extension.permissionDetails[0].body).toBe("Send requests through Loomix's server.");
   });
 
   it('refuses a malformed version instead of forwarding it', async () => {

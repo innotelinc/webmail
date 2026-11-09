@@ -88,7 +88,7 @@ async function fetchIcal(
     for (let i = 0; i <= MAX_REDIRECTS; i++) {
       const headers: Record<string, string> = {
         'Accept': 'text/calendar, application/ics, text/plain, */*',
-        'User-Agent': 'Bulwark-Webmail-Calendar (+https://bulwarkmail.org)',
+        'User-Agent': 'Loomix-Webmail-Calendar (+https://bulwarkmail.org)',
       };
       if (authHeader && new URL(currentUrl).origin === originalOrigin) {
         headers['Authorization'] = authHeader;

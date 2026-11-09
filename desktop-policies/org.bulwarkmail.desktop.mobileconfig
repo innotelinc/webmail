@@ -17,7 +17,7 @@
       <key>PayloadEnabled</key>
       <true/>
       <key>PayloadDisplayName</key>
-      <string>Bulwark settings</string>
+      <string>Loomix settings</string>
       <key>InstanceUrl</key>
       <string>https://mail.example.com</string>
       <key>AllowStandalone</key>
@@ -97,7 +97,7 @@
   <key>PayloadUUID</key>
   <string>AEC7BA2B-DD06-4BDF-83E5-147573C181F4</string>
   <key>PayloadDisplayName</key>
-  <string>Bulwark Desktop</string>
+  <string>Loomix Desktop</string>
   <key>PayloadDescription</key>
   <string>A sample profile. Remove what you do not want to set, and change the rest.</string>
   <key>PayloadScope</key>

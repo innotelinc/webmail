@@ -836,7 +836,7 @@ export function CalendarApp({ linkSegments: routeSegments }: CalendarAppProps = 
   }), [closeEventPanelForTask, whenEditorsDiscarded]);
 
   // A plugin drawing the task view opens a task in the editor
-  // (api.ui.openTask), as a click in Bulwark's list does.
+  // (api.ui.openTask), as a click in Loomix's list does.
   useEffect(() => onOpenTask((taskId) => {
     const task = useTaskStore.getState().tasks.find((t) => t.id === taskId);
     if (!task) return false;
@@ -2251,8 +2251,8 @@ export function CalendarApp({ linkSegments: routeSegments }: CalendarAppProps = 
                 compact={isMobile}
               />
               {/* A plugin may draw the list itself (the calendar-task-view
-                  slot), with Bulwark's list back while its frame is not
-                  drawn; the toolbar above stays Bulwark's. */}
+                  slot), with Loomix's list back while its frame is not
+                  drawn; the toolbar above stays Loomix's. */}
               {pluginTaskView ? (
                 <PluginTaskView
                   pluginId={pluginTaskView.pluginId}

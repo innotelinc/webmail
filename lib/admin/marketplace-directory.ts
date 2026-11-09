@@ -56,7 +56,7 @@ export function v2Url(directoryUrl: string, path: string, query: Record<string, 
   return url;
 }
 
-/** The query every catalogue request carries so the directory filters for this Bulwark. */
+/** The query every catalogue request carries so the directory filters for this Loomix. */
 export function compatQuery(): Record<string, string | undefined> {
   return { appVersion: APP_VERSION || undefined, channel: getDirectoryChannel() };
 }
@@ -234,7 +234,7 @@ export interface MarketplaceListing extends InstalledState {
   totalDownloads: number;
   rating: { average: number; count: number };
   deprecated: DirectorySummary['deprecated'];
-  /** The version the directory offers this Bulwark, or null if none fits. */
+  /** The version the directory offers this Loomix, or null if none fits. */
   latest: DirectoryVersion | null;
   /** Kept for the card: the offered version's number and requirement. */
   latestVersion: string | null;

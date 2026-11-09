@@ -70,7 +70,7 @@ export default async function manifest(): Promise<ExtendedManifest> {
   const appName =
     branded<string>("appName", "") ||
     process.env.NEXT_PUBLIC_APP_NAME ||
-    "Bulwark Webmail";
+    "Loomix Mail";
 
   const shortName = branded<string>("appShortName", "") || appName;
   const description =
@@ -81,7 +81,7 @@ export default async function manifest(): Promise<ExtendedManifest> {
 
   // If pwaIconUrl or faviconUrl was explicitly configured (admin override,
   // env var, or per-domain override), serve dynamically resized PNGs via
-  // /api/pwa-icon/[size]. Otherwise fall back to the static Bulwark PNGs -
+  // /api/pwa-icon/[size]. Otherwise fall back to the static Loomix PNGs -
   // sources marked "default" are the built-in placeholder paths and not
   // real custom icons.
   const sources = configManager.getAllWithSources();
@@ -135,7 +135,7 @@ export default async function manifest(): Promise<ExtendedManifest> {
     categories: ["productivity"],
     // Use admin-uploaded screenshots when configured (per-domain override,
     // admin/env global; resized on the fly via /api/pwa-screenshot/[variant]);
-    // otherwise fall back to the built-in Bulwark screenshots from public/.
+    // otherwise fall back to the built-in Loomix screenshots from public/.
     screenshots: (() => {
       const hasMobile =
         !!domainOverrides.pwaScreenshotMobileUrl ||

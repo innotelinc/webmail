@@ -70,8 +70,8 @@
     "demo_tagline": "Tapasztalj meg egy teljes értékű e-mail klienst. Nincs szükség fiókra.",
     "demo_no_signup": "Nincs szükség regisztrációra - fedezd fel szabadon mintaadatokkal",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Ez a név túl hosszú.",
     "loading": "Betöltés…",
     "unsupported": "Ez a levelezőszerver nem tud megosztott címkéket tárolni, ezért ez a postafiók a saját címkéidet mutatja.",
-    "unavailable": "Nem sikerült betölteni a postafiók megosztott címkéit, ezért a saját címkéidet mutatja. A Bulwark később újra próbálkozik.",
+    "unavailable": "Nem sikerült betölteni a postafiók megosztott címkéit, ezért a saját címkéidet mutatja. A Loomix később újra próbálkozik.",
     "no_rights": "Használhatod ezeket a címkéket, de ebben a postafiókban nem módosíthatod őket.",
     "too_many": "Túl sok a megosztott címke. Törölj néhányat, mielőtt újakat adsz hozzá.",
-    "save_failed": "Nem sikerült menteni a megosztott címkéket. A Bulwark újra próbálkozik, amikor a szerver válaszol.",
-    "save_pending": "Még nincs mentve. A Bulwark újra próbálkozik, amikor a szerver válaszol."
+    "save_failed": "Nem sikerült menteni a megosztott címkéket. A Loomix újra próbálkozik, amikor a szerver válaszol.",
+    "save_pending": "Még nincs mentve. A Loomix újra próbálkozik, amikor a szerver válaszol."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1112,7 +1112,7 @@
     "show_less": "Kevesebb mutatása",
     "send_failed": "Nem sikerült elküldeni az e-mailt",
     "send_timeout": "A kiszolgáló nem válaszol többé. Újraküldés előtt ellenőrizze az Elküldött mappát – az üzenet lehet, hogy már kiment.",
-    "submission_quota": "A kiszolgáló túl sok elküldött üzenetről szóló bejegyzést tárol ehhez a fiókhoz. A Bulwark eltávolította, amit tudott; ha ez továbbra is előfordul, kérje meg a rendszergazdát, hogy emelje meg az e-mail-küldési korlátot.",
+    "submission_quota": "A kiszolgáló túl sok elküldött üzenetről szóló bejegyzést tárol ehhez a fiókhoz. A Loomix eltávolította, amit tudott; ha ez továbbra is előfordul, kérje meg a rendszergazdát, hogy emelje meg az e-mail-küldési korlátot.",
     "submission_limit": "A kiszolgáló elutasította az üzenet küldését, mert elért egy korlátot: {reason}",
     "recipients_refused": "Nincs elküldve: a kiszolgáló elutasította a következőt: {recipients}.",
     "recipients_partly_refused": "A kiszolgáló elutasította a következőt: {recipients}. A többi címzett megkapja az üzenetet.",
@@ -1856,15 +1856,15 @@
       },
       "push": {
         "title": "Értesítések, amikor a(z) {appName} be van zárva",
-        "description": "Rendszerértesítések fogadása új levelekről, amikor ez az oldal be van zárva. A Bulwark push relén keresztül kézbesítve; a relay soha nem látja a levél tartalmát.",
+        "description": "Rendszerértesítések fogadása új levelekről, amikor ez az oldal be van zárva. A Loomix push relén keresztül kézbesítve; a relay soha nem látja a levél tartalmát.",
         "relay_label": "Push relé",
-        "relay_desc": "Alapértelmezés szerint a tárolt Bulwark relay. Csak akkor módosítsd, ha sajátot üzemeltetsz.",
+        "relay_desc": "Alapértelmezés szerint a tárolt Loomix relay. Csak akkor módosítsd, ha sajátot üzemeltetsz.",
         "relay_locked": "Rendszergazda által beállítva",
         "relay_locked_desc": "A push relay URL-t a rendszergazda állította be, és nem módosítható.",
         "status_active": "Aktív ezen az eszközön",
         "status_inactive": "Nincs engedélyezve ezen az eszközön",
         "status_unsupported": "Ez a böngésző nem támogatja a Web Push-t",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "A háttérértesítések nem érhetők el a bemutatóban.",
         "status_busy": "Munka...",
         "enable": "Bekapcsolás ezen az eszközön",
@@ -2484,10 +2484,10 @@
       },
       "link_device": {
         "title": "Mobilalkalmazás összekapcsolása",
-        "description": "Jelentkezz be a telefonodon a Bulwark Mail alkalmazásba anélkül, hogy ott beírnád a jelszavad. A telefonod saját bejelentkezést kap, így ha itt kijelentkezel, a telefon bejelentkezve marad.",
+        "description": "Jelentkezz be a telefonodon a Loomix Mail alkalmazásba anélkül, hogy ott beírnád a jelszavad. A telefonod saját bejelentkezést kap, így ha itt kijelentkezel, a telefon bejelentkezve marad.",
         "generate": "QR-kód megjelenítése",
         "regenerate": "Új kód megjelenítése",
-        "instructions": "Nyisd meg a Bulwark Mail alkalmazást, és a bejelentkezési képernyőn koppints a \"Scan a sign-in code\" lehetőségre (vagy az \"Add account\" → \"Scan a sign-in code\" lehetőségre, ha már be vagy jelentkezve), majd irányítsd ide a kamerát.",
+        "instructions": "Nyisd meg a Loomix Mail alkalmazást, és a bejelentkezési képernyőn koppints a \"Scan a sign-in code\" lehetőségre (vagy az \"Add account\" → \"Scan a sign-in code\" lehetőségre, ha már be vagy jelentkezve), majd irányítsd ide a kamerát.",
         "expires_in": "Ez a kód {seconds} másodperc múlva lejár. Csak egyszer használható.",
         "expired": "Ez a kód lejárt.",
         "error": "Nem sikerült párosítási kódot létrehozni. Próbáld újra.",
@@ -2753,7 +2753,7 @@
         "button": "Importálás"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Forráskód"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Keresés felül, az üzenetek teljes szélességben nyílnak meg"
   },
   "setup": {
-    "title": "A Bulwark Webmail beállítása",
+    "title": "A Loomix Mail beállítása",
     "subtitle": "Állítsa be a webmail-példányát a böngészőből.",
     "loading": "Betöltés…",
     "back": "Vissza",
@@ -3734,7 +3734,7 @@
       "regenerate": "Újragenerálás",
       "sync": "Felhasználói beállítások szinkronizálása az eszközök között",
       "sync_hint": "A felhasználók beállításait a szerveren tárolja, a munkamenet-titokkal titkosítva.",
-      "telemetry": "Névtelen használati statisztikák küldése a Bulwark fejlesztéséhez",
+      "telemetry": "Névtelen használati statisztikák küldése a Loomix fejlesztéséhez",
       "telemetry_hint": "Alapértelmezés szerint ki van kapcsolva. Naponta egy névtelen jelzés a verzióval, a platformmal és a bekapcsolt funkciókkal; soha nem küld e-mail-címet, gépnevet vagy IP-címet. Ezt bármikor módosíthatja az adminisztrációs beállításokban."
     },
     "logging": {
@@ -5363,7 +5363,7 @@
     "label": "Naptáram foglalása",
     "description": "Foglalt eseményt tesz a távollét idejére, hogy addig senki ne szervezzen Önnel megbeszélést.",
     "no_access_managed": "Ennek a fióknak a naptára nem foglalható: nincs hozzá írási joga.",
-    "no_calendar": "A naptár nem foglalható: a Bulwark nem talált naptárt az eseményhez.",
+    "no_calendar": "A naptár nem foglalható: a Loomix nem talált naptárt az eseményhez.",
     "filter_warning": "Ha bekapcsolja, a saját szűrőszkriptje kikapcsol, amíg a válasz aktív."
   },
   "calendar_delegate": {
@@ -5466,20 +5466,20 @@
   "find_time": {
     "suggest": "Időpontok javaslata",
     "searching": "Szabad időpontok keresése",
-    "slots_title": "Szabad mindenkinek, akit a Bulwark ellenőrizni tudott",
+    "slots_title": "Szabad mindenkinek, akit a Loomix ellenőrizni tudott",
     "slot": "{day}, {start}–{end}",
     "none": "A következő 10 munkanapon nincs szabad idő.",
     "picked": "Az esemény áthelyezve: {slot}",
     "rate_limited": "Túl sok lekérdezés az elmúlt percben. Próbálja újra egy perc múlva.",
-    "unavailable": "A szabad/foglalt adatok ezen a szerveren nem érhetők el, ezért a Bulwark nem tud időpontot javasolni.",
+    "unavailable": "A szabad/foglalt adatok ezen a szerveren nem érhetők el, ezért a Loomix nem tud időpontot javasolni.",
     "not_checked": "Nem ellenőrzött:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "a szervezetén kívül",
     "reason_unknown": "foglalt idők ismeretlenek",
     "reason_not_found": "nem található ezen a szerveren",
     "reason_error": "nem sikerült ellenőrizni",
-    "unknown_note": "A Bulwark csak az Önnel megosztott naptárakban látja a foglalt időket. Ezeknél a személyeknél nem tudja megkülönböztetni a szabadot a nem megosztottól.",
-    "directory_off": "A Bulwark ezen a szerveren nem tud személyeket keresni. A rendszergazda a Stalwartban bekapcsolhatja a címtár-lekérdezéseket.",
+    "unknown_note": "A Loomix csak az Önnel megosztott naptárakban látja a foglalt időket. Ezeknél a személyeknél nem tudja megkülönböztetni a szabadot a nem megosztottól.",
+    "directory_off": "A Loomix ezen a szerveren nem tud személyeket keresni. A rendszergazda a Stalwartban bekapcsolhatja a címtár-lekérdezéseket.",
     "not_looked_up": "A cím nem kereshető",
     "found": "Talált szabad időpontok: {count}"
   },
@@ -5676,7 +5676,7 @@
     "start_tour": "Bemutató indítása"
   },
   "demo_welcome": {
-    "title": "Üdvözlünk a Bulwark Mail-ben",
+    "title": "Üdvözlünk a Loomix Mail-ben",
     "description": "Fedezz fel egy teljes funkciókkal rendelkező webmail klienst - közvetlenül a böngésződben. Az összes adat az eszközödön marad, nyugodtan tesztelj mindent.",
     "feature_email": "E-mailek olvasása és írása",
     "feature_organize": "Címkék, csillagok és mappák",
@@ -6110,9 +6110,9 @@
     "cancelled_hint": "A későbbi folytatáshoz importálja újra ugyanazokat a fájlokat ugyanabba a mappába.",
     "close": "Bezárás",
     "pst_note": "Az Outlook-fájlokból csak a levelek kerülnek át. A névjegyeket, naptárelemeket és feladatokat megszámolja és kihagyja.",
-    "pst_error_encrypted": "Ez az Outlook-fájl erős titkosítást használ, amelyet a Bulwark nem tud olvasni. Az Outlookban exportálja a leveleket egy új, titkosítás nélküli .pst fájlba.",
-    "pst_error_not_pst": "Ez a fájl nem olyan Outlook-adatfájl, amelyet a Bulwark olvasni tud.",
-    "pst_error_unreadable": "A Bulwark nem tudta beolvasni ezt az Outlook-fájlt.",
+    "pst_error_encrypted": "Ez az Outlook-fájl erős titkosítást használ, amelyet a Loomix nem tud olvasni. Az Outlookban exportálja a leveleket egy új, titkosítás nélküli .pst fájlba.",
+    "pst_error_not_pst": "Ez a fájl nem olyan Outlook-adatfájl, amelyet a Loomix olvasni tud.",
+    "pst_error_unreadable": "A Loomix nem tudta beolvasni ezt az Outlook-fájlt.",
     "pst_error_worker": "Az Outlook-fájlok olvasója nem töltődött be. Töltse újra az oldalt, és próbálja meg ismét.",
     "error_over_quota": "A postafiók megtelt, ezért az importálás leállt. Szabadítson fel helyet, és importálja újra ugyanazokat a fájlokat ugyanabba a mappába a folytatáshoz.",
     "error_forbidden": "Ebbe a mappába nem adhat hozzá leveleket, ezért az importálás leállt.",
@@ -6173,7 +6173,7 @@
   },
   "desktopImport": {
     "find": "Thunderbird- és Outlook-adatok keresése…",
-    "find_hint": "A számítógép szokásos helyein keres. A Bulwark előbb megkérdezi.",
+    "find_hint": "A számítógép szokásos helyein keres. A Loomix előbb megkérdezi.",
     "scan_declined": "Nem történt keresés, mert nem engedélyezte.",
     "scan_failed": "A keresés nem sikerült. Próbálja újra.",
     "read_declined": "Egy fájl sem lett beolvasva, mert nem engedélyezte.",
@@ -6229,7 +6229,7 @@
     "restore": "Visszaállítás",
     "restored": "{count, plural, one {# üzenet} other {# üzenet}} úton van vissza a Beérkező levelekbe.",
     "restore_partial": "{count, plural, one {# üzenetet nem sikerült visszaállítani. Kijelölve marad, így újra megpróbálhatod.} other {# üzenetet nem sikerült visszaállítani. Kijelölve maradnak, így újra megpróbálhatod.}}",
-    "restore_hint": "A visszaállított levelek olvasatlanként kerülnek vissza a Beérkező levelek közé, az eredeti dátumuk szerint rendezve, így messze lent is lehetnek a listában. A szerver a háttérben állítja vissza őket. Ha ez ott nem sikerül, az üzenet elvész, és a Bulwark ezt nem tudja észlelni.",
+    "restore_hint": "A visszaállított levelek olvasatlanként kerülnek vissza a Beérkező levelek közé, az eredeti dátumuk szerint rendezve, így messze lent is lehetnek a listában. A szerver a háttérben állítja vissza őket. Ha ez ott nem sikerül, az üzenet elvész, és a Loomix ezt nem tudja észlelni.",
     "unknown_sender": "Ismeretlen feladó",
     "no_subject": "(nincs tárgy)",
     "deleted_on": "Törölve: {date}",
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Kiürítés",
     "persist_refused": "Ez a böngésző törölheti a megtartott leveleket, ha fogy a hely. Az alkalmazás telepítése ezt általában megakadályozza.",
     "persist_retry": "A böngésző megkérése a megőrzésre",
-    "safari_hint": "A Safari 7 nap látogatás nélkül törli egy webhely adatait. Adja hozzá a Bulwarkot a Főképernyőhöz vagy a Dockhoz, hogy a levelei az eszközön maradjanak.",
+    "safari_hint": "A Safari 7 nap látogatás nélkül törli egy webhely adatait. Adja hozzá a Loomixot a Főképernyőhöz vagy a Dockhoz, hogy a levelei az eszközön maradjanak.",
     "evicted": "A böngésző törölte az ezen az eszközön megtartott leveleket. Újra letöltődnek.",
     "evicted_lost": "{count, plural, one {# el nem küldött levél vagy módosítás elveszett.} other {# el nem küldött levél vagy módosítás elveszett.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Az eszköz tárhelye megtelt.",
-    "storage_full_text": "A Bulwark nem ment több levelet ide. Tartson meg kevesebb levelet, vagy ürítse ki ezt a fiókot, hogy legyen hely.",
+    "storage_full_text": "A Loomix nem ment több levelet ide. Tartson meg kevesebb levelet, vagy ürítse ki ezt a fiókot, hogy legyen hely.",
     "open_settings": "Beállítások megnyitása",
-    "default_on": "A Bulwark ezen az eszközön tartja meg a leveleit, hogy kapcsolat nélkül is működjön. Ezt a Beállításokban módosíthatja.",
+    "default_on": "A Loomix ezen az eszközön tartja meg a leveleit, hogy kapcsolat nélkül is működjön. Ezt a Beállításokban módosíthatja.",
     "conflict_calendar": "Naptáresemény",
     "conflict_contacts": "Névjegy",
     "kept_files_title": "Offline megtartott fájlok",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Tartalom a feladatok nézetében",
-        "body": "Saját szakaszokat jelenít meg egy feladat részleteiben, gombokat a feladatlistában, és saját feladatlistát a Bulwark listája helyett."
+        "body": "Saját szakaszokat jelenít meg egy feladat részleteiben, gombokat a feladatlistában, és saját feladatlistát a Loomix listája helyett."
       },
       "ui_files": {
         "title": "Tartalom a fájlok nézetében",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Billentyűparancsok",
       "docs": "Dokumentáció",
       "settings": "Beállítások…",
-      "about": "A Bulwark névjegye",
+      "about": "A Loomix névjegye",
       "from_plugins": "Továbbiak a bővítményektől…",
       "pick_gone": "Ez a menü elavult volt. Nyissa meg újra, és próbálja meg még egyszer.",
       "bar_label": "Menü"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Ha most bezárja, elvész, amit az utolsó mentés óta írt.",
       "close_anyway": "Bezárás mégis",
       "unsent_title": "Néhány levél még nincs elküldve",
-      "unsent_one": "Egy üzenet küldésre vár. A Bulwark következő megnyitásakor elmegy.",
-      "unsent_many": "{count} üzenet küldésre vár. A Bulwark következő megnyitásakor elmennek.",
+      "unsent_one": "Egy üzenet küldésre vár. A Loomix következő megnyitásakor elmegy.",
+      "unsent_many": "{count} üzenet küldésre vár. A Loomix következő megnyitásakor elmennek.",
       "quit": "Kilépés",
       "leave_title": "Elhagyja az oldalt mentetlen módosításokkal?",
       "leave_detail": "Az oldalon végzett módosítások még nincsenek mentve.",
@@ -7383,7 +7383,7 @@
       "stay": "Maradás"
     },
     "spellcheck": {
-      "offer": "A(z) {language} nyelvű helyesírás-ellenőrzéshez szótár kell. A Bulwark letöltheti a Google-tól. A szövege nem kerül elküldésre.",
+      "offer": "A(z) {language} nyelvű helyesírás-ellenőrzéshez szótár kell. A Loomix letöltheti a Google-tól. A szövege nem kerül elküldésre.",
       "download": "Letöltés"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "1 órára",
     "tray_pause_tomorrow": "Holnapig",
     "tray_resume": "Értesítések visszakapcsolása",
-    "tray_open": "Bulwark megnyitása",
-    "tray_quit": "Kilépés a Bulwarkból",
-    "tray_exit": "Kilépés a Bulwarkból"
+    "tray_open": "Loomix megnyitása",
+    "tray_quit": "Kilépés a Loomixból",
+    "tray_exit": "Kilépés a Loomixból"
   },
   "desktopMenus": {
     "save_draft": "Piszkozat mentése",
@@ -7581,25 +7581,25 @@
     "cancel": "Mégse",
     "or_here": "vagy jelentkezzen be itt",
     "timed_out": "A böngészős bejelentkezés túl sokáig tartott. Próbálja újra.",
-    "no_browser": "A Bulwark nem tudta megnyitni a böngészőt. Próbálja újra, vagy jelentkezzen be itt.",
+    "no_browser": "A Loomix nem tudta megnyitni a böngészőt. Próbálja újra, vagy jelentkezzen be itt.",
     "failed": "A böngészőn keresztüli bejelentkezés nem sikerült. Próbálja újra.",
-    "handoff_banner": "A számítógépen egy program kérte ezt a bejelentkezést a Bulwark alkalmazáshoz. Ez a böngésző kijelentkezve marad a Bulwarkból. Ha nem Ön indította, zárja be ezt a lapot.",
-    "consent_title": "Bejelentkezik a Bulwark alkalmazásba?",
-    "consent_description": "A számítógépen egy program a(z) {port} porton a(z) {username} bejelentkezését kéri. Csak akkor folytassa, ha az imént nyomta meg a „Bejelentkezés a böngészővel…” gombot az itteni Bulwark alkalmazásban. Ha nem, lehet, hogy valaki be akar jutni a fiókjába: válassza a Most nem lehetőséget.",
+    "handoff_banner": "A számítógépen egy program kérte ezt a bejelentkezést a Loomix alkalmazáshoz. Ez a böngésző kijelentkezve marad a Loomixból. Ha nem Ön indította, zárja be ezt a lapot.",
+    "consent_title": "Bejelentkezik a Loomix alkalmazásba?",
+    "consent_description": "A számítógépen egy program a(z) {port} porton a(z) {username} bejelentkezését kéri. Csak akkor folytassa, ha az imént nyomta meg a „Bejelentkezés a böngészővel…” gombot az itteni Loomix alkalmazásban. Ha nem, lehet, hogy valaki be akar jutni a fiókjába: válassza a Most nem lehetőséget.",
     "consent_confirm": "Bejelentkezés az alkalmazásba",
     "consent_cancel": "Most nem",
-    "page_done": "Bezárhatja ezt a lapot, és visszatérhet a Bulwarkhoz.",
-    "page_failed": "A bejelentkezés nem sikerült. Térjen vissza a Bulwarkhoz, és próbálja újra.",
-    "page_link_used": "Ez a hivatkozás csak egyszer működik. Térjen vissza a Bulwarkhoz, és kezdje újra.",
+    "page_done": "Bezárhatja ezt a lapot, és visszatérhet a Loomixhoz.",
+    "page_failed": "A bejelentkezés nem sikerült. Térjen vissza a Loomixhoz, és próbálja újra.",
+    "page_link_used": "Ez a hivatkozás csak egyszer működik. Térjen vissza a Loomixhoz, és kezdje újra.",
     "page_title": "Bejelentkezés ide: {server}",
-    "page_intro": "Ez az oldal a számítógépen lévő Bulwark alkalmazástól származik. A jelszava a(z) {server} szerverre kerül, és sehova máshova.",
+    "page_intro": "Ez az oldal a számítógépen lévő Loomix alkalmazástól származik. A jelszava a(z) {server} szerverre kerül, és sehova máshova.",
     "page_username": "E-mail-cím vagy felhasználónév",
     "page_password": "Jelszó",
     "page_code": "Kétfaktoros kód",
     "page_submit": "Bejelentkezés",
     "page_wrong_password": "A szerver nem fogadta el ezt a felhasználónevet és jelszót.",
     "page_code_needed": "Ehhez a fiókhoz kétfaktoros kód is kell. Adja meg újra a jelszavát és a kódot.",
-    "page_no_answer": "A Bulwark nem tudott bejelentkezni. Ellenőrizze, hogy a szerver elérhető-e, és próbálja újra.",
+    "page_no_answer": "A Loomix nem tudott bejelentkezni. Ellenőrizze, hogy a szerver elérhető-e, és próbálja újra.",
     "declined": "A böngészőben nemet mondott, így nem történt bejelentkezés.",
     "too_many": "Túl sok bejelentkezési kísérlet erről a hálózatról. Várjon néhány percet, és próbálja újra.",
     "page_declined": "Semmi nem került átadásra. Bezárhatja ezt a lapot."
@@ -7619,7 +7619,7 @@
     "other_ways": "Más bejelentkezési módok",
     "trouble": "Probléma van?",
     "trouble_cors": "A levelezőszervernek engedélyeznie kell a bejelentkezést erről a webhelyről. Ha a bejelentkezés nem sikerül, kérje meg a levelezőszerver üzemeltetőjét, hogy engedélyezze.",
-    "provider_unsupported": "A(z) {provider} nem kínál JMAP-ot, azt a módot, ahogyan a Bulwark a levelezőszerverekkel beszél, ezért a Bulwark még nem tud közvetlenül csatlakozni hozzá."
+    "provider_unsupported": "A(z) {provider} nem kínál JMAP-ot, azt a módot, ahogyan a Loomix a levelezőszerverekkel beszél, ezért a Loomix még nem tud közvetlenül csatlakozni hozzá."
   },
   "login_a11y": {
     "caps_lock_on": "A Caps Lock be van kapcsolva",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Módosítja, hogyan csatlakozik a Bulwark?",
-      "message": "A Bulwark újraindul, és megkérdezi, hogyan csatlakozzon: az e-mail-címével vagy a szervezete Bulwarkján keresztül. A fiókjai ezen a számítógépen bejelentkezve maradnak.",
+      "title": "Módosítja, hogyan csatlakozik a Loomix?",
+      "message": "A Loomix újraindul, és megkérdezi, hogyan csatlakozzon: az e-mail-címével vagy a szervezete Loomixján keresztül. A fiókjai ezen a számítógépen bejelentkezve maradnak.",
       "confirm": "Módosítás",
-      "org_link": "Inkább a szervezetem Bulwarkját használom",
+      "org_link": "Inkább a szervezetem Loomixját használom",
       "add_account": "Fiók hozzáadása…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Beszúrás"
     },
     "sign_in_page": {
-      "open_app": "Bulwark megnyitása",
+      "open_app": "Loomix megnyitása",
       "done_as": "Bejelentkezve mint {address}. Ezt a lapot bezárhatja."
     }
   },
   "desktop_updates": {
     "title": "Frissítések",
-    "version_label": "Bulwark {version}",
-    "status_idle": "A Bulwark magától keres frissítéseket.",
+    "version_label": "Loomix {version}",
+    "status_idle": "A Loomix magától keres frissítéseket.",
     "status_checking": "Frissítések keresése…",
     "status_up_to_date": "A legújabb verzió van telepítve.",
     "status_downloading": "A(z) {version} verzió letöltése…",
     "status_ready": "A(z) {version} verzió készen áll. A következő kilépéskor települ, vagy indítsa újra most.",
     "status_available": "Elérhető a(z) {version} verzió.",
-    "status_available_per_machine": "Elérhető a(z) {version} verzió. A Bulwark a számítógép minden felhasználójának telepítve van, ezért a frissítéseket rendszergazda telepíti.",
-    "status_older": "Béta verziója van. A(z) {version} stabil verzió régebbi, ezért a Bulwark ezen a verzión marad, amíg a stabil utol nem éri.",
-    "status_error": "Nem sikerült frissítéseket keresni. A Bulwark később újra próbálja.",
+    "status_available_per_machine": "Elérhető a(z) {version} verzió. A Loomix a számítógép minden felhasználójának telepítve van, ezért a frissítéseket rendszergazda telepíti.",
+    "status_older": "Béta verziója van. A(z) {version} stabil verzió régebbi, ezért a Loomix ezen a verzión marad, amíg a stabil utol nem éri.",
+    "status_error": "Nem sikerült frissítéseket keresni. A Loomix később újra próbálja.",
     "status_off": "A szervezete kikapcsolta az alkalmazáson belüli frissítéseket.",
     "check": "Keresés most",
     "restart": "Újraindítás a frissítéshez",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Béta",
     "shell_restart": "Újraindítás a frissítéshez",
     "shell_check": "Frissítések keresése…",
-    "shell_available": "Elérhető a Bulwark {version}",
-    "shell_ready_title": "A Bulwark készen áll a frissítésre",
+    "shell_available": "Elérhető a Loomix {version}",
+    "shell_ready_title": "A Loomix készen áll a frissítésre",
     "shell_ready_body": "A(z) {version} verzió a következő kilépéskor települ. Kattintson az újraindításhoz. A piszkozatok előbb mentésre kerülnek.",
-    "shell_available_title": "Elérhető a Bulwark új verziója",
-    "shell_none_title": "A Bulwark naprakész",
+    "shell_available_title": "Elérhető a Loomix új verziója",
+    "shell_none_title": "A Loomix naprakész",
     "shell_none_detail": "A(z) {version} verzió van telepítve.",
-    "shell_failed_title": "A Bulwark nem tudott frissítéseket keresni",
+    "shell_failed_title": "A Loomix nem tudott frissítéseket keresni",
     "shell_failed_detail": "Ellenőrizze a kapcsolatot, és próbálja később. Semmi sem változott.",
     "shell_beta_title": "Átvált a béta verziókra?",
     "shell_beta_detail": "Az új verziókat hamarabb kapja, és több hibájuk lehet. A visszatéréshez régebbi stabil verziót telepít, vagy megvárja, amíg a stabil utoléri.",
     "shell_beta_confirm": "Váltás bétára",
-    "shell_older_title": "Vissza a Bulwark {version} verzióra?",
+    "shell_older_title": "Vissza a Loomix {version} verzióra?",
     "shell_older_detail": "Béta verziója van: {current}. A(z) {target} stabil régebbi, és lehet, hogy nem tudja olvasni, amit a béta ezen a gépen mentett. A levelei a szerveren maradnak, de az offline tárolt levelek újra letöltődhetnek, és az el nem küldött módosítások elveszhetnek. Ha vár, a stabil utoléri a bétát, és e lépés nélkül vált rá.",
     "shell_older_confirm": "Régebbi verzió telepítése"
   },
@@ -7982,7 +7982,7 @@
       "progress": "{done}/{total} feltöltve",
       "cannot_offline": "A kiszolgáló nem érhető el. Még nincs feltöltve: {names}",
       "cannot_other": "Nem tölthető fel: {names}. Az ok a beállítások legutóbbi tevékenységei között látható.",
-      "go_note_drive": "Ha most folytatja, ami nincs feltöltve, a(z) Dokumentumok\\Bulwark – not uploaded mappába kerül. Semmi sem vész el.",
+      "go_note_drive": "Ha most folytatja, ami nincs feltöltve, a(z) Dokumentumok\\Loomix – not uploaded mappába kerül. Semmi sem vész el.",
       "go_note_folder": "Ha most folytatja, ami nincs feltöltve, a mappában marad ezen a számítógépen.",
       "keep_turn_off": "Meghajtó megtartása",
       "keep_sign_out": "Bejelentkezve maradok",
@@ -7996,22 +7996,22 @@
       "rescued": "A fel nem töltött fájlok ({count}) most itt vannak: {folder}.",
       "rescued_open": "Mappa megnyitása",
       "rescued_dismiss": "Elrejtés",
-      "start_at_login": "A Bulwark indítása a Windowsba való bejelentkezéskor",
-      "start_at_login_why": "A meghajtóhoz futnia kell a Bulwarknak, ahogy a OneDrive-nál is.",
-      "closed_warning": "A meghajtón lévő fájlok nem nyílnak meg, amíg a Bulwark be van zárva.",
-      "where": "A Fájlkezelőben Bulwark Files néven",
-      "where_letter": "A Fájlkezelőben Bulwark Files ({letter}:) néven",
+      "start_at_login": "A Loomix indítása a Windowsba való bejelentkezéskor",
+      "start_at_login_why": "A meghajtóhoz futnia kell a Loomixnak, ahogy a OneDrive-nál is.",
+      "closed_warning": "A meghajtón lévő fájlok nem nyílnak meg, amíg a Loomix be van zárva.",
+      "where": "A Fájlkezelőben Loomix Files néven",
+      "where_letter": "A Fájlkezelőben Loomix Files ({letter}:) néven",
       "open": "Megnyitás",
-      "letter_note": "A meghajtóbetűjelen át a Fájlkezelő nem mutatja a szinkronizálás állapotát és a „Mindig maradjon ezen az eszközön” lehetőséget. Ezek a Fájlkezelőben a Bulwark Files alatt látszanak.",
+      "letter_note": "A meghajtóbetűjelen át a Fájlkezelő nem mutatja a szinkronizálás állapotát és a „Mindig maradjon ezen az eszközön” lehetőséget. Ezek a Fájlkezelőben a Loomix Files alatt látszanak.",
       "letter_failed": "A meghajtóbetűjelet nem sikerült beállítani. Próbálja újra."
     },
     "tray": {
-      "idle": "Bulwark Files: Naprakész",
-      "syncing": "Bulwark Files: Szinkronizálás. Hátravan: {count}",
-      "paused": "Bulwark Files: Szüneteltetve",
-      "offline": "Bulwark Files: Offline. Várakozik: {count}",
-      "question": "Bulwark Files: Válaszra vár",
-      "error": "Bulwark Files: Hiba"
+      "idle": "Loomix Files: Naprakész",
+      "syncing": "Loomix Files: Szinkronizálás. Hátravan: {count}",
+      "paused": "Loomix Files: Szüneteltetve",
+      "offline": "Loomix Files: Offline. Várakozik: {count}",
+      "question": "Loomix Files: Válaszra vár",
+      "error": "Loomix Files: Hiba"
     },
     "notify": {
       "conflict_title": "Egy fájl két helyen módosult",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Naponta egyszer: egy véletlenszerű azonosító, az alkalmazás verziószámai, az operációs rendszer, az alkalmazás futási ideje és a kapcsolódás módja. Saját levelezőszervernél azt is, mely funkciók vannak bekapcsolva, a fiókok hozzávetőleges számát, valamint a bővítmények és témák számát. Soha nem küld leveleket, címeket vagy szerverneveket.",
     "crash_label": "Összeomlási jelentések küldése",
     "crash_description": "Az alkalmazás hibái egy véletlenszerű azonosítóval, az alkalmazás saját kódjának fájlneveivel és rövid, megtisztított üzenetekkel mennek ki. Ha maga az alkalmazás omlik össze, egy összeomlási fájl marad ezen a számítógépen, és csak akkor kerül ki, ha elküldi.",
-    "crash_memory": "Az összeomlási fájl az alkalmazás memóriájának egy részéről készült másolat az összeomlás pillanatából. A Bulwark eltávolítja a talált felhasználóneveket, címeket és bejelentkezési tokeneket, de az összeomlási fájl így is tartalmazhatja a levelei szövegét.",
-    "instance_note": "Bulwark-szerveren annak rendszergazdája külön dönt arról, mit jelentenek neki az oldalak.",
+    "crash_memory": "Az összeomlási fájl az alkalmazás memóriájának egy részéről készült másolat az összeomlás pillanatából. A Loomix eltávolítja a talált felhasználóneveket, címeket és bejelentkezési tokeneket, de az összeomlási fájl így is tartalmazhatja a levelei szövegét.",
+    "instance_note": "Loomix-szerveren annak rendszergazdája külön dönt arról, mit jelentenek neki az oldalak.",
     "forced_off": "A szervezete ezt kikapcsolta.",
     "url_label": "Hová kerülnek az összeomlási fájlok",
-    "url_description": "A https-cím, amely fogadja az összeomlási fájlt. A Bulwark nem ad ilyet.",
+    "url_description": "A https-cím, amely fogadja az összeomlási fájlt. A Loomix nem ad ilyet.",
     "url_invalid": "Adjon meg egy teljes https-címet.",
     "url_save": "Mentés",
     "files_label": "Összeomlási fájlok ezen a számítógépen",
-    "files_description": "A Bulwark megtartja a legújabbakat, és törli az egy hónapnál régebbieket.",
+    "files_description": "A Loomix megtartja a legújabbakat, és törli az egy hónapnál régebbieket.",
     "files_empty": "Nincsenek összeomlási fájlok.",
     "file_size": "{size} KB",
     "send": "Összeomlási jelentés küldése…",

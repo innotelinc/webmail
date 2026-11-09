@@ -200,7 +200,7 @@ export async function doUserFindPeople(plugin: InstalledPlugin, query: unknown):
 /**
  * Largest value a plugin keeps in one account: half of the 8 KB Stalwart
  * takes per entry. Every entry counts against the mailbox's 64 KB, which
- * Bulwark's own shared tags and team templates need too.
+ * Loomix's own shared tags and team templates need too.
  */
 export const MAX_PLUGIN_DATA_BYTES = 4096;
 /** Reads and changes one plugin may make a minute. */
@@ -223,11 +223,11 @@ export async function doAccountDataGet(plugin: InstalledPlugin, accountArg: unkn
   const client = sessionClient(method);
   const accountId = namedAccount(client, method, accountArg);
   const key = pluginDataKey(plugin.id);
-  if (!key || typeof client.getBulwarkMetadata !== 'function' || !client.supportsBulwarkMetadata?.(accountId)) {
+  if (!key || typeof client.getLoomixMetadata !== 'function' || !client.supportsLoomixMetadata?.(accountId)) {
     return { supported: false, value: null };
   }
   if (!withinRate('account-data-read', plugin.id, PLUGIN_DATA_READS_PER_MINUTE)) throw new Error(`${method}: too many reads, try again in a minute`);
-  const entries = await client.getBulwarkMetadata(accountId);
+  const entries = await client.getLoomixMetadata(accountId);
   if (!entries) return { supported: false, value: null };
   return { supported: true, value: entries[key] ?? null };
 }
@@ -238,7 +238,7 @@ export async function doAccountDataSet(plugin: InstalledPlugin, accountArg: unkn
   const client = sessionClient(method);
   const accountId = namedAccount(client, method, accountArg);
   const key = pluginDataKey(plugin.id);
-  if (!key || typeof client.setBulwarkMetadata !== 'function' || !client.supportsBulwarkMetadata?.(accountId)) {
+  if (!key || typeof client.setLoomixMetadata !== 'function' || !client.supportsLoomixMetadata?.(accountId)) {
     throw new Error(`${method}: this server keeps no shared data for plugins`);
   }
   if (value === undefined) throw new Error(`${method}: value is required (null removes it)`);
@@ -249,7 +249,7 @@ export async function doAccountDataSet(plugin: InstalledPlugin, accountArg: unkn
   }
   if (!withinRate('account-data', plugin.id, PLUGIN_DATA_WRITES_PER_MINUTE)) throw new Error(`${method}: too many changes, try again in a minute`);
   try {
-    await client.setBulwarkMetadata(accountId, key, value);
+    await client.setLoomixMetadata(accountId, key, value);
   } catch (error) {
     if (error instanceof MetadataTooLargeError) throw new Error(`${method}: the server has no room for the value (${error.message})`);
     throw new Error(`${method}: ${error instanceof Error ? error.message : 'could not save'}`);

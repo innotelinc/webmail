@@ -93,7 +93,7 @@ export function AccessibilitySettings() {
   };
 
   // Forgets the user's own values, so the organisation's defaults (or
-  // Bulwark's) apply again. Shared everyday settings shown here too stay.
+  // Loomix's) apply again. Shared everyday settings shown here too stay.
   const resetAll = () => {
     resetSettings(RESET_KEYS.filter((key) => !isSettingLocked(key)));
     setApplied(null);

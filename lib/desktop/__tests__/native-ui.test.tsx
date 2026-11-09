@@ -1,15 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContextMenu, ContextMenuHeader, ContextMenuItem, ContextMenuSeparator, ContextMenuSubMenu } from '@/components/ui/context-menu';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 import { accentColours, applySystemAccent } from '../system-accent';
 import { mergedDesktopState, registerDesktopSurface, resetDesktopCommands, runDesktopCommand, setDesktopBaseState } from '../commands';
 import { noteOpenDraft, resetOpenDrafts, restoreUrlFor } from '../window-restore';
 import { readDesktopPrefs, resetDesktopPrefsCache, setDesktopPref } from '../preferences';
 import { closePopoutWindow, isPopoutPath } from '@/lib/popout/window-role';
 
-function setBridge(bridge: Partial<BulwarkDesktopBridge> | undefined) {
-  window.bulwarkDesktop = bridge as BulwarkDesktopBridge | undefined;
+function setBridge(bridge: Partial<LoomixDesktopBridge> | undefined) {
+  window.bulwarkDesktop = bridge as LoomixDesktopBridge | undefined;
 }
 
 afterEach(() => {

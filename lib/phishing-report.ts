@@ -73,7 +73,7 @@ export function reportSubject(subject: string | undefined | null): string {
 /** The short text of a forwarded report. English: it is read by the security team, not the user. */
 export function reportText(reporter: { name?: string; email: string }): string {
   const who = reporter.name?.trim() ? `${reporter.name.trim()} <${reporter.email}>` : reporter.email;
-  return `Reported as phishing by ${who} with Bulwark.\r\nThe reported message is attached unchanged.\r\n`;
+  return `Reported as phishing by ${who} with Loomix.\r\nThe reported message is attached unchanged.\r\n`;
 }
 
 /** The identity a report goes out from: the login's own address first. */

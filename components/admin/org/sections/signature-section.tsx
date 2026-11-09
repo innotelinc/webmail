@@ -31,7 +31,7 @@ const PLACEHOLDER_HELP: Record<SignaturePlaceholder, string> = {
   name: 'name of the address the mail is sent from',
   email: 'that address',
   identity: 'name and address, as in From',
-  company: 'company name from Branding, for the web address Bulwark is opened on',
+  company: 'company name from Branding, for the web address Loomix is opened on',
   domain: 'domain of the address',
   title: 'job title the user fills in',
   department: 'department the user fills in',
@@ -303,7 +303,7 @@ export function SignatureSection({ draft }: { draft: OrgPolicyDraft }) {
           />
           {sampleDisclaimer && <TemplatePreview html={sampleDisclaimer.html} text={sampleDisclaimer.text} testId="org-disclaimer-sample" />}
           <p className="text-xs text-muted-foreground">
-            Bulwark adds the signature and the disclaimer in the browser. Mail sent from other apps over <Term id="imap">IMAP</Term> and <Term id="smtp">SMTP</Term> gets neither.
+            Loomix adds the signature and the disclaimer in the browser. Mail sent from other apps over <Term id="imap">IMAP</Term> and <Term id="smtp">SMTP</Term> gets neither.
           </p>
         </div>
       </SettingsSection>

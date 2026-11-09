@@ -29,7 +29,7 @@ import { captureDesktopMainError } from '../server';
 
 const MAIN = {
   name: 'TypeError',
-  message: "ENOENT: open 'C:\\Users\\linus\\AppData\\Roaming\\Bulwark\\inbox.json' for ceo.private@acme-corp.example",
+  message: "ENOENT: open 'C:\\Users\\linus\\AppData\\Roaming\\Loomix\\inbox.json' for ceo.private@acme-corp.example",
   stack: 'TypeError: secret\n    at sendPing (/desktop/main.mjs:120:7)\n    at file:///C:/Users/linus/elsewhere/other.js:1:1',
   mechanism: 'uncaughtexception',
 };

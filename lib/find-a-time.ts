@@ -1,6 +1,6 @@
 /**
  * "Suggest times" in the event editor: the next slots in which nobody whose
- * calendar Bulwark could check is busy.
+ * calendar Loomix could check is busy.
  *
  * The search runs over the organiser's working days and day hours (the
  * calendar settings of #1164), in the effective time zone, on a 30-minute

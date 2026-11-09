@@ -498,8 +498,8 @@ function buildCoreApi(manifest: PluginManifest) {
       },
     },
     /**
-     * Bulwark features that replace what plugins did, so a plugin can step
-     * back while Bulwark does its job. Updated in place; no permission needed.
+     * Loomix features that replace what plugins did, so a plugin can step
+     * back while Loomix does its job. Updated in place; no permission needed.
      */
     host: {
       features: hostFeaturesState,
@@ -722,7 +722,7 @@ function buildCoreApi(manifest: PluginManifest) {
       replaceBody: (composerId: string, content: { text: string } | { html: string }, options?: { expectedRevision: string }) =>
         callApi('composer.replaceBody', [composerId, content, options]) as Promise<boolean>,
       /**
-       * Replace the subject with plain text (Bulwark 1.21 and later). Line
+       * Replace the subject with plain text (Loomix 1.21 and later). Line
        * breaks and other control characters become spaces; at most 998
        * characters. One Ctrl+Z undoes it, and the draft saves as after
        * typing. Needs compose:write.
@@ -845,15 +845,15 @@ function buildCoreApi(manifest: PluginManifest) {
        * as data: URLs only. Opens the browser's print dialog (where the user
        * can also save a PDF); 3 times a minute.
        *
-       * Bulwark 1.21 and later: `{ title?, pdf }` with a PDF's bytes in place
+       * Loomix 1.21 and later: `{ title?, pdf }` with a PDF's bytes in place
        * of `html` prints that PDF: it opens in the app's file preview, which
        * brings up the print dialog. Same limits as for openFile.
        */
       print: (page: { title?: string; html: string } | { title?: string; pdf: ArrayBuffer | ArrayBufferView | Blob }) =>
         callApi('ui.print', [page], 0) as Promise<boolean>,
       /**
-       * Show a file the plugin made in Bulwark's own file preview, the one
-       * attachments and Files use, with its Download and Print (Bulwark 1.21
+       * Show a file the plugin made in Loomix's own file preview, the one
+       * attachments and Files use, with its Download and Print (Loomix 1.21
        * and later). Only PDF and PNG, JPEG, GIF or WebP images, checked by
        * their bytes; at most 25 MiB; 5 a minute. The file stays in memory
        * and is gone when the user closes the preview. Resolves to true once
@@ -929,7 +929,7 @@ function buildCoreApi(manifest: PluginManifest) {
       openCalendar: (options: { view: 'month' | 'week' | 'day' | 'agenda' | 'tasks' }) =>
         callApi('ui.openCalendar', [options]) as Promise<boolean>,
       /**
-       * Opens one of the user's tasks (an id from tasks.list) in Bulwark's
+       * Opens one of the user's tasks (an id from tasks.list) in Loomix's
        * task editor, as a click on it in the calendar's task list does: for
        * a plugin drawing the task view (calendar-task-view). Resolves to
        * false when the calendar is not on screen or has not loaded the task.
@@ -1221,7 +1221,7 @@ function buildCoreApi(manifest: PluginManifest) {
       setComplete: (id: string, complete: boolean) => callApi('tasks.setComplete', [id, complete]) as Promise<void>,
       /**
        * Dismiss one of a task's alerts at `when` (UTC, `2026-05-01T07:30:00Z`;
-       * now when left out), or undo that with null. Bulwark shows no reminder
+       * now when left out), or undo that with null. Loomix shows no reminder
        * for a dismissed alert. Refused while the task uses its calendar's
        * default alerts (TaskView.useDefaultAlerts).
        */

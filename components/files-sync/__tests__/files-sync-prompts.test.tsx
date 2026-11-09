@@ -42,12 +42,12 @@ describe('the tray line (files-p3-5)', () => {
       return ns[group][name].replace('{count}', String(values?.count ?? ''));
     };
     const status = (state: string, pending = 0) => ({ rootId: 'r', state, pending, done: 0, lastSyncedAt: null }) as never;
-    expect(trayLineText(t, status('idle'), 'idle')).toBe('Bulwark Files: Up to date');
-    expect(trayLineText(t, status('syncing', 4), 'syncing')).toBe('Bulwark Files: Syncing. To go: 4');
-    expect(trayLineText(t, status('offline', 3), 'offline')).toBe('Bulwark Files: Offline. Waiting: 3');
-    expect(trayLineText(t, status('paused'), 'paused')).toBe('Bulwark Files: Paused');
-    expect(trayLineText(t, status('confirm-delete'), 'confirm-delete')).toBe('Bulwark Files: Needs your answer');
-    expect(trayLineText(t, status('error'), 'error')).toBe('Bulwark Files: Error');
+    expect(trayLineText(t, status('idle'), 'idle')).toBe('Loomix Files: Up to date');
+    expect(trayLineText(t, status('syncing', 4), 'syncing')).toBe('Loomix Files: Syncing. To go: 4');
+    expect(trayLineText(t, status('offline', 3), 'offline')).toBe('Loomix Files: Offline. Waiting: 3');
+    expect(trayLineText(t, status('paused'), 'paused')).toBe('Loomix Files: Paused');
+    expect(trayLineText(t, status('confirm-delete'), 'confirm-delete')).toBe('Loomix Files: Needs your answer');
+    expect(trayLineText(t, status('error'), 'error')).toBe('Loomix Files: Error');
   });
 });
 

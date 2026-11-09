@@ -1,21 +1,21 @@
 /**
  * Out-of-office blocks the calendar.
  *
- * While an out-of-office reply with a start and an end is on, Bulwark keeps
+ * While an out-of-office reply with a start and an end is on, Loomix keeps
  * one busy event for it in the account's default calendar. The event is
  * found again by a fixed UID per account (`bulwark-ooo-<accountId>`; 0.16
  * rejects vendor properties, a UID survives every CalDAV client). It is
  * timed, or all-day when both ends are midnight in the user's time zone;
  * busy, public, without participants, and never sends invitations.
  *
- * The event is Bulwark's while its times are the ones Bulwark last wrote
+ * The event is Loomix's while its times are the ones Loomix last wrote
  * (kept in the settings, per account) or the reply's dates before the change
  * at hand. That second rule works on any device and for anyone who changes
  * the reply (a delegate, the owner), also where the settings don't sync
  * (Lite, sync off). The event also carries the keyword OOO_KEYWORD (a
  * CATEGORIES value, which 0.16 and 1.0 both keep): on a device with no
- * record, a marked event found when the reply is loaded counts as Bulwark's.
- * When none of these hold, someone edited it, and Bulwark leaves it alone. Switching the reply or the block off removes an
+ * record, a marked event found when the reply is loaded counts as Loomix's.
+ * When none of these hold, someone edited it, and Loomix leaves it alone. Switching the reply or the block off removes an
  * event that hasn't started and ends one that has at once; a reply that
  * simply ran out leaves its past event in place. An event deleted elsewhere
  * is not put back until the reply's dates change.
@@ -57,7 +57,7 @@ export interface ReplyState {
   subject: string;
 }
 
-/** The times Bulwark last wrote to the event, as ISO instants. */
+/** The times Loomix last wrote to the event, as ISO instants. */
 export interface WrittenBlock {
   start: string;
   end: string;
@@ -410,7 +410,7 @@ export function resetVacationCalendarSync(): void {
 
 /**
  * Whether turning the reply on switches off a filter script of the user's
- * own: Stalwart runs one script at a time, and Bulwark keeps only its own
+ * own: Stalwart runs one script at a time, and Loomix keeps only its own
  * filters running next to the reply (stores/filter-store.ts, through an
  * include). A script it can't read, or any script on a server without
  * `include`, stops while the reply is on.

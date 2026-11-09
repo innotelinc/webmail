@@ -1,5 +1,5 @@
 /**
- * Activity shared between Bulwark tabs, so working in one tab keeps the
+ * Activity shared between Loomix tabs, so working in one tab keeps the
  * others signed in. Tabs tell each other through a BroadcastChannel; where
  * there is none, through `storage` events on a localStorage key. The last
  * activity is also kept in localStorage, so a tab opened (or reloaded) after

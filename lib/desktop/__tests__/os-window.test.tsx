@@ -1,6 +1,6 @@
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge, DesktopOsPowerEvent, DesktopOsStatus } from '../types';
+import type { LoomixDesktopBridge, DesktopOsPowerEvent, DesktopOsStatus } from '../types';
 import type { CalendarEvent } from '@/lib/jmap/types';
 
 /** The window's end: badge, drag-out, waking up, the settings section. Dropped and pasted files: components/file-drop. */
@@ -10,8 +10,8 @@ vi.mock('next-intl', () => ({
   useLocale: () => 'en',
 }));
 
-function setBridge(bridge: Partial<BulwarkDesktopBridge['os']> | undefined, platform: 'win32' | 'darwin' = 'win32') {
-  window.bulwarkDesktop = bridge ? ({ version: 1, platform, os: bridge } as unknown as BulwarkDesktopBridge) : undefined;
+function setBridge(bridge: Partial<LoomixDesktopBridge['os']> | undefined, platform: 'win32' | 'darwin' = 'win32') {
+  window.bulwarkDesktop = bridge ? ({ version: 1, platform, os: bridge } as unknown as LoomixDesktopBridge) : undefined;
 }
 
 afterEach(() => {
@@ -176,7 +176,7 @@ describe('dragging an attachment out', () => {
 });
 
 describe('waking up', () => {
-  async function started(os: Partial<BulwarkDesktopBridge['os']> = {}) {
+  async function started(os: Partial<LoomixDesktopBridge['os']> = {}) {
     let fire: (event: DesktopOsPowerEvent) => void = () => {};
     setBridge({ onPower: (listener: (event: DesktopOsPowerEvent) => void) => { fire = listener; return () => {}; }, ...os });
     const power = await import('../power');

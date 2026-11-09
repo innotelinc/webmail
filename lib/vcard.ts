@@ -327,7 +327,7 @@ function anniversaryKindFromLabel(label: string | undefined): "birth" | "wedding
 
 // vCard TEL types (RFC 6350 §6.4.1, RFC 7852) and the RFC 9553 phone features
 // they stand for: vCard calls a mobile phone "cell", JSContact "mobile".
-// MOBILE is no vCard type, but Bulwark's own exports used to write it.
+// MOBILE is no vCard type, but Loomix's own exports used to write it.
 const TEL_TYPE_TO_PHONE_FEATURE: Record<string, string> = {
   CELL: "mobile",
   MOBILE: "mobile",
@@ -1178,7 +1178,7 @@ function buildContact(raw: Record<string, string[]>): ContactCard | null {
 
 // PRODID names the product that wrote the file, not the one that first made
 // the card, so the card's own prodId is not written back.
-const VCARD_PRODID = "-//Bulwark Mail//Bulwark Webmail//EN";
+const VCARD_PRODID = "-//Loomix Mail//Loomix Mail//EN";
 
 function hasUriScheme(value: string): boolean {
   return /^[a-z][a-z0-9+.-]*:/i.test(value);

@@ -281,7 +281,7 @@ export const PERM_PER_METHOD: Readonly<Record<string, Permission | null>> = {
   // (the task view: ui:tasks or tasks:read; the others: ui:calendar-action
   // or calendar:read).
   'ui.openCalendar': null,
-  // A task in Bulwark's task editor; ui:tasks or tasks:read, checked per call.
+  // A task in Loomix's task editor; ui:tasks or tasks:read, checked per call.
   'ui.openTask': null,
   // Opening a message shows its content, as reading it does.
   'ui.openEmail': 'email:read',
@@ -1119,7 +1119,7 @@ async function doCreatePRF(
     const credential = await navigator.credentials.create({
       publicKey: {
         challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp: { name: "Bulwark Webmail", id: rpId },
+        rp: { name: "Loomix Mail", id: rpId },
         user: {
           id: crypto.getRandomValues(new Uint8Array(16)),
           name: name,
@@ -1969,7 +1969,7 @@ async function doAppGetInfo(): Promise<AppInfoView> {
   let config: Awaited<ReturnType<typeof fetchConfig>> | null = null;
   try { config = await fetchConfig(); } catch { config = null; }
   return {
-    product: 'Bulwark Mail',
+    product: 'Loomix Mail',
     name: config?.appName || 'Webmail',
     version: process.env.NEXT_PUBLIC_APP_VERSION || '',
     edition: IS_LITE ? 'lite' : 'full',

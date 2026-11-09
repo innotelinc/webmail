@@ -257,7 +257,7 @@ describe('PopoutComposeApp', () => {
     expect(screen.getByTestId('composer').textContent).toBe('Moving');
   });
 
-  // desktop-p2-5: the taskbar and Alt+Tab named a composer "New message - <account> - Bulwark" whatever it held.
+  // desktop-p2-5: the taskbar and Alt+Tab named a composer "New message - <account> - Loomix" whatever it held.
   it('in the desktop app, takes the subject for its title, without the account', async () => {
     const title = vi.mocked(useDocumentTitle);
     const policyBefore = usePolicyStore.getState();

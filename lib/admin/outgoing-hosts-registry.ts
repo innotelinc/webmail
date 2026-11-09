@@ -1,5 +1,5 @@
 /**
- * Every outside host Bulwark itself knows about, what talks to it, and what
+ * Every outside host Loomix itself knows about, what talks to it, and what
  * turns it off (#903). The admin view (/api/admin/outgoing-hosts) and the
  * tests read this; the browser only needs the host names and the switches in
  * lib/outgoing-hosts.ts, so none of this prose ends up in client chunks.
@@ -29,7 +29,7 @@ export interface OutgoingHost {
   off: string;
   /** What the mode does instead. */
   inMode: string;
-  /** Also present in Bulwark Lite. */
+  /** Also present in Loomix Lite. */
   lite: boolean;
 }
 
@@ -49,7 +49,7 @@ export const OUTGOING_HOSTS: readonly OutgoingHost[] = [
     host: 'version.telemetry.bulwarkmail.org',
     files: ['lib/version-check/types.ts'],
     side: 'server',
-    usedBy: 'Hourly check for a newer Bulwark release, shown to admins.',
+    usedBy: 'Hourly check for a newer Loomix release, shown to admins.',
     off: 'BULWARK_UPDATE_CHECK=off, or BULWARK_UPDATE_CHECK_URL= (empty).',
     inMode: 'Not checked; System > Updates says why. Checks resume when the switch goes off.',
     lite: false,
@@ -161,7 +161,7 @@ export const OUTGOING_HOSTS: readonly OutgoingHost[] = [
 ];
 
 /**
- * Hosts in the source that Bulwark never connects to on its own: docs links,
+ * Hosts in the source that Loomix never connects to on its own: docs links,
  * XML namespaces, credits, examples in comments and sample text. Each is
  * allowed only in the files named, so the same host turning up somewhere new
  * has to be looked at again.

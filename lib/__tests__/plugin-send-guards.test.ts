@@ -51,7 +51,7 @@ describe('downSendGuards', () => {
     expect(downSendGuards().map((g) => [g.id, g.state])).toEqual([['a', 'loading'], ['b', 'failed'], ['c', 'failed']]);
   });
 
-  it("doesn't count a plugin Bulwark refused on purpose, nor one the user turned on", () => {
+  it("doesn't count a plugin Loomix refused on purpose, nor one the user turned on", () => {
     usePluginStore.setState({
       plugins: [
         guard({ id: 'a', status: 'error', error: 'third-party-off' }),

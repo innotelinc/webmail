@@ -13,7 +13,7 @@ export const UPDATE_CHECK_MS = 15 * 60 * 1000;
 const FOCUS_THROTTLE_MS = 60 * 1000;
 
 /**
- * "A new version of Bulwark is ready. Reload" (#523): once the server runs
+ * "A new version of Loomix is ready. Reload" (#523): once the server runs
  * another build than this tab, on focus, every 15 minutes, and right away
  * when a chunk of this tab's build fails to load (it is gone after a
  * deploy). Shown once per new build; with offline mode off as well as on.

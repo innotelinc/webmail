@@ -117,7 +117,7 @@ export function eventToICS(event: CalendarEvent): string {
   const now = formatNow();
   const lines: string[] = [
     "BEGIN:VCALENDAR",
-    "PRODID:-//Bulwark Mail//Bulwark Webmail//EN",
+    "PRODID:-//Loomix Mail//Loomix Mail//EN",
     "VERSION:2.0",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",

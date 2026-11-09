@@ -125,7 +125,7 @@ describe('POST /api/fetch-ical', () => {
     expect(guardedFetch).toHaveBeenCalledTimes(1);
     expect(guardedFetch).toHaveBeenCalledWith(
       'https://calendar.example.com/feed.ics',
-      expect.objectContaining({ headers: expect.objectContaining({ 'User-Agent': 'Bulwark-Webmail-Calendar (+https://bulwarkmail.org)' }) }),
+      expect.objectContaining({ headers: expect.objectContaining({ 'User-Agent': 'Loomix-Webmail-Calendar (+https://bulwarkmail.org)' }) }),
     );
   });
 

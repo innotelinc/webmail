@@ -25,7 +25,7 @@ export interface DeletedItemsRecovery {
  * Nothing is asked until the config and the policy are loaded and the
  * policy is resolved for this client's account, so an account switch never
  * runs on the previous account's restrictions. Then: not hidden by the admin
- * (`deletedItemsRecovery`), Stalwart features on (full Bulwark; Lite asks
+ * (`deletedItemsRecovery`), Stalwart features on (full Loomix; Lite asks
  * the server itself), and the server answering x:ArchivedItem/query
  * (Enterprise license). Asked once per account and session, and again after
  * a refusal once its retry time comes, also while the page stays open.

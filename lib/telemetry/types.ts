@@ -62,7 +62,7 @@ export interface TelemetryError {
   count: CountBucket;
   /** On how many of the last 7 days it occurred (1-7). */
   days: number;
-  /** Only one of Bulwark's fixed error codes (`Email/set: overQuota`), never free text. */
+  /** Only one of Loomix's fixed error codes (`Email/set: overQuota`), never free text. */
   message?: string;
 }
 

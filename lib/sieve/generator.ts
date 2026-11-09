@@ -274,8 +274,8 @@ function stripRuleForMetadata(r: FilterRule): Omit<FilterRule, 'origin' | 'origi
 
 export interface GenerateOptions {
   /**
-   * Require extensions used by external (non-Bulwark) rules that we must
-   * preserve in the top-level `require` directive. Duplicates with Bulwark's
+   * Require extensions used by external (non-Loomix) rules that we must
+   * preserve in the top-level `require` directive. Duplicates with Loomix's
    * own requires are deduplicated.
    */
   externalRequires?: string[];
@@ -391,7 +391,7 @@ export function generateScript(
   }
 
   if (options.includeVacation) {
-    // The "# Vacation auto-reply" comment marks the block as Bulwark's, so
+    // The "# Vacation auto-reply" comment marks the block as Loomix's, so
     // the parser does not re-import it as an external rule.
     lines.push('');
     lines.push('# Vacation auto-reply');
@@ -435,9 +435,9 @@ export function generateScript(
     lines.push('}');
   }
 
-  const enabledBulwarkRules = bulwarkRules.filter(r => r.enabled);
+  const enabledLoomixRules = bulwarkRules.filter(r => r.enabled);
 
-  for (const rule of enabledBulwarkRules) {
+  for (const rule of enabledLoomixRules) {
     if (rule.conditions.length === 0 || rule.actions.length === 0) {
       debug.warn('filters', `Skipping rule "${rule.name}": empty conditions or actions`);
       continue;
@@ -514,7 +514,7 @@ export function generateScript(
     .filter((block) => block.length > 0);
   if (externalBlocks.length > 0) {
     lines.push('');
-    lines.push('# --- External rules (managed outside Bulwark) ---');
+    lines.push('# --- External rules (managed outside Loomix) ---');
     lines.push(externalBlocks.join('\n\n'));
   }
 

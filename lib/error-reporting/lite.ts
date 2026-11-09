@@ -2,7 +2,7 @@ import type { ClientSettings } from './client';
 import { parseDsn } from './envelope';
 
 /**
- * Bulwark Lite has no server: error reporting is set in policy.json and
+ * Loomix Lite has no server: error reporting is set in policy.json and
  * browsers send straight to the DSN. There are no per-day counts.
  *
  *   "errorReporting": { "dsn": "https://<key>@host/<project>", "sampleRate": 1, "environment": "production" }

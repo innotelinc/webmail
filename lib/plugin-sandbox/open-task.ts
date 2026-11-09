@@ -1,4 +1,4 @@
-// A plugin opening one of the user's tasks in Bulwark's task editor
+// A plugin opening one of the user's tasks in Loomix's task editor
 // (api.ui.openTask): what a click on a task in the calendar's task list
 // does. A plugin drawing the task view itself (the calendar-task-view slot)
 // lists the tasks but cannot open one otherwise. The calendar opens it

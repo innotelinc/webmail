@@ -177,7 +177,7 @@ export function doAppGetSettings(): AppSettingsView {
   }
   // Plugins written before Reduce motion (v9) read this switch.
   out.animationsEnabled = state.reduceMotion !== 'on';
-  // Minutes without activity before Bulwark signs out (0 = never). The user
+  // Minutes without activity before Loomix signs out (0 = never). The user
   // setting of that name was never read; the organisation's idle timeout is
   // what applies, the strictest of the accounts signed in here.
   const limits = currentSessionLimits();

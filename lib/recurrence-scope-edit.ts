@@ -390,7 +390,7 @@ export function changedEditorFields(
  * series, where it holds a value of the field: the override of the
  * occurrence the editor was opened on takes them all - they were made on it
  * - any other one where it only held the series' old value (0.16 keeps a
- * copy of the title, place and details in every override Bulwark writes:
+ * copy of the title, place and details in every override Loomix writes:
  * without this, a renamed series kept its old name on those occurrences). A
  * value an override has of its own stays; one it does not hold comes from
  * the series.

@@ -32,7 +32,7 @@ export type TransferRequest = ImportRequest | ExportRequest | LocalExportRequest
 
 interface JobBase {
   controller: AbortController;
-  /** The Bulwark account that runs it: its sign-out stops it. */
+  /** The Loomix account that runs it: its sign-out stops it. */
   scope?: string;
   /** Settles when the job has ended. */
   finished?: Promise<unknown>;

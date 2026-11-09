@@ -65,7 +65,7 @@ export function ThirdPartySection({ draft }: { draft: OrgPolicyDraft }) {
         setMessage({
           type: 'success',
           text: on
-            ? 'Third-party traffic is off. The server stops at once; browsers follow the next time Bulwark loads.'
+            ? 'Third-party traffic is off. The server stops at once; browsers follow the next time Loomix loads.'
             : 'Third-party traffic is allowed again.',
         });
       } else {
@@ -105,7 +105,7 @@ export function ThirdPartySection({ draft }: { draft: OrgPolicyDraft }) {
   const relays = state?.reachable.filter((h) => h.kind === 'Push relay') ?? [];
 
   return (
-    <SettingsSection id="third-party" title="Third-party traffic" description="Whether Bulwark connects to anything outside your own servers.">
+    <SettingsSection id="third-party" title="Third-party traffic" description="Whether Loomix connects to anything outside your own servers.">
       <p className="text-sm text-muted-foreground" data-testid="third-party-scope-note">
         This switch is for the whole server, not per domain or group: most of what it stops, such as telemetry and the version check, runs for no particular user.
       </p>
@@ -121,7 +121,7 @@ export function ThirdPartySection({ draft }: { draft: OrgPolicyDraft }) {
         <>
           <SettingItem
             label="No third-party traffic"
-            description="Bulwark and your users' browsers stop contacting services outside your own servers: telemetry, the version check, the built-in push relay, the official extension directory, the connector, sender icons, MyMemory translation, map links and OpenPGP key lookups at other domains. Plugins that declare network access don't run; the others do. The page's security policy then allows only the hosts listed below."
+            description="Loomix and your users' browsers stop contacting services outside your own servers: telemetry, the version check, the built-in push relay, the official extension directory, the connector, sender icons, MyMemory translation, map links and OpenPGP key lookups at other domains. Plugins that declare network access don't run; the others do. The page's security policy then allows only the hosts listed below."
           >
             <div className="flex items-center gap-1.5" data-testid="third-party-switch">
               <SourceBadge source={state.source} label={state.source === 'env' ? 'NO_THIRD_PARTY_TRAFFIC' : 'config.json'} />
@@ -131,7 +131,7 @@ export function ThirdPartySection({ draft }: { draft: OrgPolicyDraft }) {
           </SettingItem>
 
           {state.envLocked && (
-            <ConfigNote>Set by NO_THIRD_PARTY_TRAFFIC in the environment. Change it there and restart Bulwark.</ConfigNote>
+            <ConfigNote>Set by NO_THIRD_PARTY_TRAFFIC in the environment. Change it there and restart Loomix.</ConfigNote>
           )}
           {state.readOnly && !state.envLocked && (
             <ConfigNote>The configuration is read-only. Set noThirdPartyTraffic in config.json, or NO_THIRD_PARTY_TRAFFIC in the environment.</ConfigNote>
@@ -140,7 +140,7 @@ export function ThirdPartySection({ draft }: { draft: OrgPolicyDraft }) {
             <ConfigNote>
               Push notifications now need a relay you run yourself. Add one under{' '}
               <AdminLink href="/admin/policy" className="underline underline-offset-2">Features and settings &gt; Push relays</AdminLink>;
-              until then users get new mail only while Bulwark is open.
+              until then users get new mail only while Loomix is open.
             </ConfigNote>
           )}
           {on && state.networkPlugins.length > 0 && (

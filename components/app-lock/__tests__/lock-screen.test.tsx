@@ -6,7 +6,7 @@ import { LockScreen } from '../lock-screen';
 import { createVault, deleteVault, FREE_FAILURES } from '@/lib/app-lock/vault';
 import { writeAppLockFile } from '@/lib/app-lock/state';
 
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 
 const unlockWithPin = vi.hoisted(() => vi.fn());
 const forgetEverything = vi.hoisted(() => vi.fn());

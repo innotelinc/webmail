@@ -70,8 +70,8 @@
     "demo_tagline": "Vyzkoušejte plně funkční e-mailový klient. Účet není vyžadován.",
     "demo_no_signup": "Bez registrace - volně prozkoumejte s ukázkovými daty",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Tento název je příliš dlouhý.",
     "loading": "Načítání…",
     "unsupported": "Tento poštovní server neumí ukládat sdílené štítky, proto tato schránka zobrazuje vaše vlastní štítky.",
-    "unavailable": "Sdílené štítky této schránky se nepodařilo načíst, proto zobrazuje vaše vlastní štítky. Bulwark to zkusí později znovu.",
+    "unavailable": "Sdílené štítky této schránky se nepodařilo načíst, proto zobrazuje vaše vlastní štítky. Loomix to zkusí později znovu.",
     "no_rights": "Tyto štítky můžete používat, ale v této schránce je nemůžete měnit.",
     "too_many": "Sdílených štítků je příliš mnoho. Než přidáte další, některé odstraňte.",
-    "save_failed": "Sdílené štítky se nepodařilo uložit. Bulwark to zkusí znovu, až server odpoví.",
-    "save_pending": "Zatím neuloženo. Bulwark to zkusí znovu, až server odpoví."
+    "save_failed": "Sdílené štítky se nepodařilo uložit. Loomix to zkusí znovu, až server odpoví.",
+    "save_pending": "Zatím neuloženo. Loomix to zkusí znovu, až server odpoví."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1109,7 +1109,7 @@
     "show_less": "Zobrazit méně",
     "send_failed": "Odeslání zprávy selhalo",
     "send_timeout": "Server přestal odpovídat. Než odešlete znovu, zkontrolujte složku Odeslané – zpráva už mohla odejít.",
-    "submission_quota": "Server má pro tento účet příliš mnoho záznamů o odeslaných zprávách. Bulwark odstranil ty, které mohl; pokud se to bude opakovat, požádejte správce o zvýšení limitu odesílání e-mailů.",
+    "submission_quota": "Server má pro tento účet příliš mnoho záznamů o odeslaných zprávách. Loomix odstranil ty, které mohl; pokud se to bude opakovat, požádejte správce o zvýšení limitu odesílání e-mailů.",
     "submission_limit": "Server odmítl zprávu odeslat, protože byl dosažen limit: {reason}",
     "recipients_refused": "Neodesláno: server odmítl {recipients}.",
     "recipients_partly_refused": "Server odmítl {recipients}. Ostatní příjemci zprávu dostanou.",
@@ -1890,13 +1890,13 @@
       "push": {
         "confirm_disable_message": "Toto zařízení přestane přijímat upozornění, když je web zavřený.",
         "confirm_disable_title": "Zakázat oznámení na pozadí?",
-        "description": "Přijímat systémová oznámení o nové poště, když je tento web zavřený. Doručováno přes push relay Bulwark; relay nikdy nevidí obsah pošty.",
+        "description": "Přijímat systémová oznámení o nové poště, když je tento web zavřený. Doručováno přes push relay Loomix; relay nikdy nevidí obsah pošty.",
         "disable": "Zakázat",
         "enable": "Zapnout v tomto zařízení",
         "dismiss_aria": "Zavřít výzvu k oznámením",
         "ios_hint": "Na iOS nejprve nainstalujte web na domovskou obrazovku – Safari doručuje Web Push pouze nainstalovaným PWA.",
         "reenable": "Znovu zaregistrovat",
-        "relay_desc": "Výchozí je hostovaný relay Bulwark. Změňte pouze pokud používáte vlastní hosting.",
+        "relay_desc": "Výchozí je hostovaný relay Loomix. Změňte pouze pokud používáte vlastní hosting.",
         "relay_label": "Push relay",
         "relay_locked": "Nastaveno administrátorem",
         "relay_locked_desc": "URL push relay byla nastavena administrátorem a nelze ji změnit.",
@@ -1904,7 +1904,7 @@
         "status_busy": "Pracuji…",
         "status_inactive": "Není povoleno na tomto zařízení",
         "status_unsupported": "Tento prohlížeč nepodporuje Web Push",
-        "status_lite": "Web Push není v Bulwark Lite k dispozici; vyžaduje server Bulwark.",
+        "status_lite": "Web Push není v Loomix Lite k dispozici; vyžaduje server Loomix.",
         "status_demo": "Oznámení na pozadí nejsou v ukázce k dispozici.",
         "title": "Oznámení, když je {appName} zavřený",
         "devices_title": "Registrovaná zařízení",
@@ -2481,10 +2481,10 @@
       },
       "link_device": {
         "title": "Propojit mobilní aplikaci",
-        "description": "Přihlaste se do aplikace Bulwark Mail v telefonu, aniž byste tam museli zadávat heslo. Telefon dostane vlastní přihlášení, takže odhlášení zde ho neodhlásí.",
+        "description": "Přihlaste se do aplikace Loomix Mail v telefonu, aniž byste tam museli zadávat heslo. Telefon dostane vlastní přihlášení, takže odhlášení zde ho neodhlásí.",
         "generate": "Zobrazit QR kód",
         "regenerate": "Zobrazit nový kód",
-        "instructions": "Otevřete aplikaci Bulwark Mail a na přihlašovací obrazovce klepněte na \"Scan a sign-in code\" (nebo na \"Add account\" → \"Scan a sign-in code\", pokud jste už přihlášeni) a pak namiřte fotoaparát sem.",
+        "instructions": "Otevřete aplikaci Loomix Mail a na přihlašovací obrazovce klepněte na \"Scan a sign-in code\" (nebo na \"Add account\" → \"Scan a sign-in code\", pokud jste už přihlášeni) a pak namiřte fotoaparát sem.",
         "expires_in": "Tento kód vyprší za {seconds} sekund. Lze jej použít pouze jednou.",
         "expired": "Platnost tohoto kódu vypršela.",
         "error": "Párovací kód se nepodařilo vytvořit. Zkuste to prosím znovu.",
@@ -2750,7 +2750,7 @@
         "button": "Importovat"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Zdrojový kód"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Hledání přes celou horní lištu, zprávy se otevírají na celou šířku"
   },
   "setup": {
-    "title": "Nastavení Bulwark Webmail",
+    "title": "Nastavení Loomix Mail",
     "subtitle": "Nastavte svou instanci webmailu v prohlížeči.",
     "loading": "Načítání…",
     "back": "Zpět",
@@ -3734,7 +3734,7 @@
       "regenerate": "Vygenerovat znovu",
       "sync": "Synchronizovat nastavení uživatelů mezi zařízeními",
       "sync_hint": "Ukládá předvolby uživatelů na server, šifrované tajným klíčem relace.",
-      "telemetry": "Odesílat anonymní statistiky používání pro zlepšení Bulwarku",
+      "telemetry": "Odesílat anonymní statistiky používání pro zlepšení Loomixu",
       "telemetry_hint": "Ve výchozím stavu vypnuto. Jeden anonymní signál denně s verzí, platformou a zapnutými funkcemi; nikdy e-mailové adresy, názvy hostitelů ani IP adresy. Kdykoli to můžete změnit v nastavení administrace."
     },
     "logging": {
@@ -5407,7 +5407,7 @@
     "start_tour": "Spustit průvodce"
   },
   "demo_welcome": {
-    "title": "Vítejte v Bulwark Mail",
+    "title": "Vítejte v Loomix Mail",
     "description": "Prozkoumejte plně funkčního webového e-mailového klienta - přímo v prohlížeči. Všechna data zůstávají na vašem zařízení, takže můžete bez obav vše otestovat.",
     "feature_email": "Čtěte a pište e-maily",
     "feature_organize": "Štítky, hvězdičky a složky",
@@ -5841,9 +5841,9 @@
     "cancelled_hint": "Chcete-li pokračovat později, importujte stejné soubory znovu do stejné složky.",
     "close": "Zavřít",
     "pst_note": "Z outlookových souborů se přenáší jen pošta. Kontakty, položky kalendáře a úkoly se spočítají a vynechají.",
-    "pst_error_encrypted": "Tento soubor Outlooku používá vysoké šifrování, které Bulwark neumí přečíst. V Outlooku exportujte poštu do nového souboru .pst bez šifrování.",
-    "pst_error_not_pst": "Tento soubor není datový soubor Outlooku, který by Bulwark uměl přečíst.",
-    "pst_error_unreadable": "Bulwark tento soubor Outlooku nedokázal přečíst.",
+    "pst_error_encrypted": "Tento soubor Outlooku používá vysoké šifrování, které Loomix neumí přečíst. V Outlooku exportujte poštu do nového souboru .pst bez šifrování.",
+    "pst_error_not_pst": "Tento soubor není datový soubor Outlooku, který by Loomix uměl přečíst.",
+    "pst_error_unreadable": "Loomix tento soubor Outlooku nedokázal přečíst.",
     "pst_error_worker": "Čtečka souborů Outlooku se nenačetla. Načtěte stránku znovu a zkuste to ještě jednou.",
     "error_over_quota": "Schránka je plná, proto se import zastavil. Uvolněte místo a importujte stejné soubory znovu do stejné složky, abyste pokračovali.",
     "error_forbidden": "Do této složky nesmíte přidávat poštu, proto se import zastavil.",
@@ -5904,7 +5904,7 @@
   },
   "desktopImport": {
     "find": "Najít data Thunderbirdu a Outlooku…",
-    "find_hint": "Hledá na obvyklých místech v tomto počítači. Bulwark se nejdřív zeptá.",
+    "find_hint": "Hledá na obvyklých místech v tomto počítači. Loomix se nejdřív zeptá.",
     "scan_declined": "Nic se nehledalo, protože jste to nepovolili.",
     "scan_failed": "Hledání se nezdařilo. Zkuste to znovu.",
     "read_declined": "Žádné soubory se nečetly, protože jste to nepovolili.",
@@ -5960,7 +5960,7 @@
     "restore": "Obnovit",
     "restored": "{count, plural, one {# zpráva se vrací} few {# zprávy se vracejí} many {# zprávy se vrací} other {# zpráv se vrací}} do složky Doručené.",
     "restore_partial": "{count, plural, one {# zprávu se nepodařilo obnovit. Zůstává vybraná, abyste to mohli zkusit znovu.} few {# zprávy se nepodařilo obnovit. Zůstávají vybrané, abyste to mohli zkusit znovu.} many {# zprávy se nepodařilo obnovit. Zůstávají vybrané, abyste to mohli zkusit znovu.} other {# zpráv se nepodařilo obnovit. Zůstávají vybrané, abyste to mohli zkusit znovu.}}",
-    "restore_hint": "Obnovená pošta se vrací do složky Doručené jako nepřečtená a řadí se podle původního data, takže může být daleko dole v seznamu. Server ji obnovuje na pozadí. Pokud se to tam nepodaří, zpráva je ztracena a Bulwark to nepozná.",
+    "restore_hint": "Obnovená pošta se vrací do složky Doručené jako nepřečtená a řadí se podle původního data, takže může být daleko dole v seznamu. Server ji obnovuje na pozadí. Pokud se to tam nepodaří, zpráva je ztracena a Loomix to nepozná.",
     "unknown_sender": "Neznámý odesílatel",
     "no_subject": "(bez předmětu)",
     "deleted_on": "Smazáno {date}",
@@ -5995,7 +5995,7 @@
     "label": "Zablokovat můj kalendář",
     "description": "Přidá obsazenou událost na dobu vaší nepřítomnosti, aby vám tehdy nikdo neplánoval schůzky.",
     "no_access_managed": "Kalendář tohoto účtu nelze zablokovat: nemáte do něj přístup pro zápis.",
-    "no_calendar": "Kalendář nelze zablokovat: Bulwark nenašel kalendář, kam událost přidat.",
+    "no_calendar": "Kalendář nelze zablokovat: Loomix nenašel kalendář, kam událost přidat.",
     "filter_warning": "Zapnutím se vypne váš vlastní skript filtrů, dokud je odpověď aktivní."
   },
   "calendar_delegate": {
@@ -6098,20 +6098,20 @@
   "find_time": {
     "suggest": "Navrhnout časy",
     "searching": "Hledají se volné časy",
-    "slots_title": "Volno pro všechny, které Bulwark mohl ověřit",
+    "slots_title": "Volno pro všechny, které Loomix mohl ověřit",
     "slot": "{day}, {start} až {end}",
     "none": "V příštích 10 pracovních dnech není volný čas.",
     "picked": "Událost přesunuta na {slot}",
     "rate_limited": "V poslední minutě bylo příliš mnoho dotazů. Zkuste to za minutu znovu.",
-    "unavailable": "Informace o volnu nejsou na tomto serveru k dispozici, takže Bulwark nemůže navrhnout časy.",
+    "unavailable": "Informace o volnu nejsou na tomto serveru k dispozici, takže Loomix nemůže navrhnout časy.",
     "not_checked": "Neověřeno:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "mimo vaši organizaci",
     "reason_unknown": "obsazené časy neznámé",
     "reason_not_found": "na tomto serveru nenalezen",
     "reason_error": "nelze ověřit",
-    "unknown_note": "Bulwark vidí obsazené časy jen v kalendářích, které s vámi někdo sdílí. U těchto lidí nerozliší volno od nesdíleného kalendáře.",
-    "directory_off": "Bulwark na tomto serveru nemůže vyhledávat lidi. Správce může ve Stalwartu zapnout dotazy do adresáře.",
+    "unknown_note": "Loomix vidí obsazené časy jen v kalendářích, které s vámi někdo sdílí. U těchto lidí nerozliší volno od nesdíleného kalendáře.",
+    "directory_off": "Loomix na tomto serveru nemůže vyhledávat lidi. Správce může ve Stalwartu zapnout dotazy do adresáře.",
     "not_looked_up": "Adresu nelze vyhledat",
     "found": "Nalezené volné časy: {count}"
   },
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Vymazat",
     "persist_refused": "Tento prohlížeč může uchovanou poštu smazat, když dojde místo. Instalace aplikace tomu obvykle zabrání.",
     "persist_retry": "Požádat prohlížeč o zachování",
-    "safari_hint": "Safari smaže data webu po 7 dnech bez návštěvy. Přidejte Bulwark na plochu nebo do Docku, aby vaše pošta na tomto zařízení zůstala.",
+    "safari_hint": "Safari smaže data webu po 7 dnech bez návštěvy. Přidejte Loomix na plochu nebo do Docku, aby vaše pošta na tomto zařízení zůstala.",
     "evicted": "Prohlížeč smazal poštu uchovanou na tomto zařízení. Stahuje se znovu.",
     "evicted_lost": "{count, plural, one {# neodeslaná zpráva nebo změna se ztratila.} few {# neodeslané zprávy nebo změny se ztratily.} many {# neodeslané zprávy nebo změny se ztratily.} other {# neodeslaných zpráv nebo změn se ztratilo.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Úložiště zařízení je plné.",
-    "storage_full_text": "Bulwark sem přestal ukládat poštu. Uchovávejte méně pošty nebo vymažte tento účet, aby se uvolnilo místo.",
+    "storage_full_text": "Loomix sem přestal ukládat poštu. Uchovávejte méně pošty nebo vymažte tento účet, aby se uvolnilo místo.",
     "open_settings": "Otevřít nastavení",
-    "default_on": "Bulwark uchovává vaši poštu na tomto zařízení, aby fungoval i bez připojení. Můžete to změnit v Nastavení.",
+    "default_on": "Loomix uchovává vaši poštu na tomto zařízení, aby fungoval i bez připojení. Můžete to změnit v Nastavení.",
     "conflict_calendar": "Událost v kalendáři",
     "conflict_contacts": "Kontakt",
     "kept_files_title": "Soubory uchované offline",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Přidávat obsah do sekce Úkoly",
-        "body": "Zobrazuje vlastní sekce v podrobnostech úkolu, tlačítka v seznamu úkolů a vlastní seznam úkolů místo seznamu Bulwarku."
+        "body": "Zobrazuje vlastní sekce v podrobnostech úkolu, tlačítka v seznamu úkolů a vlastní seznam úkolů místo seznamu Loomixu."
       },
       "ui_files": {
         "title": "Přidávat obsah do sekce Soubory",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Klávesové zkratky",
       "docs": "Dokumentace",
       "settings": "Nastavení…",
-      "about": "O aplikaci Bulwark",
+      "about": "O aplikaci Loomix",
       "from_plugins": "Více z doplňků…",
       "pick_gone": "Tato nabídka byla zastaralá. Otevřete ji znovu a zkuste to ještě jednou.",
       "bar_label": "Nabídka"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Pokud nyní okno zavřete, přijdete o to, co jste napsali od posledního uložení.",
       "close_anyway": "Přesto zavřít",
       "unsent_title": "Některá pošta ještě nebyla odeslána",
-      "unsent_one": "Jedna zpráva čeká na odeslání. Odejde při dalším spuštění Bulwark.",
-      "unsent_many": "Počet zpráv čekajících na odeslání: {count}. Odejdou při dalším spuštění Bulwark.",
+      "unsent_one": "Jedna zpráva čeká na odeslání. Odejde při dalším spuštění Loomix.",
+      "unsent_many": "Počet zpráv čekajících na odeslání: {count}. Odejdou při dalším spuštění Loomix.",
       "quit": "Ukončit",
       "leave_title": "Odejít s neuloženými změnami?",
       "leave_detail": "Změny na této stránce zatím nejsou uloženy.",
@@ -7383,7 +7383,7 @@
       "stay": "Zůstat"
     },
     "spellcheck": {
-      "offer": "Kontrola pravopisu pro jazyk {language} potřebuje slovník. Bulwark ho může stáhnout od společnosti Google. Váš text se neodesílá.",
+      "offer": "Kontrola pravopisu pro jazyk {language} potřebuje slovník. Loomix ho může stáhnout od společnosti Google. Váš text se neodesílá.",
       "download": "Stáhnout"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "Na 1 hodinu",
     "tray_pause_tomorrow": "Do zítřka",
     "tray_resume": "Znovu zapnout oznámení",
-    "tray_open": "Otevřít Bulwark",
-    "tray_quit": "Ukončit Bulwark",
-    "tray_exit": "Ukončit Bulwark"
+    "tray_open": "Otevřít Loomix",
+    "tray_quit": "Ukončit Loomix",
+    "tray_exit": "Ukončit Loomix"
   },
   "desktopMenus": {
     "save_draft": "Uložit koncept",
@@ -7581,25 +7581,25 @@
     "cancel": "Zrušit",
     "or_here": "nebo se přihlaste zde",
     "timed_out": "Přihlášení v prohlížeči trvalo příliš dlouho. Zkuste to znovu.",
-    "no_browser": "Bulwark nemohl otevřít prohlížeč. Zkuste to znovu nebo se přihlaste zde.",
+    "no_browser": "Loomix nemohl otevřít prohlížeč. Zkuste to znovu nebo se přihlaste zde.",
     "failed": "Přihlášení přes prohlížeč se nezdařilo. Zkuste to znovu.",
-    "handoff_banner": "Program v tomto počítači požádal o toto přihlášení pro aplikaci Bulwark. Tento prohlížeč zůstane z Bulwarku odhlášený. Pokud jste to nespustili vy, zavřete tuto kartu.",
-    "consent_title": "Přihlásit se do aplikace Bulwark?",
-    "consent_description": "Program v tomto počítači, na portu {port}, žádá o přihlášení pro {username}. Pokračujte, jen pokud jste právě klikli na „Přihlásit se v prohlížeči…“ v aplikaci Bulwark v tomto počítači. Pokud ne, možná se někdo snaží dostat do vašeho účtu: zvolte Teď ne.",
+    "handoff_banner": "Program v tomto počítači požádal o toto přihlášení pro aplikaci Loomix. Tento prohlížeč zůstane z Loomixu odhlášený. Pokud jste to nespustili vy, zavřete tuto kartu.",
+    "consent_title": "Přihlásit se do aplikace Loomix?",
+    "consent_description": "Program v tomto počítači, na portu {port}, žádá o přihlášení pro {username}. Pokračujte, jen pokud jste právě klikli na „Přihlásit se v prohlížeči…“ v aplikaci Loomix v tomto počítači. Pokud ne, možná se někdo snaží dostat do vašeho účtu: zvolte Teď ne.",
     "consent_confirm": "Přihlásit se do aplikace",
     "consent_cancel": "Teď ne",
-    "page_done": "Tuto kartu můžete zavřít a vrátit se do Bulwarku.",
-    "page_failed": "Přihlášení se nezdařilo. Vraťte se do Bulwarku a zkuste to znovu.",
-    "page_link_used": "Tento odkaz funguje jen jednou. Vraťte se do Bulwarku a začněte znovu.",
+    "page_done": "Tuto kartu můžete zavřít a vrátit se do Loomixu.",
+    "page_failed": "Přihlášení se nezdařilo. Vraťte se do Loomixu a zkuste to znovu.",
+    "page_link_used": "Tento odkaz funguje jen jednou. Vraťte se do Loomixu a začněte znovu.",
     "page_title": "Přihlásit se k {server}",
-    "page_intro": "Tato stránka pochází z aplikace Bulwark v tomto počítači. Vaše heslo jde na {server} a nikam jinam.",
+    "page_intro": "Tato stránka pochází z aplikace Loomix v tomto počítači. Vaše heslo jde na {server} a nikam jinam.",
     "page_username": "E-mailová adresa nebo uživatelské jméno",
     "page_password": "Heslo",
     "page_code": "Dvoufázový kód",
     "page_submit": "Přihlásit se",
     "page_wrong_password": "Server toto uživatelské jméno a heslo nepřijal.",
     "page_code_needed": "Tento účet potřebuje také dvoufázový kód. Zadejte znovu heslo a kód.",
-    "page_no_answer": "Bulwark se nemohl přihlásit. Zkontrolujte, zda je server dostupný, a zkuste to znovu.",
+    "page_no_answer": "Loomix se nemohl přihlásit. Zkontrolujte, zda je server dostupný, a zkuste to znovu.",
     "declined": "V prohlížeči jste odmítli, takže k přihlášení nedošlo.",
     "too_many": "Příliš mnoho pokusů o přihlášení z této sítě. Počkejte několik minut a zkuste to znovu.",
     "page_declined": "Nic nebylo předáno. Tuto kartu můžete zavřít."
@@ -7619,7 +7619,7 @@
     "other_ways": "Další způsoby přihlášení",
     "trouble": "Nedaří se to?",
     "trouble_cors": "Váš poštovní server musí povolit přihlašování z tohoto webu. Pokud přihlášení selže, požádejte správce poštovního serveru, aby to povolil.",
-    "provider_unsupported": "{provider} nenabízí JMAP, způsob, jakým Bulwark komunikuje s poštovními servery, takže se k němu Bulwark zatím nemůže připojit přímo."
+    "provider_unsupported": "{provider} nenabízí JMAP, způsob, jakým Loomix komunikuje s poštovními servery, takže se k němu Loomix zatím nemůže připojit přímo."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock je zapnutý",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Změnit, jak se Bulwark připojuje?",
-      "message": "Bulwark se restartuje a zeptá se, jak se připojit: pomocí vaší e-mailové adresy, nebo přes Bulwark vaší organizace. Vaše účty na tomto počítači zůstanou přihlášené.",
+      "title": "Změnit, jak se Loomix připojuje?",
+      "message": "Loomix se restartuje a zeptá se, jak se připojit: pomocí vaší e-mailové adresy, nebo přes Loomix vaší organizace. Vaše účty na tomto počítači zůstanou přihlášené.",
       "confirm": "Změnit",
-      "org_link": "Místo toho použít Bulwark mé organizace",
+      "org_link": "Místo toho použít Loomix mé organizace",
       "add_account": "Přidat účet…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Vložit"
     },
     "sign_in_page": {
-      "open_app": "Otevřít Bulwark",
+      "open_app": "Otevřít Loomix",
       "done_as": "Přihlášeno jako {address}. Tuto kartu můžete zavřít."
     }
   },
   "desktop_updates": {
     "title": "Aktualizace",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark hledá aktualizace sám.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix hledá aktualizace sám.",
     "status_checking": "Hledání aktualizací…",
     "status_up_to_date": "Máte nejnovější verzi.",
     "status_downloading": "Stahování verze {version}…",
     "status_ready": "Verze {version} je připravena. Nainstaluje se při příštím ukončení, nebo restartujte hned.",
     "status_available": "Je dostupná verze {version}.",
-    "status_available_per_machine": "Je dostupná verze {version}. Bulwark je nainstalován pro všechny na tomto počítači, takže aktualizace instaluje správce.",
-    "status_older": "Máte verzi beta. Stabilní verze {version} je starší, takže Bulwark zůstane na této verzi, dokud ji stabilní nedožene.",
-    "status_error": "Aktualizace se nepodařilo zkontrolovat. Bulwark to zkusí znovu později.",
+    "status_available_per_machine": "Je dostupná verze {version}. Loomix je nainstalován pro všechny na tomto počítači, takže aktualizace instaluje správce.",
+    "status_older": "Máte verzi beta. Stabilní verze {version} je starší, takže Loomix zůstane na této verzi, dokud ji stabilní nedožene.",
+    "status_error": "Aktualizace se nepodařilo zkontrolovat. Loomix to zkusí znovu později.",
     "status_off": "Vaše organizace vypnula aktualizace v aplikaci.",
     "check": "Zkontrolovat",
     "restart": "Restartovat a aktualizovat",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Restartovat a aktualizovat",
     "shell_check": "Zkontrolovat aktualizace…",
-    "shell_available": "Je dostupný Bulwark {version}",
-    "shell_ready_title": "Bulwark je připraven k aktualizaci",
+    "shell_available": "Je dostupný Loomix {version}",
+    "shell_ready_title": "Loomix je připraven k aktualizaci",
     "shell_ready_body": "Verze {version} se nainstaluje při příštím ukončení. Klikněte pro restart. Koncepty se nejdřív uloží.",
-    "shell_available_title": "Je dostupná nová verze Bulwark",
-    "shell_none_title": "Bulwark je aktuální",
+    "shell_available_title": "Je dostupná nová verze Loomix",
+    "shell_none_title": "Loomix je aktuální",
     "shell_none_detail": "Máte verzi {version}.",
-    "shell_failed_title": "Bulwark nemohl zkontrolovat aktualizace",
+    "shell_failed_title": "Loomix nemohl zkontrolovat aktualizace",
     "shell_failed_detail": "Zkontrolujte připojení a zkuste to později. Nic se nezměnilo.",
     "shell_beta_title": "Přejít na verze beta?",
     "shell_beta_detail": "Nové verze dostanete dříve a mohou mít více problémů. Pro návrat nainstalujete starší stabilní verzi nebo počkáte, až ji stabilní dožene.",
     "shell_beta_confirm": "Přejít na betu",
-    "shell_older_title": "Vrátit se na Bulwark {version}?",
+    "shell_older_title": "Vrátit se na Loomix {version}?",
     "shell_older_detail": "Máte betu {current}. Stabilní {target} je starší a nemusí přečíst, co beta uložila na tomto počítači. Pošta zůstává na serveru, ale pošta uložená offline se může stáhnout znovu a neodeslané změny se mohou ztratit. Když počkáte, stabilní betu dožene a přejdete na ni bez tohoto kroku.",
     "shell_older_confirm": "Nainstalovat starší verzi"
   },
@@ -7982,7 +7982,7 @@
       "progress": "Nahráno {done} z {total}",
       "cannot_offline": "Server není dostupný. Zatím nenahráno: {names}",
       "cannot_other": "Nelze nahrát: {names}. Důvod najdete v nedávné aktivitě v nastavení.",
-      "go_note_drive": "Pokud teď budete pokračovat, co není nahrané, se zkopíruje do Dokumenty\\Bulwark – not uploaded. Nic se neztratí.",
+      "go_note_drive": "Pokud teď budete pokračovat, co není nahrané, se zkopíruje do Dokumenty\\Loomix – not uploaded. Nic se neztratí.",
       "go_note_folder": "Pokud teď budete pokračovat, co není nahrané, zůstane ve složce v tomto počítači.",
       "keep_turn_off": "Ponechat jednotku",
       "keep_sign_out": "Zůstat přihlášen",
@@ -7996,22 +7996,22 @@
       "rescued": "Nenahrané soubory ({count}) jsou teď v {folder}.",
       "rescued_open": "Otevřít složku",
       "rescued_dismiss": "Skrýt",
-      "start_at_login": "Spouštět Bulwark po přihlášení do Windows",
-      "start_at_login_why": "Jednotka potřebuje spuštěný Bulwark, stejně jako OneDrive.",
-      "closed_warning": "Soubory na jednotce nejdou otevřít, když je Bulwark zavřený.",
-      "where": "V Průzkumníkovi souborů jako Bulwark Files",
-      "where_letter": "V Průzkumníkovi souborů jako Bulwark Files ({letter}:)",
+      "start_at_login": "Spouštět Loomix po přihlášení do Windows",
+      "start_at_login_why": "Jednotka potřebuje spuštěný Loomix, stejně jako OneDrive.",
+      "closed_warning": "Soubory na jednotce nejdou otevřít, když je Loomix zavřený.",
+      "where": "V Průzkumníkovi souborů jako Loomix Files",
+      "where_letter": "V Průzkumníkovi souborů jako Loomix Files ({letter}:)",
       "open": "Otevřít",
-      "letter_note": "Přes písmeno jednotky Průzkumník souborů neukazuje stav synchronizace ani „Vždy zachovat na tomto zařízení“. Najdete je pod Bulwark Files v Průzkumníkovi.",
+      "letter_note": "Přes písmeno jednotky Průzkumník souborů neukazuje stav synchronizace ani „Vždy zachovat na tomto zařízení“. Najdete je pod Loomix Files v Průzkumníkovi.",
       "letter_failed": "Písmeno jednotky se nepodařilo nastavit. Zkuste to znovu."
     },
     "tray": {
-      "idle": "Bulwark Files: Aktuální",
-      "syncing": "Bulwark Files: Synchronizace. Zbývá: {count}",
-      "paused": "Bulwark Files: Pozastaveno",
-      "offline": "Bulwark Files: Offline. Čeká: {count}",
-      "question": "Bulwark Files: Čeká na vaši odpověď",
-      "error": "Bulwark Files: Chyba"
+      "idle": "Loomix Files: Aktuální",
+      "syncing": "Loomix Files: Synchronizace. Zbývá: {count}",
+      "paused": "Loomix Files: Pozastaveno",
+      "offline": "Loomix Files: Offline. Čeká: {count}",
+      "question": "Loomix Files: Čeká na vaši odpověď",
+      "error": "Loomix Files: Chyba"
     },
     "notify": {
       "conflict_title": "Soubor se změnil na dvou místech",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Jednou denně: náhodné ID, čísla verzí aplikace, váš operační systém, jak dlouho aplikace běží a jak se připojuje. U vlastního poštovního serveru také zapnuté funkce, přibližný počet účtů a počet pluginů a motivů. Nikdy pošta, adresy ani názvy serverů.",
     "crash_label": "Odesílat hlášení o pádech",
     "crash_description": "Chyby v aplikaci se odesílají s náhodným ID, názvy souborů z kódu aplikace a krátkými, očištěnými zprávami. Když spadne sama aplikace, soubor o pádu zůstane v tomto počítači a odejde jen tehdy, když ho odešlete.",
-    "crash_memory": "Soubor o pádu je kopie části paměti aplikace v okamžiku pádu. Bulwark odstraní uživatelská jména, adresy a přihlašovací tokeny, které najde, ale soubor o pádu může přesto obsahovat text vaší pošty.",
-    "instance_note": "Na serveru Bulwark rozhoduje jeho správce zvlášť o tom, co mu stránky hlásí.",
+    "crash_memory": "Soubor o pádu je kopie části paměti aplikace v okamžiku pádu. Loomix odstraní uživatelská jména, adresy a přihlašovací tokeny, které najde, ale soubor o pádu může přesto obsahovat text vaší pošty.",
+    "instance_note": "Na serveru Loomix rozhoduje jeho správce zvlášť o tom, co mu stránky hlásí.",
     "forced_off": "Vaše organizace to vypnula.",
     "url_label": "Kam jdou soubory o pádu",
-    "url_description": "Adresa https, která přijímá soubor o pádu. Bulwark žádnou nemá.",
+    "url_description": "Adresa https, která přijímá soubor o pádu. Loomix žádnou nemá.",
     "url_invalid": "Zadejte úplnou adresu https.",
     "url_save": "Uložit",
     "files_label": "Soubory o pádu v tomto počítači",
-    "files_description": "Bulwark ponechá ty nejnovější a smaže ty starší než měsíc.",
+    "files_description": "Loomix ponechá ty nejnovější a smaže ty starší než měsíc.",
     "files_empty": "Žádné soubory o pádu.",
     "file_size": "{size} KB",
     "send": "Odeslat hlášení o pádu…",

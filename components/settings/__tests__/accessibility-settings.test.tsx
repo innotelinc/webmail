@@ -100,7 +100,7 @@ describe('reset', () => {
     expect(settings().disableThreading).toBe(true);
   });
 
-  it("gives back the organisation's defaults instead of writing Bulwark's as the user's choice", () => {
+  it("gives back the organisation's defaults instead of writing Loomix's as the user's choice", () => {
     usePolicyStore.setState({ policy: { ...DEFAULT_POLICY, defaults: { appFont: 'atkinson', fontSize: 'large' } }, loaded: true });
     settings().applyAdminPolicy();
     settings().updateSetting('appFont', 'lexend');

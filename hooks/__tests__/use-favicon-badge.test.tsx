@@ -12,7 +12,7 @@ vi.mock('@/lib/favicon-badge', () => ({
 
 const renderBadgedFaviconMock = vi.mocked(renderBadgedFavicon);
 
-const ORIGINAL_HREF = '/branding/Bulwark_Favicon.svg';
+const ORIGINAL_HREF = '/branding/Loomix_Favicon.svg';
 
 /** The link the hook owns: the only one it may ever touch. */
 function badgeLink(): HTMLLinkElement | null {

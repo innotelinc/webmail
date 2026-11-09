@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { bootState } from './index';
 
 const MESSAGES = {
-  starting: 'Bulwark is starting and connecting to its shared store.',
-  'store-lost': 'Bulwark lost its shared store data and is waiting for it to be restored.',
-  blocked: 'This Bulwark instance has local data that conflicts with the shared store. See the server log.',
+  starting: 'Loomix is starting and connecting to its shared store.',
+  'store-lost': 'Loomix lost its shared store data and is waiting for it to be restored.',
+  blocked: 'This Loomix instance has local data that conflicts with the shared store. See the server log.',
 } as const;
 
 /**

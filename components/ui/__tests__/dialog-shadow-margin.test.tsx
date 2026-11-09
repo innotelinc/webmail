@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Dialog } from '../dialog';
 import { shadowReach } from '@/lib/desktop/dialog-surface';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 
 // A dialog in a window of its own leaves room around the card for its whole shadow (the
 // shadow was cut off at the window's edge), and a click in that room does what a click on
@@ -12,7 +12,7 @@ let opened: { document: Document }[] = [];
 
 function desktop() {
   opened = [];
-  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), showWindow: vi.fn(async () => true) } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), showWindow: vi.fn(async () => true) } } as unknown as LoomixDesktopBridge;
   vi.spyOn(window, 'open').mockImplementation((() => {
     const frame = document.createElement('iframe');
     frame.setAttribute('data-fake-window', '');

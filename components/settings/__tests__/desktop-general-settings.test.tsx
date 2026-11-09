@@ -1,9 +1,9 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import en from '@/locales/en/common.json';
 
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 
 const { ProtocolHandlerSettings } = await import('../protocol-handler-settings');
 
@@ -19,7 +19,7 @@ describe('Settings > General in the desktop app', () => {
   });
 
   it('the desktop app shows only its own "Default mail app" row, not the browser\'s handlers', () => {
-    window.bulwarkDesktop = { version: 1, platform: 'win32' } as unknown as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32' } as unknown as LoomixDesktopBridge;
     render(<ProtocolHandlerSettings supportsCalendar />);
     expect(screen.queryByText('register_mailto')).toBeNull();
     expect(screen.queryByText('title')).toBeNull();

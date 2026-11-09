@@ -1,6 +1,6 @@
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
 import { useAccountStore } from '@/stores/account-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -31,7 +31,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   intl.locale = 'en';
   clients.clear();
-  window.bulwarkDesktop = { version: 1, platform: 'win32', os: { setLocked: vi.fn() } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', os: { setLocked: vi.fn() } } as unknown as LoomixDesktopBridge;
   useSettingsStore.setState({ timeFormat: '24h' });
   useAccountStore.setState({ accounts: [entry('work'), entry('home')] as never });
   useAuthStore.setState({

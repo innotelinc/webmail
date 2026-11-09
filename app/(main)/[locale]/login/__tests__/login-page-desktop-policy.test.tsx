@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import { EMPTY_POLICY_LAYERS, resolvePolicies } from '@/lib/desktop/policy-schema';
 
 // The device's OS policy on the two ways into SSO: nothing starts towards a refused server.
@@ -52,7 +52,7 @@ function allowOnly(...servers: string[]) {
     platform: 'win32',
     mode: 'standalone',
     policy: { get: () => snapshot, onChange: () => () => {} },
-  } as unknown as BulwarkDesktopBridge;
+  } as unknown as LoomixDesktopBridge;
 }
 
 let fetched: string[];
@@ -134,7 +134,7 @@ describe('sign-in with the browser, in the app', () => {
       mode: 'instance',
       auth: { claim: () => controls },
       policy: { get: () => snapshot, onChange: () => () => {} },
-    } as unknown as BulwarkDesktopBridge;
+    } as unknown as LoomixDesktopBridge;
     return controls;
   }
 
@@ -206,7 +206,7 @@ describe('sign-in with the browser, in the app', () => {
       mode: 'instance',
       auth: { claim: () => controls },
       policy: { get: () => snapshot, onChange: () => () => {} },
-    } as unknown as BulwarkDesktopBridge;
+    } as unknown as LoomixDesktopBridge;
     let sent: Record<string, unknown> | null = null;
     vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);

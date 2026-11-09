@@ -103,7 +103,7 @@ export function toImportFile(file: DesktopLocalImportFile): ImportFile {
   return { file: new LocalFile(file) as unknown as File, format: file.kind, folder: file.folder };
 }
 
-/** What's needed to go on with a job after a restart, one per Bulwark account. The shell holds the paths. */
+/** What's needed to go on with a job after a restart, one per Loomix account. The shell holds the paths. */
 export interface LocalImportJobRecord {
   id: string;
   scope: string;

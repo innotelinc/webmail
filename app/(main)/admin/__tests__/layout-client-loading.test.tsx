@@ -29,7 +29,7 @@ describe('admin layout while the session is checked', () => {
     const main = screen.getByRole('main');
     expect(main.querySelector('[data-testid="admin-body-skeleton"]')).not.toBeNull();
     // The open page's own title and description, as AdminPageHeader shows them.
-    expect(main.textContent).toContain('How this Bulwark connects and what the login page offers');
+    expect(main.textContent).toContain('How this Loomix connects and what the login page offers');
     expect(screen.getByRole('status').textContent).toBe('Loading admin panel…');
     expect(screen.getByRole('status').className).toContain('sr-only');
     expect(screen.queryByText('page')).toBeNull();

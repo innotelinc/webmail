@@ -1,5 +1,5 @@
 /**
- * File > Change connection… and the sign-in page's "Use my organisation's Bulwark
+ * File > Change connection… and the sign-in page's "Use my organisation's Loomix
  * instead": the app restarts on its first screen, which asks how to connect. That's a
  * restart with every window closing, so it asks first, in the app's own question window,
  * and says the accounts stay. The welcome tips were seen before; they don't come back

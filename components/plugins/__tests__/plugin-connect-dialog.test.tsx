@@ -65,10 +65,10 @@ describe('connect dialog', () => {
     expect(JSON.parse(apiFetch.mock.calls[0][1].body)).not.toHaveProperty('secret');
   });
 
-  it('names the app as configured, and Bulwark on a stock install', async () => {
+  it('names the app as configured, and Loomix on a stock install', async () => {
     const first = render(<PluginConnectDialog />);
     const result = open('signin');
-    expect(screen.getByText(/intro_signin /)).toHaveTextContent('"appName":"Bulwark"');
+    expect(screen.getByText(/intro_signin /)).toHaveTextContent('"appName":"Loomix"');
     first.unmount();
 
     appName.value = 'Acme Mail';

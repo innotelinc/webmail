@@ -453,7 +453,7 @@ export interface IJMAPClient {
      * so the replaced version is destroyed there (default: the primary
      * account). Draft ids are only unique within one account.
      * `classification`: the label choice (an id, null for none) kept in
-     * X-Bulwark-Label.
+     * X-Loomix-Label.
      */
     options?: { priority?: MessagePriority; accountId?: string; previousDraftAccountId?: string; classification?: string | null },
   ): Promise<string>;
@@ -683,12 +683,12 @@ export interface IJMAPClient {
   getPrincipalTypes?(ids: string[]): Promise<Record<string, string> | null>;
   /** The principals behind accounts (who owns a shared calendar); missing ids are left out. Optional (demo client). */
   getAccountOwners?(ids: string[]): Promise<Record<string, Principal>>;
-  // Bulwark data in Inbox metadata (lib/jmap/bulwark-metadata.ts). Optional (demo client).
-  supportsBulwarkMetadata?(accountId?: string): boolean;
-  getBulwarkMetadata?(accountId?: string, options?: { private?: boolean }): Promise<Record<string, unknown> | null>;
-  setBulwarkMetadata?(accountId: string | undefined, key: string, value: unknown, options?: { private?: boolean }): Promise<void>;
-  advertisesBulwarkMetadata?(accountId?: string): boolean;
-  patchBulwarkMetadata?(accountId: string | undefined, key: string, patches: Array<{ path: string[]; value: unknown }>): Promise<{ newState?: string }>;
+  // Loomix data in Inbox metadata (lib/jmap/bulwark-metadata.ts). Optional (demo client).
+  supportsLoomixMetadata?(accountId?: string): boolean;
+  getLoomixMetadata?(accountId?: string, options?: { private?: boolean }): Promise<Record<string, unknown> | null>;
+  setLoomixMetadata?(accountId: string | undefined, key: string, value: unknown, options?: { private?: boolean }): Promise<void>;
+  advertisesLoomixMetadata?(accountId?: string): boolean;
+  patchLoomixMetadata?(accountId: string | undefined, key: string, patches: Array<{ path: string[]; value: unknown }>): Promise<{ newState?: string }>;
   setCalendarShare(calendarId: string, principalId: string, rights: CalendarRights | null, targetAccountId?: string): Promise<void>;
   setAddressBookShare(addressBookId: string, principalId: string, rights: AddressBookRights | null, targetAccountId?: string): Promise<void>;
   setFileNodeShare(fileNodeId: string, principalId: string, rights: FileNodeRights | null, targetAccountId?: string): Promise<void>;

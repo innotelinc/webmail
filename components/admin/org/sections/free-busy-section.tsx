@@ -10,7 +10,7 @@ const DOCS_URL = 'https://bulwarkmail.org/docs/guides/organisation/find-a-time';
 
 /**
  * Organisation > Calendars > Free/busy sharing: a group that every user's
- * default calendar shares its free/busy with, applied by Bulwark at sign-in
+ * default calendar shares its free/busy with, applied by Loomix at sign-in
  * (organisation.calendars.freeBusyGroup, '' is off).
  */
 export function FreeBusySection({ draft }: { draft: OrgPolicyDraft }) {
@@ -25,7 +25,7 @@ export function FreeBusySection({ draft }: { draft: OrgPolicyDraft }) {
     <SettingsSection
       id="free-busy"
       title="Free/busy sharing"
-      description="Suggest times and the attendee list only see busy times in calendars shared with the organiser. Name a group everyone is in, and Bulwark shares each user's busy times (not their events) with it."
+      description="Suggest times and the attendee list only see busy times in calendars shared with the organiser. Name a group everyone is in, and Loomix shares each user's busy times (not their events) with it."
     >
       <SettingItem
         label="Share free/busy with"
@@ -63,11 +63,11 @@ export function FreeBusySection({ draft }: { draft: OrgPolicyDraft }) {
       </SettingItem>
       <div className="space-y-1 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground" data-testid="org-free-busy-notes">
         <p>
-          Bulwark adds the share to each user&apos;s default calendar when they sign in. It only adds: shares users made
+          Loomix adds the share to each user&apos;s default calendar when they sign in. It only adds: shares users made
           themselves stay, and a user who removes it gets it back at the next sign-in. It shows in the user&apos;s sharing list.
         </p>
         <p>
-          Users who only use other apps (CalDAV, phones) and never sign in to Bulwark aren&apos;t covered. Users can also
+          Users who only use other apps (CalDAV, phones) and never sign in to Loomix aren&apos;t covered. Users can also
           share their own free/busy under Settings &gt; Calendar.
         </p>
         <p>

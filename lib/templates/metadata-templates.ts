@@ -31,7 +31,7 @@ export function templateKey(id: string): string {
   return `${KEY_PREFIX}${id}`;
 }
 
-/** Ids Bulwark generates (UUIDs) fit a metadata key; older or imported ones may not. */
+/** Ids Loomix generates (UUIDs) fit a metadata key; older or imported ones may not. */
 export function isStorableTemplateId(id: string): boolean {
   return isValidMetadataKey(templateKey(id));
 }
@@ -76,7 +76,7 @@ export function isTooLargeForMetadata(template: EmailTemplate): boolean {
 }
 
 /**
- * The templates among an Inbox's Bulwark metadata entries (`template.<id>`),
+ * The templates among an Inbox's Loomix metadata entries (`template.<id>`),
  * by id, validated and sanitised like a synced template. The key decides
  * the id.
  */

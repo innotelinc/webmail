@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge, DesktopOsCommand } from '../types';
+import type { LoomixDesktopBridge, DesktopOsCommand } from '../types';
 import type { NotificationActionRequest, NotificationActionStatus } from '@/lib/pwa-notify/page-actions';
 
 /** What the OS asks for, carried out by the parts the app already has. */
@@ -55,7 +55,7 @@ beforeEach(async () => {
   vi.clearAllMocks();
   authenticated = true;
   authClient = null;
-  window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus } } as unknown as LoomixDesktopBridge;
   const { resetMailLinks } = await import('../mail-links');
   resetMailLinks();
   const { clearHandoffs, takeHandoff } = await import('@/lib/launch-handoff');
@@ -172,7 +172,7 @@ describe('launches', () => {
       let next = 0;
       uploadBlob.mockImplementation(async () => ({ blobId: `blob-${++next}`, size: 10, type: 'message/rfc822' }));
       authClient = { uploadBlob, parseEmailBlob: vi.fn() };
-      window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus, open } } as unknown as BulwarkDesktopBridge;
+      window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus, open } } as unknown as LoomixDesktopBridge;
     });
 
     // desktop-p3-5: it showed over the main window, which came out of the tray for it.
@@ -343,7 +343,7 @@ describe('a toast\'s buttons', () => {
     const { FakeBroadcastChannel } = await import('@/lib/__tests__/fixtures/fake-broadcast-channel');
     vi.stubGlobal('BroadcastChannel', FakeBroadcastChannel);
     const open = vi.fn();
-    window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus, open } } as unknown as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus, open } } as unknown as LoomixDesktopBridge;
     const { keepDiscarded } = await import('@/lib/popout/discarded-undo');
     const token = keepDiscarded({ mode: 'compose', initialData: { subject: 'Budget' } as never }, 'alice@one');
     const { setMailLinkOpener } = await import('../mail-links');
@@ -429,7 +429,7 @@ describe('listening', () => {
       version: 1,
       platform: 'win32',
       os: { onCommand: (l: (command: DesktopOsCommand) => void, options?: unknown) => { listener = l; subscribeOptions = options; return () => { listener = null; }; } },
-    } as unknown as BulwarkDesktopBridge;
+    } as unknown as LoomixDesktopBridge;
     const { startOsCommands } = await import('../os-commands');
     const stop = startOsCommands(env);
     // Main leaves the main window in the tray for an .eml only for a page that says this.

@@ -635,7 +635,7 @@ export interface TaskInput {
   alerts?: Record<string, TaskAlertInput | null> | null;
   /**
    * Links by id (1-64 of `A-Z a-z 0-9 . _ -`), at most 10: an http(s) URL,
-   * a `mailto:` address or a path of this Bulwark (`/mail/...`), stored as
+   * a `mailto:` address or a path of this Loomix (`/mail/...`), stored as
    * its full URL. Merged by id on update as `alerts` is; links another app
    * wrote stay unless named with null.
    */
@@ -980,7 +980,7 @@ export interface KeyboardEventView {
 
 /** What `api.app.getInfo()` tells a plugin about the app it runs in. */
 export interface AppInfoView {
-  /** The product: always "Bulwark Mail". */
+  /** The product: always "Loomix Mail". */
   product: string;
   /** The name the administrator gave this installation (APP_NAME), e.g. "Webmail". */
   name: string;
@@ -995,7 +995,7 @@ export interface AppInfoView {
 }
 
 /**
- * Features of Bulwark itself that replace what a plugin did, as
+ * Features of Loomix itself that replace what a plugin did, as
  * `api.host.features` tells the plugin (no permission needed). A plugin
  * that does the same job steps back while one is true. Missing on hosts
  * older than 1.19.0, so read it as `api.host?.features?.x === true`.
@@ -1006,7 +1006,7 @@ export interface HostFeaturesView extends AssistantHostFeatures {
   /** The admin turned on the confirm before sending outside the organisation (organisation.externalMail.recipientWarning). */
   externalRecipientWarning: boolean;
   /**
-   * Bulwark 1.20 and later: "no third-party traffic" is on (or not known
+   * Loomix 1.20 and later: "no third-party traffic" is on (or not known
    * yet). Outside services are off: the proxy refuses servers fixed in a
    * manifest and only reaches those the admin entered on the plugin's admin
    * page. A plugin switches such a service off instead of treating it as
@@ -1207,7 +1207,7 @@ export interface SieveScriptGenerateContext {
 }
 
 /**
- * Passed to onComposeFromLink (Bulwark 1.21 and later): the composer opened
+ * Passed to onComposeFromLink (Loomix 1.21 and later): the composer opened
  * from a link with parameters for this plugin, such as
  * `mailto:a@b.de?subject=Mahnung&x-akte-case=01%2F2026` for the plugin
  * `akte`. Only the plugin named in the parameters hears it. The link can
@@ -1252,7 +1252,7 @@ export interface OutgoingAttachment {
   /**
    * onBeforeEmailSend, 1.20 and later: the type the file's first bytes say
    * it is (application/x-msdownload for a program, application/zip, ...);
-   * absent when Bulwark knows no signature for them or couldn't read them.
+   * absent when Loomix knows no signature for them or couldn't read them.
    */
   sniffedType?: string;
   /**
@@ -1262,7 +1262,7 @@ export interface OutgoingAttachment {
    */
   textExcerpt?: string;
   /**
-   * onBeforeEmailSend, 1.20 and later: Bulwark couldn't read the file, so
+   * onBeforeEmailSend, 1.20 and later: Loomix couldn't read the file, so
    * there is no sniffedType or textExcerpt. Treat it as not checked.
    */
   unreadable?: boolean;
@@ -1284,7 +1284,7 @@ export interface OutgoingEmail {
   /** Free-form custom headers added by the composer or earlier handlers */
   headers?: Record<string, string>;
   /**
-   * Where the send comes from (onBeforeEmailSend, Bulwark 1.20 and later):
+   * Where the send comes from (onBeforeEmailSend, Loomix 1.20 and later):
    * the composer, a quick reply under a message, or a plugin's forward.
    */
   surface?: 'composer' | 'quick-reply' | 'plugin-forward';
@@ -1306,7 +1306,7 @@ export interface OutgoingEmail {
    */
   externalRecipients?: string[];
   /**
-   * Bulwark 1.21 and later: the id of the composer the message is sent from,
+   * Loomix 1.21 and later: the id of the composer the message is sent from,
    * the same id its actions and slots hand out (api.composer.*), so a plugin
    * knows which of its drafts goes out. Set in the composer (docked, full,
    * pop-out window, Pro tab, quick compose; also for a scheduled send or one
@@ -1315,12 +1315,12 @@ export interface OutgoingEmail {
    */
   composerId?: string;
   /**
-   * Bulwark 1.21 and later, onTransformOutgoingEmail: keywords to set on the
+   * Loomix 1.21 and later, onTransformOutgoingEmail: keywords to set on the
    * message, so its copy in Sent carries them from the start. Only from a
    * plugin with `email:write`; others' changes to the list are dropped.
    * Custom keywords in RFC 8621 syntax (printable ASCII without spaces and
    * the characters ( ) { ] % * " and backslash), plus `$flagged` and
-   * Bulwark's tags (`$label:<id>`); other `$` keywords are the system's and
+   * Loomix's tags (`$label:<id>`); other `$` keywords are the system's and
    * are dropped, as are invalid ones. At most 10. Starts as an empty list.
    */
   keywords?: string[];
@@ -1472,7 +1472,7 @@ export interface AttachmentPreview {
  */
 export interface ExternalLinkContext {
   /**
-   * The address as the browser parses it (`new URL(href).href`, Bulwark
+   * The address as the browser parses it (`new URL(href).href`, Loomix
    * 1.20 and later); exactly this string opens.
    */
   href: string;
@@ -1482,7 +1482,7 @@ export interface ExternalLinkContext {
   emailId?: string;
   /**
    * What the link says (its text, else an image's alt text), trimmed to 200
-   * characters, when the host knows it (Bulwark 1.20 and later). A link
+   * characters, when the host knows it (Loomix 1.20 and later). A link
    * whose text names another address than its target is a phishing sign.
    */
   text?: string;

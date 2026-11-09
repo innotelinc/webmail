@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 
 /** What the webmail owes the shell: saving on close, leaving nothing behind on sign-out. */
 
-function setBridge(bridge: Partial<BulwarkDesktopBridge> | undefined) {
-  window.bulwarkDesktop = bridge as BulwarkDesktopBridge | undefined;
+function setBridge(bridge: Partial<LoomixDesktopBridge> | undefined) {
+  window.bulwarkDesktop = bridge as LoomixDesktopBridge | undefined;
 }
 
 afterEach(() => {

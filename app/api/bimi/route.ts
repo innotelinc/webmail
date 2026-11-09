@@ -62,10 +62,10 @@ export async function GET(request: NextRequest) {
   }
   if (!indicator) {
     return new NextResponse(new Uint8Array(TRANSPARENT_PNG), {
-      headers: { ...IMAGE_HEADERS, 'Cache-Control': `public, max-age=${MISSING_MAX_AGE}`, 'X-Bulwark-Bimi': 'missing' },
+      headers: { ...IMAGE_HEADERS, 'Cache-Control': `public, max-age=${MISSING_MAX_AGE}`, 'X-Loomix-Bimi': 'missing' },
     });
   }
   return new NextResponse(new Uint8Array(indicator.png), {
-    headers: { ...IMAGE_HEADERS, 'Cache-Control': `public, max-age=${LOGO_MAX_AGE}`, 'X-Bulwark-Bimi': indicator.status },
+    headers: { ...IMAGE_HEADERS, 'Cache-Control': `public, max-age=${LOGO_MAX_AGE}`, 'X-Loomix-Bimi': indicator.status },
   });
 }

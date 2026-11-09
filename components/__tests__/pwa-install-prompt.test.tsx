@@ -9,7 +9,7 @@ import { useUIStore } from "@/stores/ui-store";
 
 vi.mock("@/hooks/use-config", () => ({
   useConfig: () => ({
-    appName: "Bulwark",
+    appName: "Loomix",
     faviconUrl: "",
     appLogoLightUrl: "",
     appLogoDarkUrl: "",

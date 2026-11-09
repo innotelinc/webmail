@@ -350,7 +350,7 @@ function PopoutComposer({ payload, handoffId, onReopen }: {
     : mode === "replyAll" ? t("email_composer.reply_all")
     : mode === "forward" ? t("email_composer.forward")
     : t("email_composer.new_message");
-  // The desktop app's taskbar and Alt+Tab: "<subject or New message> - Bulwark", as its
+  // The desktop app's taskbar and Alt+Tab: "<subject or New message> - Loomix", as its
   // Window menu names it (desktop-p2-5). Where the organisation keeps subjects out of
   // titles, the kind of message instead.
   const inDesktopApp = !!getDesktopBridge()?.windows;

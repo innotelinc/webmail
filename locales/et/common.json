@@ -70,8 +70,8 @@
     "demo_tagline": "Proovi täisfunktsionaalset e-posti klienti. Kontot pole vaja.",
     "demo_no_signup": "Registreerimist pole vaja - tutvu vabalt näidisandmetega",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "See nimi on liiga pikk.",
     "loading": "Laadimine…",
     "unsupported": "See meiliserver ei saa jagatud silte hoida, seega näitab see postkast sinu enda silte.",
-    "unavailable": "Selle postkasti jagatud silte ei õnnestunud laadida, seega näitab see sinu enda silte. Bulwark proovib hiljem uuesti.",
+    "unavailable": "Selle postkasti jagatud silte ei õnnestunud laadida, seega näitab see sinu enda silte. Loomix proovib hiljem uuesti.",
     "no_rights": "Saad neid silte kasutada, kuid ei saa neid selles postkastis muuta.",
     "too_many": "Jagatud silte on liiga palju. Kustuta mõni enne uute lisamist.",
-    "save_failed": "Jagatud silte ei õnnestunud salvestada. Bulwark proovib uuesti, kui server vastab.",
-    "save_pending": "Pole veel salvestatud. Bulwark proovib uuesti, kui server vastab."
+    "save_failed": "Jagatud silte ei õnnestunud salvestada. Loomix proovib uuesti, kui server vastab.",
+    "save_pending": "Pole veel salvestatud. Loomix proovib uuesti, kui server vastab."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1114,7 +1114,7 @@
     "send_failed": "Kirja saatmine ebaõnnestus",
     "send_offline": "Paistab, et oled võrgust väljas. Kiri on alles, saada see uuesti, kui oled taas ühenduses.",
     "send_timeout": "Server lakkas vastamast. Enne uuesti saatmist kontrolli oma saadetud kirjade kausta — sõnum võis siiski välja minna.",
-    "submission_quota": "Serveris on selle konto kohta liiga palju saadetud kirjade kirjeid. Bulwark eemaldas need, mida sai; kui see kordub, palu administraatoril e-kirjade saatmise piirangut tõsta.",
+    "submission_quota": "Serveris on selle konto kohta liiga palju saadetud kirjade kirjeid. Loomix eemaldas need, mida sai; kui see kordub, palu administraatoril e-kirjade saatmise piirangut tõsta.",
     "submission_limit": "Server keeldus kirja saatmast, sest piirang on täis: {reason}",
     "recipients_refused": "Ei saadetud: server lükkas tagasi {recipients}.",
     "recipients_partly_refused": "Server lükkas tagasi {recipients}. Teised adressaadid saavad kirja kätte.",
@@ -1856,7 +1856,7 @@
       },
       "push": {
         "title": "Teavitused, kui {appName} on suletud",
-        "description": "Saa süsteemseid teavitusi uutest kirjadest ka siis, kui see sait on suletud. Edastatakse Bulwarki push-releele; relee ei näe kirjade sisu kunagi.",
+        "description": "Saa süsteemseid teavitusi uutest kirjadest ka siis, kui see sait on suletud. Edastatakse Loomixi push-releele; relee ei näe kirjade sisu kunagi.",
         "relay_label": "Push-relee",
         "relay_desc": "Server, mis edastab su teavitusi. Vali administraatori pakutavate releede hulgast.",
         "relay_locked": "Määratud administraatori poolt",
@@ -1864,7 +1864,7 @@
         "status_active": "Aktiivne selles seadmes",
         "status_inactive": "Selles seadmes pole lubatud",
         "status_unsupported": "See brauser ei toeta Web Pushi",
-        "status_lite": "Veebi-tõukemärguanded pole Bulwark Lite'is saadaval; need vajavad Bulwarki serverit.",
+        "status_lite": "Veebi-tõukemärguanded pole Loomix Lite'is saadaval; need vajavad Loomixi serverit.",
         "status_demo": "Taustateavitused pole demos saadaval.",
         "status_busy": "Töötleb…",
         "enable": "Lülita selles seadmes sisse",
@@ -2504,10 +2504,10 @@
       },
       "link_device": {
         "title": "Ühenda mobiilirakendus",
-        "description": "Logi Bulwark Mail mobiilirakendusse sisse ilma midagi sisestamata. Genereeri siin QR-kood ja skaneeri see rakenduse sisselogimisekraanilt.",
+        "description": "Logi Loomix Mail mobiilirakendusse sisse ilma midagi sisestamata. Genereeri siin QR-kood ja skaneeri see rakenduse sisselogimisekraanilt.",
         "generate": "Kuva QR-kood",
         "regenerate": "Kuva uus kood",
-        "instructions": "Ava Bulwark Mail rakendus, puuduta sisselogimisekraanil „Skaneeri QR-kood“ ja suuna kaamera siia.",
+        "instructions": "Ava Loomix Mail rakendus, puuduta sisselogimisekraanil „Skaneeri QR-kood“ ja suuna kaamera siia.",
         "expires_in": "See kood aegub {seconds} sekundi pärast. Seda saab kasutada ainult üks kord.",
         "expired": "See kood on aegunud.",
         "error": "Sidumiskoodi loomine ebaõnnestus. Palun proovi uuesti.",
@@ -2757,7 +2757,7 @@
         "button": "Impordi"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Lähtekood"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Otsing üleval üle kogu laiuse, kirjad avanevad täislaiuses"
   },
   "setup": {
-    "title": "Bulwark Webmaili seadistamine",
+    "title": "Loomix Maili seadistamine",
     "subtitle": "Seadista oma veebipostiteenus brauseris.",
     "loading": "Laadimine…",
     "back": "Tagasi",
@@ -3734,7 +3734,7 @@
       "regenerate": "Loo uus",
       "sync": "Sünkrooni kasutajate seaded seadmete vahel",
       "sync_hint": "Salvestab kasutajate eelistused serverisse, krüpteerituna seansi saladusega.",
-      "telemetry": "Saada Bulwarki parandamiseks anonüümset kasutusstatistikat",
+      "telemetry": "Saada Loomixi parandamiseks anonüümset kasutusstatistikat",
       "telemetry_hint": "Vaikimisi väljas. Üks anonüümne signaal päevas versiooni, platvormi ja sisse lülitatud funktsioonidega; mitte kunagi e-posti aadresse, hostinimesid ega IP-aadresse. Saad seda igal ajal muuta haldusseadetes."
     },
     "logging": {
@@ -5363,7 +5363,7 @@
     "label": "Blokeeri minu kalender",
     "description": "Lisab äraoleku ajaks hõivatud sündmuse, et keegi sel ajal sulle koosolekuid ei paneks.",
     "no_access_managed": "Selle konto kalendrit ei saa blokeerida: sul pole sinna kirjutusõigust.",
-    "no_calendar": "Kalendrit ei saa blokeerida: Bulwark ei leidnud kalendrit, kuhu sündmus lisada.",
+    "no_calendar": "Kalendrit ei saa blokeerida: Loomix ei leidnud kalendrit, kuhu sündmus lisada.",
     "filter_warning": "Selle sisselülitamine lülitab sinu oma filtriskripti välja, kuni vastus on aktiivne."
   },
   "calendar_delegate": {
@@ -5466,20 +5466,20 @@
   "find_time": {
     "suggest": "Soovita aegu",
     "searching": "Vabu aegu otsitakse",
-    "slots_title": "Vaba kõigile, keda Bulwark sai kontrollida",
+    "slots_title": "Vaba kõigile, keda Loomix sai kontrollida",
     "slot": "{day}, {start} kuni {end}",
     "none": "Järgmise 10 tööpäeva jooksul pole vaba aega.",
     "picked": "Sündmus viidi aega {slot}",
     "rate_limited": "Viimase minuti jooksul oli liiga palju päringuid. Proovi minuti pärast uuesti.",
-    "unavailable": "Vaba/hõivatud teave pole selles serveris saadaval, seega ei saa Bulwark aegu soovitada.",
+    "unavailable": "Vaba/hõivatud teave pole selles serveris saadaval, seega ei saa Loomix aegu soovitada.",
     "not_checked": "Kontrollimata:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "väljaspool sinu organisatsiooni",
     "reason_unknown": "hõivatud ajad teadmata",
     "reason_not_found": "selles serveris ei leitud",
     "reason_error": "ei saanud kontrollida",
-    "unknown_note": "Bulwark näeb hõivatud aegu ainult sinuga jagatud kalendrites. Nende inimeste puhul ei saa ta eristada vaba ajast jagamata kalendrit.",
-    "directory_off": "Bulwark ei saa selles serveris inimesi otsida. Administraator saab Stalwartis kataloogipäringud sisse lülitada.",
+    "unknown_note": "Loomix näeb hõivatud aegu ainult sinuga jagatud kalendrites. Nende inimeste puhul ei saa ta eristada vaba ajast jagamata kalendrit.",
+    "directory_off": "Loomix ei saa selles serveris inimesi otsida. Administraator saab Stalwartis kataloogipäringud sisse lülitada.",
     "not_looked_up": "Seda aadressi ei leitud",
     "found": "Leitud vabu aegu: {count}"
   },
@@ -5676,7 +5676,7 @@
     "start_tour": "Alusta tutvustust"
   },
   "demo_welcome": {
-    "title": "Tere tulemast Bulwark Maili juurde",
+    "title": "Tere tulemast Loomix Maili juurde",
     "description": "Tutvu täisfunktsionaalse veebipostiga - otse oma brauseris. Kõik andmed jäävad sinu seadmesse, seega võid vabalt kõike proovida.",
     "feature_email": "Loe ja kirjuta e-kirju",
     "feature_organize": "Märgid, tähed ja kaustad",
@@ -6110,9 +6110,9 @@
     "cancelled_hint": "Hiljem jätkamiseks importige samad failid uuesti samasse kausta.",
     "close": "Sulge",
     "pst_note": "Outlooki failidest tulevad ainult kirjad. Kontaktid, kalendrikirjed ja ülesanded loendatakse ja jäetakse välja.",
-    "pst_error_encrypted": "See Outlooki fail kasutab tugevat krüpteerimist, mida Bulwark lugeda ei saa. Eksportige kirjad Outlookis uude krüpteerimata .pst-faili.",
-    "pst_error_not_pst": "See fail pole Outlooki andmefail, mida Bulwark lugeda oskab.",
-    "pst_error_unreadable": "Bulwark ei saanud seda Outlooki faili lugeda.",
+    "pst_error_encrypted": "See Outlooki fail kasutab tugevat krüpteerimist, mida Loomix lugeda ei saa. Eksportige kirjad Outlookis uude krüpteerimata .pst-faili.",
+    "pst_error_not_pst": "See fail pole Outlooki andmefail, mida Loomix lugeda oskab.",
+    "pst_error_unreadable": "Loomix ei saanud seda Outlooki faili lugeda.",
     "pst_error_worker": "Outlooki failide lugeja ei laadinud. Laadige leht uuesti ja proovige veel kord.",
     "error_over_quota": "Postkast on täis, seega import peatus. Tehke ruumi ja importige samad failid uuesti samasse kausta, et jätkata.",
     "error_forbidden": "Sellesse kausta ei tohi te kirju lisada, seega import peatus.",
@@ -6173,7 +6173,7 @@
   },
   "desktopImport": {
     "find": "Otsi Thunderbirdi ja Outlooki andmeid…",
-    "find_hint": "Otsib selle arvuti tavalistest kohtadest. Bulwark küsib enne luba.",
+    "find_hint": "Otsib selle arvuti tavalistest kohtadest. Loomix küsib enne luba.",
     "scan_declined": "Midagi ei otsitud, sest sa ei lubanud seda.",
     "scan_failed": "Otsing ei õnnestunud. Proovi uuesti.",
     "read_declined": "Faile ei loetud, sest sa ei lubanud seda.",
@@ -6229,7 +6229,7 @@
     "restore": "Taasta",
     "restored": "{count, plural, one {# kiri liigub} other {# kirja liiguvad}} tagasi sinu saabunud kirjade kausta.",
     "restore_partial": "{count, plural, one {# kirja ei õnnestunud taastada. See jääb valituks, et saaksid uuesti proovida.} other {# kirja ei õnnestunud taastada. Need jäävad valituks, et saaksid uuesti proovida.}}",
-    "restore_hint": "Taastatud kirjad tulevad tagasi saabunud kirjade kausta lugemata kujul ja algse kuupäeva järgi sorteerituna, seega võivad need olla loendis kaugel all. Server taastab need taustal. Kui see seal ebaõnnestub, läheb kiri kaotsi ja Bulwark ei saa sellest teada.",
+    "restore_hint": "Taastatud kirjad tulevad tagasi saabunud kirjade kausta lugemata kujul ja algse kuupäeva järgi sorteerituna, seega võivad need olla loendis kaugel all. Server taastab need taustal. Kui see seal ebaõnnestub, läheb kiri kaotsi ja Loomix ei saa sellest teada.",
     "unknown_sender": "Tundmatu saatja",
     "no_subject": "(teema puudub)",
     "deleted_on": "Kustutatud {date}",
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Tühjenda",
     "persist_refused": "See brauser võib hoitud kirjad kustutada, kui ruumi napib. Rakenduse paigaldamine hoiab selle tavaliselt ära.",
     "persist_retry": "Palu brauseril need alles hoida",
-    "safari_hint": "Safari kustutab saidi andmed, kui seda pole 7 päeva külastatud. Lisa Bulwark avaekraanile või Dockile, et su kirjad sellesse seadmesse alles jääksid.",
+    "safari_hint": "Safari kustutab saidi andmed, kui seda pole 7 päeva külastatud. Lisa Loomix avaekraanile või Dockile, et su kirjad sellesse seadmesse alles jääksid.",
     "evicted": "Brauser kustutas selles seadmes hoitud kirjad. Need laaditakse uuesti alla.",
     "evicted_lost": "{count, plural, one {# saatmata kiri või muudatus läks kaotsi.} other {# saatmata kirja või muudatust läks kaotsi.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Seadme salvestusruum on täis.",
-    "storage_full_text": "Bulwark ei salvesta siin enam kirju. Hoia vähem kirju või tühjenda see konto, et ruumi vabastada.",
+    "storage_full_text": "Loomix ei salvesta siin enam kirju. Hoia vähem kirju või tühjenda see konto, et ruumi vabastada.",
     "open_settings": "Ava seaded",
-    "default_on": "Bulwark hoiab su kirju selles seadmes, et see töötaks ka ilma ühenduseta. Saad seda seadetes muuta.",
+    "default_on": "Loomix hoiab su kirju selles seadmes, et see töötaks ka ilma ühenduseta. Saad seda seadetes muuta.",
     "conflict_calendar": "Kalendrisündmus",
     "conflict_contacts": "Kontakt",
     "kept_files_title": "Võrguta hoitud failid",
@@ -6844,7 +6844,7 @@
       },
       "ui_tasks": {
         "title": "Lisa ülesannetesse",
-        "body": "Näidata oma jaotisi ülesande üksikasjades, nuppe ülesannete nimekirjas ja oma ülesannete nimekirja Bulwarki oma asemel."
+        "body": "Näidata oma jaotisi ülesande üksikasjades, nuppe ülesannete nimekirjas ja oma ülesannete nimekirja Loomixi oma asemel."
       },
       "ui_files": {
         "title": "Lisa failidesse",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Klaviatuuri otseteed",
       "docs": "Dokumentatsioon",
       "settings": "Seaded…",
-      "about": "Teave Bulwarki kohta",
+      "about": "Teave Loomixi kohta",
       "from_plugins": "Veel pistikprogrammidelt…",
       "pick_gone": "See menüü oli aegunud. Avage see uuesti ja proovige veel kord.",
       "bar_label": "Menüü"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Kui sulgete nüüd, läheb kaduma see, mille olete pärast viimast salvestamist kirjutanud.",
       "close_anyway": "Sulge siiski",
       "unsent_title": "Mõni kiri on veel saatmata",
-      "unsent_one": "Üks kiri ootab saatmist. See läheb teele järgmine kord, kui Bulwarki avate.",
-      "unsent_many": "{count} kirja ootab saatmist. Need lähevad teele järgmine kord, kui Bulwarki avate.",
+      "unsent_one": "Üks kiri ootab saatmist. See läheb teele järgmine kord, kui Loomixi avate.",
+      "unsent_many": "{count} kirja ootab saatmist. Need lähevad teele järgmine kord, kui Loomixi avate.",
       "quit": "Välju",
       "leave_title": "Lahkuda salvestamata muudatustega?",
       "leave_detail": "Selle lehe muudatused pole veel salvestatud.",
@@ -7383,7 +7383,7 @@
       "stay": "Jää"
     },
     "spellcheck": {
-      "offer": "Õigekirjakontroll keelele {language} vajab sõnastikku. Bulwark saab selle Google’ilt alla laadida. Teie teksti ei saadeta.",
+      "offer": "Õigekirjakontroll keelele {language} vajab sõnastikku. Loomix saab selle Google’ilt alla laadida. Teie teksti ei saadeta.",
       "download": "Laadi alla"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "1 tunniks",
     "tray_pause_tomorrow": "Homseni",
     "tray_resume": "Lülita teavitused uuesti sisse",
-    "tray_open": "Ava Bulwark",
-    "tray_quit": "Sulge Bulwark",
-    "tray_exit": "Välju Bulwarkist"
+    "tray_open": "Ava Loomix",
+    "tray_quit": "Sulge Loomix",
+    "tray_exit": "Välju Loomixist"
   },
   "desktopMenus": {
     "save_draft": "Salvesta mustand",
@@ -7581,25 +7581,25 @@
     "cancel": "Tühista",
     "or_here": "või logi sisse siin",
     "timed_out": "Sisselogimine brauseris võttis liiga kaua aega. Proovi uuesti.",
-    "no_browser": "Bulwark ei saanud brauserit avada. Proovi uuesti või logi sisse siin.",
+    "no_browser": "Loomix ei saanud brauserit avada. Proovi uuesti või logi sisse siin.",
     "failed": "Sisselogimine brauseri kaudu ei õnnestunud. Proovi uuesti.",
-    "handoff_banner": "Selle arvuti programm küsis seda sisselogimist Bulwarki rakendusele. See brauser jääb Bulwarkist välja logituks. Kui sina seda ei alustanud, sulge see vaheleht.",
-    "consent_title": "Kas logida sisse Bulwarki rakendusse?",
-    "consent_description": "Selle arvuti programm pordil {port} küsib konto {username} sisselogimist. Jätka ainult siis, kui vajutasid just selle arvuti Bulwarki rakenduses nuppu „Logi sisse brauseriga…“. Kui mitte, võib keegi proovida sinu kontole pääseda: vali Mitte praegu.",
+    "handoff_banner": "Selle arvuti programm küsis seda sisselogimist Loomixi rakendusele. See brauser jääb Loomixist välja logituks. Kui sina seda ei alustanud, sulge see vaheleht.",
+    "consent_title": "Kas logida sisse Loomixi rakendusse?",
+    "consent_description": "Selle arvuti programm pordil {port} küsib konto {username} sisselogimist. Jätka ainult siis, kui vajutasid just selle arvuti Loomixi rakenduses nuppu „Logi sisse brauseriga…“. Kui mitte, võib keegi proovida sinu kontole pääseda: vali Mitte praegu.",
     "consent_confirm": "Logi rakendusse sisse",
     "consent_cancel": "Mitte praegu",
-    "page_done": "Võid selle vahelehe sulgeda ja Bulwarki naasta.",
-    "page_failed": "Sisselogimine ei õnnestunud. Mine tagasi Bulwarki ja proovi uuesti.",
-    "page_link_used": "See link töötab ainult üks kord. Mine tagasi Bulwarki ja alusta uuesti.",
+    "page_done": "Võid selle vahelehe sulgeda ja Loomixi naasta.",
+    "page_failed": "Sisselogimine ei õnnestunud. Mine tagasi Loomixi ja proovi uuesti.",
+    "page_link_used": "See link töötab ainult üks kord. Mine tagasi Loomixi ja alusta uuesti.",
     "page_title": "Logi sisse serverisse {server}",
-    "page_intro": "See leht tuleb selle arvuti Bulwarki rakendusest. Sinu parool läheb serverisse {server} ja mitte kuhugi mujale.",
+    "page_intro": "See leht tuleb selle arvuti Loomixi rakendusest. Sinu parool läheb serverisse {server} ja mitte kuhugi mujale.",
     "page_username": "E-posti aadress või kasutajanimi",
     "page_password": "Parool",
     "page_code": "Kaheastmelise kinnituse kood",
     "page_submit": "Logi sisse",
     "page_wrong_password": "Server ei aktsepteerinud seda kasutajanime ja parooli.",
     "page_code_needed": "See konto vajab ka kaheastmelise kinnituse koodi. Sisesta parool uuesti ja kood.",
-    "page_no_answer": "Bulwark ei saanud sisse logida. Kontrolli, kas server on kättesaadav, ja proovi uuesti.",
+    "page_no_answer": "Loomix ei saanud sisse logida. Kontrolli, kas server on kättesaadav, ja proovi uuesti.",
     "declined": "Ütlesid brauseris ei, seega sisse ei logitud.",
     "too_many": "Sellest võrgust on liiga palju sisselogimiskatseid. Oota paar minutit ja proovi uuesti.",
     "page_declined": "Midagi ei antud üle. Võid selle vahelehe sulgeda."
@@ -7619,7 +7619,7 @@
     "other_ways": "Muud sisselogimise viisid",
     "trouble": "Probleeme?",
     "trouble_cors": "Sinu meiliserver peab lubama sisselogimist sellelt veebisaidilt. Kui sisselogimine ei õnnestu, palu meiliserveri haldajal see lubada.",
-    "provider_unsupported": "{provider} ei paku JMAP-i, mille kaudu Bulwark meiliserveritega suhtleb, seega ei saa Bulwark sellega veel otse ühendust luua."
+    "provider_unsupported": "{provider} ei paku JMAP-i, mille kaudu Loomix meiliserveritega suhtleb, seega ei saa Loomix sellega veel otse ühendust luua."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock on sees",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Kas muuta, kuidas Bulwark ühendub?",
-      "message": "Bulwark taaskäivitub ja küsib, kuidas ühenduda: teie e-posti aadressiga või teie organisatsiooni Bulwarki kaudu. Teie kontod selles arvutis jäävad sisselogituks.",
+      "title": "Kas muuta, kuidas Loomix ühendub?",
+      "message": "Loomix taaskäivitub ja küsib, kuidas ühenduda: teie e-posti aadressiga või teie organisatsiooni Loomixi kaudu. Teie kontod selles arvutis jäävad sisselogituks.",
       "confirm": "Muuda",
-      "org_link": "Kasuta hoopis minu organisatsiooni Bulwarki",
+      "org_link": "Kasuta hoopis minu organisatsiooni Loomixi",
       "add_account": "Lisa konto…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Lisa"
     },
     "sign_in_page": {
-      "open_app": "Ava Bulwark",
+      "open_app": "Ava Loomix",
       "done_as": "Sisse logitud kui {address}. Võite selle vahekaardi sulgeda."
     }
   },
   "desktop_updates": {
     "title": "Uuendused",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark otsib uuendusi ise.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix otsib uuendusi ise.",
     "status_checking": "Uuenduste otsimine…",
     "status_up_to_date": "Sul on uusim versioon.",
     "status_downloading": "Versiooni {version} allalaadimine…",
     "status_ready": "Versioon {version} on valmis. See paigaldatakse järgmisel sulgemisel või taaskäivita kohe.",
     "status_available": "Versioon {version} on saadaval.",
-    "status_available_per_machine": "Versioon {version} on saadaval. Bulwark on paigaldatud kõigile selle arvuti kasutajatele, seega paigaldab uuendused administraator.",
-    "status_older": "Sul on beetaversioon. Stabiilne versioon {version} on vanem, seega jääb Bulwark sellele versioonile, kuni stabiilne järele jõuab.",
-    "status_error": "Uuendusi ei õnnestunud otsida. Bulwark proovib hiljem uuesti.",
+    "status_available_per_machine": "Versioon {version} on saadaval. Loomix on paigaldatud kõigile selle arvuti kasutajatele, seega paigaldab uuendused administraator.",
+    "status_older": "Sul on beetaversioon. Stabiilne versioon {version} on vanem, seega jääb Loomix sellele versioonile, kuni stabiilne järele jõuab.",
+    "status_error": "Uuendusi ei õnnestunud otsida. Loomix proovib hiljem uuesti.",
     "status_off": "Sinu organisatsioon on rakenduse uuendused välja lülitanud.",
     "check": "Otsi kohe",
     "restart": "Taaskäivita uuendamiseks",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beeta",
     "shell_restart": "Taaskäivita uuendamiseks",
     "shell_check": "Otsi uuendusi…",
-    "shell_available": "Bulwark {version} on saadaval",
-    "shell_ready_title": "Bulwark on uuendamiseks valmis",
+    "shell_available": "Loomix {version} on saadaval",
+    "shell_ready_title": "Loomix on uuendamiseks valmis",
     "shell_ready_body": "Versioon {version} paigaldatakse järgmisel sulgemisel. Klõpsa, et kohe taaskäivitada. Mustandid salvestatakse enne.",
-    "shell_available_title": "Saadaval on Bulwarki uus versioon",
-    "shell_none_title": "Bulwark on ajakohane",
+    "shell_available_title": "Saadaval on Loomixi uus versioon",
+    "shell_none_title": "Loomix on ajakohane",
     "shell_none_detail": "Sul on versioon {version}.",
-    "shell_failed_title": "Bulwark ei saanud uuendusi otsida",
+    "shell_failed_title": "Loomix ei saanud uuendusi otsida",
     "shell_failed_detail": "Kontrolli ühendust ja proovi hiljem uuesti. Midagi ei muutunud.",
     "shell_beta_title": "Kas minna beetaversioonidele?",
     "shell_beta_detail": "Saad uued versioonid varem ja neis võib olla rohkem probleeme. Tagasi minemiseks paigaldad vanema stabiilse versiooni või ootad, kuni stabiilne järele jõuab.",
     "shell_beta_confirm": "Mine beetale",
-    "shell_older_title": "Kas minna tagasi Bulwarki {version} peale?",
+    "shell_older_title": "Kas minna tagasi Loomixi {version} peale?",
     "shell_older_detail": "Sul on beeta {current}. Stabiilne {target} on vanem ega pruugi lugeda seda, mida beeta sellesse arvutisse salvestas. Sinu kirjad jäävad serverisse, kuid võrguühenduseta hoitud kirjad võidakse uuesti alla laadida ja saatmata muudatused võivad kaduda. Kui ootad, jõuab stabiilne järele ja lähed sellele üle ilma selle sammuta.",
     "shell_older_confirm": "Paigalda vanem versioon"
   },
@@ -7982,7 +7982,7 @@
       "progress": "{done}/{total} üles laaditud",
       "cannot_offline": "Server pole kättesaadav. Veel üles laadimata: {names}",
       "cannot_other": "Ei saa üles laadida: {names}. Põhjus on seadete viimases tegevuses.",
-      "go_note_drive": "Kui jätkate kohe, kopeeritakse üles laadimata osa kausta Dokumendid\\Bulwark – not uploaded. Midagi ei lähe kaotsi.",
+      "go_note_drive": "Kui jätkate kohe, kopeeritakse üles laadimata osa kausta Dokumendid\\Loomix – not uploaded. Midagi ei lähe kaotsi.",
       "go_note_folder": "Kui jätkate kohe, jääb üles laadimata osa selle arvuti kausta.",
       "keep_turn_off": "Jäta draiv sisse",
       "keep_sign_out": "Jää sisselogituks",
@@ -7996,22 +7996,22 @@
       "rescued": "Üles laadimata failid ({count}) on nüüd kaustas {folder}.",
       "rescued_open": "Ava kaust",
       "rescued_dismiss": "Peida",
-      "start_at_login": "Käivita Bulwark Windowsi sisselogimisel",
-      "start_at_login_why": "Draiv vajab töötavat Bulwarki, nagu OneDrive.",
-      "closed_warning": "Draivi faile ei saa avada, kui Bulwark on suletud.",
-      "where": "Failihalduris nimega Bulwark Files",
-      "where_letter": "Failihalduris nimega Bulwark Files ({letter}:)",
+      "start_at_login": "Käivita Loomix Windowsi sisselogimisel",
+      "start_at_login_why": "Draiv vajab töötavat Loomixi, nagu OneDrive.",
+      "closed_warning": "Draivi faile ei saa avada, kui Loomix on suletud.",
+      "where": "Failihalduris nimega Loomix Files",
+      "where_letter": "Failihalduris nimega Loomix Files ({letter}:)",
       "open": "Ava",
-      "letter_note": "Draivitähe kaudu ei näita Failihaldur sünkroonimise olekut ega valikut „Hoia alati selles seadmes“. Need on näha Failihalduris Bulwark Files all.",
+      "letter_note": "Draivitähe kaudu ei näita Failihaldur sünkroonimise olekut ega valikut „Hoia alati selles seadmes“. Need on näha Failihalduris Loomix Files all.",
       "letter_failed": "Draivitähte ei õnnestunud määrata. Proovige uuesti."
     },
     "tray": {
-      "idle": "Bulwark Files: Ajakohane",
-      "syncing": "Bulwark Files: Sünkroonimine. Jäänud: {count}",
-      "paused": "Bulwark Files: Peatatud",
-      "offline": "Bulwark Files: Võrguühenduseta. Ootel: {count}",
-      "question": "Bulwark Files: Ootab teie vastust",
-      "error": "Bulwark Files: Viga"
+      "idle": "Loomix Files: Ajakohane",
+      "syncing": "Loomix Files: Sünkroonimine. Jäänud: {count}",
+      "paused": "Loomix Files: Peatatud",
+      "offline": "Loomix Files: Võrguühenduseta. Ootel: {count}",
+      "question": "Loomix Files: Ootab teie vastust",
+      "error": "Loomix Files: Viga"
     },
     "notify": {
       "conflict_title": "Faili muudeti kahes kohas",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Kord päevas: juhuslik ID, rakenduse versiooninumbrid, teie operatsioonisüsteem, kui kaua rakendus on töötanud ja kuidas see ühendub. Oma meiliserveri puhul ka see, millised funktsioonid on sees, kontode ligikaudne arv ning pistikprogrammide ja kujunduste arv. Mitte kunagi kirju, aadresse ega serverinimesid.",
     "crash_label": "Saada kokkujooksmise aruanded",
     "crash_description": "Rakenduse vead saadetakse koos juhusliku ID, rakenduse enda koodi failinimede ja lühikeste puhastatud teadetega. Kui rakendus ise kokku jookseb, jääb kokkujooksmise fail sellesse arvutisse ja lahkub sealt ainult siis, kui selle saadate.",
-    "crash_memory": "Kokkujooksmise fail on koopia osast rakenduse mälust kokkujooksmise hetkel. Bulwark eemaldab leitud kasutajanimed, aadressid ja sisselogimislubad, kuid kokkujooksmise fail võib siiski sisaldada teie kirjade teksti.",
-    "instance_note": "Bulwarki serveris otsustab selle administraator eraldi, mida lehed talle teatavad.",
+    "crash_memory": "Kokkujooksmise fail on koopia osast rakenduse mälust kokkujooksmise hetkel. Loomix eemaldab leitud kasutajanimed, aadressid ja sisselogimislubad, kuid kokkujooksmise fail võib siiski sisaldada teie kirjade teksti.",
+    "instance_note": "Loomixi serveris otsustab selle administraator eraldi, mida lehed talle teatavad.",
     "forced_off": "Teie organisatsioon on selle välja lülitanud.",
     "url_label": "Kuhu kokkujooksmise failid lähevad",
-    "url_description": "Https-aadress, mis võtab kokkujooksmise faili vastu. Bulwarkil pole oma aadressi.",
+    "url_description": "Https-aadress, mis võtab kokkujooksmise faili vastu. Loomixil pole oma aadressi.",
     "url_invalid": "Sisestage täielik https-aadress.",
     "url_save": "Salvesta",
     "files_label": "Kokkujooksmise failid selles arvutis",
-    "files_description": "Bulwark hoiab alles uusimad ja kustutab kuust vanemad.",
+    "files_description": "Loomix hoiab alles uusimad ja kustutab kuust vanemad.",
     "files_empty": "Kokkujooksmise faile pole.",
     "file_size": "{size} KB",
     "send": "Saada kokkujooksmise aruanne…",

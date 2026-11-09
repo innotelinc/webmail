@@ -93,14 +93,14 @@ describe('Classification section', () => {
     expect(latest!.orgValue('labels', 'required').value).toBe(false);
   });
 
-  it('stores the extra header name only when it is a header Bulwark doesn’t write', async () => {
+  it('stores the extra header name only when it is a header Loomix doesn’t write', async () => {
     await renderSection();
     const field = () => screen.getByTestId('org-labels-extra-header');
     // The page-wide live region also has role=alert: look next to the field.
     const fieldAlert = () => within(field().parentElement!).queryByRole('alert');
     fireEvent.change(field(), { target: { value: 'Sensitivity' } });
     await waitFor(() => expect(field()).toHaveAttribute('aria-invalid', 'true'));
-    expect(fieldAlert()?.textContent).toContain('Bulwark writes this one itself');
+    expect(fieldAlert()?.textContent).toContain('Loomix writes this one itself');
     expect(latest!.orgValue('labels', 'extraHeader').value).toBe('');
     fireEvent.change(field(), { target: { value: 'X-Classification' } });
     await waitFor(() => expect(latest!.orgValue('labels', 'extraHeader').value).toBe('X-Classification'));

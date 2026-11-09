@@ -8,7 +8,7 @@
  * lib/calendar-subscription-sync.ts does that): nothing lands in anyone's
  * free/busy, removing a feed removes it everywhere at once, and Lite runs the
  * same code. What is reused from the subscriptions is the fetch (full
- * Bulwark: /api/fetch-ical, here by feed id so the address stays on the
+ * Loomix: /api/fetch-ical, here by feed id so the address stays on the
  * server) and the parsing (CalendarEvent/parse on an uploaded blob, so there
  * is no ICS parser in the bundle).
  *
@@ -233,7 +233,7 @@ async function sha256(text: string): Promise<string> {
   return `s${text.length}-${h}`;
 }
 
-/** The feed text: by id through the server in full Bulwark, from its address in Lite. */
+/** The feed text: by id through the server in full Loomix, from its address in Lite. */
 async function fetchFeedText(feed: CompanyFeed): Promise<string> {
   const response = IS_LITE
     ? await fetch(feed.url, { headers: { Accept: 'text/calendar, application/ics, text/plain, */*' }, credentials: 'omit' })

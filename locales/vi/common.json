@@ -70,8 +70,8 @@
     "demo_tagline": "Trải nghiệm một ứng dụng email đầy đủ tính năng. Không cần tài khoản.",
     "demo_no_signup": "Không cần đăng ký - khám phá thoải mái với dữ liệu mẫu",
     "mobile_handoff": {
-      "title": "Mở ứng dụng di động Bulwark?",
-      "description": "Trang đăng nhập này đã được mở bằng ứng dụng trên thiết bị này. Thông tin đăng nhập của bạn cho {username} sẽ được chuyển tới ứng dụng đã đăng ký liên kết Bulwark. Chỉ tiếp tục nếu bạn bắt đầu việc này từ ứng dụng di động Bulwark.",
+      "title": "Mở ứng dụng di động Loomix?",
+      "description": "Trang đăng nhập này đã được mở bằng ứng dụng trên thiết bị này. Thông tin đăng nhập của bạn cho {username} sẽ được chuyển tới ứng dụng đã đăng ký liên kết Loomix. Chỉ tiếp tục nếu bạn bắt đầu việc này từ ứng dụng di động Loomix.",
       "confirm": "Chuyển sang ứng dụng",
       "cancel": "Tiếp tục dùng thư điện tử trên web"
     },
@@ -491,11 +491,11 @@
     "too_long": "Tên này dài quá.",
     "loading": "Đang tải…",
     "unsupported": "Máy chủ thư này không thể giữ các thẻ được chia sẻ nên hộp thư này hiển thị các thẻ của riêng bạn.",
-    "unavailable": "Không thể tải các thẻ được chia sẻ của hộp thư này nên nó hiển thị các thẻ của riêng bạn. Bulwark thử lại sau.",
+    "unavailable": "Không thể tải các thẻ được chia sẻ của hộp thư này nên nó hiển thị các thẻ của riêng bạn. Loomix thử lại sau.",
     "no_rights": "Bạn có thể sử dụng các thẻ này nhưng không thể thay đổi chúng trong hộp thư này.",
     "too_many": "Có quá nhiều thẻ được chia sẻ. Xóa một số trước khi thêm nhiều hơn.",
-    "save_failed": "Không thể lưu các thẻ được chia sẻ. Bulwark thử lại khi máy chủ trả lời.",
-    "save_pending": "Chưa được lưu. Bulwark thử lại khi máy chủ trả lời."
+    "save_failed": "Không thể lưu các thẻ được chia sẻ. Loomix thử lại khi máy chủ trả lời.",
+    "save_pending": "Chưa được lưu. Loomix thử lại khi máy chủ trả lời."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1114,7 +1114,7 @@
     "send_failed": "Gửi email thất bại",
     "send_offline": "Có vẻ như bạn đang ngoại tuyến. Thư vẫn ở đây; hãy gửi lại khi bạn kết nối mạng.",
     "send_timeout": "Máy chủ ngừng phản hồi. Hãy kiểm tra thư mục Đã gửi trước khi gửi lại — thư có thể đã được gửi đi.",
-    "submission_quota": "Máy chủ có quá nhiều bản ghi thư đã gửi cho tài khoản này. Bulwark đã xóa được một số bản ghi; nếu tình trạng này tiếp diễn, hãy yêu cầu quản trị viên tăng giới hạn gửi email.",
+    "submission_quota": "Máy chủ có quá nhiều bản ghi thư đã gửi cho tài khoản này. Loomix đã xóa được một số bản ghi; nếu tình trạng này tiếp diễn, hãy yêu cầu quản trị viên tăng giới hạn gửi email.",
     "submission_limit": "Máy chủ từ chối gửi thư vì đã chạm giới hạn: {reason}",
     "recipients_refused": "Chưa gửi: máy chủ đã từ chối {recipients}.",
     "recipients_partly_refused": "Máy chủ đã từ chối {recipients}. Những người nhận khác vẫn nhận được thư.",
@@ -1868,7 +1868,7 @@
       },
       "push": {
         "title": "Thông báo khi {appName} đang đóng",
-        "description": "Nhận thông báo hệ thống về thư mới khi đóng trang web này. Thông báo được gửi qua máy chủ chuyển tiếp push của Bulwark; máy chủ này không bao giờ xem được nội dung thư.",
+        "description": "Nhận thông báo hệ thống về thư mới khi đóng trang web này. Thông báo được gửi qua máy chủ chuyển tiếp push của Loomix; máy chủ này không bao giờ xem được nội dung thư.",
         "relay_label": "Máy chủ chuyển tiếp push",
         "relay_desc": "Máy chủ gửi thông báo cho bạn. Chọn một máy chủ trong số các máy chủ do quản trị viên cung cấp.",
         "relay_locked": "Do quản trị viên đặt",
@@ -1876,7 +1876,7 @@
         "status_active": "Đang hoạt động trên thiết bị này",
         "status_inactive": "Chưa bật trên thiết bị này",
         "status_unsupported": "Trình duyệt này không hỗ trợ Web Push",
-        "status_lite": "Bulwark Lite không hỗ trợ Web Push; tính năng này cần máy chủ Bulwark.",
+        "status_lite": "Loomix Lite không hỗ trợ Web Push; tính năng này cần máy chủ Loomix.",
         "status_demo": "Thông báo nền không khả dụng trong bản demo.",
         "status_busy": "Đang xử lý…",
         "enable": "Bật trên thiết bị này",
@@ -2516,10 +2516,10 @@
       },
       "link_device": {
         "title": "Liên kết ứng dụng di động",
-        "description": "Đăng nhập vào ứng dụng Bulwark Mail trên điện thoại mà không phải nhập mật khẩu trên điện thoại. Điện thoại có phiên đăng nhập riêng nên đăng xuất tại đây sẽ không đăng xuất trên điện thoại.",
+        "description": "Đăng nhập vào ứng dụng Loomix Mail trên điện thoại mà không phải nhập mật khẩu trên điện thoại. Điện thoại có phiên đăng nhập riêng nên đăng xuất tại đây sẽ không đăng xuất trên điện thoại.",
         "generate": "Hiển thị mã QR",
         "regenerate": "Hiển thị mã mới",
-        "instructions": "Mở ứng dụng Bulwark Mail và nhấn \"Quét mã đăng nhập\" trên màn hình đăng nhập (hoặc \"Thêm tài khoản\" → \"Quét mã đăng nhập\" nếu bạn đã đăng nhập), sau đó hướng camera vào đây.",
+        "instructions": "Mở ứng dụng Loomix Mail và nhấn \"Quét mã đăng nhập\" trên màn hình đăng nhập (hoặc \"Thêm tài khoản\" → \"Quét mã đăng nhập\" nếu bạn đã đăng nhập), sau đó hướng camera vào đây.",
         "expires_in": "Mã này sẽ hết hạn sau {seconds} giây. Nó chỉ có thể được sử dụng một lần.",
         "expired": "Mã này đã hết hạn.",
         "error": "Không thể tạo mã ghép nối. Vui lòng thử lại.",
@@ -2769,7 +2769,7 @@
         "button": "Nhập"
       },
       "about": {
-        "title": "Webmail Bulwark",
+        "title": "Webmail Loomix",
         "source_code": "Mã nguồn"
       },
       "spam_siege": {
@@ -3621,7 +3621,7 @@
     "mountain_view_description": "Tìm kiếm ở trên cùng, thư mở rộng toàn màn hình"
   },
   "setup": {
-    "title": "Thiết lập webmail Bulwark",
+    "title": "Thiết lập webmail Loomix",
     "subtitle": "Định cấu hình phiên bản webmail của bạn từ trình duyệt.",
     "loading": "Đang tải…",
     "back": "Quay lại",
@@ -3746,7 +3746,7 @@
       "regenerate": "Tạo lại",
       "sync": "Đồng bộ hóa cài đặt người dùng trên các thiết bị",
       "sync_hint": "Lưu trữ tùy chọn của người dùng trên máy chủ, được mã hóa bằng khóa bí mật của phiên.",
-      "telemetry": "Gửi số liệu thống kê sử dụng ẩn danh để giúp cải thiện Bulwark",
+      "telemetry": "Gửi số liệu thống kê sử dụng ẩn danh để giúp cải thiện Loomix",
       "telemetry_hint": "Mặc định tắt. Mỗi ngày gửi một tín hiệu ẩn danh gồm phiên bản, nền tảng và các tính năng đang bật; không gửi địa chỉ email, tên máy chủ hoặc địa chỉ IP. Bạn có thể thay đổi bất cứ lúc nào trong cài đặt quản trị."
     },
     "logging": {
@@ -5375,7 +5375,7 @@
     "label": "Chặn lịch của tôi",
     "description": "Thêm một sự kiện bận trong thời gian bạn vắng mặt để không ai đặt cuộc họp với bạn lúc đó.",
     "no_access_managed": "Không thể chặn lịch của tài khoản này: bạn không có quyền ghi.",
-    "no_calendar": "Không thể chặn lịch: Bulwark không tìm thấy lịch để thêm sự kiện.",
+    "no_calendar": "Không thể chặn lịch: Loomix không tìm thấy lịch để thêm sự kiện.",
     "filter_warning": "Bật tính năng này sẽ tắt tập lệnh lọc của riêng bạn trong thời gian trả lời tự động bật."
   },
   "calendar_delegate": {
@@ -5478,20 +5478,20 @@
   "find_time": {
     "suggest": "Gợi ý thời gian",
     "searching": "Đang tìm thời gian trống",
-    "slots_title": "Trống với mọi người mà Bulwark kiểm tra được",
+    "slots_title": "Trống với mọi người mà Loomix kiểm tra được",
     "slot": "{day}, {start} đến {end}",
     "none": "Không có thời gian trống trong 10 ngày làm việc tới.",
     "picked": "Đã dời sự kiện sang {slot}",
     "rate_limited": "Quá nhiều lượt tra cứu trong phút vừa qua. Hãy thử lại sau một phút.",
-    "unavailable": "Máy chủ này không có thông tin rảnh/bận, nên Bulwark không thể gợi ý thời gian.",
+    "unavailable": "Máy chủ này không có thông tin rảnh/bận, nên Loomix không thể gợi ý thời gian.",
     "not_checked": "Chưa kiểm tra:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "ngoài tổ chức của bạn",
     "reason_unknown": "không rõ giờ bận",
     "reason_not_found": "không tìm thấy trên máy chủ này",
     "reason_error": "không kiểm tra được",
-    "unknown_note": "Bulwark chỉ thấy giờ bận trong các lịch được chia sẻ với bạn. Với những người này, nó không phân biệt được rảnh hay chưa chia sẻ.",
-    "directory_off": "Bulwark không thể tra cứu người trên máy chủ này. Quản trị viên có thể bật truy vấn thư mục trong Stalwart.",
+    "unknown_note": "Loomix chỉ thấy giờ bận trong các lịch được chia sẻ với bạn. Với những người này, nó không phân biệt được rảnh hay chưa chia sẻ.",
+    "directory_off": "Loomix không thể tra cứu người trên máy chủ này. Quản trị viên có thể bật truy vấn thư mục trong Stalwart.",
     "not_looked_up": "Không tra cứu được địa chỉ này",
     "found": "Số khung giờ trống tìm thấy: {count}"
   },
@@ -5688,7 +5688,7 @@
     "start_tour": "Bắt đầu chuyến tham quan"
   },
   "demo_welcome": {
-    "title": "Chào mừng đến với Thư Bulwark",
+    "title": "Chào mừng đến với Thư Loomix",
     "description": "Khám phá ứng dụng email trực tuyến đầy đủ tính năng - ngay trong trình duyệt của bạn. Tất cả dữ liệu vẫn còn trên thiết bị của bạn, vì vậy hãy thoải mái kiểm tra mọi thứ.",
     "feature_email": "Đọc và soạn email",
     "feature_organize": "Thẻ, dấu sao và thư mục",
@@ -6122,9 +6122,9 @@
     "cancelled_hint": "Để tiếp tục sau, hãy nhập lại cùng các tệp vào cùng thư mục.",
     "close": "Đóng",
     "pst_note": "Từ tệp Outlook chỉ nhập thư. Danh bạ, mục lịch và công việc được đếm rồi bỏ qua.",
-    "pst_error_encrypted": "Tệp Outlook này dùng mã hóa mạnh mà Bulwark không đọc được. Trong Outlook, hãy xuất thư sang một tệp .pst mới không mã hóa.",
-    "pst_error_not_pst": "Tệp này không phải tệp dữ liệu Outlook mà Bulwark đọc được.",
-    "pst_error_unreadable": "Bulwark không đọc được tệp Outlook này.",
+    "pst_error_encrypted": "Tệp Outlook này dùng mã hóa mạnh mà Loomix không đọc được. Trong Outlook, hãy xuất thư sang một tệp .pst mới không mã hóa.",
+    "pst_error_not_pst": "Tệp này không phải tệp dữ liệu Outlook mà Loomix đọc được.",
+    "pst_error_unreadable": "Loomix không đọc được tệp Outlook này.",
     "pst_error_worker": "Không tải được trình đọc tệp Outlook. Hãy tải lại trang rồi thử lại.",
     "error_over_quota": "Hộp thư đã đầy nên việc nhập đã dừng. Hãy giải phóng dung lượng rồi nhập lại cùng các tệp vào cùng thư mục để tiếp tục.",
     "error_forbidden": "Bạn không được thêm thư vào thư mục này nên việc nhập đã dừng.",
@@ -6185,7 +6185,7 @@
   },
   "desktopImport": {
     "find": "Tìm dữ liệu Thunderbird và Outlook…",
-    "find_hint": "Tìm ở những nơi thường dùng trên máy tính này. Bulwark sẽ hỏi bạn trước.",
+    "find_hint": "Tìm ở những nơi thường dùng trên máy tính này. Loomix sẽ hỏi bạn trước.",
     "scan_declined": "Không tìm gì vì bạn không cho phép.",
     "scan_failed": "Không tìm được. Hãy thử lại.",
     "read_declined": "Không đọc tệp nào vì bạn không cho phép.",
@@ -6241,7 +6241,7 @@
     "restore": "Khôi phục",
     "restored": "{count, plural, one {Đang khôi phục # thư} other {Đang khôi phục # thư}} về Hộp thư đến của bạn.",
     "restore_partial": "{count, plural, one {Không thể khôi phục # thư. Thư vẫn được chọn để bạn có thể thử lại.} other {Không thể khôi phục # thư. Các thư vẫn được chọn để bạn có thể thử lại.}}",
-    "restore_hint": "Thư đã khôi phục sẽ quay trở lại Hộp thư đến của bạn dưới dạng chưa đọc, được sắp xếp theo ngày ban đầu, do đó, thư này có thể nằm ở xa danh sách. Máy chủ khôi phục nó trong nền. Nếu thất bại ở đó, thư sẽ bị mất và Bulwark không thể biết được.",
+    "restore_hint": "Thư đã khôi phục sẽ quay trở lại Hộp thư đến của bạn dưới dạng chưa đọc, được sắp xếp theo ngày ban đầu, do đó, thư này có thể nằm ở xa danh sách. Máy chủ khôi phục nó trong nền. Nếu thất bại ở đó, thư sẽ bị mất và Loomix không thể biết được.",
     "unknown_sender": "Người gửi không xác định",
     "no_subject": "(không có tiêu đề)",
     "deleted_on": "Đã xóa {date}",
@@ -6427,14 +6427,14 @@
     "clear_confirm": "Xóa",
     "persist_refused": "Trình duyệt này có thể xóa thư đã giữ khi sắp hết dung lượng. Cài đặt ứng dụng thường giúp tránh điều này.",
     "persist_retry": "Đề nghị trình duyệt giữ lại",
-    "safari_hint": "Safari xóa dữ liệu của một trang web sau 7 ngày không truy cập. Hãy thêm Bulwark vào Màn hình chính hoặc Dock để giữ thư trên thiết bị này.",
+    "safari_hint": "Safari xóa dữ liệu của một trang web sau 7 ngày không truy cập. Hãy thêm Loomix vào Màn hình chính hoặc Dock để giữ thư trên thiết bị này.",
     "evicted": "Trình duyệt đã xóa thư được giữ trên thiết bị này. Đang tải lại.",
     "evicted_lost": "{count, plural, other {# thư hoặc thay đổi chưa gửi đã bị mất.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Bộ nhớ thiết bị đã đầy.",
-    "storage_full_text": "Bulwark đã ngừng lưu thư ở đây. Hãy giữ ít thư hơn hoặc xóa tài khoản này để có thêm chỗ.",
+    "storage_full_text": "Loomix đã ngừng lưu thư ở đây. Hãy giữ ít thư hơn hoặc xóa tài khoản này để có thêm chỗ.",
     "open_settings": "Mở cài đặt",
-    "default_on": "Bulwark giữ thư của bạn trên thiết bị này để dùng được khi không có kết nối. Bạn có thể đổi điều này trong Cài đặt.",
+    "default_on": "Loomix giữ thư của bạn trên thiết bị này để dùng được khi không có kết nối. Bạn có thể đổi điều này trong Cài đặt.",
     "conflict_calendar": "Sự kiện lịch",
     "conflict_contacts": "Liên hệ",
     "kept_files_title": "Tệp giữ ngoại tuyến",
@@ -6856,7 +6856,7 @@
       },
       "ui_tasks": {
         "title": "Thêm vào công việc",
-        "body": "Hiển thị các phần riêng của nó trong chi tiết công việc, các nút trong danh sách công việc và danh sách công việc riêng thay cho danh sách của Bulwark."
+        "body": "Hiển thị các phần riêng của nó trong chi tiết công việc, các nút trong danh sách công việc và danh sách công việc riêng thay cho danh sách của Loomix."
       },
       "ui_files": {
         "title": "Thêm vào tệp",
@@ -7367,7 +7367,7 @@
       "shortcuts": "Phím tắt",
       "docs": "Tài liệu",
       "settings": "Cài đặt…",
-      "about": "Giới thiệu về Bulwark",
+      "about": "Giới thiệu về Loomix",
       "from_plugins": "Thêm từ các plugin…",
       "pick_gone": "Menu này đã cũ. Hãy mở lại và thử một lần nữa.",
       "bar_label": "Trình đơn"
@@ -7386,8 +7386,8 @@
       "unsaved_detail": "Nếu bạn đóng bây giờ, nội dung bạn đã viết kể từ lần lưu gần nhất sẽ bị mất.",
       "close_anyway": "Vẫn đóng",
       "unsent_title": "Một số thư chưa được gửi",
-      "unsent_one": "Có 1 thư đang chờ gửi. Thư sẽ được gửi vào lần tới bạn mở Bulwark.",
-      "unsent_many": "Có {count} thư đang chờ gửi. Các thư sẽ được gửi vào lần tới bạn mở Bulwark.",
+      "unsent_one": "Có 1 thư đang chờ gửi. Thư sẽ được gửi vào lần tới bạn mở Loomix.",
+      "unsent_many": "Có {count} thư đang chờ gửi. Các thư sẽ được gửi vào lần tới bạn mở Loomix.",
       "quit": "Thoát",
       "leave_title": "Rời đi khi còn thay đổi chưa lưu?",
       "leave_detail": "Các thay đổi của bạn trên trang này chưa được lưu.",
@@ -7395,7 +7395,7 @@
       "stay": "Ở lại"
     },
     "spellcheck": {
-      "offer": "Kiểm tra chính tả cho {language} cần một từ điển. Bulwark có thể tải từ Google. Văn bản của bạn không bị gửi đi.",
+      "offer": "Kiểm tra chính tả cho {language} cần một từ điển. Loomix có thể tải từ Google. Văn bản của bạn không bị gửi đi.",
       "download": "Tải xuống"
     },
     "restore": {
@@ -7424,9 +7424,9 @@
     "tray_pause_hour": "Trong 1 giờ",
     "tray_pause_tomorrow": "Đến ngày mai",
     "tray_resume": "Bật lại thông báo",
-    "tray_open": "Mở Bulwark",
-    "tray_quit": "Thoát Bulwark",
-    "tray_exit": "Thoát Bulwark"
+    "tray_open": "Mở Loomix",
+    "tray_quit": "Thoát Loomix",
+    "tray_exit": "Thoát Loomix"
   },
   "desktopMenus": {
     "save_draft": "Lưu bản nháp",
@@ -7593,25 +7593,25 @@
     "cancel": "Hủy",
     "or_here": "hoặc đăng nhập tại đây",
     "timed_out": "Đăng nhập trong trình duyệt mất quá nhiều thời gian. Hãy thử lại.",
-    "no_browser": "Bulwark không thể mở trình duyệt. Hãy thử lại hoặc đăng nhập tại đây.",
+    "no_browser": "Loomix không thể mở trình duyệt. Hãy thử lại hoặc đăng nhập tại đây.",
     "failed": "Không đăng nhập được qua trình duyệt. Hãy thử lại.",
-    "handoff_banner": "Một chương trình trên máy tính này đã yêu cầu đăng nhập này cho ứng dụng Bulwark. Trình duyệt này vẫn chưa đăng nhập Bulwark. Nếu không phải bạn bắt đầu, hãy đóng tab này.",
-    "consent_title": "Đăng nhập vào ứng dụng Bulwark?",
-    "consent_description": "Một chương trình trên máy tính này, tại cổng {port}, đang yêu cầu thông tin đăng nhập của {username}. Chỉ tiếp tục nếu bạn vừa nhấn \"Đăng nhập bằng trình duyệt…\" trong ứng dụng Bulwark tại đây. Nếu không, có thể ai đó đang cố vào tài khoản của bạn: hãy chọn Để sau.",
+    "handoff_banner": "Một chương trình trên máy tính này đã yêu cầu đăng nhập này cho ứng dụng Loomix. Trình duyệt này vẫn chưa đăng nhập Loomix. Nếu không phải bạn bắt đầu, hãy đóng tab này.",
+    "consent_title": "Đăng nhập vào ứng dụng Loomix?",
+    "consent_description": "Một chương trình trên máy tính này, tại cổng {port}, đang yêu cầu thông tin đăng nhập của {username}. Chỉ tiếp tục nếu bạn vừa nhấn \"Đăng nhập bằng trình duyệt…\" trong ứng dụng Loomix tại đây. Nếu không, có thể ai đó đang cố vào tài khoản của bạn: hãy chọn Để sau.",
     "consent_confirm": "Đăng nhập vào ứng dụng",
     "consent_cancel": "Để sau",
-    "page_done": "Bạn có thể đóng tab này và quay lại Bulwark.",
-    "page_failed": "Không đăng nhập được. Hãy quay lại Bulwark và thử lại.",
-    "page_link_used": "Liên kết này chỉ dùng được một lần. Hãy quay lại Bulwark và bắt đầu lại.",
+    "page_done": "Bạn có thể đóng tab này và quay lại Loomix.",
+    "page_failed": "Không đăng nhập được. Hãy quay lại Loomix và thử lại.",
+    "page_link_used": "Liên kết này chỉ dùng được một lần. Hãy quay lại Loomix và bắt đầu lại.",
     "page_title": "Đăng nhập vào {server}",
-    "page_intro": "Trang này đến từ ứng dụng Bulwark trên máy tính này. Mật khẩu của bạn chỉ được gửi đến {server}.",
+    "page_intro": "Trang này đến từ ứng dụng Loomix trên máy tính này. Mật khẩu của bạn chỉ được gửi đến {server}.",
     "page_username": "Địa chỉ email hoặc tên người dùng",
     "page_password": "Mật khẩu",
     "page_code": "Mã hai yếu tố",
     "page_submit": "Đăng nhập",
     "page_wrong_password": "Máy chủ không chấp nhận tên người dùng và mật khẩu này.",
     "page_code_needed": "Tài khoản này cũng cần mã hai yếu tố. Hãy nhập lại mật khẩu và mã.",
-    "page_no_answer": "Bulwark không thể đăng nhập. Hãy kiểm tra xem máy chủ có truy cập được không rồi thử lại.",
+    "page_no_answer": "Loomix không thể đăng nhập. Hãy kiểm tra xem máy chủ có truy cập được không rồi thử lại.",
     "declined": "Bạn đã từ chối trong trình duyệt nên không có đăng nhập nào.",
     "too_many": "Có quá nhiều lần thử đăng nhập từ mạng này. Hãy đợi vài phút rồi thử lại.",
     "page_declined": "Không có gì được chuyển giao. Bạn có thể đóng tab này."
@@ -7631,7 +7631,7 @@
     "other_ways": "Cách đăng nhập khác",
     "trouble": "Gặp sự cố?",
     "trouble_cors": "Máy chủ thư của bạn phải cho phép đăng nhập từ trang web này. Nếu đăng nhập không được, hãy nhờ người quản lý máy chủ thư cho phép.",
-    "provider_unsupported": "{provider} không hỗ trợ JMAP, cách Bulwark trao đổi với máy chủ thư, nên Bulwark chưa thể kết nối trực tiếp."
+    "provider_unsupported": "{provider} không hỗ trợ JMAP, cách Loomix trao đổi với máy chủ thư, nên Loomix chưa thể kết nối trực tiếp."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock đang bật",
@@ -7639,10 +7639,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Thay đổi cách Bulwark kết nối?",
-      "message": "Bulwark khởi động lại và hỏi cách kết nối: bằng địa chỉ email của bạn hoặc qua Bulwark của tổ chức bạn. Các tài khoản của bạn trên máy tính này vẫn được đăng nhập.",
+      "title": "Thay đổi cách Loomix kết nối?",
+      "message": "Loomix khởi động lại và hỏi cách kết nối: bằng địa chỉ email của bạn hoặc qua Loomix của tổ chức bạn. Các tài khoản của bạn trên máy tính này vẫn được đăng nhập.",
       "confirm": "Thay đổi",
-      "org_link": "Dùng Bulwark của tổ chức tôi thay thế",
+      "org_link": "Dùng Loomix của tổ chức tôi thay thế",
       "add_account": "Thêm tài khoản…"
     },
     "picture": {
@@ -7655,22 +7655,22 @@
       "insert": "Chèn"
     },
     "sign_in_page": {
-      "open_app": "Mở Bulwark",
+      "open_app": "Mở Loomix",
       "done_as": "Đã đăng nhập với {address}. Bạn có thể đóng thẻ này."
     }
   },
   "desktop_updates": {
     "title": "Cập nhật",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark tự kiểm tra bản cập nhật.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix tự kiểm tra bản cập nhật.",
     "status_checking": "Đang kiểm tra bản cập nhật…",
     "status_up_to_date": "Bạn đang dùng phiên bản mới nhất.",
     "status_downloading": "Đang tải phiên bản {version}…",
     "status_ready": "Phiên bản {version} đã sẵn sàng. Bản này sẽ được cài vào lần thoát tới, hoặc khởi động lại ngay.",
     "status_available": "Đã có phiên bản {version}.",
-    "status_available_per_machine": "Đã có phiên bản {version}. Bulwark được cài cho mọi người trên máy tính này nên quản trị viên sẽ cài bản cập nhật.",
-    "status_older": "Bạn đang dùng bản beta. Bản ổn định {version} cũ hơn nên Bulwark giữ phiên bản này đến khi bản ổn định theo kịp.",
-    "status_error": "Không kiểm tra được bản cập nhật. Bulwark sẽ thử lại sau.",
+    "status_available_per_machine": "Đã có phiên bản {version}. Loomix được cài cho mọi người trên máy tính này nên quản trị viên sẽ cài bản cập nhật.",
+    "status_older": "Bạn đang dùng bản beta. Bản ổn định {version} cũ hơn nên Loomix giữ phiên bản này đến khi bản ổn định theo kịp.",
+    "status_error": "Không kiểm tra được bản cập nhật. Loomix sẽ thử lại sau.",
     "status_off": "Tổ chức của bạn đã tắt cập nhật trong ứng dụng.",
     "check": "Kiểm tra ngay",
     "restart": "Khởi động lại để cập nhật",
@@ -7682,18 +7682,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Khởi động lại để cập nhật",
     "shell_check": "Kiểm tra bản cập nhật…",
-    "shell_available": "Đã có Bulwark {version}",
-    "shell_ready_title": "Bulwark đã sẵn sàng cập nhật",
+    "shell_available": "Đã có Loomix {version}",
+    "shell_ready_title": "Loomix đã sẵn sàng cập nhật",
     "shell_ready_body": "Phiên bản {version} sẽ được cài vào lần thoát tới. Nhấp để khởi động lại ngay. Bản nháp được lưu trước.",
-    "shell_available_title": "Đã có phiên bản Bulwark mới",
-    "shell_none_title": "Bulwark đã cập nhật",
+    "shell_available_title": "Đã có phiên bản Loomix mới",
+    "shell_none_title": "Loomix đã cập nhật",
     "shell_none_detail": "Bạn đang dùng phiên bản {version}.",
-    "shell_failed_title": "Bulwark không kiểm tra được bản cập nhật",
+    "shell_failed_title": "Loomix không kiểm tra được bản cập nhật",
     "shell_failed_detail": "Hãy kiểm tra kết nối và thử lại sau. Không có gì thay đổi.",
     "shell_beta_title": "Chuyển sang bản beta?",
     "shell_beta_detail": "Bạn nhận phiên bản mới sớm hơn và có thể có nhiều lỗi hơn. Để quay lại, hãy cài bản ổn định cũ hơn hoặc chờ bản ổn định theo kịp.",
     "shell_beta_confirm": "Chuyển sang beta",
-    "shell_older_title": "Quay lại Bulwark {version}?",
+    "shell_older_title": "Quay lại Loomix {version}?",
     "shell_older_detail": "Bạn đang dùng beta {current}. Bản ổn định {target} cũ hơn và có thể không đọc được những gì beta đã lưu trên máy này. Thư vẫn ở trên máy chủ, nhưng thư lưu ngoại tuyến có thể tải lại và thay đổi chưa gửi có thể mất. Nếu chờ, bản ổn định sẽ theo kịp và bạn chuyển mà không cần bước này.",
     "shell_older_confirm": "Cài phiên bản cũ hơn"
   },
@@ -7994,7 +7994,7 @@
       "progress": "Đã tải lên {done}/{total}",
       "cannot_offline": "Không thể kết nối máy chủ. Chưa tải lên: {names}",
       "cannot_other": "Không thể tải lên: {names}. Hoạt động gần đây trong Cài đặt cho biết lý do.",
-      "go_note_drive": "Nếu tiếp tục bây giờ, những gì chưa tải lên sẽ được sao chép vào Tài liệu\\Bulwark – not uploaded. Không mất gì cả.",
+      "go_note_drive": "Nếu tiếp tục bây giờ, những gì chưa tải lên sẽ được sao chép vào Tài liệu\\Loomix – not uploaded. Không mất gì cả.",
       "go_note_folder": "Nếu tiếp tục bây giờ, những gì chưa tải lên sẽ vẫn ở trong thư mục trên máy tính này.",
       "keep_turn_off": "Giữ ổ đĩa",
       "keep_sign_out": "Tiếp tục đăng nhập",
@@ -8008,22 +8008,22 @@
       "rescued": "Các tệp chưa tải lên ({count}) hiện nằm trong {folder}.",
       "rescued_open": "Mở thư mục",
       "rescued_dismiss": "Bỏ qua",
-      "start_at_login": "Khởi động Bulwark khi đăng nhập Windows",
-      "start_at_login_why": "Ổ đĩa cần Bulwark đang chạy, giống như OneDrive.",
-      "closed_warning": "Không thể mở tệp trong ổ đĩa khi Bulwark đang đóng.",
-      "where": "Trong Trình khám phá Tệp với tên Bulwark Files",
-      "where_letter": "Trong Trình khám phá Tệp với tên Bulwark Files ({letter}:)",
+      "start_at_login": "Khởi động Loomix khi đăng nhập Windows",
+      "start_at_login_why": "Ổ đĩa cần Loomix đang chạy, giống như OneDrive.",
+      "closed_warning": "Không thể mở tệp trong ổ đĩa khi Loomix đang đóng.",
+      "where": "Trong Trình khám phá Tệp với tên Loomix Files",
+      "where_letter": "Trong Trình khám phá Tệp với tên Loomix Files ({letter}:)",
       "open": "Mở",
-      "letter_note": "Qua ký tự ổ đĩa, Trình khám phá Tệp không hiện trạng thái đồng bộ và “Luôn giữ trên thiết bị này”. Chúng hiện dưới Bulwark Files trong Trình khám phá.",
+      "letter_note": "Qua ký tự ổ đĩa, Trình khám phá Tệp không hiện trạng thái đồng bộ và “Luôn giữ trên thiết bị này”. Chúng hiện dưới Loomix Files trong Trình khám phá.",
       "letter_failed": "Không thể đặt ký tự ổ đĩa. Hãy thử lại."
     },
     "tray": {
-      "idle": "Bulwark Files: Đã cập nhật",
-      "syncing": "Bulwark Files: Đang đồng bộ. Còn lại: {count}",
-      "paused": "Bulwark Files: Đã tạm dừng",
-      "offline": "Bulwark Files: Ngoại tuyến. Đang chờ: {count}",
-      "question": "Bulwark Files: Cần bạn trả lời",
-      "error": "Bulwark Files: Lỗi"
+      "idle": "Loomix Files: Đã cập nhật",
+      "syncing": "Loomix Files: Đang đồng bộ. Còn lại: {count}",
+      "paused": "Loomix Files: Đã tạm dừng",
+      "offline": "Loomix Files: Ngoại tuyến. Đang chờ: {count}",
+      "question": "Loomix Files: Cần bạn trả lời",
+      "error": "Loomix Files: Lỗi"
     },
     "notify": {
       "conflict_title": "Một tệp đã bị thay đổi ở hai nơi",
@@ -8189,15 +8189,15 @@
     "telemetry_description": "Mỗi ngày một lần: một ID ngẫu nhiên, các số phiên bản của ứng dụng, hệ điều hành của bạn, ứng dụng đã chạy bao lâu và cách nó kết nối. Với máy chủ thư riêng, còn có các tính năng đang bật, số tài khoản ước tính và số tiện ích cùng chủ đề bạn có. Không bao giờ gửi thư, địa chỉ hay tên máy chủ.",
     "crash_label": "Gửi báo cáo sự cố",
     "crash_description": "Lỗi trong ứng dụng được gửi kèm một ID ngẫu nhiên, tên tệp từ mã của chính ứng dụng và thông báo ngắn đã được làm sạch. Nếu chính ứng dụng gặp sự cố, một tệp sự cố sẽ ở lại trên máy tính này và chỉ rời đi khi bạn gửi.",
-    "crash_memory": "Tệp sự cố là bản sao một phần bộ nhớ của ứng dụng khi gặp sự cố. Bulwark xóa tên người dùng, địa chỉ và mã đăng nhập mà nó tìm thấy, nhưng tệp sự cố vẫn có thể chứa nội dung thư của bạn.",
-    "instance_note": "Trên máy chủ Bulwark, quản trị viên của máy chủ đó quyết định riêng những gì các trang báo cáo về.",
+    "crash_memory": "Tệp sự cố là bản sao một phần bộ nhớ của ứng dụng khi gặp sự cố. Loomix xóa tên người dùng, địa chỉ và mã đăng nhập mà nó tìm thấy, nhưng tệp sự cố vẫn có thể chứa nội dung thư của bạn.",
+    "instance_note": "Trên máy chủ Loomix, quản trị viên của máy chủ đó quyết định riêng những gì các trang báo cáo về.",
     "forced_off": "Tổ chức của bạn đã tắt mục này.",
     "url_label": "Nơi nhận tệp sự cố",
-    "url_description": "Địa chỉ https nhận tệp sự cố. Bulwark không có sẵn địa chỉ nào.",
+    "url_description": "Địa chỉ https nhận tệp sự cố. Loomix không có sẵn địa chỉ nào.",
     "url_invalid": "Nhập địa chỉ https đầy đủ.",
     "url_save": "Lưu",
     "files_label": "Tệp sự cố trên máy tính này",
-    "files_description": "Bulwark giữ các tệp mới nhất và xóa các tệp cũ hơn một tháng.",
+    "files_description": "Loomix giữ các tệp mới nhất và xóa các tệp cũ hơn một tháng.",
     "files_empty": "Không có tệp sự cố.",
     "file_size": "{size} KB",
     "send": "Gửi báo cáo sự cố…",

@@ -35,7 +35,7 @@ describe('setup wizard language', () => {
   it('shows the welcome step in German', async () => {
     renderIn('de', de);
     expect(await screen.findByText('Einrichtungstoken')).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Einrichtung von Bulwark Webmail');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Einrichtung von Loomix Mail');
     expect(screen.getByRole('button', { name: 'Fortfahren' })).toBeTruthy();
     expect(screen.queryByText('Setup token')).toBeNull();
   });

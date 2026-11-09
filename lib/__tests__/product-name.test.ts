@@ -10,17 +10,17 @@ describe('productName', () => {
     expect(productName(' Acme Mail ')).toBe('Acme Mail');
   });
 
-  it('keeps Bulwark on a stock install', () => {
-    expect(productName('Webmail')).toBe('Bulwark');
-    expect(productName('')).toBe('Bulwark');
-    expect(productName('  ')).toBe('Bulwark');
-    expect(productName(undefined)).toBe('Bulwark');
-    expect(productName(null)).toBe('Bulwark');
+  it('keeps Loomix on a stock install', () => {
+    expect(productName('Webmail')).toBe('Loomix');
+    expect(productName('')).toBe('Loomix');
+    expect(productName('  ')).toBe('Loomix');
+    expect(productName(undefined)).toBe('Loomix');
+    expect(productName(null)).toBe('Loomix');
   });
 });
 
 // Strings that speak about this deployment name it through {appName}, so a
-// branded install does not tell its users about "Bulwark".
+// branded install does not tell its users about "Loomix".
 const APP_NAME_KEYS = [
   'protocol_handlers.description',
   'protocol_handlers.mailto_description',
@@ -50,9 +50,9 @@ function lookup(obj: unknown, key: string): unknown {
 }
 
 describe('app name in locale strings', () => {
-  it.each(locales)('%s does not hardcode Bulwark where {appName} belongs', (locale) => {
+  it.each(locales)('%s does not hardcode Loomix where {appName} belongs', (locale) => {
     const data = JSON.parse(fs.readFileSync(path.join(localesDir, locale, 'common.json'), 'utf-8'));
-    const hardcoded = APP_NAME_KEYS.filter((key) => String(lookup(data, key)).includes('Bulwark'));
+    const hardcoded = APP_NAME_KEYS.filter((key) => String(lookup(data, key)).includes('Loomix'));
     expect(hardcoded).toEqual([]);
   });
 

@@ -461,7 +461,7 @@
         "remove_error": "The public key could not be deleted. Try again."
       },
       "link_device": {
-        "description": "Sign in to the Bulwark Mail app on your phone without typing your password. Your phone gets its own sign-in. If you sign out here, your phone stays signed in.",
+        "description": "Sign in to the Loomix Mail app on your phone without typing your password. Your phone gets its own sign-in. If you sign out here, your phone stays signed in.",
         "error": "The code could not be created. Try again.",
         "password_prompt": "Type your password to show it's you. Your password is not sent to the phone.",
         "error_not_signed_in": "You were signed out. Sign in again, then link your phone.",

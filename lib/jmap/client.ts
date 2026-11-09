@@ -621,7 +621,7 @@ const ADDRESS_BOOK_PROPERTIES = [
   "myRights",
 ] as const;
 
-// The Principal properties Bulwark reads. 0.16's default list is the same;
+// The Principal properties Loomix reads. 0.16's default list is the same;
 // 1.0's adds `capabilities` for every principal and `accounts`, a whole
 // account object with every account capability for the user, their groups
 // and sharers.
@@ -670,7 +670,7 @@ const SIEVE_SCRIPT_PROPERTIES = ["id", "name", "blobId", "isActive"] as const;
 // administrator has directory queries off (jmap/src/principal/query.rs). A
 // role without the permission gets `forbidden` too, as "You are not
 // authorized to perform this action", so only the wording tells the two
-// apart; it picks the explanation shown, never what Bulwark does.
+// apart; it picks the explanation shown, never what Loomix does.
 const DIRECTORY_QUERIES_OFF = "The administrator has disabled directory queries.";
 
 /**
@@ -5344,7 +5344,7 @@ export class JMAPClient implements IJMAPClient {
     inReplyTo?: string[],
     references?: string[],
     // `classification`: the composer's label choice (an id, null for none),
-    // kept in X-Bulwark-Label so a re-opened draft restores it.
+    // kept in X-Loomix-Label so a re-opened draft restores it.
     options?: { priority?: MessagePriority; accountId?: string; previousDraftAccountId?: string; classification?: string | null },
   ): Promise<string> {
     // A draft for a group identity belongs in the group's Drafts, like its
@@ -6061,7 +6061,7 @@ export class JMAPClient implements IJMAPClient {
 
     const lines: string[] = [
       'BEGIN:VCALENDAR',
-      'PRODID:-//Bulwark Mail//Bulwark Webmail//EN',
+      'PRODID:-//Loomix Mail//Loomix Mail//EN',
       'VERSION:2.0',
       'CALSCALE:GREGORIAN',
       'METHOD:REPLY',
@@ -6250,7 +6250,7 @@ export class JMAPClient implements IJMAPClient {
 
     const lines: string[] = [
       'BEGIN:VCALENDAR',
-      'PRODID:-//Bulwark Mail//Bulwark Webmail//EN',
+      'PRODID:-//Loomix Mail//Loomix Mail//EN',
       'VERSION:2.0',
       'CALSCALE:GREGORIAN',
       'METHOD:REQUEST',
@@ -6428,7 +6428,7 @@ export class JMAPClient implements IJMAPClient {
 
     const lines: string[] = [
       'BEGIN:VCALENDAR',
-      'PRODID:-//Bulwark Mail//Bulwark Webmail//EN',
+      'PRODID:-//Loomix Mail//Loomix Mail//EN',
       'VERSION:2.0',
       'CALSCALE:GREGORIAN',
       'METHOD:CANCEL',
@@ -8243,8 +8243,8 @@ export class JMAPClient implements IJMAPClient {
    */
   private metadataUnsupported = new Map<string, number>();
 
-  /** Whether Bulwark may keep data in this account's Inbox metadata (lib/jmap/bulwark-metadata.ts). */
-  supportsBulwarkMetadata(accountId?: string): boolean {
+  /** Whether Loomix may keep data in this account's Inbox metadata (lib/jmap/bulwark-metadata.ts). */
+  supportsLoomixMetadata(accountId?: string): boolean {
     const id = accountId || this.accountId;
     const failedAt = this.metadataUnsupported.get(id);
     if (failedAt !== undefined && Date.now() - failedAt < 10 * 60_000) return false;
@@ -8252,12 +8252,12 @@ export class JMAPClient implements IJMAPClient {
   }
 
   /**
-   * Bulwark's metadata entries of the account's Inbox, by key, shared or the
+   * Loomix's metadata entries of the account's Inbox, by key, shared or the
    * user's private ones. Null when the server has no usable metadata.
    */
-  async getBulwarkMetadata(accountId?: string, options?: { private?: boolean }): Promise<Record<string, unknown> | null> {
+  async getLoomixMetadata(accountId?: string, options?: { private?: boolean }): Promise<Record<string, unknown> | null> {
     const id = accountId || this.accountId;
-    if (!this.supportsBulwarkMetadata(id)) return null;
+    if (!this.supportsLoomixMetadata(id)) return null;
     const property = options?.private ? "privateMetadata" : "metadata";
     try {
       // A request of its own: a server that can't answer it must not take
@@ -8284,14 +8284,14 @@ export class JMAPClient implements IJMAPClient {
   private metadataInboxIds = new Map<string, string>();
 
   /**
-   * Writes one Bulwark metadata entry of the account's Inbox (null removes
+   * Writes one Loomix metadata entry of the account's Inbox (null removes
    * it), leaving every other entry as it is. Throws MetadataTooLargeError
    * when the server refuses the size, MetadataUnsupportedError when the
    * account has no metadata.
    */
-  async setBulwarkMetadata(accountId: string | undefined, key: string, value: unknown, options?: { private?: boolean }): Promise<void> {
+  async setLoomixMetadata(accountId: string | undefined, key: string, value: unknown, options?: { private?: boolean }): Promise<void> {
     const id = accountId || this.accountId;
-    if (!this.supportsBulwarkMetadata(id)) throw new MetadataUnsupportedError();
+    if (!this.supportsLoomixMetadata(id)) throw new MetadataUnsupportedError();
     const property = options?.private ? "privateMetadata" : "metadata";
     if (value !== null && metadataValueBytes(value) > MAX_METADATA_ENTRY_BYTES) {
       throw new MetadataTooLargeError(`The entry is larger than ${MAX_METADATA_ENTRY_BYTES} bytes`);
@@ -8301,16 +8301,16 @@ export class JMAPClient implements IJMAPClient {
 
   /**
    * Whether the account advertises vendor metadata on mailboxes, whatever
-   * its last request did (supportsBulwarkMetadata also pauses after a
+   * its last request did (supportsLoomixMetadata also pauses after a
    * failure). False means the server keeps no metadata for this account.
    */
-  advertisesBulwarkMetadata(accountId?: string): boolean {
+  advertisesLoomixMetadata(accountId?: string): boolean {
     const id = accountId || this.accountId;
     return advertisesMailboxMetadata(this.accounts[id]?.accountCapabilities as Record<string, unknown> | undefined);
   }
 
   /**
-   * Changes values inside one Bulwark metadata entry of the account's Inbox
+   * Changes values inside one Loomix metadata entry of the account's Inbox
    * and nothing else: each patch path (segments, escaped here) is set, null
    * removes it, an empty path is the whole entry. Returns the Mailbox state
    * after the change, so a caller can recognise the push of its own write.
@@ -8318,9 +8318,9 @@ export class JMAPClient implements IJMAPClient {
    * MetadataPatchError (a parent of a path doesn't exist) and
    * MetadataUnsupportedError.
    */
-  async patchBulwarkMetadata(accountId: string | undefined, key: string, patches: Array<{ path: string[]; value: unknown }>): Promise<{ newState?: string }> {
+  async patchLoomixMetadata(accountId: string | undefined, key: string, patches: Array<{ path: string[]; value: unknown }>): Promise<{ newState?: string }> {
     const id = accountId || this.accountId;
-    if (!this.supportsBulwarkMetadata(id)) throw new MetadataUnsupportedError();
+    if (!this.supportsLoomixMetadata(id)) throw new MetadataUnsupportedError();
     const update: Record<string, unknown> = {};
     for (const { path, value } of patches) {
       update[[`metadata/${namespaceFor(key)}`, ...path.map(escapeMetadataPathSegment)].join("/")] = value;
@@ -8332,7 +8332,7 @@ export class JMAPClient implements IJMAPClient {
   private async updateInboxMetadata(id: string, update: Record<string, unknown>, options?: { private?: boolean }): Promise<string | undefined> {
     let inboxId = this.metadataInboxIds.get(id);
     if (!inboxId) {
-      await this.getBulwarkMetadata(id, options);
+      await this.getLoomixMetadata(id, options);
       inboxId = this.metadataInboxIds.get(id);
       if (!inboxId) throw new MetadataUnsupportedError();
     }

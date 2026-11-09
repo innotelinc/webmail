@@ -36,7 +36,7 @@ export function OutOfOfficeCalendarSection({ draft }: { draft: OrgPolicyDraft })
     <SettingsSection
       id="out-of-office"
       title="Out-of-office"
-      description="When a user sets an out-of-office reply with a start and an end, Bulwark adds a busy event for that time to their default calendar, so colleagues don't book meetings with them."
+      description="When a user sets an out-of-office reply with a start and an end, Loomix adds a busy event for that time to their default calendar, so colleagues don't book meetings with them."
     >
       <SettingItem
         label="Out-of-office blocks the calendar"
@@ -63,11 +63,11 @@ export function OutOfOfficeCalendarSection({ draft }: { draft: OrgPolicyDraft })
       <div className="space-y-1 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground" data-testid="org-ooo-notes">
         <p>
           The event is busy, visible to everyone who sees the calendar, has no attendees and sends no invitations. If a user
-          moves or changes it, Bulwark leaves it alone. Ending the reply early ends or removes the event.
+          moves or changes it, Loomix leaves it alone. Ending the reply early ends or removes the event.
         </p>
         <p>
-          Bulwark follows replies set through JMAP (Bulwark, other JMAP apps). A reply another app sets up as a Sieve script of
-          its own isn&apos;t visible to Bulwark, and the event is only updated when the user opens Bulwark.{' '}
+          Loomix follows replies set through JMAP (Loomix, other JMAP apps). A reply another app sets up as a Sieve script of
+          its own isn&apos;t visible to Loomix, and the event is only updated when the user opens Loomix.{' '}
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline-offset-2 hover:underline">
             More about out-of-office
           </a>

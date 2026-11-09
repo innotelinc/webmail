@@ -31,7 +31,7 @@ interface Props {
   /**
    * Told whether the frame is up: false when the plugin's shouldShow says no
    * or its frame fails to start, true once it has started. For a slot that
-   * stands in for a part of Bulwark (calendar-task-view), so the caller can
+   * stands in for a part of Loomix (calendar-task-view), so the caller can
    * draw its own part again.
    */
   onShownChange?: (shown: boolean) => void;

@@ -70,8 +70,8 @@
     "demo_tagline": "體驗功能完整的電子郵件用戶端，不需要帳號。",
     "demo_no_signup": "不需要註冊，使用範例資料自由探索",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "名稱太長。",
     "loading": "載入中…",
     "unsupported": "此郵件伺服器無法保存共用標籤，因此此信箱顯示的是您自己的標籤。",
-    "unavailable": "無法載入此信箱的共用標籤，因此顯示的是您自己的標籤。Bulwark 稍後會再試一次。",
+    "unavailable": "無法載入此信箱的共用標籤，因此顯示的是您自己的標籤。Loomix 稍後會再試一次。",
     "no_rights": "您可以使用這些標籤，但無法在此信箱中變更。",
     "too_many": "共用標籤太多。請先刪除一些再新增。",
-    "save_failed": "無法儲存共用標籤。伺服器回應後 Bulwark 會再試一次。",
-    "save_pending": "尚未儲存。伺服器回應後 Bulwark 會再試一次。"
+    "save_failed": "無法儲存共用標籤。伺服器回應後 Loomix 會再試一次。",
+    "save_pending": "尚未儲存。伺服器回應後 Loomix 會再試一次。"
   },
   "email_viewer": {
     "read_receipt": {
@@ -1112,7 +1112,7 @@
     "show_less": "顯示較少",
     "send_failed": "傳送郵件失敗",
     "send_timeout": "伺服器停止回應。再次傳送前，請先檢查「寄件備份」信件匣，因為郵件可能已經寄出。",
-    "submission_quota": "伺服器上此帳戶的已寄出郵件記錄過多。Bulwark 已移除可以移除的記錄；如果問題持續發生，請要求管理員提高郵件提交數量上限。",
+    "submission_quota": "伺服器上此帳戶的已寄出郵件記錄過多。Loomix 已移除可以移除的記錄；如果問題持續發生，請要求管理員提高郵件提交數量上限。",
     "submission_limit": "由於達到上限，伺服器拒絕傳送此郵件：{reason}",
     "recipients_refused": "未傳送：伺服器拒絕了 {recipients}。",
     "recipients_partly_refused": "伺服器拒絕了 {recipients}。其他收件者會收到此郵件。",
@@ -1856,7 +1856,7 @@
       },
       "push": {
         "title": "{appName} 關閉時的通知",
-        "description": "網站關閉時仍可接收新郵件的系統通知。通知會透過 Bulwark 推送中繼傳送；中繼不會看到郵件內容。",
+        "description": "網站關閉時仍可接收新郵件的系統通知。通知會透過 Loomix 推送中繼傳送；中繼不會看到郵件內容。",
         "relay_label": "推送中繼",
         "relay_desc": "用來傳送通知的伺服器。請從管理員提供的中繼中選擇。",
         "relay_locked": "由管理員設定",
@@ -1864,7 +1864,7 @@
         "status_active": "已在此裝置上啟用",
         "status_inactive": "在此裝置上未啟用",
         "status_unsupported": "此瀏覽器不支援 Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "展示版不提供背景通知。",
         "status_busy": "工作中…",
         "enable": "在此裝置上開啟",
@@ -2504,10 +2504,10 @@
       },
       "link_device": {
         "title": "連結行動應用程式",
-        "description": "不需在手機上輸入密碼，即可登入手機上的 Bulwark Mail 應用程式。手機會取得獨立的登入狀態，因此在這裡登出不會讓手機登出。",
+        "description": "不需在手機上輸入密碼，即可登入手機上的 Loomix Mail 應用程式。手機會取得獨立的登入狀態，因此在這裡登出不會讓手機登出。",
         "generate": "顯示 QR Code",
         "regenerate": "顯示新的 QR Code",
-        "instructions": "開啟 Bulwark Mail 應用程式，在登入畫面點選「Scan a sign-in code」（如果已經登入，請點選「Add account」→「Scan a sign-in code」），再將相機對準這裡。",
+        "instructions": "開啟 Loomix Mail 應用程式，在登入畫面點選「Scan a sign-in code」（如果已經登入，請點選「Add account」→「Scan a sign-in code」），再將相機對準這裡。",
         "expires_in": "此 QR Code 將在 {seconds} 秒後到期，且只能使用一次。",
         "expired": "此 QR Code 已到期。",
         "error": "無法建立配對碼。請再試一次。",
@@ -2757,7 +2757,7 @@
         "button": "匯入"
       },
       "about": {
-        "title": "Bulwark 網頁郵件",
+        "title": "Loomix 網頁郵件",
         "source_code": "原始碼"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "搜尋列橫跨頂端，郵件以全寬開啟"
   },
   "setup": {
-    "title": "Bulwark Webmail 設定",
+    "title": "Loomix Mail 設定",
     "subtitle": "在瀏覽器中設定你的網頁郵件執行個體。",
     "loading": "載入中…",
     "back": "返回",
@@ -3734,7 +3734,7 @@
       "regenerate": "重新產生",
       "sync": "在裝置之間同步使用者設定",
       "sync_hint": "將使用者偏好設定儲存在伺服器上，並以工作階段密鑰加密。",
-      "telemetry": "傳送匿名使用統計資料以協助改善 Bulwark",
+      "telemetry": "傳送匿名使用統計資料以協助改善 Loomix",
       "telemetry_hint": "預設關閉。每天傳送一次匿名訊號，包含版本、平台和已啟用的功能；絕不包含電子郵件地址、主機名稱或 IP。你可以隨時在管理設定中變更。"
     },
     "logging": {
@@ -5363,7 +5363,7 @@
     "label": "佔用我的行事曆",
     "description": "在你外出期間新增一個忙碌活動，這樣別人不會在這段時間約你開會。",
     "no_access_managed": "無法佔用此帳號的行事曆：你沒有寫入權限。",
-    "no_calendar": "無法佔用你的行事曆：Bulwark 找不到可以新增活動的行事曆。",
+    "no_calendar": "無法佔用你的行事曆：Loomix 找不到可以新增活動的行事曆。",
     "filter_warning": "開啟後，在自動回覆生效期間你自己的過濾指令碼會被關閉。"
   },
   "calendar_delegate": {
@@ -5466,20 +5466,20 @@
   "find_time": {
     "suggest": "建議時間",
     "searching": "正在尋找空閒時間",
-    "slots_title": "Bulwark 能查到的所有人都有空",
+    "slots_title": "Loomix 能查到的所有人都有空",
     "slot": "{day} {start} 至 {end}",
     "none": "未來 10 個工作天內沒有空閒時間。",
     "picked": "活動已移到 {slot}",
     "rate_limited": "過去一分鐘內查詢過多，請一分鐘後再試。",
-    "unavailable": "此伺服器不提供忙碌/空閒資訊，Bulwark 無法建議時間。",
+    "unavailable": "此伺服器不提供忙碌/空閒資訊，Loomix 無法建議時間。",
     "not_checked": "未檢查：",
     "not_checked_item": "{who}：{reason}",
     "reason_external": "組織外部",
     "reason_unknown": "忙碌時間未知",
     "reason_not_found": "在此伺服器上找不到",
     "reason_error": "無法檢查",
-    "unknown_note": "Bulwark 只能看到與你共用的行事曆中的忙碌時間。對這些人，它無法區分有空和未共用。",
-    "directory_off": "Bulwark 無法在此伺服器上查詢使用者。管理員可以在 Stalwart 中開啟目錄查詢。",
+    "unknown_note": "Loomix 只能看到與你共用的行事曆中的忙碌時間。對這些人，它無法區分有空和未共用。",
+    "directory_off": "Loomix 無法在此伺服器上查詢使用者。管理員可以在 Stalwart 中開啟目錄查詢。",
     "not_looked_up": "無法查詢此地址",
     "found": "找到的空閒時間：{count}"
   },
@@ -5676,7 +5676,7 @@
     "start_tour": "開始功能導覽"
   },
   "demo_welcome": {
-    "title": "歡迎使用 Bulwark Mail",
+    "title": "歡迎使用 Loomix Mail",
     "description": "直接在瀏覽器中探索功能完整的網頁郵件用戶端。所有資料都保留在您的裝置上，請自由測試各項功能。",
     "feature_email": "閱讀與撰寫郵件",
     "feature_organize": "標籤、星號與信件匣",
@@ -6110,9 +6110,9 @@
     "cancelled_hint": "如需稍後繼續，請再次把相同的檔案匯入到同一個資料夾。",
     "close": "關閉",
     "pst_note": "Outlook 檔案中只匯入郵件。聯絡人、行事曆項目和工作會被計數並略過。",
-    "pst_error_encrypted": "此 Outlook 檔案使用了 Bulwark 無法讀取的高強度加密。請在 Outlook 中把郵件匯出到一個不加密的新 .pst 檔案。",
-    "pst_error_not_pst": "此檔案不是 Bulwark 能讀取的 Outlook 資料檔。",
-    "pst_error_unreadable": "Bulwark 無法讀取此 Outlook 檔案。",
+    "pst_error_encrypted": "此 Outlook 檔案使用了 Loomix 無法讀取的高強度加密。請在 Outlook 中把郵件匯出到一個不加密的新 .pst 檔案。",
+    "pst_error_not_pst": "此檔案不是 Loomix 能讀取的 Outlook 資料檔。",
+    "pst_error_unreadable": "Loomix 無法讀取此 Outlook 檔案。",
     "pst_error_worker": "Outlook 檔案讀取元件未能載入。請重新載入頁面後再試。",
     "error_over_quota": "信箱已滿，匯入已停止。請騰出空間，然後把相同的檔案再次匯入同一個資料夾即可繼續。",
     "error_forbidden": "您無權在此資料夾新增郵件，匯入已停止。",
@@ -6173,7 +6173,7 @@
   },
   "desktopImport": {
     "find": "尋找 Thunderbird 和 Outlook 資料…",
-    "find_hint": "在這台電腦的常用位置尋找。Bulwark 會先詢問你。",
+    "find_hint": "在這台電腦的常用位置尋找。Loomix 會先詢問你。",
     "scan_declined": "你沒有允許,所以沒有尋找。",
     "scan_failed": "尋找失敗。請再試一次。",
     "read_declined": "你沒有允許,所以沒有讀取任何檔案。",
@@ -6229,7 +6229,7 @@
     "restore": "還原",
     "restored": "{count, plural, other {# 封郵件}}正在回到您的收件匣。",
     "restore_partial": "{count, plural, other {# 封郵件無法還原。它們仍保持選取，您可以再試一次。}}",
-    "restore_hint": "還原的郵件會以未讀狀態回到收件匣，並依原始日期排序，因此可能位於清單很下方。伺服器會在背景中進行還原。如果伺服器端還原失敗，郵件將會遺失，而 Bulwark 無法得知。",
+    "restore_hint": "還原的郵件會以未讀狀態回到收件匣，並依原始日期排序，因此可能位於清單很下方。伺服器會在背景中進行還原。如果伺服器端還原失敗，郵件將會遺失，而 Loomix 無法得知。",
     "unknown_sender": "未知寄件者",
     "no_subject": "（無主旨）",
     "deleted_on": "刪除於 {date}",
@@ -6415,14 +6415,14 @@
     "clear_confirm": "清除",
     "persist_refused": "儲存空間不足時，此瀏覽器可能會刪除保留的郵件。安裝應用程式通常可以避免這種情況。",
     "persist_retry": "請瀏覽器保留",
-    "safari_hint": "Safari 會在網站 7 天未造訪後刪除其資料。把 Bulwark 加入主畫面或 Dock，郵件就能保留在此裝置上。",
+    "safari_hint": "Safari 會在網站 7 天未造訪後刪除其資料。把 Loomix 加入主畫面或 Dock，郵件就能保留在此裝置上。",
     "evicted": "瀏覽器刪除了此裝置上保留的郵件。正在重新下載。",
     "evicted_lost": "{count, plural, other {# 封未寄出的郵件或變更已遺失。}}",
     "evicted_dismiss": "好",
     "storage_full_title": "裝置儲存空間已滿。",
-    "storage_full_text": "Bulwark 已停止在此儲存郵件。請少保留一些郵件，或清除此帳號來騰出空間。",
+    "storage_full_text": "Loomix 已停止在此儲存郵件。請少保留一些郵件，或清除此帳號來騰出空間。",
     "open_settings": "開啟設定",
-    "default_on": "Bulwark 會把你的郵件保留在此裝置上，這樣沒有網路也能使用。你可以在設定中變更。",
+    "default_on": "Loomix 會把你的郵件保留在此裝置上，這樣沒有網路也能使用。你可以在設定中變更。",
     "conflict_calendar": "行事曆活動",
     "conflict_contacts": "聯絡人",
     "kept_files_title": "離線保留的檔案",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "新增到工作畫面",
-        "body": "在工作詳細資料中顯示它自己的區塊，在工作清單中顯示按鈕，並可用它自己的工作清單取代 Bulwark 的工作清單。"
+        "body": "在工作詳細資料中顯示它自己的區塊，在工作清單中顯示按鈕，並可用它自己的工作清單取代 Loomix 的工作清單。"
       },
       "ui_files": {
         "title": "新增到檔案畫面",
@@ -7355,7 +7355,7 @@
       "shortcuts": "鍵盤快速鍵",
       "docs": "說明文件",
       "settings": "設定…",
-      "about": "關於 Bulwark",
+      "about": "關於 Loomix",
       "from_plugins": "更多外掛程式選項…",
       "pick_gone": "此選單已過期。請重新開啟後再試一次。",
       "bar_label": "選單"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "如果現在關閉，自上次儲存以來所寫的內容將會遺失。",
       "close_anyway": "仍要關閉",
       "unsent_title": "有郵件尚未寄出",
-      "unsent_one": "有 1 封郵件正在等待寄出，將在您下次開啟 Bulwark 時寄出。",
-      "unsent_many": "有 {count} 封郵件正在等待寄出，將在您下次開啟 Bulwark 時寄出。",
+      "unsent_one": "有 1 封郵件正在等待寄出，將在您下次開啟 Loomix 時寄出。",
+      "unsent_many": "有 {count} 封郵件正在等待寄出，將在您下次開啟 Loomix 時寄出。",
       "quit": "結束",
       "leave_title": "有未儲存的變更，確定要離開嗎？",
       "leave_detail": "您在此頁面所做的變更尚未儲存。",
@@ -7383,7 +7383,7 @@
       "stay": "留下"
     },
     "spellcheck": {
-      "offer": "{language}拼字檢查需要字典。Bulwark 可以從 Google 下載。您的文字不會被傳送。",
+      "offer": "{language}拼字檢查需要字典。Loomix 可以從 Google 下載。您的文字不會被傳送。",
       "download": "下載"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "1 小時",
     "tray_pause_tomorrow": "直到明天",
     "tray_resume": "重新開啟通知",
-    "tray_open": "開啟 Bulwark",
-    "tray_quit": "結束 Bulwark",
-    "tray_exit": "結束 Bulwark"
+    "tray_open": "開啟 Loomix",
+    "tray_quit": "結束 Loomix",
+    "tray_exit": "結束 Loomix"
   },
   "desktopMenus": {
     "save_draft": "儲存草稿",
@@ -7581,25 +7581,25 @@
     "cancel": "取消",
     "or_here": "或在此登入",
     "timed_out": "瀏覽器登入耗時過長。請再試一次。",
-    "no_browser": "Bulwark 無法開啟瀏覽器。請再試一次,或在此登入。",
+    "no_browser": "Loomix 無法開啟瀏覽器。請再試一次,或在此登入。",
     "failed": "透過瀏覽器登入失敗。請再試一次。",
-    "handoff_banner": "這台電腦上的一個程式為 Bulwark 應用程式要求了這次登入。此瀏覽器不會登入 Bulwark。如果不是你發起的,請關閉此分頁。",
-    "consent_title": "要登入 Bulwark 應用程式嗎?",
-    "consent_description": "這台電腦上連接埠 {port} 的一個程式正在要求 {username} 的登入資訊。只有在你剛剛按下這裡 Bulwark 應用程式中的「使用瀏覽器登入…」時才繼續。否則可能有人想進入你的帳戶:請選擇「暫不」。",
+    "handoff_banner": "這台電腦上的一個程式為 Loomix 應用程式要求了這次登入。此瀏覽器不會登入 Loomix。如果不是你發起的,請關閉此分頁。",
+    "consent_title": "要登入 Loomix 應用程式嗎?",
+    "consent_description": "這台電腦上連接埠 {port} 的一個程式正在要求 {username} 的登入資訊。只有在你剛剛按下這裡 Loomix 應用程式中的「使用瀏覽器登入…」時才繼續。否則可能有人想進入你的帳戶:請選擇「暫不」。",
     "consent_confirm": "登入應用程式",
     "consent_cancel": "暫不",
-    "page_done": "你可以關閉此分頁並返回 Bulwark。",
-    "page_failed": "登入失敗。請返回 Bulwark 並再試一次。",
-    "page_link_used": "此連結只能使用一次。請返回 Bulwark 重新開始。",
+    "page_done": "你可以關閉此分頁並返回 Loomix。",
+    "page_failed": "登入失敗。請返回 Loomix 並再試一次。",
+    "page_link_used": "此連結只能使用一次。請返回 Loomix 重新開始。",
     "page_title": "登入 {server}",
-    "page_intro": "此頁面來自這台電腦上的 Bulwark 應用程式。你的密碼只會傳送到 {server}。",
+    "page_intro": "此頁面來自這台電腦上的 Loomix 應用程式。你的密碼只會傳送到 {server}。",
     "page_username": "電子郵件地址或使用者名稱",
     "page_password": "密碼",
     "page_code": "雙重驗證碼",
     "page_submit": "登入",
     "page_wrong_password": "伺服器不接受此使用者名稱和密碼。",
     "page_code_needed": "此帳戶還需要雙重驗證碼。請重新輸入密碼和驗證碼。",
-    "page_no_answer": "Bulwark 無法登入。請檢查伺服器是否可連線,然後再試一次。",
+    "page_no_answer": "Loomix 無法登入。請檢查伺服器是否可連線,然後再試一次。",
     "declined": "你在瀏覽器中拒絕了,因此沒有登入。",
     "too_many": "來自此網路的登入嘗試過多。請等幾分鐘後再試一次。",
     "page_declined": "沒有交出任何內容。你可以關閉此分頁。"
@@ -7619,7 +7619,7 @@
     "other_ways": "其他登入方式",
     "trouble": "遇到問題？",
     "trouble_cors": "你的郵件伺服器必須允許從這個網站登入。如果無法登入，請負責郵件伺服器的人允許。",
-    "provider_unsupported": "{provider} 不支援 JMAP（Bulwark 與郵件伺服器溝通的方式），所以 Bulwark 目前還無法直接連線。"
+    "provider_unsupported": "{provider} 不支援 JMAP（Loomix 與郵件伺服器溝通的方式），所以 Loomix 目前還無法直接連線。"
   },
   "login_a11y": {
     "caps_lock_on": "大寫鎖定已開啟",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "要變更 Bulwark 的連線方式嗎？",
-      "message": "Bulwark 會重新啟動並詢問連線方式：使用你的電子郵件地址，或透過你所屬組織的 Bulwark。這台電腦上的帳戶會保持登入。",
+      "title": "要變更 Loomix 的連線方式嗎？",
+      "message": "Loomix 會重新啟動並詢問連線方式：使用你的電子郵件地址，或透過你所屬組織的 Loomix。這台電腦上的帳戶會保持登入。",
       "confirm": "變更",
-      "org_link": "改用我所屬組織的 Bulwark",
+      "org_link": "改用我所屬組織的 Loomix",
       "add_account": "新增帳戶…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "插入"
     },
     "sign_in_page": {
-      "open_app": "開啟 Bulwark",
+      "open_app": "開啟 Loomix",
       "done_as": "已以 {address} 登入。你可以關閉此分頁。"
     }
   },
   "desktop_updates": {
     "title": "更新",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark 會自動檢查更新。",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix 會自動檢查更新。",
     "status_checking": "正在檢查更新…",
     "status_up_to_date": "已是最新版本。",
     "status_downloading": "正在下載版本 {version}…",
     "status_ready": "版本 {version} 已準備好。將在下次結束時安裝，也可以立即重新啟動。",
     "status_available": "版本 {version} 可用。",
-    "status_available_per_machine": "版本 {version} 可用。Bulwark 是為這台電腦的所有使用者安裝的，因此由管理員安裝更新。",
-    "status_older": "你使用的是測試版。穩定版 {version} 較舊，因此 Bulwark 會維持目前版本，直到穩定版趕上。",
-    "status_error": "無法檢查更新。Bulwark 稍後會再試。",
+    "status_available_per_machine": "版本 {version} 可用。Loomix 是為這台電腦的所有使用者安裝的，因此由管理員安裝更新。",
+    "status_older": "你使用的是測試版。穩定版 {version} 較舊，因此 Loomix 會維持目前版本，直到穩定版趕上。",
+    "status_error": "無法檢查更新。Loomix 稍後會再試。",
     "status_off": "你的組織已關閉應用程式內更新。",
     "check": "立即檢查",
     "restart": "重新啟動以更新",
@@ -7670,18 +7670,18 @@
     "channel_beta": "測試版",
     "shell_restart": "重新啟動以更新",
     "shell_check": "檢查更新…",
-    "shell_available": "Bulwark {version} 可用",
-    "shell_ready_title": "Bulwark 已準備好更新",
+    "shell_available": "Loomix {version} 可用",
+    "shell_ready_title": "Loomix 已準備好更新",
     "shell_ready_body": "版本 {version} 將在下次結束時安裝。按一下立即重新啟動。草稿會先儲存。",
-    "shell_available_title": "Bulwark 有新版本",
-    "shell_none_title": "Bulwark 已是最新",
+    "shell_available_title": "Loomix 有新版本",
+    "shell_none_title": "Loomix 已是最新",
     "shell_none_detail": "你的版本是 {version}。",
-    "shell_failed_title": "Bulwark 無法檢查更新",
+    "shell_failed_title": "Loomix 無法檢查更新",
     "shell_failed_detail": "請檢查網路連線，稍後再試。沒有任何變更。",
     "shell_beta_title": "切換到測試版？",
     "shell_beta_detail": "你會更早收到新版本，但問題可能較多。要切回，請安裝較舊的穩定版，或等待穩定版趕上。",
     "shell_beta_confirm": "切換到測試版",
-    "shell_older_title": "回到 Bulwark {version}？",
+    "shell_older_title": "回到 Loomix {version}？",
     "shell_older_detail": "你使用的是測試版 {current}。穩定版 {target} 較舊，可能讀不了測試版在這台電腦上儲存的內容。郵件仍在伺服器上，但離線儲存的郵件可能會重新下載，未傳送的變更可能遺失。如果等待，穩定版趕上後你可以無需此步驟切換。",
     "shell_older_confirm": "安裝舊版本"
   },
@@ -7982,7 +7982,7 @@
       "progress": "已上傳 {done}/{total}",
       "cannot_offline": "無法連線到伺服器。尚未上傳：{names}",
       "cannot_other": "無法上傳：{names}。原因請見設定中的最近活動。",
-      "go_note_drive": "如果現在繼續，未上傳的內容會複製到 文件\\Bulwark – not uploaded，不會遺失。",
+      "go_note_drive": "如果現在繼續，未上傳的內容會複製到 文件\\Loomix – not uploaded，不會遺失。",
       "go_note_folder": "如果現在繼續，未上傳的內容會留在這部電腦上的資料夾中。",
       "keep_turn_off": "保留磁碟機",
       "keep_sign_out": "保持登入",
@@ -7996,22 +7996,22 @@
       "rescued": "未上傳的檔案（{count}）現在位於 {folder}。",
       "rescued_open": "開啟資料夾",
       "rescued_dismiss": "關閉",
-      "start_at_login": "登入 Windows 時啟動 Bulwark",
-      "start_at_login_why": "和 OneDrive 一樣，磁碟機需要 Bulwark 在執行。",
-      "closed_warning": "Bulwark 關閉時，無法開啟磁碟機中的檔案。",
-      "where": "在檔案總管中顯示為 Bulwark Files",
-      "where_letter": "在檔案總管中顯示為 Bulwark Files ({letter}:)",
+      "start_at_login": "登入 Windows 時啟動 Loomix",
+      "start_at_login_why": "和 OneDrive 一樣，磁碟機需要 Loomix 在執行。",
+      "closed_warning": "Loomix 關閉時，無法開啟磁碟機中的檔案。",
+      "where": "在檔案總管中顯示為 Loomix Files",
+      "where_letter": "在檔案總管中顯示為 Loomix Files ({letter}:)",
       "open": "開啟",
-      "letter_note": "透過磁碟機代號存取時，檔案總管不會顯示同步狀態和「永遠保留在此裝置上」。它們會顯示在檔案總管的 Bulwark Files 下。",
+      "letter_note": "透過磁碟機代號存取時，檔案總管不會顯示同步狀態和「永遠保留在此裝置上」。它們會顯示在檔案總管的 Loomix Files 下。",
       "letter_failed": "無法設定磁碟機代號。請再試一次。"
     },
     "tray": {
-      "idle": "Bulwark Files: 已是最新",
-      "syncing": "Bulwark Files: 正在同步。剩餘：{count}",
-      "paused": "Bulwark Files: 已暫停",
-      "offline": "Bulwark Files: 離線。等待中：{count}",
-      "question": "Bulwark Files: 需要你的回答",
-      "error": "Bulwark Files: 錯誤"
+      "idle": "Loomix Files: 已是最新",
+      "syncing": "Loomix Files: 正在同步。剩餘：{count}",
+      "paused": "Loomix Files: 已暫停",
+      "offline": "Loomix Files: 離線。等待中：{count}",
+      "question": "Loomix Files: 需要你的回答",
+      "error": "Loomix Files: 錯誤"
     },
     "notify": {
       "conflict_title": "一個檔案在兩處被變更",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "每天一次：一個隨機 ID、應用程式的版本號、您的作業系統、應用程式已執行多久以及連線方式。使用自己的郵件伺服器時，還包括已開啟的功能、大致的帳號數量以及外掛和主題的數量。絕不傳送郵件、地址或伺服器名稱。",
     "crash_label": "傳送當機報告",
     "crash_description": "應用程式中的錯誤會連同一個隨機 ID、應用程式本身程式碼的檔案名稱和經過清理的簡短訊息一起傳送。如果應用程式本身當機，當機檔案會留在這台電腦上，只有您傳送時才會離開。",
-    "crash_memory": "當機檔案是當機時應用程式部分記憶體的副本。Bulwark 會移除它找到的使用者名稱、地址和登入權杖，但當機檔案仍可能包含您郵件的文字。",
-    "instance_note": "在 Bulwark 伺服器上，頁面向伺服器回報哪些內容由該伺服器的管理員另行決定。",
+    "crash_memory": "當機檔案是當機時應用程式部分記憶體的副本。Loomix 會移除它找到的使用者名稱、地址和登入權杖，但當機檔案仍可能包含您郵件的文字。",
+    "instance_note": "在 Loomix 伺服器上，頁面向伺服器回報哪些內容由該伺服器的管理員另行決定。",
     "forced_off": "您的組織已關閉此功能。",
     "url_label": "當機檔案的去向",
-    "url_description": "接收當機檔案的 https 地址。Bulwark 沒有預設地址。",
+    "url_description": "接收當機檔案的 https 地址。Loomix 沒有預設地址。",
     "url_invalid": "請輸入完整的 https 地址。",
     "url_save": "儲存",
     "files_label": "這台電腦上的當機檔案",
-    "files_description": "Bulwark 保留最新的檔案，並刪除超過一個月的檔案。",
+    "files_description": "Loomix 保留最新的檔案，並刪除超過一個月的檔案。",
     "files_empty": "沒有當機檔案。",
     "file_size": "{size} KB",
     "send": "傳送當機報告…",

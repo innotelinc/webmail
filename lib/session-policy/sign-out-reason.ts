@@ -1,5 +1,5 @@
 /**
- * Why Bulwark signed the user out on its own, for the login page to say.
+ * Why Loomix signed the user out on its own, for the login page to say.
  * Kept in sessionStorage: the tab that signed out shows it once.
  */
 

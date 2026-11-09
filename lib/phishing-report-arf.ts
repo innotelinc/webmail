@@ -59,13 +59,13 @@ export function buildArfParts(input: {
   const arrival = email.receivedAt ? new Date(email.receivedAt) : null;
   const reportedDomain = senderDomain(email);
   const human = [
-    `This is a phishing report (RFC 5965) sent by ${fromEmail} with Bulwark.`,
+    `This is a phishing report (RFC 5965) sent by ${fromEmail} with Loomix.`,
     '',
     'The reported message is attached unchanged.',
   ].join('\r\n');
   const report = [
     'Feedback-Type: fraud',
-    `User-Agent: Bulwark/${appVersion()}`,
+    `User-Agent: Loomix/${appVersion()}`,
     'Version: 1',
     ...(arrival && !Number.isNaN(arrival.getTime()) ? [`Arrival-Date: ${rfc5322Date(arrival)}`] : []),
     ...(input.recipient ? [`Original-Rcpt-To: ${headerAtom(input.recipient)}`] : []),

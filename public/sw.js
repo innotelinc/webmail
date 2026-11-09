@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-// Bulwark service worker.
+// Loomix service worker.
 //
 // This SW does two jobs:
 //   1. Satisfy the PWA installability requirement (a fetch handler that
@@ -164,7 +164,7 @@ async function cachedDocument(url) {
 }
 
 /**
- * The cache of the build that answered (the X-Bulwark-Build header): after a
+ * The cache of the build that answered (the X-Loomix-Build header): after a
  * deploy the old worker still fetches the new build's pages and chunks, which
  * belong in the new build's cache, not in its own.
  */
@@ -1266,8 +1266,8 @@ async function handleOpenMailtoInClient(event) {
 
 async function showMailtoFocusNotification(state) {
   try {
-    await self.registration.showNotification(state.focusNotificationTitle || "Bulwark", {
-      body: state.focusNotificationBody || "The request was opened in Bulwark. Click to bring it to the front.",
+    await self.registration.showNotification(state.focusNotificationTitle || "Loomix", {
+      body: state.focusNotificationBody || "The request was opened in Loomix. Click to bring it to the front.",
       tag: "bulwark-mailto-focus",
       icon: `${BASE_PATH}/api/pwa-icon/192`,
       badge: `${BASE_PATH}/api/pwa-icon/192`,

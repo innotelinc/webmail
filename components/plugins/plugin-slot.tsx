@@ -17,7 +17,7 @@ interface PluginSlotProps {
 export const SHARED_FILL_MIN_HEIGHT = 280;
 
 export function PluginSlot({ name, className, extraProps }: PluginSlotProps) {
-  // Without a retired plugin's offer while Bulwark does its job (host-features.ts).
+  // Without a retired plugin's offer while Loomix does its job (host-features.ts).
   const offers = usePluginSlotOffers(name);
 
   if (offers.length === 0) return null;

@@ -9,7 +9,7 @@ import { useSettingsStore } from '@/stores/settings-store';
 // -18; desktop-p2-4). Labels are keys here (next-intl mock).
 
 const config = vi.hoisted(() => ({ settingsSyncEnabled: true }));
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark', settingsSyncEnabled: config.settingsSyncEnabled }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix', settingsSyncEnabled: config.settingsSyncEnabled }) }));
 vi.mock('../desktop-telemetry-settings', () => ({ DesktopTelemetrySettings: () => null }));
 vi.mock('@/components/mail-transfer/mail-backup-settings', () => ({ MailBackupSettings: () => null }));
 vi.mock('../debug-settings', () => ({ DebugSettings: () => null }));

@@ -80,7 +80,7 @@ export interface ShortcutKeyEvent {
  */
 const RESERVED = new Set(['cmd+shift+A', 'cmd+shift+C', 'cmd+shift+V', 'cmd+shift+X', 'cmd+shift+Z']);
 /**
- * The app's own keys with two modifiers, which a global key would take from Bulwark itself:
+ * The app's own keys with two modifiers, which a global key would take from Loomix itself:
  * the composer's Cc, Bcc and schedule send, and the menus' new message, new window, Save as
  * PDF, reply all and forward. Same list as APP_KEYS in the shell's os-rules.ts.
  */

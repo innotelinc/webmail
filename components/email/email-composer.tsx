@@ -350,7 +350,7 @@ export interface ComposerDraftData {
    */
   linkParams?: Record<string, string>;
   /**
-   * Classification label of a re-opened draft (X-Bulwark-Label): an id,
+   * Classification label of a re-opened draft (X-Loomix-Label): an id,
    * null for "no label", absent when the draft says nothing.
    */
   classification?: string | null;

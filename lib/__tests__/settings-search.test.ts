@@ -12,9 +12,9 @@ import {
   withAppName,
 } from '../settings-search';
 
-const labelsFor = (tab: SettingsSearchTab) => settingsSubResults(en, tab, 'Bulwark').map((r) => r.label);
+const labelsFor = (tab: SettingsSearchTab) => settingsSubResults(en, tab, 'Loomix').map((r) => r.label);
 const resultsFor = (tab: SettingsSearchTab, query: string) =>
-  settingsSubResults(en, tab, 'Bulwark').filter((r) => matchesSubResult(r, query));
+  settingsSubResults(en, tab, 'Loomix').filter((r) => matchesSubResult(r, query));
 
 describe('settings search index (English messages)', () => {
   it('every entry names a label that exists, without a raw placeholder', () => {
@@ -87,9 +87,9 @@ describe('settings search index (English messages)', () => {
   });
 
   it('marks the rows the Advanced switch hides', () => {
-    const advanced = settingsSubResults(en, 'message_list', 'Bulwark').filter((r) => r.advanced).map((r) => r.label);
+    const advanced = settingsSubResults(en, 'message_list', 'Loomix').filter((r) => r.advanced).map((r) => r.label);
     expect(advanced).toContain('Emails per page');
-    expect(settingsSubResults(en, 'privacy', 'Bulwark').filter((r) => r.advanced).map((r) => r.label)).not.toContain('Pictures from company websites');
+    expect(settingsSubResults(en, 'privacy', 'Loomix').filter((r) => r.advanced).map((r) => r.label)).not.toContain('Pictures from company websites');
   });
 });
 
@@ -98,7 +98,7 @@ describe('settings search index (English messages)', () => {
 describe('settings search: words, word starts and synonyms', () => {
   /** Every row of every page that the query finds, as "page: label". */
   const everywhere = (query: string) => (Object.keys(tabSearchEntries) as SettingsSearchTab[]).flatMap((tab) =>
-    settingsSubResults(en, tab, 'Bulwark')
+    settingsSubResults(en, tab, 'Loomix')
       .filter((r) => matchesSubResult(r, query))
       .map((r) => `${tab}: ${r.label}`));
 
@@ -167,7 +167,7 @@ describe('settings search: no two rows with the same name', () => {
     const duplicates: string[] = [];
     for (const [tab, entries] of Object.entries(tabSearchEntries)) {
       for (const entry of entries) {
-        const text = (withAppName(getByPath(en, entry.label), 'Bulwark') as string).trim().toLowerCase();
+        const text = (withAppName(getByPath(en, entry.label), 'Loomix') as string).trim().toLowerCase();
         if (PENDING_RENAMES.has(text)) continue;
         const where = `${tab}: ${entry.label}`;
         if (seen.has(text)) duplicates.push(`"${text}" at ${seen.get(text)} and ${where}`);
@@ -196,7 +196,7 @@ describe('{appName} in the index (#1314)', () => {
 describe('settings search: more words people use', () => {
   const everywhere = (query: string, shown?: (when: string | undefined) => boolean) =>
     (Object.keys(tabSearchEntries) as SettingsSearchTab[]).flatMap((tab) =>
-      settingsSubResults(en, tab, 'Bulwark', (entry) => (shown ? shown(entry.when) : !entry.when?.startsWith('desktop')))
+      settingsSubResults(en, tab, 'Loomix', (entry) => (shown ? shown(entry.when) : !entry.when?.startsWith('desktop')))
         .filter((r) => matchesSubResult(r, query))
         .map((r) => `${tab}: ${r.label}`));
 
@@ -217,7 +217,7 @@ describe('settings search: more words people use', () => {
 
   it('looks for one short word in names and synonyms only, not in descriptions', () => {
     // "about" starts a word in many descriptions ("how you hear about new mail").
-    expect(everywhere('about')).toEqual(['about: About Bulwark']);
+    expect(everywhere('about')).toEqual(['about: About Loomix']);
     const row = { label: 'Sound', description: 'Plays a chime about new mail when it arrives' };
     expect(matchesSubResult(row, 'about')).toBe(false);
     expect(matchesSubResult(row, 'chime')).toBe(false);
@@ -243,11 +243,11 @@ describe('settings search in the desktop app', () => {
     return when !== 'touch' && when !== 'mountainView' && when !== 'multiAccount';
   };
   const inAppResults = (query: string, mac = false) => (Object.keys(tabSearchEntries) as SettingsSearchTab[]).flatMap((tab) =>
-    settingsSubResults(en, tab, 'Bulwark', (entry) => inApp(entry.when, mac))
+    settingsSubResults(en, tab, 'Loomix', (entry) => inApp(entry.when, mac))
       .filter((r) => matchesSubResult(r, query))
       .map((r) => `${tab}: ${r.label}`));
   const inBrowser = (query: string) => (Object.keys(tabSearchEntries) as SettingsSearchTab[]).flatMap((tab) =>
-    settingsSubResults(en, tab, 'Bulwark', (entry) => !entry.when?.startsWith('desktop'))
+    settingsSubResults(en, tab, 'Loomix', (entry) => !entry.when?.startsWith('desktop'))
       .filter((r) => matchesSubResult(r, query))
       .map((r) => `${tab}: ${r.label}`));
 
@@ -278,7 +278,7 @@ describe('settings search in the desktop app', () => {
   });
 
   it('marks developer tools as an advanced row', () => {
-    const devTools = settingsSubResults(en, 'troubleshooting', 'Bulwark').find((r) => r.label === 'Developer tools');
+    const devTools = settingsSubResults(en, 'troubleshooting', 'Loomix').find((r) => r.label === 'Developer tools');
     expect(devTools?.advanced).toBe(true);
   });
 

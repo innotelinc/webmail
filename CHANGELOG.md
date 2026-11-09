@@ -2,20 +2,20 @@
 
 ## 1.21.0 (2026-11-07)
 
-1.21.0 can keep mail, calendars, contacts and files in an encrypted database on the device, so Bulwark opens at once and you can read, search, write and file mail with no connection. The new Bulwark desktop app for Windows, macOS and Linux is built on this release and is out as a public beta. The reading pane shows whole conversations, menus are the same everywhere, and files can be dropped onto any screen. Undo send is on by default, and an app lock with a PIN, a passkey or Windows Hello locks the app and the mail kept on the device. Admins can set the login page's background and layout, cap what devices keep offline and wipe a lost device. Push notifications open the right message and show sender and subject after the browser was closed. A first visit opens the sign-in page about 0.45 s sooner, and Greek and Norwegian Nynorsk are new languages.
+1.21.0 can keep mail, calendars, contacts and files in an encrypted database on the device, so Loomix opens at once and you can read, search, write and file mail with no connection. The new Loomix desktop app for Windows, macOS and Linux is built on this release and is out as a public beta. The reading pane shows whole conversations, menus are the same everywhere, and files can be dropped onto any screen. Undo send is on by default, and an app lock with a PIN, a passkey or Windows Hello locks the app and the mail kept on the device. Admins can set the login page's background and layout, cap what devices keep offline and wipe a lost device. Push notifications open the right message and show sender and subject after the browser was closed. A first visit opens the sign-in page about 0.45 s sooner, and Greek and Norwegian Nynorsk are new languages.
 
 ### Desktop app beta
 
 Download the beta from [github.com/bulwarkmail/desktop/releases](https://github.com/bulwarkmail/desktop/releases): an installer or MSI for Windows, a DMG for macOS, and an AppImage, deb or rpm for Linux, each for x64 and arm64. Windows builds are signed by Rath & Blume GbR, and macOS builds are signed and notarized.
 
-- **Two ways to connect**: Straight to your own JMAP server, such as Stalwart, without running a Bulwark server, or to your organisation's Bulwark, which needs 1.21.0 or later for the desktop features
+- **Two ways to connect**: Straight to your own JMAP server, such as Stalwart, without running a Loomix server, or to your organisation's Loomix, which needs 1.21.0 or later for the desktop features
 - **Sign-in**: You sign in through your browser, so your password manager, passkeys and your organisation's single sign-on work
 - **Offline**: Mail is kept on the computer by default, so the app opens at once and works with no connection
-- **Windows**: A tray icon with unread mail and the next event, notifications with Reply, Archive, Mark as read and Delete, a taskbar badge and a jump list. Bulwark can be the default mail app for mail links and .eml, .ics and .vcf files, and adds "Send to > Bulwark". Files shows in File Explorer as "Bulwark Files" and downloads a file when you open it
+- **Windows**: A tray icon with unread mail and the next event, notifications with Reply, Archive, Mark as read and Delete, a taskbar badge and a jump list. Loomix can be the default mail app for mail links and .eml, .ics and .vcf files, and adds "Send to > Loomix". Files shows in File Explorer as "Loomix Files" and downloads a file when you open it
 - **Windows security**: Unlock with Windows Hello, sign in with Kerberos or NTLM to servers your organisation lists, and sign or decrypt S/MIME mail with certificates from the system store and smart cards
 - **Windows and menus**: Messages and composers open in their own windows and come back after a restart. Quick compose opens from any app with Ctrl+Alt+Enter (Cmd+Opt+N on a Mac, Ctrl+Alt+N on Linux). Alt shows a menu bar, the keyboard shortcuts follow Outlook's, and the app has its own print preview and save dialog
 - **Files and attachments**: Open an attachment in its usual program, edit it and put the saved version back on the draft, a reply or in Files. Sync any folder on the computer with a Files folder, and attach recently used files from the Attach menu
-- **Import**: Bulwark finds Thunderbird profiles and Outlook PST files on the computer and imports the mail and address books you pick
+- **Import**: Loomix finds Thunderbird profiles and Outlook PST files on the computer and imports the mail and address books you pick
 - **Organisation**: Group Policy (ADMX), Intune, MSI switches, a macOS profile or `/etc/bulwark/policies.json` can set or force the server, plugins, offline mail, updates, the app lock and the Files options
 - **Updates**: Installed with the Windows installer, on macOS or as an AppImage, the app updates itself and saves your drafts first. MSI, deb and rpm installs show when an update is out
 
@@ -77,10 +77,10 @@ Thank you for your donations:
 
 ### Features
 
-- **Offline**: Mail, calendars, tasks, contacts and files are kept in an encrypted database on the device, in the browser, the installed app and the desktop app. Bulwark opens from the local copy at once, and you can read, search, write, file, delete and answer invitations with no connection. Changes go out when the server is back, a send that lost its connection goes out once, and changes that clash with another device are listed for review
+- **Offline**: Mail, calendars, tasks, contacts and files are kept in an encrypted database on the device, in the browser, the installed app and the desktop app. Loomix opens from the local copy at once, and you can read, search, write, file, delete and answer invitations with no connection. Changes go out when the server is back, a send that lost its connection goes out once, and changes that clash with another device are listed for review
 - **Offline**: Search kept mail with no connection, including word starts, exact phrases, words inside German compounds and both umlaut spellings. Online searches also show matches from kept mail, without duplicates
 - **Offline**: Drafts and their attachments save on the device while offline and reach the server once. Attachments and inline images of kept mail stay readable within the sizes you choose, and the composer says when it is offline and keeps the message if Send can't go out
-- **Offline**: Choose per account how far back mail is kept and how large attachments may be, see what it takes, clear an account, and follow the first sync with the time left. Bulwark says when the browser removed kept mail and downloads it again
+- **Offline**: Choose per account how far back mail is kept and how large attachments may be, see what it takes, clear an account, and follow the first sync with the time left. Loomix says when the browser removed kept mail and downloads it again
 - **Offline**: Export the mail kept on this device to mbox or an EML zip, also with no connection
 - **App lock**: Lock the app and the mail on the device with a PIN, a passkey or Windows Hello after the time you choose, or in the desktop app only when the screen locks or at sign-out. PINs have at least 5 characters, and a policy can ask for longer ones or turn Windows Hello off (`AppLockHelloAllowed`)
 - **Calendar**: Reminders come from the local copy, once across tabs and restarts and also offline. Reminders missed while the computer slept come as one summary, and recurring events remind on every occurrence
@@ -105,7 +105,7 @@ Thank you for your donations:
 - **Printing**: Printouts use the theme's print colours and the print styles add-ons offer
 - **Settings**: Offline, Privacy and About have their own pages, and search finds everyday words. Layouts show a preview, Out of office starts with real text and can't go out blank, signatures use the composer's editor and can be edited per address on the Composing page, a new rule can also run on the Inbox's existing mail, and the server settings for other mail apps are listed
 - **Settings**: An option keeps the account switcher at the top of the sidebar, on by default
-- **Sign-in**: Bulwark asks for your email address first and finds your mail server. Gmail, Outlook.com and iCloud addresses get a plain explanation
+- **Sign-in**: Loomix asks for your email address first and finds your mail server. Gmail, Outlook.com and iCloud addresses get a plain explanation
 - **Login page**: A language picker next to the theme button, and the Accessibility panel adds font, underline links, focus outline and large targets. The password field says when Caps Lock is on, and choices made here carry over after sign-in
 - **Login page**: Admins set a background picture for light and dark mode, its dim and blur, and whether the form sits in a card or a side panel, under Admin > Branding, also per domain, or with `LOGIN_LAYOUT`, `LOGIN_BACKGROUND_LIGHT_URL`, `LOGIN_BACKGROUND_DARK_URL`, `LOGIN_BACKGROUND_DIM` and `LOGIN_BACKGROUND_BLUR`
 - **Branding**: A `DOMAIN_BRANDING` entry can carry a colour palette for light and dark mode (#1549, thanks @ghozty)
@@ -124,7 +124,7 @@ Thank you for your donations:
 ### Performance
 
 - **Sign-in**: A first visit opens the sign-in page straight away, about 0.45 s sooner, without starting the mail view first
-- **Startup**: The mail view's code loads while the sign-in form waits (not on Save-Data or 2G), the first mail requests go out sooner, the first list comes in one request, and the settings are asked for while the page starts. Chrome compiles the start-up scripts while they download, Bulwark Lite's included
+- **Startup**: The mail view's code loads while the sign-in form waits (not on Save-Data or 2G), the first mail requests go out sooner, the first list comes in one request, and the settings are asked for while the page starts. Chrome compiles the start-up scripts while they download, Loomix Lite's included
 - **Mail list**: Switching folders, searching and scrolling large folders redraws less, so search answers about 10-20 ms sooner
 - **Reader**: Opening an HTML mail lays it out and sanitizes it once instead of twice
 - **Composer**: Replies to large HTML mails open faster; the quote is no longer turned into text on every keystroke
@@ -162,7 +162,7 @@ Thank you for your donations:
 
 ## 1.20.0 (2026-11-03)
 
-1.20.0 can keep recent mail on the device, so mail can be read, sorted and written without a connection and goes out once the server answers again. Mail comes in from mbox, Outlook PST, EML and ZIP files and goes out as mbox or ZIP, and proofreading plugins underline mistakes while you write. With the AI Assistant plugin 2.2 the assistant reads attachments and whole conversations, takes actions such as answering invitations or filing many messages at once, works with Files and sits next to every app. Admins can turn on phishing reports, classification labels, device policies such as no downloads or printing, announcements, company calendars and out-of-office templates. Bulwark can run as several instances that share one Valkey or Redis store, with Kubernetes manifests, Prometheus metrics, OpenTelemetry traces and error reporting. Every page shows its shape in your theme while the app loads instead of a blank screen, and attachments show as a bar of tiles under the message header. Vietnamese is a new language.
+1.20.0 can keep recent mail on the device, so mail can be read, sorted and written without a connection and goes out once the server answers again. Mail comes in from mbox, Outlook PST, EML and ZIP files and goes out as mbox or ZIP, and proofreading plugins underline mistakes while you write. With the AI Assistant plugin 2.2 the assistant reads attachments and whole conversations, takes actions such as answering invitations or filing many messages at once, works with Files and sits next to every app. Admins can turn on phishing reports, classification labels, device policies such as no downloads or printing, announcements, company calendars and out-of-office templates. Loomix can run as several instances that share one Valkey or Redis store, with Kubernetes manifests, Prometheus metrics, OpenTelemetry traces and error reporting. Every page shows its shape in your theme while the app loads instead of a blank screen, and attachments show as a bar of tiles under the message header. Vietnamese is a new language.
 
 Thank you for your donations:
 
@@ -219,11 +219,11 @@ Thank you for your donations:
 - **Security**: Classification labels. Admins define labels, with presets for a generic scheme and German OFFEN / VS-NfD, a default, and whether a label is required. The composer has a label picker, and sent mail carries SIO-Label, Sensitivity and an optional admin header, plus a subject prefix that isn't doubled. Quick replies, plugin forwards, Pro tabs and Undo send keep the label, and received mail shows known labels (Organisation > Classification)
 - **Organisation**: Device policies: no attachment or file downloads, no mail or folder export, no printing, no install prompt, push notifications without sender and subject, and a watermark with the user's address and the date. The push text and the office editor are enforced on the server (Organisation > Devices)
 - **Organisation**: An announcement across the top of Mail, Calendar, Contacts, Files and Settings, per language, with a severity, a start and end time, and whether users can close it. Trash and Junk can say how long the server keeps mail there (Organisation > Notices)
-- **Organisation**: An out-of-office template library. Users pick a reply and Bulwark fills in their name, the dates and a deputy (Organisation > Templates)
+- **Organisation**: An out-of-office template library. Users pick a reply and Loomix fills in their name, the dates and a deputy (Organisation > Templates)
 - **Organisation**: Admins can turn proofreading off, preset it or require it, for everyone, a domain or a group and per plugin, and preset or lock the writing language (Organisation > Proofreading, #1397)
-- **Calendar**: "Suggest times" in the event editor finds the next slots that are free for every attendee whose calendar Bulwark can check, and lists who it couldn't check and why (#1164)
+- **Calendar**: "Suggest times" in the event editor finds the next slots that are free for every attendee whose calendar Loomix can check, and lists who it couldn't check and why (#1164)
 - **Calendar**: An invitation in a calendar shared with you can be answered as its owner; the organiser's reply names you with SENT-BY. Group mailbox calendars answer as the group (#634)
-- **Calendar**: An out-of-office reply with dates puts a busy event in your calendar ("Block my calendar", on by default); admins can lock it. The start and end fields use the time zone set in Bulwark, not the browser's
+- **Calendar**: An out-of-office reply with dates puts a busy event in your calendar ("Block my calendar", on by default); admins can lock it. The start and end fields use the time zone set in Loomix, not the browser's
 - **Calendar**: Company calendars the admin lists show read-only under "Organisation" and can be hidden; their addresses stay on the server
 - **Calendar**: Share your free/busy with a group in one click. Admins can share every user's free/busy with a group at sign-in
 - **Calendar**: Timed events in the month view can show as a bar, coloured text or a dot and text (#1449, thanks @chodid)
@@ -235,11 +235,11 @@ Thank you for your donations:
 - **Mail**: On the phone in Mountain View, Reply and Reply all sit at the top of the open message (#1475, thanks @mmomjian)
 - **Contacts**: The directory is hidden when the server refuses it, and users or admins can turn it off (#1457, thanks @SystemFuchs)
 - **Loading**: From the first paint every page shows its own shape in the saved theme, density and layout: Mail's folders, list and reader, the calendar grid, Contacts, Files, Settings, plugin pages, the admin, sign-in and setup pages and the Pro workspace with its tabs. Linked messages, mailto links and connector links draw the page they open
-- **Several instances**: Bulwark runs as several replicas behind any load balancer when `REDIS_URL` points them at one Redis-protocol store (Valkey, Redis, KeyDB, Dragonfly). Every replica sees the same admin config, policy, plugins, themes, branding, synced settings, plugin credentials, sign-in limits, pairing and hand-off codes, admin sessions and audit log, and an admin change reaches every replica within seconds. No replica needs a shared volume, and config can still come from read-only mounted files. Without `REDIS_URL` nothing changes (#1066, thanks @supu2)
+- **Several instances**: Loomix runs as several replicas behind any load balancer when `REDIS_URL` points them at one Redis-protocol store (Valkey, Redis, KeyDB, Dragonfly). Every replica sees the same admin config, policy, plugins, themes, branding, synced settings, plugin credentials, sign-in limits, pairing and hand-off codes, admin sessions and audit log, and an admin change reaches every replica within seconds. No replica needs a shared volume, and config can still come from read-only mounted files. Without `REDIS_URL` nothing changes (#1066, thanks @supu2)
 - **Several instances**: An existing install moves onto the store by starting one instance with `REDIS_URL` on its old volume; `SHARED_STORE_EXPORT=1` writes everything back into the data folders. `/api/ready` answers 503 while an instance is starting or can't reach the store, and the admin Overview shows which storage is in use and how many instances checked in during the last minute (#1066)
 - **Several instances**: One instance runs the telemetry heartbeat and the update check, and another takes over within about 40 seconds if it goes away. QR pairing and the browser sign-in hand-off work whichever instance the phone and desktop reach (#1066)
 - **Kubernetes**: Reference manifests in `deploy/kubernetes` run three replicas with one Valkey store, with an overlay for config kept in git. CI deploys them to a kind cluster and checks shared sessions, config spread and zero failed requests during a rolling restart (#1066)
-- **Monitoring**: Browser and server errors go to your own error tracker (Bugsink, GlitchTip, Sentry), set under System > Monitoring or with `ERROR_REPORTING_DSN`. Message text, addresses, URLs, file names and tokens are removed before anything is sent. Bulwark Lite reads it from `errorReporting` in policy.json
+- **Monitoring**: Browser and server errors go to your own error tracker (Bugsink, GlitchTip, Sentry), set under System > Monitoring or with `ERROR_REPORTING_DSN`. Message text, addresses, URLs, file names and tokens are removed before anything is sent. Loomix Lite reads it from `errorReporting` in policy.json
 - **Monitoring**: Prometheus metrics at `/api/metrics`, on with `METRICS_TOKEN`: requests, sign-ins, calls to Stalwart and other services, browser errors, memory and event-loop lag. `/api/health/live` and `/api/health/ready` serve liveness and readiness probes, and the Docker image has a health check
 - **Monitoring**: OpenTelemetry traces when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, with the trace context passed on to Stalwart
 - **Usage stats**: A separate switch, off by default, also sends anonymous error counts, daily or within about a minute (`BULWARK_TELEMETRY_ERRORS`)
@@ -251,16 +251,16 @@ Thank you for your donations:
 - **Plugins**: Tasks carry alerts (#1481) and links and related mail (#1482), `api.ui.openEmail` opens a message in the reader (#1466), star and after-send hooks name the mail's account (#1467), and input in a plugin frame counts as activity for the idle sign-out (#1456) (thanks @HOLOEYE-JZ)
 - **Plugins**: The calendar API includes the contacts' birthday calendar with `contacts:read` (#1479, thanks @tobiasge)
 - **Plugins**: `composer.getSnapshot` and `composer.readAttachment` read the draft with `compose:read`, and `replaceBody` takes an `expectedRevision` (#1443). Composer toolbar actions show in quick reply (#1445), and plugins can show progress toasts (#1442) (thanks @yontani)
-- **Plugins**: Text checkers: `api.composer.registerChecker` with the new `compose:check` permission lets a plugin check what users write and have Bulwark draw its suggestions; a checker that only checks when asked needs `compose:read` (#1397)
-- **Plugins**: Quick replies and plugin forwards go through send checks like the composer. Send-check plugins get what the user wrote without the quote, the recipients outside the organisation, each attachment's real file type and, with permission, its text. While a send check the admin forces on isn't running, Bulwark doesn't send and says why
-- **Plugins**: Every link Bulwark opens, plain-text mail and middle clicks included, goes through link-check plugins with the address the browser really opens. With no third-party traffic, a plugin that only reaches servers an admin typed keeps running
+- **Plugins**: Text checkers: `api.composer.registerChecker` with the new `compose:check` permission lets a plugin check what users write and have Loomix draw its suggestions; a checker that only checks when asked needs `compose:read` (#1397)
+- **Plugins**: Quick replies and plugin forwards go through send checks like the composer. Send-check plugins get what the user wrote without the quote, the recipients outside the organisation, each attachment's real file type and, with permission, its text. While a send check the admin forces on isn't running, Loomix doesn't send and says why
+- **Plugins**: Every link Loomix opens, plain-text mail and middle clicks included, goes through link-check plugins with the address the browser really opens. With no third-party traffic, a plugin that only reaches servers an admin typed keeps running
 - **Plugins**: Plugin frames can run work they can stop in a worker
 - **Plugins**: A side panel next to Calendar, Contacts, Files and Settings (`app-side-panel`, permission `ui:side-panel`) that knows the open event, contact, selected files or settings page. Its button sits at the end of each view's toolbar, where Mail has it, and on phones a plugin dialog fills the space above the keyboard
 - **Plugins**: `email.getAttachmentText` reads the text of PDF, Word, Excel, PowerPoint, OpenDocument, text, CSV, HTML, calendar and contact attachments, and `email.getAttachmentImage` hands over a picture made smaller in the app, without tracking pixels. `email.getThread` reads a conversation, the reader panel gets the messages ticked in the list, inline images carry their Content-ID and alt text, and `email.search` takes a `position`
 - **Plugins**: `calendar.respond` answers an invitation the way the reader's banner does (new permission `calendar:respond`), `filters.list` and `filters.create` add rules the way Settings > Filters does, `email.batch` archives, moves, marks or tags up to 200 messages at once, and `app.setSettings` changes appearance, reading, composing, notification, calendar and accessibility settings through the settings pages (new permission `settings:change`). Settings the organisation set stay as they are, and each change comes with an undo
 - **Plugins**: `api.files` finds, reads and attaches files, saves attachments to Files, creates text and Markdown files and folders, and moves and renames, in the user's own drive only. Replacing a file keeps the old version in the Files trash. There is no call to delete or share a file
-- **Plugins**: `optionalPermissions` in a plugin's manifest lists permissions an older Bulwark doesn't know; Bulwark grants the ones it knows and installs the plugin without the rest. `api.host.features` says which of the new calls are there
-- **Plugins**: Rules for every plugin: none can switch the out-of-office on while it forwards mail, or while Bulwark can't tell; plugin filters can't forward, redirect, reject or discard mail; a plugin's batch, archive or filter never files mail into a folder shared with others, and Bulwark refuses when it can't tell; plugin file writes stay in the user's own drive
+- **Plugins**: `optionalPermissions` in a plugin's manifest lists permissions an older Loomix doesn't know; Loomix grants the ones it knows and installs the plugin without the rest. `api.host.features` says which of the new calls are there
+- **Plugins**: Rules for every plugin: none can switch the out-of-office on while it forwards mail, or while Loomix can't tell; plugin filters can't forward, redirect, reject or discard mail; a plugin's batch, archive or filter never files mail into a folder shared with others, and Loomix refuses when it can't tell; plugin file writes stay in the user's own drive
 - **i18n**: Vietnamese (#1448, thanks @vietnamvps)
 
 ### Fixes
@@ -351,10 +351,10 @@ Thank you for your donations:
 ### Features
 
 - **Mail**: Booking, shipping and order mail that carries schema.org markup gets a card above the message: route and local times for flights, trains and buses, check-in and check-out for hotels, rental cars, events and restaurants, tracking for parcels and status for orders, with copy buttons and links that show where they lead. Flights, hotels and the other bookings can be added to a calendar you pick; a later mail about the same booking offers to update the event and a cancellation to remove it. Apple Wallet boarding passes and event tickets attached to a mail give the same cards. Cards appear only when the receiving server verified the sender's domain, never for forwarded mail, and everything is read in the browser without contacting airlines or carriers. Admins can turn them off under Policy
-- **Mail**: Mail that passes DMARC for its From domain shows the sender's BIMI logo as the sender icon, with a check mark beside the name when a Verified Mark or Common Mark Certificate backs it. Bulwark checks the record and the certificate itself, since Stalwart doesn't do BIMI. A contact photo still comes first, and logos follow the sender icons setting and stay off when third-party traffic is turned off. Admins can limit logos to certificate-backed ones with "Require a mark certificate" or `BIMI_REQUIRE_CERTIFICATE`
+- **Mail**: Mail that passes DMARC for its From domain shows the sender's BIMI logo as the sender icon, with a check mark beside the name when a Verified Mark or Common Mark Certificate backs it. Loomix checks the record and the certificate itself, since Stalwart doesn't do BIMI. A contact photo still comes first, and logos follow the sender icons setting and stay off when third-party traffic is turned off. Admins can limit logos to certificate-backed ones with "Require a mark certificate" or `BIMI_REQUIRE_CERTIFICATE`
 - **Mail**: Expanded message headers in Mountain View have Reply all next to Reply (#1404, thanks @pcatapan)
 - **Accessibility**: Each preset on the Accessibility page shows a small picture of what it changes
-- **Admin**: On Stalwart 1.0, Auto-configure OAuth also registers a client for Bulwark Mobile, so the app signs in as a first-party client and gets the account security settings (#1459, thanks @Chaoskjell44)
+- **Admin**: On Stalwart 1.0, Auto-configure OAuth also registers a client for Loomix Mobile, so the app signs in as a first-party client and gets the account security settings (#1459, thanks @Chaoskjell44)
 - **Admin**: The marketplace shows the changelog of every version an update brings, not only the newest, and a rollback lists what it undoes
 - **Plugins**: `api.email.forward` forwards a message with its attachments, from team mailboxes too, under the new `email:forward` permission. The user allows each address once, and can see and remove allowed addresses in Settings > Add-ons. A forward goes through the same checks and undo delay as a normal send
 - **Plugins**: `api.ui.print` prints a page the plugin made, such as a readable invoice, without scripts or network access. The UI kit has a `Table` for line items and totals, and admin settings of type string can ask for a multi-line box with `multiline: true`
@@ -449,13 +449,13 @@ Thank you for your donations:
 - **Accessibility**: Plain language gives simpler English and German wording for sign-in, errors and Settings. Technical terms in Settings and the admin area get short explanations that work with keyboard, touch and screen readers
 - **Accessibility**: Optional confirmations before deleting, archiving and sending, a prompt for alt text when an image goes into a message, an accessible example message in the template picker, and a default font and size for new messages
 - **Admin**: Links to an accessibility statement, a barrier report, help, Easy Read and sign language show on the login page, in the settings sidebar and in the account menu when set with `ACCESSIBILITY_STATEMENT_URL`, `ACCESSIBILITY_FEEDBACK_URL`, `HELP_URL`, `EASY_READ_URL` and `SIGN_LANGUAGE_URL`
-- **Admin**: `OAUTH_REVOKE_ON_SIGN_OUT=false` keeps the refresh token valid on sign-out, so Stalwart 1.0 keeps Bulwark in the user's connected applications and doesn't ask for consent again (#1388, thanks @Beckid)
+- **Admin**: `OAUTH_REVOKE_ON_SIGN_OUT=false` keeps the refresh token valid on sign-out, so Stalwart 1.0 keeps Loomix in the user's connected applications and doesn't ask for consent again (#1388, thanks @Beckid)
 - **Login**: `LOGIN_USERNAME_PLACEHOLDER` sets the placeholder of the login email field (#1423, thanks @DerFolder)
 - **Login**: The SSO-only login page offers "Remember me", and the box decides for every single sign-on path (#1437, thanks @marketstead-dave)
 - **Setup**: The setup wizard shows in the browser's language, in all 29 languages
 - **Mail**: Ctrl+Z or z undoes the last mail actions, newest first, marking read or unread, stars and tags included. Delete to Trash, archive, move, spam report and remove from folder offer Undo in their toast, also after a move to another account and in lists that mix accounts
 - **Mail**: Scheduled messages can be cancelled back into Drafts and rescheduled in the Schedule send dialog. "This morning" and "This afternoon" are offered as schedule times while they are still ahead (#1390, thanks @PoltoS)
-- **Mail**: Before sending, Bulwark warns about unfilled placeholders such as [Your name], in every app language, and about unfinished text. The warning can be turned off
+- **Mail**: Before sending, Loomix warns about unfilled placeholders such as [Your name], in every app language, and about unfinished text. The warning can be turned off
 - **Mail**: Attachments can be saved to Files from the message, from shared and group mailboxes too
 - **Mail**: The list header has a Sort menu and the folder's actions, and the filter panel is simpler, with on/off toggles, date and size ranges and every field in view
 - **Mail**: A click anywhere beside a row's avatar or checkbox ticks it (#1381, thanks @mmomjian)
@@ -550,8 +550,8 @@ Thank you for your donations:
 
 ### Upgrading to Stalwart 1.0
 
-- After moving Stalwart to 1.0, run **Auto-configure OAuth** once on the admin **Authentication** page. It registers Bulwark with Stalwart as a first-party client. Without it, mail, contacts, calendars and files work, but the account security settings (password, two-factor, app passwords) are not available, and single sign-on through Stalwart needs the registered client
-- Stalwart 1.0 can't be installed over 0.16: its migration tool (`stalwart-migrate`) copies the data into a new store. Ids and sync state are kept, so Bulwark carries on without reloading anything, but OAuth tokens are not migrated: everyone who signed in with single sign-on, or with a password and a two-factor code, signs in again. Keep the server's public URL the same
+- After moving Stalwart to 1.0, run **Auto-configure OAuth** once on the admin **Authentication** page. It registers Loomix with Stalwart as a first-party client. Without it, mail, contacts, calendars and files work, but the account security settings (password, two-factor, app passwords) are not available, and single sign-on through Stalwart needs the registered client
+- Stalwart 1.0 can't be installed over 0.16: its migration tool (`stalwart-migrate`) copies the data into a new store. Ids and sync state are kept, so Loomix carries on without reloading anything, but OAuth tokens are not migrated: everyone who signed in with single sign-on, or with a password and a two-factor code, signs in again. Keep the server's public URL the same
 - Admin sessions are signed out once by this update, and they now also end when you sign out or change the admin password
 
 ### Security
@@ -572,16 +572,16 @@ Thank you for your donations:
 
 ### Features
 
-- **Stalwart 1.0**: Calendars, tasks, contact photos, files, free/busy, sending past Stalwart 1.0's submission limit, phrase search, and its rules for keywords, file names and time zones work on 1.0 as on 0.16. Bulwark Lite installs as a Stalwart 1.0 Application
+- **Stalwart 1.0**: Calendars, tasks, contact photos, files, free/busy, sending past Stalwart 1.0's submission limit, phrase search, and its rules for keywords, file names and time zones work on 1.0 as on 0.16. Loomix Lite installs as a Stalwart 1.0 Application
 - **Plugins**: Plugins can show their own results in search and open the message a result names (#1336, #1338, thanks @HOLOEYE-JZ), and show a count on their buttons (#1345, thanks @HOLOEYE-JZ). `email.get`, `email.getRaw` and `email.getAttachment` take an optional account id, and summaries carry it
 - **Accounts**: A new device offers to restore the saved account list (#1363, thanks @lucamzanon)
 - **Mail**: Quick reply below messages can be turned off in Settings (#1370, thanks @maxhaomh)
 - **Mountain View**: The inbox splits into Unread and Everything else, and attachment and code chips look like Gmail's
-- **Server**: iCal subscriptions and other server-side fetches go through the outbound proxy when `NODE_USE_ENV_PROXY=1` is set. Bulwark still checks the address itself and asks the proxy for exactly that address (#1367, thanks @Jan0oo)
+- **Server**: iCal subscriptions and other server-side fetches go through the outbound proxy when `NODE_USE_ENV_PROXY=1` is set. Loomix still checks the address itself and asks the proxy for exactly that address (#1367, thanks @Jan0oo)
 
 ### Fixes
 
-- **Sign-in**: Password and two-factor sign-in, Bulwark Lite and phone pairing work on Stalwart 1.0, single sign-on asks for mail, contacts, calendar and file access there, and a background account signed in with OAuth renews its own token instead of the active account's (#989, thanks @Almost-Senseless-Coder)
+- **Sign-in**: Password and two-factor sign-in, Loomix Lite and phone pairing work on Stalwart 1.0, single sign-on asks for mail, contacts, calendar and file access there, and a background account signed in with OAuth renews its own token instead of the active account's (#989, thanks @Almost-Senseless-Coder)
 - **Sign-in**: Signing out of one login switches to the remaining one when it was signed in before the page loaded, instead of signing out of all, and an OAuth account that can't be restored has its refresh token cleared
 - **Mail**: Bulk archive in the unified inbox creates each account's Archive, and a group account's year and month archive folders are reused
 - **Mail**: The unified inbox shows new mail of a group or shared account and of another signed-in login without a click (#1350, thanks @ClapsAndJiggles), and message links open the message of the account they name (#1351, thanks @ClapsAndJiggles)
@@ -601,7 +601,7 @@ Thank you for your donations:
 
 ## 1.17.2 (2026-10-24)
 
-1.17.2 fixes a cross-site scripting hole in re-opened drafts and keeps Safari from dropping push subscriptions after pushes that had nothing new to show. Drafts written as a group identity now stay in the group's Drafts, and bulk delete, trash and move with several accounts on different servers act on the right server. Plugins can update and remove their own tags, format dates in the user's regional settings and put buttons beside a sidebar section's title. User-facing texts use the configured app name instead of "Bulwark".
+1.17.2 fixes a cross-site scripting hole in re-opened drafts and keeps Safari from dropping push subscriptions after pushes that had nothing new to show. Drafts written as a group identity now stay in the group's Drafts, and bulk delete, trash and move with several accounts on different servers act on the right server. Plugins can update and remove their own tags, format dates in the user's regional settings and put buttons beside a sidebar section's title. User-facing texts use the configured app name instead of "Loomix".
 
 Thank you for your donations:
 
@@ -648,7 +648,7 @@ Thank you for your donations:
 - **Plugins**: Plugin frames get the user's date locale, 12/24-hour setting, time zone and first day of the week, and can format with `api.i18n.formatDate` and `api.i18n.formatTime`, without asking for `settings:read` (#1335, thanks @tobiasge)
 - **Plugins**: A new `sidebar-section-actions` slot puts a plugin's buttons beside its sidebar section's title instead of in a row below it (#1317, thanks @LeonardNJU)
 - **Admin**: A policy switch lists the Tags above the shared mailboxes in the sidebar, so they stay in sight when many shared mailboxes are expanded. It is off by default (#1334, thanks @HOLOEYE-JZ)
-- **Branding**: Default apps in Settings, the "Open Bulwark" notification, the rate-limit banner, the plugin connect dialog and the connector page use the configured `APP_NAME`, and the settings search finds them by it (#1314, thanks @ghozty)
+- **Branding**: Default apps in Settings, the "Open Loomix" notification, the rate-limit banner, the plugin connect dialog and the connector page use the configured `APP_NAME`, and the settings search finds them by it (#1314, thanks @ghozty)
 
 ### Fixes
 
@@ -665,7 +665,7 @@ Thank you for your donations:
 
 ### Security
 
-- **Dependencies**: Next.js 16.4.2 and DOMPurify 3.4.17 fix six published advisories, three of them critical. None of them reached Bulwark: the webmail has no `use cache` functions and no Server Actions, its image optimizer refuses SVG and runs on sharp 0.35.5, which already carries the fix, and the mail sanitizer uses none of the DOMPurify modes the bypasses need (SAFE_FOR_TEMPLATES, IN_PLACE, XHTML parsing). Updating is still recommended
+- **Dependencies**: Next.js 16.4.2 and DOMPurify 3.4.17 fix six published advisories, three of them critical. None of them reached Loomix: the webmail has no `use cache` functions and no Server Actions, its image optimizer refuses SVG and runs on sharp 0.35.5, which already carries the fix, and the mail sanitizer uses none of the DOMPurify modes the bypasses need (SAFE_FOR_TEMPLATES, IN_PLACE, XHTML parsing). Updating is still recommended
 
 1.17.1 stops the background-notifications prompt from asking you to turn push on while the app is still restoring a subscription the browser dropped, and an open tab now repairs a dropped subscription on its own. The message list stays within the screen on phones, and a browser that was already signed in hands a mobile sign-in to the app again.
 
@@ -1421,7 +1421,7 @@ Thank you for your donations:
 
 ### Fixes
 
-- **Docker**: The server starts again. 1.11.1 excluded `data/` from the standalone build with a pattern that also dropped Next.js's own metadata modules, so the Docker image and the `bulwark-standalone-*` tarballs failed on startup. `npm start` and Bulwark Lite were not affected
+- **Docker**: The server starts again. 1.11.1 excluded `data/` from the standalone build with a pattern that also dropped Next.js's own metadata modules, so the Docker image and the `bulwark-standalone-*` tarballs failed on startup. `npm start` and Loomix Lite were not affected
 
 ## 1.11.1 (2026-09-26)
 
@@ -1531,7 +1531,7 @@ Thank you for your donations:
 
 ## 1.11.0 (2026-09-23)
 
-1.11.0 introduces **Bulwark Lite**, a static build of the webmail that runs without a Node server, and fixes many places where Bulwark and Stalwart disagreed about mail, filters, calendars, contacts and files. It contains everything from the three 1.11.0 betas. The `latest` Docker tag moves to this release.
+1.11.0 introduces **Loomix Lite**, a static build of the webmail that runs without a Node server, and fixes many places where Loomix and Stalwart disagreed about mail, filters, calendars, contacts and files. It contains everything from the three 1.11.0 betas. The `latest` Docker tag moves to this release.
 
 Thank you for your donations:
 
@@ -1564,7 +1564,7 @@ Thank you for your donations:
 
 ### Features
 
-- **Lite**: Bulwark Lite, a static build that talks to the JMAP server straight from the browser. `npm run build:lite` builds it, and every release ships `bulwark-lite-<version>.zip` for any static web host
+- **Lite**: Loomix Lite, a static build that talks to the JMAP server straight from the browser. `npm run build:lite` builds it, and every release ships `bulwark-lite-<version>.zip` for any static web host
 - **Lite**: `bulwark-lite-stalwart.zip`, a Stalwart Application bundle that picks up its mount prefix at runtime, with OpenID Connect login
 - **Lite**: Container image `ghcr.io/bulwarkmail/webmail-lite` (#1081)
 - **Themes**: "Flat fields" theme
@@ -1644,8 +1644,8 @@ General test release of everything planned for 1.11.0 so far. Not recommended fo
 
 - Attendees can answer a single occurrence of a recurring event (#1086).
 - Optional inbox-only push notifications (#983, thanks [@guisea](https://github.com/guisea)).
-- OpenID Connect login in the Bulwark Lite bundle for Stalwart.
-- Bulwark Lite as a container image (#1081).
+- OpenID Connect login in the Loomix Lite bundle for Stalwart.
+- Loomix Lite as a container image (#1081).
 
 ### Changed
 
@@ -1683,7 +1683,7 @@ General test release of everything planned for 1.11.0 so far. Not recommended fo
 
 ## 1.11.0-beta.2 (2026-09-21) - Pre-release
 
-Second test release for **Bulwark Lite**. Not recommended for production; the `latest` Docker tag stays on 1.10.0.
+Second test release for **Loomix Lite**. Not recommended for production; the `latest` Docker tag stays on 1.10.0.
 
 ### Added
 
@@ -1697,12 +1697,12 @@ Second test release for **Bulwark Lite**. Not recommended for production; the `l
 
 ## 1.11.0-beta.1 (2026-09-19) - Pre-release
 
-Test release for **Bulwark Lite**, the static build of the webmail. Not recommended for production; the `latest` Docker tag stays on 1.10.0.
+Test release for **Loomix Lite**, the static build of the webmail. Not recommended for production; the `latest` Docker tag stays on 1.10.0.
 
 ### Added
 
-- **Bulwark Lite static export**: `npm run build:lite` produces a server-less build that talks to the JMAP server directly from the browser. The release ships `bulwark-lite-<version>.zip` for any static web host.
-- **Bulwark Lite for Stalwart Applications**: `bulwark-lite-stalwart.zip` is a Stalwart `Application` bundle that picks up its mount prefix at runtime.
+- **Loomix Lite static export**: `npm run build:lite` produces a server-less build that talks to the JMAP server directly from the browser. The release ships `bulwark-lite-<version>.zip` for any static web host.
+- **Loomix Lite for Stalwart Applications**: `bulwark-lite-stalwart.zip` is a Stalwart `Application` bundle that picks up its mount prefix at runtime.
 - **"Flat fields" theme**.
 
 ### Changed
@@ -1711,7 +1711,7 @@ Test release for **Bulwark Lite**, the static build of the webmail. Not recommen
 
 ### Fixed
 
-- Hardened Bulwark Lite login, deep-link replay and settings gating.
+- Hardened Loomix Lite login, deep-link replay and settings gating.
 
 ## 1.10.0 (2026-09-17)
 
@@ -2579,7 +2579,7 @@ Superseded by 1.8.1. The release build never produced a Docker image — use 1.8
 - **Plugins**: Sync plugin slot iframe height with reported content height
 - **Plugins**: Use plugin slot offer snapshots for `useSyncExternalStore`
 - **Plugins**: Trust the directory version on marketplace install and update
-- **Filters**: Prevent duplication of Bulwark rules with literal braces in values
+- **Filters**: Prevent duplication of Loomix rules with literal braces in values
 - **Setup**: Defer setup wizard HTTP detection to avoid hydration mismatch
 - **Routing**: Anchor unmatched URLs into `main` so 404 renders
 - **Routing**: Respect server-resolved locale on first visit (#309)
@@ -2872,7 +2872,7 @@ First-launch web setup wizard. New installs no longer need to hand-edit `.env.lo
 
 ## 1.5.3 (2026-04-28)
 
-> **New:** Help shape Bulwark Webmail. Each instance now sends a lightweight daily heartbeat (version, platform, bucketed account counts, feature toggles - never message data or PII) so we can see which platforms and features actually get used and prioritize fixes where they matter most. You're in control: opt out any time from **Admin → Telemetry** or by setting `BULWARK_TELEMETRY=off`. Full schema in the [privacy notice](https://bulwarkmail.org/docs/legal/privacy/telemetry).
+> **New:** Help shape Loomix Mail. Each instance now sends a lightweight daily heartbeat (version, platform, bucketed account counts, feature toggles - never message data or PII) so we can see which platforms and features actually get used and prioritize fixes where they matter most. You're in control: opt out any time from **Admin → Telemetry** or by setting `BULWARK_TELEMETRY=off`. Full schema in the [privacy notice](https://bulwarkmail.org/docs/legal/privacy/telemetry).
 
 ### Features
 
@@ -2930,7 +2930,7 @@ First-launch web setup wizard. New installs no longer need to hand-edit `.env.lo
 
 ### Breaking Changes
 
-- **Self-service portal now needs Stalwart 0.16+**: Stalwart dropped its self-service HTTP API in 0.16.0 and replaced it with JMAP. Bulwark Webmail only talks to the new JMAP endpoint, so the self-service portal (account settings, app passwords, API keys) requires Stalwart 0.16 or newer. `STALWART_API_URL` is deprecated, these actions go through the normal JMAP session.
+- **Self-service portal now needs Stalwart 0.16+**: Stalwart dropped its self-service HTTP API in 0.16.0 and replaced it with JMAP. Loomix Mail only talks to the new JMAP endpoint, so the self-service portal (account settings, app passwords, API keys) requires Stalwart 0.16 or newer. `STALWART_API_URL` is deprecated, these actions go through the normal JMAP session.
 
 ### Features
 
@@ -3435,7 +3435,7 @@ Thank you for your donations:
 - **i18n**: Added Dutch and Portuguese translations (now 8 languages)
 - **Docker**: Publish only to GHCR, remove Docker Hub
 - **DevOps**: Interactive setup script with dry-run option and JMAP server URL validation
-- **Branding**: New Bulwark Webmail identity with logo assets and light/dark mode support
+- **Branding**: New Loomix Mail identity with logo assets and light/dark mode support
 
 ### Fixes
 

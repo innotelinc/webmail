@@ -316,7 +316,7 @@ describe('the Safari hint', () => {
   const WIN_EDGE = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 Edg/126.0';
   const ANDROID_WEBVIEW = 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/126.0 Mobile Safari/537.36';
   const FIREFOX = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14.5; rv:128.0) Gecko/20100101 Firefox/128.0';
-  const ELECTRON = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Bulwark/1.0 Chrome/126.0 Electron/31.0 Safari/537.36';
+  const ELECTRON = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Loomix/1.0 Chrome/126.0 Electron/31.0 Safari/537.36';
 
   it('shows in Safari and on iOS browsers that are not installed', () => {
     for (const ua of [IPHONE, IPAD_CHROME, MAC_SAFARI]) expect(safariMayDelete(ua, false)).toBe(true);

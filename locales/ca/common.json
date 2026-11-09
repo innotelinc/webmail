@@ -70,8 +70,8 @@
     "demo_tagline": "Proveu un client de correu complet. No cal cap compte.",
     "demo_no_signup": "No cal registrar-se - exploreu lliurement amb dades d'exemple",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Aquest nom és massa llarg.",
     "loading": "Carregant…",
     "unsupported": "Aquest servidor de correu no pot desar etiquetes compartides, així que aquesta bústia mostra les vostres pròpies etiquetes.",
-    "unavailable": "No s'han pogut carregar les etiquetes compartides d'aquesta bústia, així que mostra les vostres pròpies etiquetes. Bulwark ho tornarà a provar més tard.",
+    "unavailable": "No s'han pogut carregar les etiquetes compartides d'aquesta bústia, així que mostra les vostres pròpies etiquetes. Loomix ho tornarà a provar més tard.",
     "no_rights": "Podeu fer servir aquestes etiquetes, però no les podeu canviar en aquesta bústia.",
     "too_many": "Hi ha massa etiquetes compartides. Suprimiu-ne algunes abans d'afegir-ne més.",
-    "save_failed": "No s'han pogut desar les etiquetes compartides. Bulwark ho tornarà a provar quan el servidor respongui.",
-    "save_pending": "Encara no s'ha desat. Bulwark ho tornarà a provar quan el servidor respongui."
+    "save_failed": "No s'han pogut desar les etiquetes compartides. Loomix ho tornarà a provar quan el servidor respongui.",
+    "save_pending": "Encara no s'ha desat. Loomix ho tornarà a provar quan el servidor respongui."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1112,7 +1112,7 @@
     "show_less": "Mostra'n menys",
     "send_failed": "No s'ha pogut enviar el correu",
     "send_timeout": "El servidor ha deixat de respondre. Comproveu la carpeta Enviats abans de tornar a enviar: el missatge pot haver sortit.",
-    "submission_quota": "El servidor té massa registres de missatges enviats per a aquest compte. Bulwark ha eliminat els que ha pogut; si torna a passar, demaneu a l'administrador que augmenti el límit d'enviaments de correu.",
+    "submission_quota": "El servidor té massa registres de missatges enviats per a aquest compte. Loomix ha eliminat els que ha pogut; si torna a passar, demaneu a l'administrador que augmenti el límit d'enviaments de correu.",
     "submission_limit": "El servidor s'ha negat a enviar el missatge perquè s'ha arribat a un límit: {reason}",
     "recipients_refused": "No s'ha enviat: el servidor ha rebutjat {recipients}.",
     "recipients_partly_refused": "El servidor ha rebutjat {recipients}. Els altres destinataris reben el missatge.",
@@ -1856,15 +1856,15 @@
       },
       "push": {
         "title": "Notificacions quan {appName} està tancat",
-        "description": "Rebeu notificacions del sistema per al correu nou quan aquest lloc estigui tancat. S'entreguen mitjançant el repetidor push del Bulwark; el repetidor mai no veu el contingut del correu.",
+        "description": "Rebeu notificacions del sistema per al correu nou quan aquest lloc estigui tancat. S'entreguen mitjançant el repetidor push del Loomix; el repetidor mai no veu el contingut del correu.",
         "relay_label": "Repetidor push",
-        "relay_desc": "Per defecte utilitza el repetidor allotjat del Bulwark. Canvieu-ho només si allotgeu el vostre propi servidor.",
+        "relay_desc": "Per defecte utilitza el repetidor allotjat del Loomix. Canvieu-ho només si allotgeu el vostre propi servidor.",
         "relay_locked": "Establert per l'administrador",
         "relay_locked_desc": "L'URL del repetidor push l'ha establert l'administrador i no es pot canviar.",
         "status_active": "Actiu en aquest dispositiu",
         "status_inactive": "No activat en aquest dispositiu",
         "status_unsupported": "Aquest navegador no admet Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "Les notificacions en segon pla no estan disponibles a la demo.",
         "status_busy": "Treballant…",
         "enable": "Activa en aquest dispositiu",
@@ -2488,10 +2488,10 @@
       },
       "link_device": {
         "title": "Enllaça l'aplicació mòbil",
-        "description": "Inicieu la sessió a l'aplicació Bulwark Mail del telèfon sense escriure-hi la contrasenya. El telèfon obté el seu propi inici de sessió, de manera que tancar la sessió aquí no la tanca al telèfon.",
+        "description": "Inicieu la sessió a l'aplicació Loomix Mail del telèfon sense escriure-hi la contrasenya. El telèfon obté el seu propi inici de sessió, de manera que tancar la sessió aquí no la tanca al telèfon.",
         "generate": "Mostra el codi QR",
         "regenerate": "Mostra un codi nou",
-        "instructions": "Obriu l'aplicació Bulwark Mail i toqueu «Scan a sign-in code» a la pantalla d'inici de sessió (o «Add account» → «Scan a sign-in code» si ja heu iniciat la sessió) i, després, apunteu la càmera aquí.",
+        "instructions": "Obriu l'aplicació Loomix Mail i toqueu «Scan a sign-in code» a la pantalla d'inici de sessió (o «Add account» → «Scan a sign-in code» si ja heu iniciat la sessió) i, després, apunteu la càmera aquí.",
         "expires_in": "Aquest codi caduca d'aquí a {seconds} segons. Només es pot utilitzar una vegada.",
         "expired": "Aquest codi ha caducat.",
         "error": "No s'ha pogut crear el codi d'aparellament. Torneu-ho a provar.",
@@ -2757,7 +2757,7 @@
         "button": "Importa"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Codi font"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Cerca a dalt de tot, els missatges s'obren a tota l'amplada"
   },
   "setup": {
-    "title": "Configuració de Bulwark Webmail",
+    "title": "Configuració de Loomix Mail",
     "subtitle": "Configureu la vostra instància de correu web des del navegador.",
     "loading": "S’està carregant…",
     "back": "Enrere",
@@ -3734,7 +3734,7 @@
       "regenerate": "Torna a generar",
       "sync": "Sincronitza els paràmetres dels usuaris entre dispositius",
       "sync_hint": "Desa les preferències dels usuaris al servidor, xifrades amb el secret de sessió.",
-      "telemetry": "Envia estadístiques d’ús anònimes per ajudar a millorar Bulwark",
+      "telemetry": "Envia estadístiques d’ús anònimes per ajudar a millorar Loomix",
       "telemetry_hint": "Desactivat per defecte. Un senyal anònim al dia amb la versió, la plataforma i les funcions activades; mai adreces de correu, noms d’amfitrió ni IP. Ho podeu canviar quan vulgueu als paràmetres d’administració."
     },
     "logging": {
@@ -5363,7 +5363,7 @@
     "label": "Bloca el meu calendari",
     "description": "Afegeix un esdeveniment ocupat mentre sou fora, perquè ningú us convoqui a reunions aleshores.",
     "no_access_managed": "No es pot blocar el calendari d’aquest compte: no hi teniu accés d’escriptura.",
-    "no_calendar": "No es pot blocar el calendari: Bulwark no ha trobat cap calendari on afegir l’esdeveniment.",
+    "no_calendar": "No es pot blocar el calendari: Loomix no ha trobat cap calendari on afegir l’esdeveniment.",
     "filter_warning": "Si ho activeu, el vostre propi script de filtres s’aturarà mentre la resposta estigui activa."
   },
   "calendar_delegate": {
@@ -5466,20 +5466,20 @@
   "find_time": {
     "suggest": "Suggereix horaris",
     "searching": "S’estan cercant horaris lliures",
-    "slots_title": "Lliure per a tothom que Bulwark ha pogut comprovar",
+    "slots_title": "Lliure per a tothom que Loomix ha pogut comprovar",
     "slot": "{day}, de {start} a {end}",
     "none": "No hi ha temps lliure en els propers 10 dies laborables.",
     "picked": "Esdeveniment mogut a {slot}",
     "rate_limited": "Massa consultes en l’últim minut. Torneu-ho a provar d’aquí a un minut.",
-    "unavailable": "La disponibilitat no està disponible en aquest servidor, així que Bulwark no pot suggerir horaris.",
+    "unavailable": "La disponibilitat no està disponible en aquest servidor, així que Loomix no pot suggerir horaris.",
     "not_checked": "No comprovats:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "fora de la vostra organització",
     "reason_unknown": "hores ocupades desconegudes",
     "reason_not_found": "no trobat en aquest servidor",
     "reason_error": "no s’ha pogut comprovar",
-    "unknown_note": "Bulwark només veu les hores ocupades dels calendaris compartits amb vós. Per a aquestes persones no pot distingir lliure de no compartit.",
-    "directory_off": "Bulwark no pot cercar persones en aquest servidor. L’administrador pot activar les consultes de directori a Stalwart.",
+    "unknown_note": "Loomix només veu les hores ocupades dels calendaris compartits amb vós. Per a aquestes persones no pot distingir lliure de no compartit.",
+    "directory_off": "Loomix no pot cercar persones en aquest servidor. L’administrador pot activar les consultes de directori a Stalwart.",
     "not_looked_up": "No s’ha pogut cercar aquesta adreça",
     "found": "Horaris lliures trobats: {count}"
   },
@@ -5676,7 +5676,7 @@
     "start_tour": "Comença la visita guiada"
   },
   "demo_welcome": {
-    "title": "Us donem la benvinguda al Bulwark Mail",
+    "title": "Us donem la benvinguda al Loomix Mail",
     "description": "Exploreu un client de correu web complet, directament al navegador. Totes les dades es queden al vostre dispositiu, així que proveu-ho tot sense cap problema.",
     "feature_email": "Llegiu i redacteu correus",
     "feature_organize": "Etiquetes, estrelles i carpetes",
@@ -6110,9 +6110,9 @@
     "cancelled_hint": "Per continuar més tard, torneu a importar els mateixos fitxers a la mateixa carpeta.",
     "close": "Tanca",
     "pst_note": "Dels fitxers d'Outlook només s'importa el correu. Els contactes, elements del calendari i tasques es compten i es deixen fora.",
-    "pst_error_encrypted": "Aquest fitxer d'Outlook fa servir xifratge alt, que Bulwark no pot llegir. A Outlook, exporteu el correu a un fitxer .pst nou sense xifratge.",
-    "pst_error_not_pst": "Aquest fitxer no és un fitxer de dades d'Outlook que Bulwark pugui llegir.",
-    "pst_error_unreadable": "Bulwark no ha pogut llegir aquest fitxer d'Outlook.",
+    "pst_error_encrypted": "Aquest fitxer d'Outlook fa servir xifratge alt, que Loomix no pot llegir. A Outlook, exporteu el correu a un fitxer .pst nou sense xifratge.",
+    "pst_error_not_pst": "Aquest fitxer no és un fitxer de dades d'Outlook que Loomix pugui llegir.",
+    "pst_error_unreadable": "Loomix no ha pogut llegir aquest fitxer d'Outlook.",
     "pst_error_worker": "El lector de fitxers d'Outlook no s'ha carregat. Torneu a carregar la pàgina i proveu-ho de nou.",
     "error_over_quota": "La bústia és plena, així que la importació s'ha aturat. Feu espai i torneu a importar els mateixos fitxers a la mateixa carpeta per continuar.",
     "error_forbidden": "No podeu afegir correu a aquesta carpeta, així que la importació s'ha aturat.",
@@ -6173,7 +6173,7 @@
   },
   "desktopImport": {
     "find": "Cerca dades de Thunderbird i Outlook…",
-    "find_hint": "Cerca als llocs habituals d'aquest ordinador. Bulwark t'ho pregunta abans.",
+    "find_hint": "Cerca als llocs habituals d'aquest ordinador. Loomix t'ho pregunta abans.",
     "scan_declined": "No s'ha cercat res perquè no ho has permès.",
     "scan_failed": "La cerca no ha funcionat. Torna-ho a provar.",
     "read_declined": "No s'ha llegit cap fitxer perquè no ho has permès.",
@@ -6229,7 +6229,7 @@
     "restore": "Restaura",
     "restored": "{count, plural, one {# missatge torna} other {# missatges tornen}} a la vostra safata d'entrada.",
     "restore_partial": "{count, plural, one {No s'ha pogut restaurar # missatge. Continua seleccionat perquè ho pugueu tornar a provar.} other {No s'han pogut restaurar # missatges. Continuen seleccionats perquè ho pugueu tornar a provar.}}",
-    "restore_hint": "El correu restaurat torna a la safata d'entrada com a no llegit, ordenat per la data original, així que pot quedar molt avall a la llista. El servidor el restaura en segon pla. Si allà falla, el missatge es perd i Bulwark no ho pot saber.",
+    "restore_hint": "El correu restaurat torna a la safata d'entrada com a no llegit, ordenat per la data original, així que pot quedar molt avall a la llista. El servidor el restaura en segon pla. Si allà falla, el missatge es perd i Loomix no ho pot saber.",
     "unknown_sender": "Remitent desconegut",
     "no_subject": "(sense assumpte)",
     "deleted_on": "Suprimit el {date}",
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Buida",
     "persist_refused": "Aquest navegador pot esborrar el correu desat quan falti espai. Instal·lar l'aplicació sol evitar-ho.",
     "persist_retry": "Demana al navegador que el conservi",
-    "safari_hint": "El Safari esborra les dades d'un lloc després de 7 dies sense visitar-lo. Afegiu Bulwark a la pantalla d'inici o al Dock per mantenir el vostre correu en aquest dispositiu.",
+    "safari_hint": "El Safari esborra les dades d'un lloc després de 7 dies sense visitar-lo. Afegiu Loomix a la pantalla d'inici o al Dock per mantenir el vostre correu en aquest dispositiu.",
     "evicted": "El navegador ha esborrat el correu desat en aquest dispositiu. Es torna a baixar.",
     "evicted_lost": "{count, plural, one {S'ha perdut # missatge o canvi sense enviar.} other {S'han perdut # missatges o canvis sense enviar.}}",
     "evicted_dismiss": "D'acord",
     "storage_full_title": "L'emmagatzematge del dispositiu és ple.",
-    "storage_full_text": "Bulwark ha deixat de desar correu aquí. Deseu menys correu o buideu aquest compte per fer espai.",
+    "storage_full_text": "Loomix ha deixat de desar correu aquí. Deseu menys correu o buideu aquest compte per fer espai.",
     "open_settings": "Obre la configuració",
-    "default_on": "Bulwark desa el vostre correu en aquest dispositiu perquè funcioni sense connexió. Podeu canviar-ho a la configuració.",
+    "default_on": "Loomix desa el vostre correu en aquest dispositiu perquè funcioni sense connexió. Podeu canviar-ho a la configuració.",
     "conflict_calendar": "Esdeveniment del calendari",
     "conflict_contacts": "Contacte",
     "kept_files_title": "Fitxers desats sense connexió",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Afegir elements a la vista de tasques",
-        "body": "Mostrar seccions pròpies als detalls d'una tasca, botons a la llista de tasques i una llista de tasques pròpia en lloc de la de Bulwark."
+        "body": "Mostrar seccions pròpies als detalls d'una tasca, botons a la llista de tasques i una llista de tasques pròpia en lloc de la de Loomix."
       },
       "ui_files": {
         "title": "Afegir elements a la vista de fitxers",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Dreceres de teclat",
       "docs": "Documentació",
       "settings": "Configuració…",
-      "about": "Quant a Bulwark",
+      "about": "Quant a Loomix",
       "from_plugins": "Més dels connectors…",
       "pick_gone": "Aquest menú estava desfasat. Torneu-lo a obrir i proveu-ho una altra vegada.",
       "bar_label": "Menú"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Si tanqueu ara, es perdrà el que heu escrit des de l’últim desament.",
       "close_anyway": "Tanca igualment",
       "unsent_title": "Hi ha correu sense enviar",
-      "unsent_one": "Hi ha un missatge pendent d’enviar. Se n’anirà la propera vegada que obriu Bulwark.",
-      "unsent_many": "Hi ha {count} missatges pendents d’enviar. Se n’aniran la propera vegada que obriu Bulwark.",
+      "unsent_one": "Hi ha un missatge pendent d’enviar. Se n’anirà la propera vegada que obriu Loomix.",
+      "unsent_many": "Hi ha {count} missatges pendents d’enviar. Se n’aniran la propera vegada que obriu Loomix.",
       "quit": "Surt",
       "leave_title": "Voleu sortir amb canvis sense desar?",
       "leave_detail": "Els canvis fets en aquesta pàgina encara no s’han desat.",
@@ -7383,7 +7383,7 @@
       "stay": "Queda’t"
     },
     "spellcheck": {
-      "offer": "La revisió ortogràfica en {language} necessita un diccionari. Bulwark el pot baixar de Google. El vostre text no s’envia.",
+      "offer": "La revisió ortogràfica en {language} necessita un diccionari. Loomix el pot baixar de Google. El vostre text no s’envia.",
       "download": "Baixa"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "Durant 1 hora",
     "tray_pause_tomorrow": "Fins demà",
     "tray_resume": "Torna a activar les notificacions",
-    "tray_open": "Obre Bulwark",
-    "tray_quit": "Surt de Bulwark",
-    "tray_exit": "Surt de Bulwark"
+    "tray_open": "Obre Loomix",
+    "tray_quit": "Surt de Loomix",
+    "tray_exit": "Surt de Loomix"
   },
   "desktopMenus": {
     "save_draft": "Desa l'esborrany",
@@ -7581,25 +7581,25 @@
     "cancel": "Cancel·la",
     "or_here": "o inicia la sessió aquí",
     "timed_out": "L’inici de sessió al navegador ha trigat massa. Torna-ho a provar.",
-    "no_browser": "Bulwark no ha pogut obrir el navegador. Torna-ho a provar o inicia la sessió aquí.",
+    "no_browser": "Loomix no ha pogut obrir el navegador. Torna-ho a provar o inicia la sessió aquí.",
     "failed": "No s’ha pogut iniciar la sessió a través del navegador. Torna-ho a provar.",
-    "handoff_banner": "Un programa d’aquest ordinador ha demanat aquest inici de sessió per a l’aplicació Bulwark. Aquest navegador continua sense sessió a Bulwark. Si no ho has començat tu, tanca aquesta pestanya.",
-    "consent_title": "Vols iniciar la sessió a l’aplicació Bulwark?",
-    "consent_description": "Un programa d’aquest ordinador, al port {port}, demana l’inici de sessió de {username}. Continua només si acabes de prémer «Inicia la sessió amb el navegador…» a l’aplicació Bulwark d’aquí. Si no, potser algú intenta entrar al teu compte: tria Ara no.",
+    "handoff_banner": "Un programa d’aquest ordinador ha demanat aquest inici de sessió per a l’aplicació Loomix. Aquest navegador continua sense sessió a Loomix. Si no ho has començat tu, tanca aquesta pestanya.",
+    "consent_title": "Vols iniciar la sessió a l’aplicació Loomix?",
+    "consent_description": "Un programa d’aquest ordinador, al port {port}, demana l’inici de sessió de {username}. Continua només si acabes de prémer «Inicia la sessió amb el navegador…» a l’aplicació Loomix d’aquí. Si no, potser algú intenta entrar al teu compte: tria Ara no.",
     "consent_confirm": "Inicia la sessió a l’aplicació",
     "consent_cancel": "Ara no",
-    "page_done": "Pots tancar aquesta pestanya i tornar a Bulwark.",
-    "page_failed": "No s’ha pogut iniciar la sessió. Torna a Bulwark i torna-ho a provar.",
-    "page_link_used": "Aquest enllaç només funciona una vegada. Torna a Bulwark i comença de nou.",
+    "page_done": "Pots tancar aquesta pestanya i tornar a Loomix.",
+    "page_failed": "No s’ha pogut iniciar la sessió. Torna a Loomix i torna-ho a provar.",
+    "page_link_used": "Aquest enllaç només funciona una vegada. Torna a Loomix i comença de nou.",
     "page_title": "Inicia la sessió a {server}",
-    "page_intro": "Aquesta pàgina ve de l’aplicació Bulwark d’aquest ordinador. La teva contrasenya va a {server} i enlloc més.",
+    "page_intro": "Aquesta pàgina ve de l’aplicació Loomix d’aquest ordinador. La teva contrasenya va a {server} i enlloc més.",
     "page_username": "Adreça electrònica o nom d’usuari",
     "page_password": "Contrasenya",
     "page_code": "Codi de dos factors",
     "page_submit": "Inicia la sessió",
     "page_wrong_password": "El servidor no ha acceptat aquest nom d’usuari i aquesta contrasenya.",
     "page_code_needed": "Aquest compte també necessita un codi de dos factors. Torna a escriure la contrasenya i el codi.",
-    "page_no_answer": "Bulwark no ha pogut iniciar la sessió. Comprova que el servidor sigui accessible i torna-ho a provar.",
+    "page_no_answer": "Loomix no ha pogut iniciar la sessió. Comprova que el servidor sigui accessible i torna-ho a provar.",
     "declined": "Has dit que no al navegador, així que no s’ha iniciat cap sessió.",
     "too_many": "Massa intents d’inici de sessió des d’aquesta xarxa. Espera uns minuts i torna-ho a provar.",
     "page_declined": "No s’ha lliurat res. Pots tancar aquesta pestanya."
@@ -7619,7 +7619,7 @@
     "other_ways": "Altres maneres d'iniciar la sessió",
     "trouble": "Tens problemes?",
     "trouble_cors": "El teu servidor de correu ha de permetre iniciar sessió des d'aquest lloc web. Si no funciona, demana a qui gestiona el servidor que ho permeti.",
-    "provider_unsupported": "{provider} no ofereix JMAP, la manera com Bulwark parla amb els servidors de correu, així que Bulwark encara no s'hi pot connectar directament."
+    "provider_unsupported": "{provider} no ofereix JMAP, la manera com Loomix parla amb els servidors de correu, així que Loomix encara no s'hi pot connectar directament."
   },
   "login_a11y": {
     "caps_lock_on": "El bloqueig de majúscules està activat",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Voleu canviar com es connecta Bulwark?",
-      "message": "Bulwark es reinicia i pregunta com connectar-se: amb la vostra adreça electrònica o a través del Bulwark de la vostra organització. Els vostres comptes d'aquest ordinador continuen amb la sessió iniciada.",
+      "title": "Voleu canviar com es connecta Loomix?",
+      "message": "Loomix es reinicia i pregunta com connectar-se: amb la vostra adreça electrònica o a través del Loomix de la vostra organització. Els vostres comptes d'aquest ordinador continuen amb la sessió iniciada.",
       "confirm": "Canvia",
-      "org_link": "Fes servir el Bulwark de la meva organització",
+      "org_link": "Fes servir el Loomix de la meva organització",
       "add_account": "Afegeix un compte…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Insereix"
     },
     "sign_in_page": {
-      "open_app": "Obre Bulwark",
+      "open_app": "Obre Loomix",
       "done_as": "Heu iniciat la sessió com a {address}. Podeu tancar aquesta pestanya."
     }
   },
   "desktop_updates": {
     "title": "Actualitzacions",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark cerca actualitzacions tot sol.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix cerca actualitzacions tot sol.",
     "status_checking": "S’estan cercant actualitzacions…",
     "status_up_to_date": "Teniu l’última versió.",
     "status_downloading": "S’està baixant la versió {version}…",
     "status_ready": "La versió {version} està a punt. S’instal·larà la pròxima vegada que sortiu, o reinicieu ara.",
     "status_available": "La versió {version} està disponible.",
-    "status_available_per_machine": "La versió {version} està disponible. Bulwark està instal·lat per a tothom en aquest ordinador, així que un administrador instal·la les actualitzacions.",
-    "status_older": "Teniu una beta. La versió estable {version} és anterior, així que Bulwark es queda en aquesta versió fins que l’estable l’atrapi.",
-    "status_error": "No s’han pogut cercar actualitzacions. Bulwark ho tornarà a provar més tard.",
+    "status_available_per_machine": "La versió {version} està disponible. Loomix està instal·lat per a tothom en aquest ordinador, així que un administrador instal·la les actualitzacions.",
+    "status_older": "Teniu una beta. La versió estable {version} és anterior, així que Loomix es queda en aquesta versió fins que l’estable l’atrapi.",
+    "status_error": "No s’han pogut cercar actualitzacions. Loomix ho tornarà a provar més tard.",
     "status_off": "La vostra organització ha desactivat les actualitzacions a l’aplicació.",
     "check": "Cerca ara",
     "restart": "Reinicia per actualitzar",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Reinicia per actualitzar",
     "shell_check": "Cerca actualitzacions…",
-    "shell_available": "Bulwark {version} està disponible",
-    "shell_ready_title": "Bulwark està a punt per actualitzar-se",
+    "shell_available": "Loomix {version} està disponible",
+    "shell_ready_title": "Loomix està a punt per actualitzar-se",
     "shell_ready_body": "La versió {version} s’instal·larà la pròxima vegada que sortiu. Feu clic per reiniciar ara. Els esborranys es desen primer.",
-    "shell_available_title": "Hi ha una versió nova de Bulwark",
-    "shell_none_title": "Bulwark està al dia",
+    "shell_available_title": "Hi ha una versió nova de Loomix",
+    "shell_none_title": "Loomix està al dia",
     "shell_none_detail": "Teniu la versió {version}.",
-    "shell_failed_title": "Bulwark no ha pogut cercar actualitzacions",
+    "shell_failed_title": "Loomix no ha pogut cercar actualitzacions",
     "shell_failed_detail": "Comproveu la connexió i torneu-ho a provar més tard. No ha canviat res.",
     "shell_beta_title": "Voleu passar a versions beta?",
     "shell_beta_detail": "Rebeu les versions noves abans, i poden tenir més problemes. Per tornar, instal·leu una versió estable anterior o espereu que l’estable l’atrapi.",
     "shell_beta_confirm": "Passa a beta",
-    "shell_older_title": "Voleu tornar a Bulwark {version}?",
+    "shell_older_title": "Voleu tornar a Loomix {version}?",
     "shell_older_detail": "Teniu la beta {current}. L’estable {target} és anterior i pot no llegir el que la beta ha desat en aquest ordinador. El correu es queda al servidor, però el correu desat fora de línia es pot tornar a baixar i els canvis sense enviar es poden perdre. Si espereu, l’estable atrapa la beta i hi passeu sense aquest pas.",
     "shell_older_confirm": "Instal·la una versió anterior"
   },
@@ -7982,7 +7982,7 @@
       "progress": "{done} de {total} pujats",
       "cannot_offline": "No es pot connectar amb el servidor. Encara sense pujar: {names}",
       "cannot_other": "No es poden pujar: {names}. L'activitat recent de la configuració n'explica el motiu.",
-      "go_note_drive": "Si continueu ara, el que no s'hagi pujat es copia a Documents\\Bulwark – not uploaded. No es perd res.",
+      "go_note_drive": "Si continueu ara, el que no s'hagi pujat es copia a Documents\\Loomix – not uploaded. No es perd res.",
       "go_note_folder": "Si continueu ara, el que no s'hagi pujat es queda a la carpeta d'aquest ordinador.",
       "keep_turn_off": "Mantén la unitat",
       "keep_sign_out": "Mantén la sessió",
@@ -7996,22 +7996,22 @@
       "rescued": "Els fitxers que no s'han pujat ({count}) ara són a {folder}.",
       "rescued_open": "Obre la carpeta",
       "rescued_dismiss": "Descarta",
-      "start_at_login": "Inicia Bulwark en iniciar la sessió al Windows",
-      "start_at_login_why": "La unitat necessita que Bulwark s'executi, com OneDrive.",
-      "closed_warning": "Els fitxers de la unitat no s'obren mentre Bulwark està tancat.",
-      "where": "A l'Explorador de fitxers com a Bulwark Files",
-      "where_letter": "A l'Explorador de fitxers com a Bulwark Files ({letter}:)",
+      "start_at_login": "Inicia Loomix en iniciar la sessió al Windows",
+      "start_at_login_why": "La unitat necessita que Loomix s'executi, com OneDrive.",
+      "closed_warning": "Els fitxers de la unitat no s'obren mentre Loomix està tancat.",
+      "where": "A l'Explorador de fitxers com a Loomix Files",
+      "where_letter": "A l'Explorador de fitxers com a Loomix Files ({letter}:)",
       "open": "Obre",
-      "letter_note": "Per la lletra, l'Explorador de fitxers no mostra l'estat de sincronització ni «Mantén sempre en aquest dispositiu». Es veuen a Bulwark Files, a l'Explorador.",
+      "letter_note": "Per la lletra, l'Explorador de fitxers no mostra l'estat de sincronització ni «Mantén sempre en aquest dispositiu». Es veuen a Loomix Files, a l'Explorador.",
       "letter_failed": "No s'ha pogut assignar la lletra d'unitat. Torneu-ho a provar."
     },
     "tray": {
-      "idle": "Bulwark Files: Actualitzat",
-      "syncing": "Bulwark Files: S'està sincronitzant. Queden: {count}",
-      "paused": "Bulwark Files: En pausa",
-      "offline": "Bulwark Files: Sense connexió. En espera: {count}",
-      "question": "Bulwark Files: Necessita la vostra resposta",
-      "error": "Bulwark Files: Error"
+      "idle": "Loomix Files: Actualitzat",
+      "syncing": "Loomix Files: S'està sincronitzant. Queden: {count}",
+      "paused": "Loomix Files: En pausa",
+      "offline": "Loomix Files: Sense connexió. En espera: {count}",
+      "question": "Loomix Files: Necessita la vostra resposta",
+      "error": "Loomix Files: Error"
     },
     "notify": {
       "conflict_title": "Un fitxer s'ha canviat en dos llocs",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Un cop al dia: un identificador aleatori, els números de versió de l'aplicació, el teu sistema operatiu, quant de temps fa que funciona l'aplicació i com es connecta. Amb un servidor de correu propi, també quines funcions estan actives, un nombre aproximat de comptes i quants connectors i temes tens. Mai correus, adreces ni noms de servidor.",
     "crash_label": "Envia informes d'errors greus",
     "crash_description": "Els errors de l'aplicació s'envien amb un identificador aleatori, noms de fitxer del codi de l'aplicació i missatges curts i nets. Si la mateixa aplicació es tanca per un error, un fitxer d'error queda en aquest ordinador i només en surt si l'envies.",
-    "crash_memory": "Un fitxer d'error és una còpia d'una part de la memòria de l'aplicació en el moment de l'error. Bulwark elimina els noms d'usuari, les adreces i els testimonis d'inici de sessió que troba, però un fitxer d'error encara pot contenir el text dels teus correus.",
-    "instance_note": "En un servidor Bulwark, el seu administrador decideix per separat què li comuniquen les pàgines.",
+    "crash_memory": "Un fitxer d'error és una còpia d'una part de la memòria de l'aplicació en el moment de l'error. Loomix elimina els noms d'usuari, les adreces i els testimonis d'inici de sessió que troba, però un fitxer d'error encara pot contenir el text dels teus correus.",
+    "instance_note": "En un servidor Loomix, el seu administrador decideix per separat què li comuniquen les pàgines.",
     "forced_off": "La teva organització ho ha desactivat.",
     "url_label": "Destinació dels fitxers d'error",
-    "url_description": "L'adreça https que rep un fitxer d'error. Bulwark no n'inclou cap.",
+    "url_description": "L'adreça https que rep un fitxer d'error. Loomix no n'inclou cap.",
     "url_invalid": "Escriu una adreça https completa.",
     "url_save": "Desa",
     "files_label": "Fitxers d'error en aquest ordinador",
-    "files_description": "Bulwark conserva els més recents i elimina els de més d'un mes.",
+    "files_description": "Loomix conserva els més recents i elimina els de més d'un mes.",
     "files_empty": "No hi ha fitxers d'error.",
     "file_size": "{size} KB",
     "send": "Envia l'informe d'error…",

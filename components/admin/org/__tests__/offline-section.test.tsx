@@ -86,7 +86,7 @@ describe('Offline mode section', () => {
   it('says what a device keeps and links the docs', async () => {
     await renderSection();
     expect(screen.getByRole('link', { name: 'How offline mode works' }).getAttribute('href')).toBe('https://bulwarkmail.org/docs/guides/organisation/offline-mode');
-    expect(document.body.textContent).toContain('Bulwark Lite reads the same policy but has no offline mode');
+    expect(document.body.textContent).toContain('Loomix Lite reads the same policy but has no offline mode');
     expect(document.body.textContent).not.toContain('250 MB');
   });
 

@@ -24,7 +24,7 @@ export function RecoverySection({ draft }: { draft: OrgPolicyDraft }) {
     >
       <div className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground" data-testid="org-recovery-requirements">
         This needs a Stalwart Enterprise license and archiving turned on in Stalwart (Data Retention &gt; Archiving, the
-        archiveDeletedItemsFor setting). Without both, Bulwark asks the server, gets a refusal, and shows users nothing.{' '}
+        archiveDeletedItemsFor setting). Without both, Loomix asks the server, gets a refusal, and shows users nothing.{' '}
         <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline-offset-2 hover:underline">
           How to set it up
         </a>

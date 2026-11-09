@@ -24,7 +24,7 @@ describe('api.app.getInfo', () => {
   it('gives the product, the administrator\'s name for it, the version and the edition, without a permission', async () => {
     vi.stubEnv('NEXT_PUBLIC_APP_VERSION', '1.17.0');
     expect(await dispatchApiCall(plugin(), 'app.getInfo', [])).toEqual({
-      product: 'Bulwark Mail',
+      product: 'Loomix Mail',
       name: 'Rath Mail',
       version: '1.17.0',
       edition: 'full',
@@ -36,7 +36,7 @@ describe('api.app.getInfo', () => {
   it('still answers when the config can not be read', async () => {
     fetchConfig.mockRejectedValueOnce(new Error('offline'));
     const info = await dispatchApiCall(plugin(), 'app.getInfo', []) as { name: string; product: string };
-    expect(info.product).toBe('Bulwark Mail');
+    expect(info.product).toBe('Loomix Mail');
     expect(info.name).toBe('Webmail');
   });
 });
@@ -77,12 +77,12 @@ describe('api.app.searchSettings', () => {
     expect(JSON.stringify(results)).not.toContain('{appName}');
   });
 
-  it('says Bulwark when the config can not be read', async () => {
+  it('says Loomix when the config can not be read', async () => {
     await setUp();
     fetchConfig.mockRejectedValueOnce(new Error('offline'));
     const results = await dispatchApiCall(plugin(), 'app.searchSettings', ['bulwark email links']) as { pageId: string; description?: string }[];
     expect(fetchConfig).toHaveBeenCalledTimes(1);
-    expect(results.some((r) => r.pageId === 'general' && r.description?.includes('Bulwark'))).toBe(true);
+    expect(results.some((r) => r.pageId === 'general' && r.description?.includes('Loomix'))).toBe(true);
     expect(JSON.stringify(results)).not.toContain('{appName}');
   });
 

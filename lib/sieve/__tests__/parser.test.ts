@@ -47,7 +47,7 @@ describe('parseScript', () => {
     expect(result.vacation).toEqual(vacation);
   });
 
-  it('reads back metadata a newer Bulwark wrote with */ escaped (older clients parse it too)', () => {
+  it('reads back metadata a newer Loomix wrote with */ escaped (older clients parse it too)', () => {
     // JSON.parse turns `\/` back into `/`, so no reader needs to know.
     const script = '/* @metadata:begin\n{"version":1,"rules":[{"id":"x","name":"a *\\/ b","enabled":true,"matchType":"all",'
       + '"conditions":[{"field":"from","comparator":"contains","value":"c"}],"actions":[{"type":"discard"}],"stopProcessing":false}]}\n@metadata:end */\n';
@@ -64,7 +64,7 @@ describe('parseScript', () => {
     expect(result.rules.some((r) => r.origin === 'external')).toBe(false);
   });
 
-  it('parses external rules when no Bulwark metadata is present', () => {
+  it('parses external rules when no Loomix metadata is present', () => {
     const result = parseScript('require ["fileinto"];\nif header :contains "From" "x" { fileinto "Y"; }');
     expect(result.isOpaque).toBe(false);
     expect(result.rules).toHaveLength(1);
@@ -162,7 +162,7 @@ describe('parseScript', () => {
     });
 
     it('reads a rule whose name has runs of whitespace back as one rule, save after save', () => {
-      // A hand-written block, and one that only looks like Bulwark's.
+      // A hand-written block, and one that only looks like Loomix's.
       const external = '# Hand\nif header :contains "subject" "hand" {\n    keep;\n}\n'
         + '# Rule: Someone else\nif header :contains "subject" "other" {\n    keep;\n}\n';
       const rules = [
@@ -202,7 +202,7 @@ describe('parseScript', () => {
       const rule = makeRule({ id: '1', name: 'Foo  Bar' });
       const block = generateScript([rule]).slice(generateScript([rule]).indexOf('# Rule: Foo Bar'));
       // As written before: the rule, and two copies read back as someone else's.
-      const withCopies = `${generateScript([rule])}\n# --- External rules (managed outside Bulwark) ---\n${block}\n${block}`;
+      const withCopies = `${generateScript([rule])}\n# --- External rules (managed outside Loomix) ---\n${block}\n${block}`;
       const result = parseScript(withCopies);
       expect(result.rules).toEqual([rule]);
       expect(generateScript(result.rules).split('# Rule: Foo Bar').length).toBe(2);

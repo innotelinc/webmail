@@ -176,7 +176,7 @@ export function resetStalwartDefaultClients(): void {
   defaultClients.clear();
 }
 
-/** Registers Bulwark as a public client at Stalwart 1.0 (see stalwartClientRegistration). */
+/** Registers Loomix as a public client at Stalwart 1.0 (see stalwartClientRegistration). */
 async function registerPublicClient(base: string, upstreamFetch: typeof fetch): Promise<LoginClient | null> {
   try {
     const response = await upstreamFetch(`${base}/auth/register`, {

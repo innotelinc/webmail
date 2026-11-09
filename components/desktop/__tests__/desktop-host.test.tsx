@@ -1,6 +1,6 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import { registerDesktopSurface, resetDesktopCommands } from '@/lib/desktop/commands';
 import { readDesktopPrefs, resetDesktopPrefsCache, setDesktopPref } from '@/lib/desktop/preferences';
 import { resetDesktopLanguages } from '@/lib/desktop/languages';
@@ -71,7 +71,7 @@ function fakeBridge() {
     theme: { set: parts.setTheme, system: async () => ({ dark: false, highContrast: false }) },
     lifecycle: { onFlushRequest: (handler: () => Promise<unknown>) => { flush = handler; return () => {}; } },
   };
-  window.bulwarkDesktop = bridge as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = bridge as unknown as LoomixDesktopBridge;
   return { ...parts, run: (id: string) => act(() => command!(id)), flush: () => flush!(), missing: (language: string) => act(() => missing!(language)) };
 }
 

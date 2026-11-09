@@ -50,7 +50,7 @@ export function visibleCalendarOwners(calendars: Pick<Calendar, "isShared" | "ac
 }
 
 /**
- * Look up everyone Bulwark can and search the free slots. One availability
+ * Look up everyone Loomix can and search the free slots. One availability
  * call per attendee it can resolve plus one for the organiser, over the whole
  * search window; refused up front when that would go over what is left of
  * Stalwart 1.0's 100 calls a minute.
@@ -149,7 +149,7 @@ interface FindATimeProps {
 /**
  * "Suggest times" next to the attendees' availability in the event editor:
  * up to five slots in the next ten working days that are free for everyone
- * whose calendar Bulwark could check, and who it couldn't check and why.
+ * whose calendar Loomix could check, and who it couldn't check and why.
  * The list opens in place under the button (the editor is a full-screen
  * sheet on phones already); Escape closes it and gives the focus back.
  */

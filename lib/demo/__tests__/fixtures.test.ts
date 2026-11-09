@@ -490,12 +490,12 @@ describe('demo fixtures: audience screenshots', () => {
     expect(entry.discovered).toMatchObject({ '$label:billing': 2, '$label:integration': 3 });
 
     await saveSharedTags(key, SUPPORT_ACCOUNT_ID, client, [{ id: 'bug', value: { label: 'Bug report', color: 'red' } }]);
-    const stored = await client.getBulwarkMetadata!(SUPPORT_ACCOUNT_ID);
+    const stored = await client.getLoomixMetadata!(SUPPORT_ACCOUNT_ID);
     expect((stored!.tags as { tags: Record<string, { label: string }> }).tags.bug.label).toBe('Bug report');
     expect((stored!.tags as { tags: Record<string, unknown> }).tags.billing).toBeDefined();
 
     // Nora's own account keeps none (her templates stay on the device), and its tags don't mix with the team's.
-    expect(client.supportsBulwarkMetadata!(client.getAccountId())).toBe(false);
+    expect(client.supportsLoomixMetadata!(client.getAccountId())).toBe(false);
     const own = await client.discoverKeywords();
     expect(Object.keys(own.keywords).some((k) => SUPPORT_TAGS.some((t) => k === `$label:${t.id}`))).toBe(false);
   });
@@ -516,7 +516,7 @@ describe('demo fixtures: audience screenshots', () => {
       for (const k of Object.keys(e.keywords).filter((k) => k.startsWith('$assigned:'))) expect(k).toMatch(/^\$assigned:[a-z0-9][a-z0-9_.-]{0,100}$/);
     }
     // Names for the badges: the group's shared map (plugin.team-inbox) and the directory.
-    const names = (await client.getBulwarkMetadata!(SUPPORT_ACCOUNT_ID))!['plugin.team-inbox'] as { people: Record<string, { n: string }> };
+    const names = (await client.getLoomixMetadata!(SUPPORT_ACCOUNT_ID))!['plugin.team-inbox'] as { people: Record<string, { n: string }> };
     expect(names.people[PRINCIPAL.bob].n).toBe(BOB.name);
     expect((await client.getPrincipals()).find((p) => p.id === PRINCIPAL.bob)?.email).toBe(BOB.email);
   });

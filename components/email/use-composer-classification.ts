@@ -16,7 +16,7 @@ export interface ComposerClassification {
   setChoice: (choice: string | null) => void;
   /** Sending needs a label and there is none. */
   missing: boolean;
-  /** What a saved draft keeps (X-Bulwark-Label); undefined while labels are off. */
+  /** What a saved draft keeps (X-Loomix-Label); undefined while labels are off. */
   draftChoice: string | null | undefined;
 }
 

@@ -70,8 +70,8 @@
     "demo_tagline": "Experience a full-featured email client. No account required.",
     "demo_no_signup": "No signup needed - explore freely with sample data",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "This name is too long.",
     "loading": "Loading…",
     "unsupported": "This mail server can't keep shared tags, so this mailbox shows your own tags.",
-    "unavailable": "Couldn't load the shared tags of this mailbox, so it shows your own tags. Bulwark tries again later.",
+    "unavailable": "Couldn't load the shared tags of this mailbox, so it shows your own tags. Loomix tries again later.",
     "no_rights": "You can use these tags, but you can't change them in this mailbox.",
     "too_many": "There are too many shared tags. Delete some before adding more.",
-    "save_failed": "Couldn't save the shared tags. Bulwark tries again when the server answers.",
-    "save_pending": "Not saved yet. Bulwark tries again when the server answers."
+    "save_failed": "Couldn't save the shared tags. Loomix tries again when the server answers.",
+    "save_pending": "Not saved yet. Loomix tries again when the server answers."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1114,7 +1114,7 @@
     "send_failed": "Failed to send email",
     "send_offline": "You seem to be offline. The message is still here, send it again once you are back online.",
     "send_timeout": "The server stopped responding. Check your Sent folder before sending again — the message may have gone out.",
-    "submission_quota": "The server has too many sent-message records for this account. Bulwark removed the ones it could; if this keeps happening, ask your administrator to raise the email submission limit.",
+    "submission_quota": "The server has too many sent-message records for this account. Loomix removed the ones it could; if this keeps happening, ask your administrator to raise the email submission limit.",
     "submission_limit": "The server refused to send the message because a limit was reached: {reason}",
     "recipients_refused": "Not sent: the server refused {recipients}.",
     "recipients_partly_refused": "The server refused {recipients}. The other recipients get the message.",
@@ -1856,7 +1856,7 @@
       },
       "push": {
         "title": "Notifications when {appName} is closed",
-        "description": "Receive system notifications for new mail when this site is closed. Delivered via the Bulwark push relay; the relay never sees mail content.",
+        "description": "Receive system notifications for new mail when this site is closed. Delivered via the Loomix push relay; the relay never sees mail content.",
         "relay_label": "Push relay",
         "relay_desc": "The server that delivers your notifications. Choose from the relays your administrator offers.",
         "relay_locked": "Set by administrator",
@@ -1864,7 +1864,7 @@
         "status_active": "Active on this device",
         "status_inactive": "Not enabled on this device",
         "status_unsupported": "This browser does not support Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "Background notifications aren't available in the demo.",
         "status_busy": "Working…",
         "enable": "Turn on for this device",
@@ -2504,10 +2504,10 @@
       },
       "link_device": {
         "title": "Link the mobile app",
-        "description": "Sign in to the Bulwark Mail app on your phone without typing your password there. Your phone gets its own sign-in, so signing out here doesn't sign it out.",
+        "description": "Sign in to the Loomix Mail app on your phone without typing your password there. Your phone gets its own sign-in, so signing out here doesn't sign it out.",
         "generate": "Show QR code",
         "regenerate": "Show a new code",
-        "instructions": "Open the Bulwark Mail app and tap \"Scan a sign-in code\" on the sign-in screen (or \"Add account\" → \"Scan a sign-in code\" if you're already signed in), then point the camera here.",
+        "instructions": "Open the Loomix Mail app and tap \"Scan a sign-in code\" on the sign-in screen (or \"Add account\" → \"Scan a sign-in code\" if you're already signed in), then point the camera here.",
         "expires_in": "This code expires in {seconds} seconds. It can only be used once.",
         "expired": "This code has expired.",
         "error": "Couldn't create a pairing code. Please try again.",
@@ -2757,7 +2757,7 @@
         "button": "Import"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Source code"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Search across the top, messages open full width"
   },
   "setup": {
-    "title": "Bulwark Webmail setup",
+    "title": "Loomix Mail setup",
     "subtitle": "Configure your webmail instance from the browser.",
     "loading": "Loading…",
     "back": "Back",
@@ -3734,7 +3734,7 @@
       "regenerate": "Regenerate",
       "sync": "Sync user settings across devices",
       "sync_hint": "Stores user preferences on the server, encrypted with the session secret.",
-      "telemetry": "Send anonymous usage stats to help improve Bulwark",
+      "telemetry": "Send anonymous usage stats to help improve Loomix",
       "telemetry_hint": "Off by default. One anonymous heartbeat per day with version, platform and which features are enabled; never email addresses, hostnames or IPs. You can change this anytime in the admin settings."
     },
     "logging": {
@@ -5363,7 +5363,7 @@
     "label": "Block my calendar",
     "description": "Adds a busy event for the time you’re away, so nobody books meetings with you then.",
     "no_access_managed": "The calendar of this account can’t be blocked: you don’t have write access to it.",
-    "no_calendar": "Your calendar can’t be blocked: Bulwark found no calendar to add the event to.",
+    "no_calendar": "Your calendar can’t be blocked: Loomix found no calendar to add the event to.",
     "filter_warning": "Turning this on switches off your own filter script while the reply is active."
   },
   "calendar_delegate": {
@@ -5466,20 +5466,20 @@
   "find_time": {
     "suggest": "Suggest times",
     "searching": "Looking for free times",
-    "slots_title": "Free for everyone Bulwark could check",
+    "slots_title": "Free for everyone Loomix could check",
     "slot": "{day}, {start} to {end}",
     "none": "No free time in the next 10 working days.",
     "picked": "Event moved to {slot}",
     "rate_limited": "Too many lookups in the last minute. Try again in a minute.",
-    "unavailable": "Free/busy isn’t available on this server, so Bulwark can’t suggest times.",
+    "unavailable": "Free/busy isn’t available on this server, so Loomix can’t suggest times.",
     "not_checked": "Not checked:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "outside your organisation",
     "reason_unknown": "busy times unknown",
     "reason_not_found": "not found on this server",
     "reason_error": "couldn’t be checked",
-    "unknown_note": "Bulwark only sees busy times in calendars shared with you. For these people it can’t tell free from not shared.",
-    "directory_off": "Bulwark can’t look up people on this server. Your administrator can turn on directory queries in Stalwart.",
+    "unknown_note": "Loomix only sees busy times in calendars shared with you. For these people it can’t tell free from not shared.",
+    "directory_off": "Loomix can’t look up people on this server. Your administrator can turn on directory queries in Stalwart.",
     "not_looked_up": "Couldn’t look up this address",
     "found": "Free times found: {count}"
   },
@@ -5676,7 +5676,7 @@
     "start_tour": "Start Tour"
   },
   "demo_welcome": {
-    "title": "Welcome to Bulwark Mail",
+    "title": "Welcome to Loomix Mail",
     "description": "Explore a fully-featured webmail client - right in your browser. All data stays on your device, so feel free to test everything.",
     "feature_email": "Read & compose email",
     "feature_organize": "Tags, stars & folders",
@@ -6110,9 +6110,9 @@
     "cancelled_hint": "To go on later, import the same files into the same folder again.",
     "close": "Close",
     "pst_note": "Only mail comes in from Outlook files. Contacts, calendar items and tasks are counted and left out.",
-    "pst_error_encrypted": "This Outlook file uses high encryption, which Bulwark can't read. In Outlook, export the mail to a new .pst file without encryption.",
-    "pst_error_not_pst": "This file isn't an Outlook data file Bulwark can read.",
-    "pst_error_unreadable": "Bulwark couldn't read this Outlook file.",
+    "pst_error_encrypted": "This Outlook file uses high encryption, which Loomix can't read. In Outlook, export the mail to a new .pst file without encryption.",
+    "pst_error_not_pst": "This file isn't an Outlook data file Loomix can read.",
+    "pst_error_unreadable": "Loomix couldn't read this Outlook file.",
     "pst_error_worker": "The Outlook file reader didn't load. Reload the page and try again.",
     "error_over_quota": "The mailbox is full, so the import stopped. Make room and import the same files into the same folder again to go on.",
     "error_forbidden": "You may not add mail to this folder, so the import stopped.",
@@ -6173,7 +6173,7 @@
   },
   "desktopImport": {
     "find": "Find Thunderbird and Outlook data…",
-    "find_hint": "Looks in the usual places on this computer. Bulwark asks you first.",
+    "find_hint": "Looks in the usual places on this computer. Loomix asks you first.",
     "scan_declined": "Nothing was searched, because you didn't allow it.",
     "scan_failed": "The search didn't work. Try again.",
     "read_declined": "No files were read, because you didn't allow it.",
@@ -6229,7 +6229,7 @@
     "restore": "Restore",
     "restored": "{count, plural, one {# message is} other {# messages are}} on the way back to your Inbox.",
     "restore_partial": "{count, plural, one {# message couldn't be restored. It stays selected, so you can try again.} other {# messages couldn't be restored. They stay selected, so you can try again.}}",
-    "restore_hint": "Restored mail goes back to your Inbox as unread, sorted by its original date, so it may be far down the list. The server restores it in the background. If that fails there, the message is lost and Bulwark can't tell.",
+    "restore_hint": "Restored mail goes back to your Inbox as unread, sorted by its original date, so it may be far down the list. The server restores it in the background. If that fails there, the message is lost and Loomix can't tell.",
     "unknown_sender": "Unknown sender",
     "no_subject": "(no subject)",
     "deleted_on": "Deleted {date}",
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Clear",
     "persist_refused": "This browser may delete the kept mail when space runs low. Installing the app usually stops that.",
     "persist_retry": "Ask the browser to keep it",
-    "safari_hint": "Safari deletes a site's data after 7 days without a visit. Add Bulwark to your Home Screen or Dock to keep your mail on this device.",
+    "safari_hint": "Safari deletes a site's data after 7 days without a visit. Add Loomix to your Home Screen or Dock to keep your mail on this device.",
     "evicted": "The browser deleted the mail kept on this device. It's downloading again.",
     "evicted_lost": "{count, plural, one {# unsent message or change was lost.} other {# unsent messages or changes were lost.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Device storage is full.",
-    "storage_full_text": "Bulwark has stopped saving mail here. Keep less mail or clear this account to make room.",
+    "storage_full_text": "Loomix has stopped saving mail here. Keep less mail or clear this account to make room.",
     "open_settings": "Open settings",
-    "default_on": "Bulwark keeps your mail on this device, so it works without a connection. You can change this in Settings.",
+    "default_on": "Loomix keeps your mail on this device, so it works without a connection. You can change this in Settings.",
     "conflict_calendar": "Calendar event",
     "conflict_contacts": "Contact",
     "kept_files_title": "Files kept offline",
@@ -6844,7 +6844,7 @@
       },
       "ui_tasks": {
         "title": "Add to tasks",
-        "body": "Show its own sections in a task's details, buttons in the task list, and its own task list in place of Bulwark's."
+        "body": "Show its own sections in a task's details, buttons in the task list, and its own task list in place of Loomix's."
       },
       "ui_files": {
         "title": "Add to files",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Keyboard shortcuts",
       "docs": "Documentation",
       "settings": "Settings…",
-      "about": "About Bulwark",
+      "about": "About Loomix",
       "from_plugins": "More from plugins…",
       "pick_gone": "That menu was out of date. Open it again and try once more.",
       "bar_label": "Menu"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "If you close now, what you wrote since the last save is lost.",
       "close_anyway": "Close anyway",
       "unsent_title": "Some mail has not been sent yet",
-      "unsent_one": "One message is waiting to be sent. It goes out the next time you open Bulwark.",
-      "unsent_many": "{count} messages are waiting to be sent. They go out the next time you open Bulwark.",
+      "unsent_one": "One message is waiting to be sent. It goes out the next time you open Loomix.",
+      "unsent_many": "{count} messages are waiting to be sent. They go out the next time you open Loomix.",
       "quit": "Quit",
       "leave_title": "Leave with unsaved changes?",
       "leave_detail": "What you changed on this page is not saved yet.",
@@ -7383,7 +7383,7 @@
       "stay": "Stay"
     },
     "spellcheck": {
-      "offer": "Spell checking in {language} needs a dictionary. Bulwark can download it from Google. Your text isn't sent.",
+      "offer": "Spell checking in {language} needs a dictionary. Loomix can download it from Google. Your text isn't sent.",
       "download": "Download"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "For 1 hour",
     "tray_pause_tomorrow": "Until tomorrow",
     "tray_resume": "Turn notifications back on",
-    "tray_open": "Open Bulwark",
-    "tray_quit": "Quit Bulwark",
-    "tray_exit": "Exit Bulwark"
+    "tray_open": "Open Loomix",
+    "tray_quit": "Quit Loomix",
+    "tray_exit": "Exit Loomix"
   },
   "desktopMenus": {
     "save_draft": "Save draft",
@@ -7581,25 +7581,25 @@
     "cancel": "Cancel",
     "or_here": "or sign in here",
     "timed_out": "The browser sign-in took too long. Try again.",
-    "no_browser": "Bulwark could not open your browser. Try again, or sign in here.",
+    "no_browser": "Loomix could not open your browser. Try again, or sign in here.",
     "failed": "Signing in through your browser did not work. Try again.",
-    "handoff_banner": "A program on this computer asked for this sign-in, for the Bulwark app. This browser stays signed out of Bulwark. If you didn't start this, close this tab.",
-    "consent_title": "Sign in to the Bulwark app?",
-    "consent_description": "A program on this computer, at port {port}, is asking for the sign-in for {username}. Continue only if you just pressed \"Sign in with your browser…\" in the Bulwark app here. If you didn't, someone may be trying to get into your account: choose Not now.",
+    "handoff_banner": "A program on this computer asked for this sign-in, for the Loomix app. This browser stays signed out of Loomix. If you didn't start this, close this tab.",
+    "consent_title": "Sign in to the Loomix app?",
+    "consent_description": "A program on this computer, at port {port}, is asking for the sign-in for {username}. Continue only if you just pressed \"Sign in with your browser…\" in the Loomix app here. If you didn't, someone may be trying to get into your account: choose Not now.",
     "consent_confirm": "Sign in to the app",
     "consent_cancel": "Not now",
-    "page_done": "You can close this tab and go back to Bulwark.",
-    "page_failed": "Signing in did not work. Go back to Bulwark and try again.",
-    "page_link_used": "This link only works once. Go back to Bulwark and start again.",
+    "page_done": "You can close this tab and go back to Loomix.",
+    "page_failed": "Signing in did not work. Go back to Loomix and try again.",
+    "page_link_used": "This link only works once. Go back to Loomix and start again.",
     "page_title": "Sign in to {server}",
-    "page_intro": "This page comes from the Bulwark app on this computer. Your password goes to {server} and nowhere else.",
+    "page_intro": "This page comes from the Loomix app on this computer. Your password goes to {server} and nowhere else.",
     "page_username": "Email address or username",
     "page_password": "Password",
     "page_code": "Two-factor code",
     "page_submit": "Sign in",
     "page_wrong_password": "The server did not accept this username and password.",
     "page_code_needed": "This account also needs a two-factor code. Enter your password again and the code.",
-    "page_no_answer": "Bulwark could not sign in. Check that the server is reachable and try again.",
+    "page_no_answer": "Loomix could not sign in. Check that the server is reachable and try again.",
     "declined": "You said no in your browser, so nothing was signed in.",
     "too_many": "Too many sign-in attempts from this network. Wait a few minutes and try again.",
     "page_declined": "Nothing was handed over. You can close this tab."
@@ -7619,7 +7619,7 @@
     "other_ways": "Other ways to sign in",
     "trouble": "Having trouble?",
     "trouble_cors": "Your mail server has to allow sign-ins from this website. If signing in fails, ask whoever runs your mail server to allow it.",
-    "provider_unsupported": "{provider} doesn't offer JMAP, the way Bulwark talks to mail servers, so Bulwark can't connect to it directly yet."
+    "provider_unsupported": "{provider} doesn't offer JMAP, the way Loomix talks to mail servers, so Loomix can't connect to it directly yet."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock is on",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Change how Bulwark connects?",
-      "message": "Bulwark restarts and asks how to connect: with your email address, or through your organisation's Bulwark. Your accounts on this computer stay signed in.",
+      "title": "Change how Loomix connects?",
+      "message": "Loomix restarts and asks how to connect: with your email address, or through your organisation's Loomix. Your accounts on this computer stay signed in.",
       "confirm": "Change",
-      "org_link": "Use my organisation's Bulwark instead",
+      "org_link": "Use my organisation's Loomix instead",
       "add_account": "Add account…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Insert"
     },
     "sign_in_page": {
-      "open_app": "Open Bulwark",
+      "open_app": "Open Loomix",
       "done_as": "Signed in as {address}. You can close this tab."
     }
   },
   "desktop_updates": {
     "title": "Updates",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark checks for updates by itself.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix checks for updates by itself.",
     "status_checking": "Checking for updates…",
     "status_up_to_date": "You have the latest version.",
     "status_downloading": "Downloading version {version}…",
     "status_ready": "Version {version} is ready. It installs the next time you quit, or restart now.",
     "status_available": "Version {version} is available.",
-    "status_available_per_machine": "Version {version} is available. Bulwark is installed for everyone on this computer, so an administrator installs updates.",
-    "status_older": "You have a beta. Stable {version} is older, so Bulwark stays on this version until stable catches up.",
-    "status_error": "Couldn't check for updates. Bulwark tries again later.",
+    "status_available_per_machine": "Version {version} is available. Loomix is installed for everyone on this computer, so an administrator installs updates.",
+    "status_older": "You have a beta. Stable {version} is older, so Loomix stays on this version until stable catches up.",
+    "status_error": "Couldn't check for updates. Loomix tries again later.",
     "status_off": "Your organisation turned off updates in the app.",
     "check": "Check now",
     "restart": "Restart to update",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Restart to update",
     "shell_check": "Check for updates…",
-    "shell_available": "Bulwark {version} is available",
-    "shell_ready_title": "Bulwark is ready to update",
+    "shell_available": "Loomix {version} is available",
+    "shell_ready_title": "Loomix is ready to update",
     "shell_ready_body": "Version {version} installs the next time you quit. Click to restart now. Your drafts are saved first.",
-    "shell_available_title": "A new version of Bulwark is available",
-    "shell_none_title": "Bulwark is up to date",
+    "shell_available_title": "A new version of Loomix is available",
+    "shell_none_title": "Loomix is up to date",
     "shell_none_detail": "You have version {version}.",
-    "shell_failed_title": "Bulwark couldn't check for updates",
+    "shell_failed_title": "Loomix couldn't check for updates",
     "shell_failed_detail": "Check your connection and try again later. Nothing has changed.",
     "shell_beta_title": "Switch to beta versions?",
     "shell_beta_detail": "You get new versions earlier, and they can have more problems. To go back later, you install an older stable version or wait until stable catches up.",
     "shell_beta_confirm": "Switch to beta",
-    "shell_older_title": "Go back to Bulwark {version}?",
+    "shell_older_title": "Go back to Loomix {version}?",
     "shell_older_detail": "You have the beta {current}. Stable {target} is older, and it may not be able to read what the beta saved on this computer. Your mail stays on your server, but mail kept for offline use may download again and changes not yet sent can be lost. If you wait, stable catches up and you move to it without this step.",
     "shell_older_confirm": "Install older version"
   },
@@ -7982,7 +7982,7 @@
       "progress": "{done} of {total} uploaded",
       "cannot_offline": "The server can't be reached. Not uploaded yet: {names}",
       "cannot_other": "These can't be uploaded: {names}. Recent activity in Settings says why.",
-      "go_note_drive": "If you go on now, what isn't uploaded is copied to Documents\\Bulwark – not uploaded. Nothing is lost.",
+      "go_note_drive": "If you go on now, what isn't uploaded is copied to Documents\\Loomix – not uploaded. Nothing is lost.",
       "go_note_folder": "If you go on now, what isn't uploaded stays in the folder on this computer.",
       "keep_turn_off": "Keep the drive on",
       "keep_sign_out": "Stay signed in",
@@ -7996,22 +7996,22 @@
       "rescued": "Files that weren't uploaded ({count}) are in {folder} now.",
       "rescued_open": "Open folder",
       "rescued_dismiss": "Dismiss",
-      "start_at_login": "Start Bulwark when you sign in to Windows",
-      "start_at_login_why": "The drive needs Bulwark running, as OneDrive does.",
-      "closed_warning": "Files in the drive can't open while Bulwark is closed.",
-      "where": "In File Explorer as Bulwark Files",
-      "where_letter": "In File Explorer as Bulwark Files ({letter}:)",
+      "start_at_login": "Start Loomix when you sign in to Windows",
+      "start_at_login_why": "The drive needs Loomix running, as OneDrive does.",
+      "closed_warning": "Files in the drive can't open while Loomix is closed.",
+      "where": "In File Explorer as Loomix Files",
+      "where_letter": "In File Explorer as Loomix Files ({letter}:)",
       "open": "Open",
-      "letter_note": "Through the letter, File Explorer shows no sync status and no “Always keep on this device”. They show under Bulwark Files in Explorer.",
+      "letter_note": "Through the letter, File Explorer shows no sync status and no “Always keep on this device”. They show under Loomix Files in Explorer.",
       "letter_failed": "The drive letter couldn't be set. Try again."
     },
     "tray": {
-      "idle": "Bulwark Files: Up to date",
-      "syncing": "Bulwark Files: Syncing. To go: {count}",
-      "paused": "Bulwark Files: Paused",
-      "offline": "Bulwark Files: Offline. Waiting: {count}",
-      "question": "Bulwark Files: Needs your answer",
-      "error": "Bulwark Files: Error"
+      "idle": "Loomix Files: Up to date",
+      "syncing": "Loomix Files: Syncing. To go: {count}",
+      "paused": "Loomix Files: Paused",
+      "offline": "Loomix Files: Offline. Waiting: {count}",
+      "question": "Loomix Files: Needs your answer",
+      "error": "Loomix Files: Error"
     },
     "notify": {
       "conflict_title": "A file was changed in two places",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Once a day: a random ID, the app's version numbers, your operating system, how long the app has been running and how it connects. With your own mail server, also which features are on, a rough number of accounts and how many plugins and themes you have. Never mail, addresses or server names.",
     "crash_label": "Send crash reports",
     "crash_description": "Errors in the app go out with a random ID, file names from the app's own code and short, cleaned-up messages. If the app itself crashes, a crash file stays on this computer and only leaves when you send it.",
-    "crash_memory": "A crash file is a copy of part of the app's memory when it crashed. Bulwark removes user names, addresses and sign-in tokens it can find, but a crash file can still contain the text of your mail.",
-    "instance_note": "On a Bulwark server, that server's admin decides separately what its pages report to it.",
+    "crash_memory": "A crash file is a copy of part of the app's memory when it crashed. Loomix removes user names, addresses and sign-in tokens it can find, but a crash file can still contain the text of your mail.",
+    "instance_note": "On a Loomix server, that server's admin decides separately what its pages report to it.",
     "forced_off": "Your organisation turned this off.",
     "url_label": "Where crash files go",
-    "url_description": "The https address that receives a crash file. Bulwark doesn't come with one.",
+    "url_description": "The https address that receives a crash file. Loomix doesn't come with one.",
     "url_invalid": "Enter a full https address.",
     "url_save": "Save",
     "files_label": "Crash files on this computer",
-    "files_description": "Bulwark keeps the newest few and deletes ones older than a month.",
+    "files_description": "Loomix keeps the newest few and deletes ones older than a month.",
     "files_empty": "No crash files.",
     "file_size": "{size} KB",
     "send": "Send crash report…",

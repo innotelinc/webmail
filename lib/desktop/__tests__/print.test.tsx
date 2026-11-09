@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { createPortal } from 'react-dom';
-import type { BulwarkDesktopBridge, DesktopPrintPreviewRequest } from '../types';
+import type { LoomixDesktopBridge, DesktopPrintPreviewRequest } from '../types';
 
 /**
  * Print in the desktop app goes to the shell's own preview: print windows open hidden under a
@@ -14,7 +14,7 @@ type Preview = (request: DesktopPrintPreviewRequest) => Promise<string>;
 function setBridge(preview?: Preview, onRequest?: (listener: () => void) => () => void) {
   window.bulwarkDesktop = (preview
     ? { version: 1, platform: 'win32', print: { preview, onRequest: onRequest ?? (() => () => {}) } }
-    : undefined) as BulwarkDesktopBridge | undefined;
+    : undefined) as LoomixDesktopBridge | undefined;
 }
 
 /** A window as window.open gives one, that records print(). */

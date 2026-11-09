@@ -7,7 +7,7 @@ import { debug } from '@/lib/debug';
 /**
  * Whether "Recover deleted items" works for an account, asked once per
  * session and account with a one-item x:ArchivedItem/query. The answer can
- * change while Bulwark stays open (an admin installs the license, or it runs
+ * change while Loomix stays open (an admin installs the license, or it runs
  * out), so a "no" is asked again after a while. Separately, whether the
  * archive holds a recent message, which decides the Trash link.
  */

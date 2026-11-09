@@ -1,6 +1,6 @@
 /**
  * Device policies (policy.json `organisation.devices`, enterprise pack item
- * 13): admin switches that make copying mail out of Bulwark harder: no
+ * 13): admin switches that make copying mail out of Loomix harder: no
  * attachment downloads or opening in a new tab, no mail or folder export, no
  * printing, no install prompt, push without sender and subject, and a
  * watermark.

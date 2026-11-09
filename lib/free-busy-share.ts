@@ -7,7 +7,7 @@
  * (local-data/enterprise-pack-facts.md part 6 §1). Two ways to fix that:
  *
  * - the admin names a group in organisation.calendars.freeBusyGroup, and
- *   Bulwark shares each user's default calendar with it at sign-in;
+ *   Loomix shares each user's default calendar with it at sign-in;
  * - a user shares their own with one click (Calendar settings, the Find a
  *   time note).
  *

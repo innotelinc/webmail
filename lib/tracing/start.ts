@@ -20,7 +20,7 @@ import { scrubAttributes, scrubSpanName, type Attributes } from './scrub';
  * Everything else comes from the standard OTEL_* variables, which the OTLP
  * exporter and the env resource detector read themselves.
  *
- * Next's own spans (requests, rendering, route handlers) and Bulwark's spans
+ * Next's own spans (requests, rendering, route handlers) and Loomix's spans
  * for the calls it makes (lib/metrics/upstream.ts) go through the same
  * provider; a processor scrubs every span before export (./scrub.ts).
  *

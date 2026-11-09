@@ -461,7 +461,7 @@
         "remove_error": "Không thể xóa khóa công khai. Hãy thử lại."
       },
       "link_device": {
-        "description": "Đăng nhập vào ứng dụng Bulwark Mail trên điện thoại mà không cần nhập mật khẩu. Điện thoại có phiên đăng nhập riêng. Nếu đăng xuất tại đây, điện thoại vẫn giữ trạng thái đăng nhập.",
+        "description": "Đăng nhập vào ứng dụng Loomix Mail trên điện thoại mà không cần nhập mật khẩu. Điện thoại có phiên đăng nhập riêng. Nếu đăng xuất tại đây, điện thoại vẫn giữ trạng thái đăng nhập.",
         "error": "Không thể tạo mã. Hãy thử lại.",
         "password_prompt": "Nhập mật khẩu để xác nhận đó là bạn. Mật khẩu không được gửi đến điện thoại.",
         "error_not_signed_in": "Bạn đã được đăng xuất. Hãy đăng nhập lại rồi liên kết điện thoại.",

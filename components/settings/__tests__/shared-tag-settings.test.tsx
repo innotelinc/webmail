@@ -34,10 +34,10 @@ const client = {
     { id: 'team', name: 'org-team@example.org', isPrimary: false, capabilities: { mail: true } },
   ],
   getPrincipalTypes: async () => ({ team: principalType }),
-  advertisesBulwarkMetadata: () => advertised,
-  supportsBulwarkMetadata: () => advertised,
-  getBulwarkMetadata: vi.fn(async () => (stored ? { tags: stored } : null)),
-  patchBulwarkMetadata: vi.fn(async (_id: string | undefined, _key: string, patches: Array<{ path: string[]; value: unknown }>) => {
+  advertisesLoomixMetadata: () => advertised,
+  supportsLoomixMetadata: () => advertised,
+  getLoomixMetadata: vi.fn(async () => (stored ? { tags: stored } : null)),
+  patchLoomixMetadata: vi.fn(async (_id: string | undefined, _key: string, patches: Array<{ path: string[]; value: unknown }>) => {
     const tags = { ...((stored?.tags ?? {}) as Record<string, unknown>) };
     for (const { path, value } of patches) {
       if (value === null) delete tags[path[1]];
@@ -64,8 +64,8 @@ beforeEach(() => {
   keywords = {};
   advertised = true;
   principalType = 'group';
-  client.getBulwarkMetadata.mockClear();
-  client.patchBulwarkMetadata.mockClear();
+  client.getLoomixMetadata.mockClear();
+  client.patchLoomixMetadata.mockClear();
   client.getMailboxes.mockClear();
   useSettingsStore.setState({ emailKeywords: [], nestedTags: false });
   useAuthStore.setState({
@@ -85,7 +85,7 @@ describe('SharedTagSettings', () => {
     fireEvent.click(screen.getByText('add'));
     fireEvent.change(screen.getByLabelText('name'), { target: { value: 'Waiting' } });
     fireEvent.click(screen.getByText('save'));
-    await waitFor(() => expect(client.patchBulwarkMetadata).toHaveBeenCalledWith('team', 'tags', [
+    await waitFor(() => expect(client.patchLoomixMetadata).toHaveBeenCalledWith('team', 'tags', [
       { path: ['tags', 'waiting'], value: { label: 'Waiting', color: 'blue' } },
     ]));
     expect(await screen.findByText('Waiting')).toBeInTheDocument();
@@ -97,7 +97,7 @@ describe('SharedTagSettings', () => {
     fireEvent.change(screen.getByLabelText('name'), { target: { value: 'Very urgent' } });
     fireEvent.click(screen.getByText('save'));
     // The color wasn't picked, so it isn't sent: whatever is stored stays.
-    await waitFor(() => expect(client.patchBulwarkMetadata).toHaveBeenCalledWith('team', 'tags', [
+    await waitFor(() => expect(client.patchLoomixMetadata).toHaveBeenCalledWith('team', 'tags', [
       { path: ['tags', 'urgent'], value: { label: 'Very urgent', color: 'red' } },
     ]));
     await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText('edit_tag:Very urgent')));
@@ -112,7 +112,7 @@ describe('SharedTagSettings', () => {
     // Shown at every width, not only from the sm breakpoint up.
     expect(warning.className).not.toMatch(/(^|\s)hidden(\s|$)/);
     fireEvent.click(screen.getByText('delete'));
-    await waitFor(() => expect(client.patchBulwarkMetadata).toHaveBeenCalledWith('team', 'tags', [{ path: ['tags', 'urgent'], value: null }]));
+    await waitFor(() => expect(client.patchLoomixMetadata).toHaveBeenCalledWith('team', 'tags', [{ path: ['tags', 'urgent'], value: null }]));
   });
 
   it('shows the tags read-only with "Set by your organisation" when the admin locked them', async () => {
@@ -149,7 +149,7 @@ describe('SharedTagSettings', () => {
     render(<SharedTagSettings />);
     expect(await screen.findByTestId('shared-tags-unsupported')).toHaveTextContent('unsupported');
     expect(screen.queryByText('add')).not.toBeInTheDocument();
-    expect(client.getBulwarkMetadata).not.toHaveBeenCalled();
+    expect(client.getLoomixMetadata).not.toHaveBeenCalled();
   });
 
   it('says so in one line when the shared tags couldn\'t be read', async () => {
@@ -162,7 +162,7 @@ describe('SharedTagSettings', () => {
   it('keeps a change the server didn\'t take and says it will try again', async () => {
     render(<SharedTagSettings />);
     await screen.findByText('Urgent');
-    client.patchBulwarkMetadata.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    client.patchLoomixMetadata.mockRejectedValueOnce(new TypeError('Failed to fetch'));
     fireEvent.click(screen.getByText('add'));
     fireEvent.change(screen.getByLabelText('name'), { target: { value: 'Waiting' } });
     await act(async () => { fireEvent.click(screen.getByText('save')); });
@@ -176,7 +176,7 @@ describe('SharedTagSettings', () => {
     fireEvent.click(await screen.findByLabelText('name_it:waiting-for-customer'));
     fireEvent.change(screen.getByLabelText('name'), { target: { value: 'Customer' } });
     fireEvent.click(screen.getByText('save'));
-    await waitFor(() => expect(client.patchBulwarkMetadata).toHaveBeenCalledWith('team', 'tags', [
+    await waitFor(() => expect(client.patchLoomixMetadata).toHaveBeenCalledWith('team', 'tags', [
       { path: ['tags', 'waiting-for-customer'], value: { label: 'Customer', color: expect.any(String) } },
     ]));
   });

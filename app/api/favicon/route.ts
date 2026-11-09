@@ -38,7 +38,7 @@ const TRANSPARENT_PNG = Buffer.from(
 const MISSING_FAVICON_HEADERS = {
   'Content-Type': 'image/png',
   'Cache-Control': 'public, max-age=86400', // 1 day
-  'X-Bulwark-Favicon': 'missing',
+  'X-Loomix-Favicon': 'missing',
 };
 
 // Strict domain validation to prevent SSRF

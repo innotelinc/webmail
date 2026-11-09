@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { RecurrenceScopeDialog } from '@/components/calendar/recurrence-scope-dialog';
 import { SessionTimeoutDialog } from '@/components/session/session-timeout-dialog';
 import { FilePickerDialog } from '@/components/files/file-picker-dialog';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
 
 // Modals that draw their own overlay instead of using Dialog go into a window of their
@@ -42,7 +42,7 @@ function fakeWindow(name: string): FakeWindow {
 
 function desktop() {
   opened = [];
-  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), showWindow: vi.fn(async () => true) } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), showWindow: vi.fn(async () => true) } } as unknown as LoomixDesktopBridge;
   vi.spyOn(window, 'open').mockImplementation(((_url: string, name: string) => {
     const win = fakeWindow(name);
     opened.push(win);

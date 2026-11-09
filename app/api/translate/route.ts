@@ -177,7 +177,7 @@ async function mymemoryRequest(
 
   const res = await observeUpstream('translate', () => fetch(url.toString(), {
     signal,
-    headers: { 'User-Agent': 'Bulwark-Webmail-Translate (+https://bulwarkmail.org)' },
+    headers: { 'User-Agent': 'Loomix-Webmail-Translate (+https://bulwarkmail.org)' },
   }));
   const data = (await res.json().catch(() => null)) as
     | { responseStatus?: number | string; responseData?: { translatedText?: string }; responseDetails?: string }

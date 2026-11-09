@@ -70,8 +70,8 @@
     "demo_tagline": "Ervaar een complete e-mailclient. Geen account nodig.",
     "demo_no_signup": "Geen registratie nodig - verken vrij met voorbeeldgegevens",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Deze naam is te lang.",
     "loading": "Laden…",
     "unsupported": "Deze mailserver kan geen gedeelde labels bewaren, daarom toont dit postvak je eigen labels.",
-    "unavailable": "De gedeelde labels van dit postvak konden niet worden geladen, daarom toont het je eigen labels. Bulwark probeert het later opnieuw.",
+    "unavailable": "De gedeelde labels van dit postvak konden niet worden geladen, daarom toont het je eigen labels. Loomix probeert het later opnieuw.",
     "no_rights": "Je kunt deze labels gebruiken, maar je kunt ze in dit postvak niet wijzigen.",
     "too_many": "Er zijn te veel gedeelde labels. Verwijder er een paar voordat je meer toevoegt.",
-    "save_failed": "De gedeelde labels konden niet worden opgeslagen. Bulwark probeert het opnieuw zodra de server antwoordt.",
-    "save_pending": "Nog niet opgeslagen. Bulwark probeert het opnieuw zodra de server antwoordt."
+    "save_failed": "De gedeelde labels konden niet worden opgeslagen. Loomix probeert het opnieuw zodra de server antwoordt.",
+    "save_pending": "Nog niet opgeslagen. Loomix probeert het opnieuw zodra de server antwoordt."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1116,7 +1116,7 @@
     "smime_unlock_button": "Ontgrendelen",
     "smime_passphrase_placeholder": "S/MIME-wachtwoordzin",
     "send_timeout": "De server reageert niet meer. Controleer de map Verzonden voordat u opnieuw verstuurt — het bericht is mogelijk al verzonden.",
-    "submission_quota": "De server bewaart te veel records van verzonden berichten voor dit account. Bulwark heeft verwijderd wat kon; blijft dit gebeuren, vraag uw beheerder dan de limiet voor e-mailverzendingen te verhogen.",
+    "submission_quota": "De server bewaart te veel records van verzonden berichten voor dit account. Loomix heeft verwijderd wat kon; blijft dit gebeuren, vraag uw beheerder dan de limiet voor e-mailverzendingen te verhogen.",
     "submission_limit": "De server weigerde het bericht te verzenden omdat een limiet is bereikt: {reason}",
     "recipients_refused": "Niet verzonden: de server heeft {recipients} geweigerd.",
     "recipients_partly_refused": "De server heeft {recipients} geweigerd. De andere ontvangers krijgen het bericht.",
@@ -1890,13 +1890,13 @@
       "push": {
         "confirm_disable_message": "Dit apparaat ontvangt geen meldingen meer als de site is gesloten.",
         "confirm_disable_title": "Achtergrondmeldingen uitschakelen?",
-        "description": "Ontvang systeemmeldingen voor nieuwe e-mail wanneer deze site gesloten is. Geleverd via de Bulwark-pushrelay; de relay ziet nooit e-mailinhoud.",
+        "description": "Ontvang systeemmeldingen voor nieuwe e-mail wanneer deze site gesloten is. Geleverd via de Loomix-pushrelay; de relay ziet nooit e-mailinhoud.",
         "disable": "Uitschakelen",
         "enable": "Aanzetten op dit apparaat",
         "dismiss_aria": "Meldingsvenster sluiten",
         "ios_hint": "Installeer de site op iOS eerst op het beginscherm – Safari levert Web Push alleen aan geïnstalleerde PWA's.",
         "reenable": "Opnieuw registreren",
-        "relay_desc": "Gebruikt standaard de gehoste Bulwark-relay. Wijzig alleen als je zelf hostt.",
+        "relay_desc": "Gebruikt standaard de gehoste Loomix-relay. Wijzig alleen als je zelf hostt.",
         "relay_label": "Push-relay",
         "relay_locked": "Ingesteld door beheerder",
         "relay_locked_desc": "De push-relay-URL is ingesteld door je beheerder en kan niet worden gewijzigd.",
@@ -1904,7 +1904,7 @@
         "status_busy": "Bezig…",
         "status_inactive": "Niet ingeschakeld op dit apparaat",
         "status_unsupported": "Deze browser ondersteunt geen Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "Achtergrondmeldingen zijn niet beschikbaar in de demo.",
         "title": "Meldingen als {appName} gesloten is",
         "devices_title": "Geregistreerde apparaten",
@@ -2481,10 +2481,10 @@
       },
       "link_device": {
         "title": "Mobiele app koppelen",
-        "description": "Log in bij de Bulwark Mail-app op uw telefoon zonder daar uw wachtwoord te typen. Uw telefoon krijgt een eigen aanmelding, dus als u hier uitlogt, blijft de telefoon ingelogd.",
+        "description": "Log in bij de Loomix Mail-app op uw telefoon zonder daar uw wachtwoord te typen. Uw telefoon krijgt een eigen aanmelding, dus als u hier uitlogt, blijft de telefoon ingelogd.",
         "generate": "QR-code tonen",
         "regenerate": "Nieuwe code tonen",
-        "instructions": "Open de Bulwark Mail-app en tik op het inlogscherm op \"Scan a sign-in code\" (of op \"Add account\" → \"Scan a sign-in code\" als u al bent ingelogd) en richt de camera hierop.",
+        "instructions": "Open de Loomix Mail-app en tik op het inlogscherm op \"Scan a sign-in code\" (of op \"Add account\" → \"Scan a sign-in code\" als u al bent ingelogd) en richt de camera hierop.",
         "expires_in": "Deze code verloopt over {seconds} seconden. Hij kan maar één keer worden gebruikt.",
         "expired": "Deze code is verlopen.",
         "error": "Kon geen koppelingscode aanmaken. Probeer het opnieuw.",
@@ -2750,7 +2750,7 @@
         "button": "Importeren"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Broncode"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Zoeken bovenaan, berichten openen over de volle breedte"
   },
   "setup": {
-    "title": "Bulwark Webmail instellen",
+    "title": "Loomix Mail instellen",
     "subtitle": "Stel je webmailinstantie in vanuit de browser.",
     "loading": "Laden…",
     "back": "Terug",
@@ -3734,7 +3734,7 @@
       "regenerate": "Opnieuw aanmaken",
       "sync": "Gebruikersinstellingen synchroniseren tussen apparaten",
       "sync_hint": "Slaat gebruikersvoorkeuren op de server op, versleuteld met het sessiegeheim.",
-      "telemetry": "Anonieme gebruiksstatistieken sturen om Bulwark te verbeteren",
+      "telemetry": "Anonieme gebruiksstatistieken sturen om Loomix te verbeteren",
       "telemetry_hint": "Standaard uit. Eén anoniem signaal per dag met versie, platform en welke functies aan staan; nooit e-mailadressen, hostnamen of IP-adressen. Je kunt dit altijd wijzigen in de beheerinstellingen."
     },
     "logging": {
@@ -5407,7 +5407,7 @@
     "start_tour": "Tour starten"
   },
   "demo_welcome": {
-    "title": "Welkom bij Bulwark Mail",
+    "title": "Welkom bij Loomix Mail",
     "description": "Ontdek een volwaardige webmail-client - rechtstreeks in je browser. Alle gegevens blijven op je apparaat, dus test gerust alles.",
     "feature_email": "E-mails lezen en schrijven",
     "feature_organize": "Tags, sterren en mappen",
@@ -5841,9 +5841,9 @@
     "cancelled_hint": "Importeer later dezelfde bestanden opnieuw in dezelfde map om verder te gaan.",
     "close": "Sluiten",
     "pst_note": "Uit Outlook-bestanden komt alleen e-mail mee. Contacten, agenda-items en taken worden geteld en overgeslagen.",
-    "pst_error_encrypted": "Dit Outlook-bestand gebruikt sterke versleuteling, die Bulwark niet kan lezen. Exporteer de e-mail in Outlook naar een nieuw .pst-bestand zonder versleuteling.",
-    "pst_error_not_pst": "Dit bestand is geen Outlook-gegevensbestand dat Bulwark kan lezen.",
-    "pst_error_unreadable": "Bulwark kon dit Outlook-bestand niet lezen.",
+    "pst_error_encrypted": "Dit Outlook-bestand gebruikt sterke versleuteling, die Loomix niet kan lezen. Exporteer de e-mail in Outlook naar een nieuw .pst-bestand zonder versleuteling.",
+    "pst_error_not_pst": "Dit bestand is geen Outlook-gegevensbestand dat Loomix kan lezen.",
+    "pst_error_unreadable": "Loomix kon dit Outlook-bestand niet lezen.",
     "pst_error_worker": "De lezer voor Outlook-bestanden is niet geladen. Laad de pagina opnieuw en probeer het nog eens.",
     "error_over_quota": "De mailbox is vol, dus de import is gestopt. Maak ruimte en importeer dezelfde bestanden opnieuw in dezelfde map om verder te gaan.",
     "error_forbidden": "U mag geen e-mail aan deze map toevoegen, dus de import is gestopt.",
@@ -5904,7 +5904,7 @@
   },
   "desktopImport": {
     "find": "Thunderbird- en Outlook-gegevens zoeken…",
-    "find_hint": "Zoekt op de gebruikelijke plekken op deze computer. Bulwark vraagt het eerst.",
+    "find_hint": "Zoekt op de gebruikelijke plekken op deze computer. Loomix vraagt het eerst.",
     "scan_declined": "Er is niets gezocht, omdat je het niet hebt toegestaan.",
     "scan_failed": "Het zoeken is mislukt. Probeer het opnieuw.",
     "read_declined": "Er zijn geen bestanden gelezen, omdat je het niet hebt toegestaan.",
@@ -5960,7 +5960,7 @@
     "restore": "Herstellen",
     "restored": "{count, plural, one {# bericht gaat} other {# berichten gaan}} terug naar je Postvak IN.",
     "restore_partial": "{count, plural, one {# bericht kon niet worden hersteld. Het blijft geselecteerd, zodat je het opnieuw kunt proberen.} other {# berichten konden niet worden hersteld. Ze blijven geselecteerd, zodat je het opnieuw kunt proberen.}}",
-    "restore_hint": "Herstelde e-mail komt ongelezen terug in je Postvak IN, gesorteerd op de oorspronkelijke datum, dus misschien ver onderaan de lijst. De server herstelt het op de achtergrond. Mislukt dat daar, dan is het bericht verloren en kan Bulwark dat niet zien.",
+    "restore_hint": "Herstelde e-mail komt ongelezen terug in je Postvak IN, gesorteerd op de oorspronkelijke datum, dus misschien ver onderaan de lijst. De server herstelt het op de achtergrond. Mislukt dat daar, dan is het bericht verloren en kan Loomix dat niet zien.",
     "unknown_sender": "Onbekende afzender",
     "no_subject": "(geen onderwerp)",
     "deleted_on": "Verwijderd op {date}",
@@ -5995,7 +5995,7 @@
     "label": "Mijn agenda blokkeren",
     "description": "Zet een bezette afspraak in je agenda voor de tijd dat je weg bent, zodat niemand dan vergaderingen met je plant.",
     "no_access_managed": "De agenda van dit account kan niet worden geblokkeerd: je hebt er geen schrijfrechten voor.",
-    "no_calendar": "Je agenda kan niet worden geblokkeerd: Bulwark vond geen agenda om de afspraak in te zetten.",
+    "no_calendar": "Je agenda kan niet worden geblokkeerd: Loomix vond geen agenda om de afspraak in te zetten.",
     "filter_warning": "Als je dit aanzet, staat je eigen filterscript uit zolang het antwoord actief is."
   },
   "calendar_delegate": {
@@ -6098,20 +6098,20 @@
   "find_time": {
     "suggest": "Tijden voorstellen",
     "searching": "Vrije tijden zoeken",
-    "slots_title": "Vrij voor iedereen die Bulwark kon controleren",
+    "slots_title": "Vrij voor iedereen die Loomix kon controleren",
     "slot": "{day}, {start} tot {end}",
     "none": "Geen vrije tijd in de komende 10 werkdagen.",
     "picked": "Afspraak verplaatst naar {slot}",
     "rate_limited": "Te veel opvragingen in de afgelopen minuut. Probeer het over een minuut opnieuw.",
-    "unavailable": "Vrij/bezet is niet beschikbaar op deze server, dus Bulwark kan geen tijden voorstellen.",
+    "unavailable": "Vrij/bezet is niet beschikbaar op deze server, dus Loomix kan geen tijden voorstellen.",
     "not_checked": "Niet gecontroleerd:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "buiten je organisatie",
     "reason_unknown": "bezette tijden onbekend",
     "reason_not_found": "niet gevonden op deze server",
     "reason_error": "kon niet worden gecontroleerd",
-    "unknown_note": "Bulwark ziet bezette tijden alleen in agenda’s die met je zijn gedeeld. Bij deze mensen kan het vrij niet onderscheiden van niet gedeeld.",
-    "directory_off": "Bulwark kan op deze server geen mensen opzoeken. Je beheerder kan directoryquery’s aanzetten in Stalwart.",
+    "unknown_note": "Loomix ziet bezette tijden alleen in agenda’s die met je zijn gedeeld. Bij deze mensen kan het vrij niet onderscheiden van niet gedeeld.",
+    "directory_off": "Loomix kan op deze server geen mensen opzoeken. Je beheerder kan directoryquery’s aanzetten in Stalwart.",
     "not_looked_up": "Dit adres kon niet worden opgezocht",
     "found": "Vrije tijden gevonden: {count}"
   },
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Wissen",
     "persist_refused": "Deze browser kan de bewaarde e-mail verwijderen als de ruimte opraakt. De app installeren voorkomt dat meestal.",
     "persist_retry": "Browser vragen het te bewaren",
-    "safari_hint": "Safari verwijdert de gegevens van een site na 7 dagen zonder bezoek. Zet Bulwark op je beginscherm of in het Dock om je e-mail op dit apparaat te houden.",
+    "safari_hint": "Safari verwijdert de gegevens van een site na 7 dagen zonder bezoek. Zet Loomix op je beginscherm of in het Dock om je e-mail op dit apparaat te houden.",
     "evicted": "De browser heeft de e-mail verwijderd die op dit apparaat was bewaard. Ze wordt opnieuw gedownload.",
     "evicted_lost": "{count, plural, one {# niet-verzonden bericht of wijziging is verloren gegaan.} other {# niet-verzonden berichten of wijzigingen zijn verloren gegaan.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "De opslag van het apparaat is vol.",
-    "storage_full_text": "Bulwark slaat hier geen e-mail meer op. Bewaar minder e-mail of wis dit account om ruimte te maken.",
+    "storage_full_text": "Loomix slaat hier geen e-mail meer op. Bewaar minder e-mail of wis dit account om ruimte te maken.",
     "open_settings": "Instellingen openen",
-    "default_on": "Bulwark bewaart je e-mail op dit apparaat, zodat het ook zonder verbinding werkt. Je kunt dit wijzigen in de instellingen.",
+    "default_on": "Loomix bewaart je e-mail op dit apparaat, zodat het ook zonder verbinding werkt. Je kunt dit wijzigen in de instellingen.",
     "conflict_calendar": "Agenda-item",
     "conflict_contacts": "Contact",
     "kept_files_title": "Offline bewaarde bestanden",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Toevoegen aan de takenweergave",
-        "body": "Eigen secties tonen in de details van een taak, knoppen in de takenlijst en een eigen takenlijst in plaats van die van Bulwark."
+        "body": "Eigen secties tonen in de details van een taak, knoppen in de takenlijst en een eigen takenlijst in plaats van die van Loomix."
       },
       "ui_files": {
         "title": "Toevoegen aan de bestandenweergave",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Toetsenbordsneltoetsen",
       "docs": "Documentatie",
       "settings": "Instellingen…",
-      "about": "Over Bulwark",
+      "about": "Over Loomix",
       "from_plugins": "Meer van plug-ins…",
       "pick_gone": "Dat menu was verouderd. Open het opnieuw en probeer het nog eens.",
       "bar_label": "Menu"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Als u nu sluit, gaat verloren wat u sinds de laatste keer bewaren hebt geschreven.",
       "close_anyway": "Toch sluiten",
       "unsent_title": "Er is e-mail die nog niet is verzonden",
-      "unsent_one": "Eén bericht wacht om te worden verzonden. Het wordt verzonden de volgende keer dat u Bulwark opent.",
-      "unsent_many": "{count} berichten wachten om te worden verzonden. Ze worden verzonden de volgende keer dat u Bulwark opent.",
+      "unsent_one": "Eén bericht wacht om te worden verzonden. Het wordt verzonden de volgende keer dat u Loomix opent.",
+      "unsent_many": "{count} berichten wachten om te worden verzonden. Ze worden verzonden de volgende keer dat u Loomix opent.",
       "quit": "Stop",
       "leave_title": "Verlaten met niet-bewaarde wijzigingen?",
       "leave_detail": "Uw wijzigingen op deze pagina zijn nog niet bewaard.",
@@ -7383,7 +7383,7 @@
       "stay": "Blijf"
     },
     "spellcheck": {
-      "offer": "Voor spellingcontrole in het {language} is een woordenboek nodig. Bulwark kan dit downloaden van Google. Uw tekst wordt niet verzonden.",
+      "offer": "Voor spellingcontrole in het {language} is een woordenboek nodig. Loomix kan dit downloaden van Google. Uw tekst wordt niet verzonden.",
       "download": "Download"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "1 uur",
     "tray_pause_tomorrow": "Tot morgen",
     "tray_resume": "Meldingen weer aanzetten",
-    "tray_open": "Bulwark openen",
-    "tray_quit": "Bulwark afsluiten",
-    "tray_exit": "Bulwark afsluiten"
+    "tray_open": "Loomix openen",
+    "tray_quit": "Loomix afsluiten",
+    "tray_exit": "Loomix afsluiten"
   },
   "desktopMenus": {
     "save_draft": "Concept opslaan",
@@ -7581,25 +7581,25 @@
     "cancel": "Annuleren",
     "or_here": "of log hier in",
     "timed_out": "Inloggen in de browser duurde te lang. Probeer het opnieuw.",
-    "no_browser": "Bulwark kon je browser niet openen. Probeer het opnieuw of log hier in.",
+    "no_browser": "Loomix kon je browser niet openen. Probeer het opnieuw of log hier in.",
     "failed": "Inloggen via je browser is niet gelukt. Probeer het opnieuw.",
-    "handoff_banner": "Een programma op deze computer heeft om deze aanmelding gevraagd voor de Bulwark-app. Deze browser blijft uitgelogd bij Bulwark. Heb je dit niet gestart, sluit dan dit tabblad.",
-    "consent_title": "Inloggen bij de Bulwark-app?",
-    "consent_description": "Een programma op deze computer, op poort {port}, vraagt om de aanmelding van {username}. Ga alleen verder als je zojuist op \"Inloggen met je browser…\" hebt geklikt in de Bulwark-app hier. Zo niet, dan probeert iemand misschien in je account te komen: kies Niet nu.",
+    "handoff_banner": "Een programma op deze computer heeft om deze aanmelding gevraagd voor de Loomix-app. Deze browser blijft uitgelogd bij Loomix. Heb je dit niet gestart, sluit dan dit tabblad.",
+    "consent_title": "Inloggen bij de Loomix-app?",
+    "consent_description": "Een programma op deze computer, op poort {port}, vraagt om de aanmelding van {username}. Ga alleen verder als je zojuist op \"Inloggen met je browser…\" hebt geklikt in de Loomix-app hier. Zo niet, dan probeert iemand misschien in je account te komen: kies Niet nu.",
     "consent_confirm": "Inloggen bij de app",
     "consent_cancel": "Niet nu",
-    "page_done": "Je kunt dit tabblad sluiten en teruggaan naar Bulwark.",
-    "page_failed": "Inloggen is niet gelukt. Ga terug naar Bulwark en probeer het opnieuw.",
-    "page_link_used": "Deze link werkt maar één keer. Ga terug naar Bulwark en begin opnieuw.",
+    "page_done": "Je kunt dit tabblad sluiten en teruggaan naar Loomix.",
+    "page_failed": "Inloggen is niet gelukt. Ga terug naar Loomix en probeer het opnieuw.",
+    "page_link_used": "Deze link werkt maar één keer. Ga terug naar Loomix en begin opnieuw.",
     "page_title": "Inloggen bij {server}",
-    "page_intro": "Deze pagina komt van de Bulwark-app op deze computer. Je wachtwoord gaat naar {server} en nergens anders heen.",
+    "page_intro": "Deze pagina komt van de Loomix-app op deze computer. Je wachtwoord gaat naar {server} en nergens anders heen.",
     "page_username": "E-mailadres of gebruikersnaam",
     "page_password": "Wachtwoord",
     "page_code": "Tweefactorcode",
     "page_submit": "Inloggen",
     "page_wrong_password": "De server heeft deze gebruikersnaam en dit wachtwoord niet geaccepteerd.",
     "page_code_needed": "Dit account heeft ook een tweefactorcode nodig. Voer je wachtwoord opnieuw in en de code.",
-    "page_no_answer": "Bulwark kon niet inloggen. Controleer of de server bereikbaar is en probeer het opnieuw.",
+    "page_no_answer": "Loomix kon niet inloggen. Controleer of de server bereikbaar is en probeer het opnieuw.",
     "declined": "Je hebt in je browser nee gezegd, dus er is niet ingelogd.",
     "too_many": "Te veel inlogpogingen vanaf dit netwerk. Wacht een paar minuten en probeer het opnieuw.",
     "page_declined": "Er is niets overgedragen. Je kunt dit tabblad sluiten."
@@ -7619,7 +7619,7 @@
     "other_ways": "Andere manieren om in te loggen",
     "trouble": "Lukt het niet?",
     "trouble_cors": "Je mailserver moet aanmelden vanaf deze website toestaan. Lukt aanmelden niet, vraag dan wie je mailserver beheert om het toe te staan.",
-    "provider_unsupported": "{provider} biedt geen JMAP, de manier waarop Bulwark met mailservers praat, dus Bulwark kan er nog niet rechtstreeks mee verbinden."
+    "provider_unsupported": "{provider} biedt geen JMAP, de manier waarop Loomix met mailservers praat, dus Loomix kan er nog niet rechtstreeks mee verbinden."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock staat aan",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Wijzigen hoe Bulwark verbinding maakt?",
-      "message": "Bulwark start opnieuw en vraagt hoe het verbinding moet maken: met je e-mailadres of via de Bulwark van je organisatie. Je accounts op deze computer blijven aangemeld.",
+      "title": "Wijzigen hoe Loomix verbinding maakt?",
+      "message": "Loomix start opnieuw en vraagt hoe het verbinding moet maken: met je e-mailadres of via de Loomix van je organisatie. Je accounts op deze computer blijven aangemeld.",
       "confirm": "Wijzigen",
-      "org_link": "In plaats daarvan de Bulwark van mijn organisatie gebruiken",
+      "org_link": "In plaats daarvan de Loomix van mijn organisatie gebruiken",
       "add_account": "Account toevoegen…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Invoegen"
     },
     "sign_in_page": {
-      "open_app": "Bulwark openen",
+      "open_app": "Loomix openen",
       "done_as": "Aangemeld als {address}. Je kunt dit tabblad sluiten."
     }
   },
   "desktop_updates": {
     "title": "Updates",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark zoekt zelf naar updates.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix zoekt zelf naar updates.",
     "status_checking": "Zoeken naar updates…",
     "status_up_to_date": "Je hebt de nieuwste versie.",
     "status_downloading": "Versie {version} downloaden…",
     "status_ready": "Versie {version} staat klaar. Ze wordt geïnstalleerd zodra je afsluit, of start nu opnieuw.",
     "status_available": "Versie {version} is beschikbaar.",
-    "status_available_per_machine": "Versie {version} is beschikbaar. Bulwark is voor iedereen op deze computer geïnstalleerd, dus een beheerder installeert updates.",
-    "status_older": "Je hebt een bèta. Stabiele versie {version} is ouder, dus Bulwark blijft op deze versie tot de stabiele versie is bijgewerkt.",
-    "status_error": "Zoeken naar updates is niet gelukt. Bulwark probeert het later opnieuw.",
+    "status_available_per_machine": "Versie {version} is beschikbaar. Loomix is voor iedereen op deze computer geïnstalleerd, dus een beheerder installeert updates.",
+    "status_older": "Je hebt een bèta. Stabiele versie {version} is ouder, dus Loomix blijft op deze versie tot de stabiele versie is bijgewerkt.",
+    "status_error": "Zoeken naar updates is niet gelukt. Loomix probeert het later opnieuw.",
     "status_off": "Je organisatie heeft updates in de app uitgeschakeld.",
     "check": "Nu zoeken",
     "restart": "Opnieuw starten en bijwerken",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Bèta",
     "shell_restart": "Opnieuw starten en bijwerken",
     "shell_check": "Zoeken naar updates…",
-    "shell_available": "Bulwark {version} is beschikbaar",
-    "shell_ready_title": "Bulwark kan worden bijgewerkt",
+    "shell_available": "Loomix {version} is beschikbaar",
+    "shell_ready_title": "Loomix kan worden bijgewerkt",
     "shell_ready_body": "Versie {version} wordt geïnstalleerd zodra je afsluit. Klik om nu opnieuw te starten. Je concepten worden eerst opgeslagen.",
-    "shell_available_title": "Er is een nieuwe versie van Bulwark",
-    "shell_none_title": "Bulwark is bijgewerkt",
+    "shell_available_title": "Er is een nieuwe versie van Loomix",
+    "shell_none_title": "Loomix is bijgewerkt",
     "shell_none_detail": "Je hebt versie {version}.",
-    "shell_failed_title": "Bulwark kon niet naar updates zoeken",
+    "shell_failed_title": "Loomix kon niet naar updates zoeken",
     "shell_failed_detail": "Controleer je verbinding en probeer het later opnieuw. Er is niets veranderd.",
     "shell_beta_title": "Overstappen op bètaversies?",
     "shell_beta_detail": "Je krijgt nieuwe versies eerder, en ze kunnen meer problemen hebben. Om terug te gaan installeer je een oudere stabiele versie of wacht je tot stabiel is bijgewerkt.",
     "shell_beta_confirm": "Overstappen op bèta",
-    "shell_older_title": "Terug naar Bulwark {version}?",
+    "shell_older_title": "Terug naar Loomix {version}?",
     "shell_older_detail": "Je hebt de bèta {current}. Stabiel {target} is ouder en kan misschien niet lezen wat de bèta op deze computer heeft opgeslagen. Je e-mail blijft op je server, maar offline bewaarde e-mail wordt mogelijk opnieuw gedownload en niet-verzonden wijzigingen kunnen verloren gaan. Als je wacht, haalt stabiel de bèta in en stap je over zonder deze stap.",
     "shell_older_confirm": "Oudere versie installeren"
   },
@@ -7982,7 +7982,7 @@
       "progress": "{done} van {total} geüpload",
       "cannot_offline": "De server is niet bereikbaar. Nog niet geüpload: {names}",
       "cannot_other": "Deze kunnen niet worden geüpload: {names}. Recente activiteit in Instellingen vertelt waarom.",
-      "go_note_drive": "Als u nu doorgaat, wordt wat niet is geüpload gekopieerd naar Documenten\\Bulwark – not uploaded. Er gaat niets verloren.",
+      "go_note_drive": "Als u nu doorgaat, wordt wat niet is geüpload gekopieerd naar Documenten\\Loomix – not uploaded. Er gaat niets verloren.",
       "go_note_folder": "Als u nu doorgaat, blijft wat niet is geüpload in de map op deze computer.",
       "keep_turn_off": "Station aan laten",
       "keep_sign_out": "Aangemeld blijven",
@@ -7996,22 +7996,22 @@
       "rescued": "Niet-geüploade bestanden ({count}) staan nu in {folder}.",
       "rescued_open": "Map openen",
       "rescued_dismiss": "Sluiten",
-      "start_at_login": "Bulwark starten bij aanmelden bij Windows",
-      "start_at_login_why": "Het station heeft Bulwark nodig, net als OneDrive.",
-      "closed_warning": "Bestanden op het station gaan niet open zolang Bulwark gesloten is.",
-      "where": "In Verkenner als Bulwark Files",
-      "where_letter": "In Verkenner als Bulwark Files ({letter}:)",
+      "start_at_login": "Loomix starten bij aanmelden bij Windows",
+      "start_at_login_why": "Het station heeft Loomix nodig, net als OneDrive.",
+      "closed_warning": "Bestanden op het station gaan niet open zolang Loomix gesloten is.",
+      "where": "In Verkenner als Loomix Files",
+      "where_letter": "In Verkenner als Loomix Files ({letter}:)",
       "open": "Openen",
-      "letter_note": "Via de letter toont Verkenner geen synchronisatiestatus en geen ‘Altijd op dit apparaat bewaren’. Die ziet u onder Bulwark Files in Verkenner.",
+      "letter_note": "Via de letter toont Verkenner geen synchronisatiestatus en geen ‘Altijd op dit apparaat bewaren’. Die ziet u onder Loomix Files in Verkenner.",
       "letter_failed": "De stationsletter kon niet worden ingesteld. Probeer het opnieuw."
     },
     "tray": {
-      "idle": "Bulwark Files: Bijgewerkt",
-      "syncing": "Bulwark Files: Synchroniseren. Nog: {count}",
-      "paused": "Bulwark Files: Gepauzeerd",
-      "offline": "Bulwark Files: Offline. Wachtend: {count}",
-      "question": "Bulwark Files: Wacht op uw antwoord",
-      "error": "Bulwark Files: Fout"
+      "idle": "Loomix Files: Bijgewerkt",
+      "syncing": "Loomix Files: Synchroniseren. Nog: {count}",
+      "paused": "Loomix Files: Gepauzeerd",
+      "offline": "Loomix Files: Offline. Wachtend: {count}",
+      "question": "Loomix Files: Wacht op uw antwoord",
+      "error": "Loomix Files: Fout"
     },
     "notify": {
       "conflict_title": "Een bestand is op twee plekken gewijzigd",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Eén keer per dag: een willekeurige ID, de versienummers van de app, je besturingssysteem, hoe lang de app al draait en hoe hij verbinding maakt. Met je eigen mailserver ook welke functies aan staan, een ruw aantal accounts en hoeveel plug-ins en thema's je hebt. Nooit e-mail, adressen of servernamen.",
     "crash_label": "Crashrapporten verzenden",
     "crash_description": "Fouten in de app gaan mee met een willekeurige ID, bestandsnamen uit de eigen code van de app en korte, opgeschoonde meldingen. Als de app zelf crasht, blijft er een crashbestand op deze computer staan dat alleen weggaat als jij het verzendt.",
-    "crash_memory": "Een crashbestand is een kopie van een deel van het geheugen van de app op het moment van de crash. Bulwark verwijdert gebruikersnamen, adressen en aanmeldtokens die het vindt, maar een crashbestand kan nog steeds de tekst van je e-mail bevatten.",
-    "instance_note": "Op een Bulwark-server bepaalt de beheerder daarvan apart wat de pagina's aan die server melden.",
+    "crash_memory": "Een crashbestand is een kopie van een deel van het geheugen van de app op het moment van de crash. Loomix verwijdert gebruikersnamen, adressen en aanmeldtokens die het vindt, maar een crashbestand kan nog steeds de tekst van je e-mail bevatten.",
+    "instance_note": "Op een Loomix-server bepaalt de beheerder daarvan apart wat de pagina's aan die server melden.",
     "forced_off": "Je organisatie heeft dit uitgezet.",
     "url_label": "Bestemming van crashbestanden",
-    "url_description": "Het https-adres dat een crashbestand ontvangt. Bulwark heeft er zelf geen.",
+    "url_description": "Het https-adres dat een crashbestand ontvangt. Loomix heeft er zelf geen.",
     "url_invalid": "Vul een volledig https-adres in.",
     "url_save": "Opslaan",
     "files_label": "Crashbestanden op deze computer",
-    "files_description": "Bulwark bewaart de nieuwste en verwijdert bestanden die ouder zijn dan een maand.",
+    "files_description": "Loomix bewaart de nieuwste en verwijdert bestanden die ouder zijn dan een maand.",
     "files_empty": "Geen crashbestanden.",
     "file_size": "{size} KB",
     "send": "Crashrapport verzenden…",

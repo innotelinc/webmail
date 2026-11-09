@@ -1,8 +1,8 @@
 {
-  "name": "bulwark-webmail",
+  "name": "loomix-mail",
   "version": "1.21.0",
-  "description": "Bulwark Webmail: self-hosted webmail for mail, calendar, contacts and files, built on JMAP",
-  "author": "Bulwark Mail <dev@bulwarkmail.org>",
+  "description": "Loomix Mail — webmail, calendar, contacts and files for Stalwart Mail Server",
+  "author": "Innotel / Loomix Mail",
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",

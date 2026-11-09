@@ -63,7 +63,7 @@ export class DemoJMAPClient implements IJMAPClient {
   private readonly principals: Principal[];
   /** Mail deleted for good that the server still keeps (Recover deleted items). */
   private archive: DemoArchivedItem[];
-  /** Bulwark's shared Inbox metadata by account and key; only accounts listed here have any. */
+  /** Loomix's shared Inbox metadata by account and key; only accounts listed here have any. */
   private metadata: Record<string, Record<string, unknown>>;
   /** The same for each account's private metadata. */
   private ownMetadata: Record<string, Record<string, unknown>> = {};
@@ -332,27 +332,27 @@ export class DemoJMAPClient implements IJMAPClient {
       .sort((a, b) => a.utcStart.localeCompare(b.utcStart));
   }
 
-  // ── Bulwark data in Inbox metadata (urn:ietf:params:jmap:metadata) ──
+  // ── Loomix data in Inbox metadata (urn:ietf:params:jmap:metadata) ──
   // Only the Support group keeps any (fixtures/shared-metadata.ts): its
   // shared tags and the team inbox plugin's names. Keys are without the
   // `org.bulwarkmail.` namespace, as JMAPClient hands them out.
 
-  supportsBulwarkMetadata(accountId?: string): boolean {
+  supportsLoomixMetadata(accountId?: string): boolean {
     return !!accountId && Object.prototype.hasOwnProperty.call(this.metadata, accountId);
   }
 
-  advertisesBulwarkMetadata(accountId?: string): boolean {
-    return this.supportsBulwarkMetadata(accountId);
+  advertisesLoomixMetadata(accountId?: string): boolean {
+    return this.supportsLoomixMetadata(accountId);
   }
 
-  async getBulwarkMetadata(accountId?: string, options?: { private?: boolean }): Promise<Record<string, unknown> | null> {
-    if (!this.supportsBulwarkMetadata(accountId)) return null;
+  async getLoomixMetadata(accountId?: string, options?: { private?: boolean }): Promise<Record<string, unknown> | null> {
+    if (!this.supportsLoomixMetadata(accountId)) return null;
     const store = options?.private ? this.ownMetadata : this.metadata;
     return structuredClone(store[accountId!] ?? {});
   }
 
-  async setBulwarkMetadata(accountId: string | undefined, key: string, value: unknown, options?: { private?: boolean }): Promise<void> {
-    if (!this.supportsBulwarkMetadata(accountId)) throw new MetadataUnsupportedError();
+  async setLoomixMetadata(accountId: string | undefined, key: string, value: unknown, options?: { private?: boolean }): Promise<void> {
+    if (!this.supportsLoomixMetadata(accountId)) throw new MetadataUnsupportedError();
     if (value !== null && metadataValueBytes(value) > MAX_METADATA_ENTRY_BYTES) {
       throw new MetadataTooLargeError(`The entry is larger than ${MAX_METADATA_ENTRY_BYTES} bytes`);
     }
@@ -364,8 +364,8 @@ export class DemoJMAPClient implements IJMAPClient {
   }
 
   /** Sets (null: removes) values inside one entry; a path whose parent is missing fails as on Stalwart. */
-  async patchBulwarkMetadata(accountId: string | undefined, key: string, patches: Array<{ path: string[]; value: unknown }>): Promise<{ newState?: string }> {
-    if (!this.supportsBulwarkMetadata(accountId)) throw new MetadataUnsupportedError();
+  async patchLoomixMetadata(accountId: string | undefined, key: string, patches: Array<{ path: string[]; value: unknown }>): Promise<{ newState?: string }> {
+    if (!this.supportsLoomixMetadata(accountId)) throw new MetadataUnsupportedError();
     const entries = this.metadata[accountId!];
     const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
     let result: unknown = structuredClone(entries[key]);

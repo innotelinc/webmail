@@ -55,7 +55,7 @@ describe('Free/busy sharing section', () => {
   it('says CalDAV-only users are not covered and points at the directory setting', async () => {
     await renderSection();
     const notes = screen.getByTestId('org-free-busy-notes').textContent ?? '';
-    expect(notes).toContain('never sign in to Bulwark');
+    expect(notes).toContain('never sign in to Loomix');
     expect(notes).toContain('Allow Directory Queries');
   });
 

@@ -112,7 +112,7 @@ describe('auth-store: token refresh is scoped to the account that needs it', () 
       const method = init?.method ?? 'GET';
       const headers = (init?.headers ?? {}) as Record<string, string>;
 
-      // Bulwark token route: plain PUT hands back the cached token for the
+      // Loomix token route: plain PUT hands back the cached token for the
       // slot; force=true mints a fresh one for that slot.
       const m = url.match(/^\/api\/auth\/token\?slot=(\d+)(&force=true)?$/);
       if (m && method === 'PUT') {

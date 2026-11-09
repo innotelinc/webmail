@@ -197,7 +197,7 @@ async function liteMetadata(): Promise<Metadata> {
     formatDetection: {
       telephone: false,
     },
-    icons: { icon: withBasePath("/branding/Bulwark_Favicon.svg") },
+    icons: { icon: withBasePath("/branding/Loomix_Favicon.svg") },
   };
 }
 
@@ -208,7 +208,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // /api/config, app/manifest.ts, and /api/pwa-icon already do. Resolve the
   // request host and prefer its override; fall back to the global
   // admin/env/default value when the host has no favicon override (#585).
-  const faviconUrl = await brandedValue("faviconUrl", "/branding/Bulwark_Favicon.svg");
+  const faviconUrl = await brandedValue("faviconUrl", "/branding/Loomix_Favicon.svg");
   // Localize the <head> description to match the UI language; a hardcoded
   // English description is another signal that makes Chrome offer to
   // "translate this page". Resolve the locale from the request path, since this

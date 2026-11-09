@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge, DesktopUpdateState, DesktopUpdatesBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopUpdateState, DesktopUpdatesBridge } from '@/lib/desktop/types';
 import { DesktopUpdateSettings } from '../desktop-update-settings';
 
 vi.mock('../settings-section', async (importOriginal) => ({
@@ -33,7 +33,7 @@ function bridge(state: Partial<DesktopUpdateState>) {
       return () => {};
     },
   };
-  window.bulwarkDesktop = { version: 1, platform: 'win32', updates } as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', updates } as LoomixDesktopBridge;
   return { updates, push: (next: Partial<DesktopUpdateState>) => act(() => push({ ...full, ...next })) };
 }
 

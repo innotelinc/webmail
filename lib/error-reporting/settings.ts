@@ -8,7 +8,7 @@ import type { ClientSettings } from './client';
 /**
  * The error-reporting settings as the server resolves them: admin config,
  * then ERROR_REPORTING_DSN(_FILE) / ERROR_REPORTING_SAMPLE_RATE /
- * ERROR_REPORTING_ENVIRONMENT, then off. Bulwark Lite reads the same three
+ * ERROR_REPORTING_ENVIRONMENT, then off. Loomix Lite reads the same three
  * from policy.json (lib/error-reporting/lite.ts).
  */
 

@@ -1,5 +1,5 @@
 <p>
-  <a href="https://bulwarkmail.org"><img src="https://raw.githubusercontent.com/bulwarkmail/.github/main/profile/banner.png" alt="Bulwark: webmail for Stalwart Mail Server. Mail, calendar, contacts and files in one browser client." width="100%" /></a>
+  <a href="https://bulwarkmail.org"><img src="https://raw.githubusercontent.com/bulwarkmail/.github/main/profile/banner.png" alt="Loomix: webmail for Stalwart Mail Server. Mail, calendar, contacts and files in one browser client." width="100%" /></a>
 </p>
 
 <p align="center">
@@ -17,10 +17,10 @@
   <a href="https://discord.gg/tYCujymGrT">Discord</a>
 </p>
 
-Bulwark Webmail is a self-hosted webmail client for [Stalwart Mail Server](https://stalw.art/). It talks to Stalwart over JMAP and puts mail, calendar, contacts and files behind one login, with one set of settings and one admin dashboard.
+Loomix Mail is a self-hosted webmail client for [Stalwart Mail Server](https://stalw.art/). It talks to Stalwart over JMAP and puts mail, calendar, contacts and files behind one login, with one set of settings and one admin dashboard.
 
 <p align="center">
-  <a href="https://bulwarkmail.org/docs/features/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/dark-laptop-phone.webp" /><img src="screenshots/light-laptop-phone.webp" alt="Bulwark inbox on a laptop, with the same message open on a phone" width="100%" /></picture></a>
+  <a href="https://bulwarkmail.org/docs/features/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/dark-laptop-phone.webp" /><img src="screenshots/light-laptop-phone.webp" alt="Loomix inbox on a laptop, with the same message open on a phone" width="100%" /></picture></a>
 </p>
 
 ## Contents
@@ -61,7 +61,7 @@ Bulwark Webmail is a self-hosted webmail client for [Stalwart Mail Server](https
 
 All four share [single sign-on](https://bulwarkmail.org/docs/getting-started/configuration/authentication) and [2FA](https://bulwarkmail.org/docs/guides/account-security), [multiple accounts](https://bulwarkmail.org/docs/guides/multi-account), 27 languages, [PWA install and web push](https://bulwarkmail.org/docs/features/pwa), [themes](https://bulwarkmail.org/docs/guides/customization), [plugins](https://bulwarkmail.org/docs/guides/plugins) and [keyboard shortcuts](https://bulwarkmail.org/docs/guides/keyboard-shortcuts). The full list is on the [All features](https://bulwarkmail.org/docs/features/overview) page.
 
-There are two [editions](https://bulwarkmail.org/docs/getting-started/editions). The full edition runs as a Node.js server and adds the admin dashboard, OAuth, plugins and settings sync. [Bulwark Lite](https://bulwarkmail.org/docs/getting-started/lite) is the same client as static files, served by any web host or by Stalwart itself.
+There are two [editions](https://bulwarkmail.org/docs/getting-started/editions). The full edition runs as a Node.js server and adds the admin dashboard, OAuth, plugins and settings sync. [Loomix Lite](https://bulwarkmail.org/docs/getting-started/lite) is the same client as static files, served by any web host or by Stalwart itself.
 
 ## Quick start
 
@@ -108,7 +108,7 @@ APP_NAME=My Webmail
 
 All documentation is at [bulwarkmail.org/docs](https://bulwarkmail.org/docs):
 
-- Getting started: [Introduction](https://bulwarkmail.org/docs/getting-started/introduction), [Installation](https://bulwarkmail.org/docs/getting-started/installation), [Editions](https://bulwarkmail.org/docs/getting-started/editions), [Bulwark Lite](https://bulwarkmail.org/docs/getting-started/lite), [Demo mode](https://bulwarkmail.org/docs/getting-started/demo-mode)
+- Getting started: [Introduction](https://bulwarkmail.org/docs/getting-started/introduction), [Installation](https://bulwarkmail.org/docs/getting-started/installation), [Editions](https://bulwarkmail.org/docs/getting-started/editions), [Loomix Lite](https://bulwarkmail.org/docs/getting-started/lite), [Demo mode](https://bulwarkmail.org/docs/getting-started/demo-mode)
 - Deployment: [Docker](https://bulwarkmail.org/docs/deployment/docker), [Manual install](https://bulwarkmail.org/docs/deployment/manual), [Static hosting](https://bulwarkmail.org/docs/deployment/static), [Install on Stalwart](https://bulwarkmail.org/docs/deployment/stalwart-app), [Updating](https://bulwarkmail.org/docs/deployment/updating)
 - Guides: [Admin dashboard](https://bulwarkmail.org/docs/guides/admin), [Account security](https://bulwarkmail.org/docs/guides/account-security), [Impersonation](https://bulwarkmail.org/docs/guides/impersonation), [Plugins](https://bulwarkmail.org/docs/guides/plugins), [Marketplace](https://bulwarkmail.org/docs/guides/marketplace), [Troubleshooting](https://bulwarkmail.org/docs/guides/troubleshooting)
 - Extensions: [Introduction](https://bulwarkmail.org/docs/extensions/introduction), [manifest.json](https://bulwarkmail.org/docs/extensions/manifest), [Publishing](https://bulwarkmail.org/docs/extensions/publishing)
@@ -140,9 +140,9 @@ The stack: [Next.js 16](https://nextjs.org/) and React 19, TypeScript, [Tailwind
 
 ## Use of AI
 
-AI tools are part of how Bulwark is developed. A change is held to the same standard whether a person or a tool wrote it: it has to be understood, reviewed and pass the checks and tests before it is merged.
+AI tools are part of how Loomix is developed. A change is held to the same standard whether a person or a tool wrote it: it has to be understood, reviewed and pass the checks and tests before it is merged.
 
-Bulwark itself has no AI features and doesn't send your mail, contacts, calendar or files to an AI service. If your Stalwart server classifies spam with an LLM, Bulwark shows the verdict, but the classification happens on your server.
+Loomix itself has no AI features and doesn't send your mail, contacts, calendar or files to an AI service. If your Stalwart server classifies spam with an LLM, Loomix shows the verdict, but the classification happens on your server.
 
 Contributors can use AI tools too, as long as they use capable, current models and not small or outdated ones. The [contributing guide](https://bulwarkmail.org/docs/development/contributing#ai-assisted-contributions) explains what we expect.
 

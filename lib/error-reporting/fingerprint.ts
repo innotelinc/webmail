@@ -20,9 +20,9 @@ export function hash64(text: string): string {
 
 /**
  * The fingerprint of an error: its name, the top frames (file without origin,
- * line, column) and the Bulwark version. The same error in another release is
+ * line, column) and the Loomix version. The same error in another release is
  * another fingerprint, because its frames point into other chunks anyway.
- * `code` is one of Bulwark's fixed error codes (a JMAP error type), for
+ * `code` is one of Loomix's fixed error codes (a JMAP error type), for
  * errors that are all raised from the same place.
  */
 export function fingerprint(name: string, frames: readonly Frame[], version: string, code?: string): string {

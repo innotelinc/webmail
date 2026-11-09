@@ -91,7 +91,7 @@ async function defaultFetchBytes(url: string, maxBytes: number, allowHttp: boole
     // come from DNS records any sender controls.
     const get = () => fetchPublicUrl(current, {
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      headers: { 'User-Agent': 'Bulwark-Webmail-BIMI' },
+      headers: { 'User-Agent': 'Loomix-Webmail-BIMI' },
     });
     let response: Awaited<ReturnType<typeof fetchPublicUrl>>;
     try {

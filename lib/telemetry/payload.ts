@@ -118,8 +118,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 /**
  * The error counts of the last complete UTC day (the day before `now`), for
  * schema v2: at most MAX_TELEMETRY_ERRORS, the most frequent first. Only
- * frames in Bulwark's own bundles go (no extension, plugin or Node paths),
- * and a message only when it is one of Bulwark's fixed error codes.
+ * frames in Loomix's own bundles go (no extension, plugin or Node paths),
+ * and a message only when it is one of Loomix's fixed error codes.
  */
 export function errorsForPayload(agg: Aggregate, now = Date.now()): TelemetryError[] {
   return errorsForDay(agg, utcDay(now - 86_400_000));

@@ -14,7 +14,7 @@ import {
   notifyWithoutStore,
   type ReminderLabels,
 } from '../reminder-notifications';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 
 const ACCOUNT = 'alice@one';
 const accounts = [{ id: ACCOUNT, cookieSlot: 3, serverUrl: 'https://one.example', username: 'alice@example.org' }];
@@ -56,7 +56,7 @@ const openExternal = vi.fn();
 const notify = vi.fn(async () => ({ shown: true, playSound: false }));
 
 function setPlatform(platform: string) {
-  window.bulwarkDesktop = { version: 1, platform, windows: { focus }, shell: { openExternal }, os: { notify } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform, windows: { focus }, shell: { openExternal }, os: { notify } } as unknown as LoomixDesktopBridge;
 }
 
 let store: InProcessStore;

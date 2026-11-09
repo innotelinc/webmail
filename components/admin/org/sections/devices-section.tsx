@@ -39,13 +39,13 @@ export const DEVICE_FIELDS: DeviceField[] = [
   {
     key: 'noInstallPrompt',
     label: 'No install prompt',
-    description: 'Bulwark doesn’t offer to install itself as an app and holds back the browser’s own install banner. The browser’s menu can still install Bulwark.',
+    description: 'Loomix doesn’t offer to install itself as an app and holds back the browser’s own install banner. The browser’s menu can still install Loomix.',
     enforced: 'browser',
   },
   {
     key: 'pushWithoutContent',
     label: 'Push without sender and subject',
-    description: 'Browser notifications say only “New mail”. The server leaves sender, subject and text out of what it sends to the browser and the push service, also for browsers that still run an old Bulwark. The Bulwark mobile app isn’t covered yet: its notifications still show sender and subject.',
+    description: 'Browser notifications say only “New mail”. The server leaves sender, subject and text out of what it sends to the browser and the push service, also for browsers that still run an old Loomix. The Loomix mobile app isn’t covered yet: its notifications still show sender and subject.',
     enforced: 'server',
   },
   {
@@ -75,12 +75,12 @@ export function DevicesSection({ draft }: { draft: OrgPolicyDraft }) {
     <SettingsSection
       id="devices"
       title="Downloads, printing and notifications"
-      description="Make it harder to copy mail out of Bulwark on the devices people use. Each switch is off until you turn it on."
+      description="Make it harder to copy mail out of Loomix on the devices people use. Each switch is off until you turn it on."
     >
       <div className="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200" data-testid="org-devices-warning">
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         <p>
-          These settings make copying harder in Bulwark. They don&apos;t stop screenshots, other mail apps, or someone who
+          These settings make copying harder in Loomix. They don&apos;t stop screenshots, other mail apps, or someone who
           knows the browser&apos;s tools: the browser fetches mail from the mail server directly, so only the push text and
           the office editor are checked on the server.{' '}
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="font-medium underline underline-offset-2">

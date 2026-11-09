@@ -459,7 +459,7 @@
         "remove_error": "Der öffentliche Schlüssel konnte nicht gelöscht werden. Versuchen Sie es noch einmal."
       },
       "link_device": {
-        "description": "Melden Sie sich in der Bulwark-Mail-App auf Ihrem Handy an, ohne Ihr Passwort einzutippen. Ihr Handy bekommt eine eigene Anmeldung. Wenn Sie sich hier abmelden, bleibt Ihr Handy angemeldet.",
+        "description": "Melden Sie sich in der Loomix-Mail-App auf Ihrem Handy an, ohne Ihr Passwort einzutippen. Ihr Handy bekommt eine eigene Anmeldung. Wenn Sie sich hier abmelden, bleibt Ihr Handy angemeldet.",
         "error": "Der Code konnte nicht erstellt werden. Versuchen Sie es noch einmal.",
         "password_prompt": "Geben Sie Ihr Passwort ein, damit wir wissen, dass Sie es sind. Ihr Passwort wird nicht an das Handy geschickt.",
         "error_not_signed_in": "Sie wurden abgemeldet. Melden Sie sich wieder an und verbinden Sie dann Ihr Handy.",

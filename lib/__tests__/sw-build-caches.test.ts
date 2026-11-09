@@ -56,7 +56,7 @@ describe('service worker caches per build', () => {
     // The server runs build b now and says so on every answer.
     const fetchFromB = async () => {
       if (!online) throw new TypeError('Failed to fetch');
-      const res = new Response('{}', { status: 200, headers: { 'Content-Type': 'application/json', 'X-Bulwark-Build': 'b' } });
+      const res = new Response('{}', { status: 200, headers: { 'Content-Type': 'application/json', 'X-Loomix-Build': 'b' } });
       Object.defineProperty(res, 'type', { value: 'basic' });
       return res;
     };

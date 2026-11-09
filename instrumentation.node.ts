@@ -15,7 +15,7 @@ const pkg = JSON.parse(
   readFileSync(`${process.cwd()}/package.json`, "utf-8")
 );
 const current: string = pkg.version ?? "0.0.0";
-logger.info(`Bulwark Webmail v${current}`, { version: current });
+logger.info(`Loomix Mail v${current}`, { version: current });
 
 // Prometheus metrics, only with METRICS_TOKEN(_FILE): count every request
 // from the first one on. https://bulwarkmail.org/docs/deployment/monitoring#metrics

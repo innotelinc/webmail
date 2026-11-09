@@ -4,7 +4,7 @@ import React from 'react';
 import { EmailComposer } from '../email-composer';
 import { useAuthStore } from '@/stores/auth-store';
 import { DEFAULT_POLICY_SNAPSHOT, type PolicySnapshot } from '@/lib/desktop/policy-schema';
-import type { BulwarkDesktopBridge, DesktopRecentFile } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopRecentFile } from '@/lib/desktop/types';
 
 // Recent files in the Attach menu, in the desktop app: the shell's side is
 // repos/desktop's test/recent-files.spec.ts; here the bridge is a stub.
@@ -234,7 +234,7 @@ function desktop({ files = RECENT, policyOff = false, popup }: DesktopOptions = 
     policy: { get: () => snapshot, onChange: () => () => {} },
     recentFiles: { list, attach },
     ...(popup ? { menu: { popup, setState: () => {}, onCommand: () => () => {} } } : {}),
-  } as unknown as BulwarkDesktopBridge;
+  } as unknown as LoomixDesktopBridge;
   return { list, attach };
 }
 

@@ -16,7 +16,7 @@
 export const POLICY_SCHEMA_VERSION = 1;
 
 /** Under HKLM and HKCU. Only this tree is ever read: nothing a standard user can write. */
-export const POLICY_REGISTRY_ROOT = 'Software\\Policies\\Bulwark\\Desktop';
+export const POLICY_REGISTRY_ROOT = 'Software\\Policies\\Loomix\\Desktop';
 export const POLICY_RECOMMENDED_SUBKEY = 'Recommended';
 export const POLICY_BUNDLE_ID = 'org.bulwarkmail.desktop';
 export const POLICY_LINUX_FILE = '/etc/bulwark/policies.json';
@@ -157,11 +157,11 @@ export const POLICY_SCHEMA: Record<PolicyKey, PolicyDefinition> = {
     default: null,
     maxLength: POLICY_MAX_STRING,
     sample: 'https://mail.example.com',
-    label: { en: 'Address of the Bulwark server', de: 'Adresse des Bulwark-Servers' },
-    title: { en: 'Bulwark server', de: 'Bulwark-Server' },
+    label: { en: 'Address of the Loomix server', de: 'Adresse des Loomix-Servers' },
+    title: { en: 'Loomix server', de: 'Loomix-Server' },
     description: {
-      en: 'The address of your Bulwark server, starting with https://. When forced, the app opens on this server, the choice of server is hidden, and the window stays on it. An invalid address shows an error page that names this policy, and the app does not fall back to anything else. As a default, the app opens on this server until the user picks something else.',
-      de: 'Die Adresse Ihres Bulwark-Servers, beginnend mit https://. Wenn erzwungen, öffnet sich die App auf diesem Server, die Serverauswahl ist ausgeblendet und das Fenster bleibt auf diesem Server. Eine ungültige Adresse zeigt eine Fehlerseite mit dem Namen dieser Richtlinie, und die App weicht auf nichts anderes aus. Als Standardwert öffnet sich die App auf diesem Server, bis der Benutzer etwas anderes wählt.',
+      en: 'The address of your Loomix server, starting with https://. When forced, the app opens on this server, the choice of server is hidden, and the window stays on it. An invalid address shows an error page that names this policy, and the app does not fall back to anything else. As a default, the app opens on this server until the user picks something else.',
+      de: 'Die Adresse Ihres Loomix-Servers, beginnend mit https://. Wenn erzwungen, öffnet sich die App auf diesem Server, die Serverauswahl ist ausgeblendet und das Fenster bleibt auf diesem Server. Eine ungültige Adresse zeigt eine Fehlerseite mit dem Namen dieser Richtlinie, und die App weicht auf nichts anderes aus. Als Standardwert öffnet sich die App auf diesem Server, bis der Benutzer etwas anderes wählt.',
     },
   },
   AllowStandalone: {
@@ -173,8 +173,8 @@ export const POLICY_SCHEMA: Record<PolicyKey, PolicyDefinition> = {
     sample: false,
     title: { en: 'Allow direct connections to mail servers', de: 'Direkte Verbindungen zu Mailservern zulassen' },
     description: {
-      en: 'When disabled, the app only opens a Bulwark server and nobody can sign in directly to a mail server. Accounts added earlier stay on the disk, but are hidden. If you force a Bulwark server and leave this not configured, direct connections are off too. Enable it to offer both.',
-      de: 'Wenn deaktiviert, öffnet die App nur einen Bulwark-Server, und niemand kann sich direkt bei einem Mailserver anmelden. Früher hinzugefügte Konten bleiben auf dem Datenträger, sind aber ausgeblendet. Wenn Sie einen Bulwark-Server erzwingen und diese Richtlinie nicht konfigurieren, sind direkte Verbindungen ebenfalls aus. Aktivieren Sie sie, um beides anzubieten.',
+      en: 'When disabled, the app only opens a Loomix server and nobody can sign in directly to a mail server. Accounts added earlier stay on the disk, but are hidden. If you force a Loomix server and leave this not configured, direct connections are off too. Enable it to offer both.',
+      de: 'Wenn deaktiviert, öffnet die App nur einen Loomix-Server, und niemand kann sich direkt bei einem Mailserver anmelden. Früher hinzugefügte Konten bleiben auf dem Datenträger, sind aber ausgeblendet. Wenn Sie einen Loomix-Server erzwingen und diese Richtlinie nicht konfigurieren, sind direkte Verbindungen ebenfalls aus. Aktivieren Sie sie, um beides anzubieten.',
     },
   },
   AllowedJmapServers: {
@@ -187,8 +187,8 @@ export const POLICY_SCHEMA: Record<PolicyKey, PolicyDefinition> = {
     label: { en: 'Allowed mail servers', de: 'Zugelassene Mailserver' },
     title: { en: 'Allowed mail servers', de: 'Zugelassene Mailserver' },
     description: {
-      en: 'The mail servers people may sign in to. One per line: an address such as https://mail.example.com, or https://*.example.com for all subdomains. A server without a scheme means https. Plain http must be named with http://. When this list is set, everything else is refused, and accounts on a server taken off the list stop until it is back, keeping their data. A Bulwark server the user picks, or the one under "Bulwark server" as a default, must be on the list too. A forced one does not need to be.',
-      de: 'Die Mailserver, bei denen sich Benutzer anmelden dürfen. Einer pro Zeile: eine Adresse wie https://mail.example.com oder https://*.example.com für alle Subdomains. Ein Server ohne Schema bedeutet https. Unverschlüsseltes http muss mit http:// angegeben werden. Ist diese Liste gesetzt, wird alles andere abgelehnt, und Konten auf einem Server, der von der Liste genommen wird, ruhen, bis er wieder darauf steht, und behalten ihre Daten. Ein Bulwark-Server, den der Benutzer wählt, oder der unter „Bulwark-Server“ als Standardwert muss ebenfalls auf der Liste stehen. Ein erzwungener nicht.',
+      en: 'The mail servers people may sign in to. One per line: an address such as https://mail.example.com, or https://*.example.com for all subdomains. A server without a scheme means https. Plain http must be named with http://. When this list is set, everything else is refused, and accounts on a server taken off the list stop until it is back, keeping their data. A Loomix server the user picks, or the one under "Loomix server" as a default, must be on the list too. A forced one does not need to be.',
+      de: 'Die Mailserver, bei denen sich Benutzer anmelden dürfen. Einer pro Zeile: eine Adresse wie https://mail.example.com oder https://*.example.com für alle Subdomains. Ein Server ohne Schema bedeutet https. Unverschlüsseltes http muss mit http:// angegeben werden. Ist diese Liste gesetzt, wird alles andere abgelehnt, und Konten auf einem Server, der von der Liste genommen wird, ruhen, bis er wieder darauf steht, und behalten ihre Daten. Ein Loomix-Server, den der Benutzer wählt, oder der unter „Loomix-Server“ als Standardwert muss ebenfalls auf der Liste stehen. Ein erzwungener nicht.',
     },
   },
   AllowInsecureInstance: {
@@ -198,10 +198,10 @@ export const POLICY_SCHEMA: Record<PolicyKey, PolicyDefinition> = {
     default: false,
     onInvalid: false,
     sample: false,
-    title: { en: 'Allow a Bulwark server on plain http', de: 'Bulwark-Server über unverschlüsseltes http zulassen' },
+    title: { en: 'Allow a Loomix server on plain http', de: 'Loomix-Server über unverschlüsseltes http zulassen' },
     description: {
-      en: 'When enabled, the address in "Bulwark server" may start with http://. Passwords and mail then travel unencrypted, and the browser features that need https, such as offline mail and S/MIME, do not work. Leave this off unless the server is on a network you trust.',
-      de: 'Wenn aktiviert, darf die Adresse unter „Bulwark-Server“ mit http:// beginnen. Passwörter und E-Mails gehen dann unverschlüsselt über das Netzwerk, und Funktionen, die https brauchen, wie Offline-E-Mails und S/MIME, funktionieren nicht. Lassen Sie dies aus, sofern der Server nicht in einem Netzwerk steht, dem Sie vertrauen.',
+      en: 'When enabled, the address in "Loomix server" may start with http://. Passwords and mail then travel unencrypted, and the browser features that need https, such as offline mail and S/MIME, do not work. Leave this off unless the server is on a network you trust.',
+      de: 'Wenn aktiviert, darf die Adresse unter „Loomix-Server“ mit http:// beginnen. Passwörter und E-Mails gehen dann unverschlüsselt über das Netzwerk, und Funktionen, die https brauchen, wie Offline-E-Mails und S/MIME, funktionieren nicht. Lassen Sie dies aus, sofern der Server nicht in einem Netzwerk steht, dem Sie vertrauen.',
     },
   },
   UpdateChannel: {
@@ -247,8 +247,8 @@ export const POLICY_SCHEMA: Record<PolicyKey, PolicyDefinition> = {
     ],
     title: { en: 'Which plugins may run', de: 'Welche Plugins laufen dürfen' },
     description: {
-      en: 'Whether plugins can be installed and run. With the list or none, people cannot add a plugin themselves, since a package can name any id. With the list, only plugins your Bulwark server or the app\'s directory provides can run. A plugin that is refused keeps its data and settings: it comes back as it was if the policy allows it again.',
-      de: 'Ob Plugins installiert und ausgeführt werden dürfen. Mit der Liste oder ohne Plugins können Benutzer selbst keine Plugins hinzufügen, weil ein Paket jede beliebige ID nennen kann. Mit der Liste laufen nur Plugins, die Ihr Bulwark-Server oder das Verzeichnis der App bereitstellt. Ein abgelehntes Plugin behält seine Daten und Einstellungen: Es kommt unverändert zurück, wenn die Richtlinie es wieder erlaubt.',
+      en: 'Whether plugins can be installed and run. With the list or none, people cannot add a plugin themselves, since a package can name any id. With the list, only plugins your Loomix server or the app\'s directory provides can run. A plugin that is refused keeps its data and settings: it comes back as it was if the policy allows it again.',
+      de: 'Ob Plugins installiert und ausgeführt werden dürfen. Mit der Liste oder ohne Plugins können Benutzer selbst keine Plugins hinzufügen, weil ein Paket jede beliebige ID nennen kann. Mit der Liste laufen nur Plugins, die Ihr Loomix-Server oder das Verzeichnis der App bereitstellt. Ein abgelehntes Plugin behält seine Daten und Einstellungen: Es kommt unverändert zurück, wenn die Richtlinie es wieder erlaubt.',
     },
   },
   PluginAllowlist: {
@@ -444,8 +444,8 @@ export const POLICY_SCHEMA: Record<PolicyKey, PolicyDefinition> = {
     label: { en: 'Addresses', de: 'Adressen' },
     title: { en: 'Sites that may use the system certificate store', de: 'Websites, die den Zertifikatspeicher des Systems verwenden dürfen' },
     description: {
-      en: 'The Bulwark servers, by https address, whose plugins may sign and decrypt with the certificates in the operating system\'s store, without the user being asked for each site. One per line.',
-      de: 'Die Bulwark-Server, nach https-Adresse, deren Plugins mit den Zertifikaten im Speicher des Betriebssystems signieren und entschlüsseln dürfen, ohne dass der Benutzer für jede Website gefragt wird. Eine pro Zeile.',
+      en: 'The Loomix servers, by https address, whose plugins may sign and decrypt with the certificates in the operating system\'s store, without the user being asked for each site. One per line.',
+      de: 'Die Loomix-Server, nach https-Adresse, deren Plugins mit den Zertifikaten im Speicher des Betriebssystems signieren und entschlüsseln dürfen, ohne dass der Benutzer für jede Website gefragt wird. Eine pro Zeile.',
     },
   },
   BrowserSignIn: {
@@ -602,7 +602,7 @@ function fail<T>(reason: string): Parsed<T> {
 }
 
 /**
- * A Bulwark server's address, normalised to `origin + path + /`. Only https, or http
+ * A Loomix server's address, normalised to `origin + path + /`. Only https, or http
  * when the policy says so. No credentials, no query, no fragment.
  */
 export function parseInstanceUrl(raw: unknown, allowInsecure: boolean): Parsed<string> {

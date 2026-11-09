@@ -7,7 +7,7 @@
  * message through. While such a guard is down, sending waits a few seconds
  * for it and then stays blocked.
  *
- * Doesn't count: a plugin that never runs on purpose, because Bulwark
+ * Doesn't count: a plugin that never runs on purpose, because Loomix
  * refused it (the no-third-party mode, the admin's approval or user-plugin
  * rules, a tier it may not have). The Security page lists those for the
  * admin. And a plugin the user turned on themselves: that is their choice.
@@ -50,7 +50,7 @@ export interface DownSendGuard {
   state: SendGuardState;
 }
 
-/** Errors that mean Bulwark refused to start the plugin, not that it broke. */
+/** Errors that mean Loomix refused to start the plugin, not that it broke. */
 const REFUSALS = new Set([
   'third-party-off',
   'device-policy',

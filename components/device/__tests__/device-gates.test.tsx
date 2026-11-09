@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/hooks/use-config', () => ({
-  useConfig: () => ({ appName: 'Bulwark', faviconUrl: '', appLogoLightUrl: '', appLogoDarkUrl: '' }),
+  useConfig: () => ({ appName: 'Loomix', faviconUrl: '', appLogoLightUrl: '', appLogoDarkUrl: '' }),
 }));
 const toast = vi.hoisted(() => ({ info: vi.fn(), error: vi.fn(), success: vi.fn(), warning: vi.fn() }));
 vi.mock('@/stores/toast-store', () => ({ toast }));

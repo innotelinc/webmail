@@ -17,13 +17,13 @@ import {
 } from '@/lib/oauth/scopes';
 
 const CLIENT_ID = 'bulwark-webmail';
-const CLIENT_DESCRIPTION = 'Bulwark Webmail (auto-configured)';
-// Bulwark Mobile's own client (#1459). The webmail's can't serve the app: it
+const CLIENT_DESCRIPTION = 'Loomix Mail (auto-configured)';
+// Loomix Mobile's own client (#1459). The webmail's can't serve the app: it
 // has a secret, which Stalwart wants at the token endpoint and the app
 // doesn't have. The redirect is the app's App Store and Play id as a
 // private-use scheme (RFC 8252), which the iOS and Android apps register.
 const MOBILE_CLIENT_ID = 'bulwark-mobile';
-const MOBILE_CLIENT_DESCRIPTION = 'Bulwark Mobile (auto-configured)';
+const MOBILE_CLIENT_DESCRIPTION = 'Loomix Mobile (auto-configured)';
 const MOBILE_REDIRECT_URI = 'org.bulwarkmail.mobile:/auth/callback';
 const JMAP_TIMEOUT_MS = 10_000;
 const STALWART_USING = ['urn:ietf:params:jmap:core', 'urn:stalwart:jmap'];
@@ -171,7 +171,7 @@ async function hasStalwartScopes(creds: ServerCreds): Promise<boolean> {
 }
 
 /**
- * A public client for Bulwark Mobile with the webmail's access, so the app's
+ * A public client for Loomix Mobile with the webmail's access, so the app's
  * own sign-in reaches the account's Stalwart settings too. The client the
  * app registers for itself otherwise gets the data scopes only. An existing
  * one is taken over as the webmail's is, its secret dropped.

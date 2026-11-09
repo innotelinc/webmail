@@ -25,7 +25,7 @@ import { getUserParticipantId, isOrganizer } from '@/lib/calendar-participants';
 
 type Status = CalendarParticipant['participationStatus'];
 
-/** The owner of a shared account, as Bulwark shows and matches it. */
+/** The owner of a shared account, as Loomix shows and matches it. */
 export interface AccountOwner {
   name: string;
   /** Lower-case addresses the owner's participant may carry. */

@@ -59,7 +59,7 @@ export function metrics(): Metrics {
   client.collectDefaultMetrics({ register: registry, prefix: 'bulwark_' });
   const version = process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0';
   const build = process.env.NEXT_PUBLIC_GIT_COMMIT || process.env.BULWARK_BUILD || 'unknown';
-  new client.Gauge({ name: 'bulwark_build_info', help: 'Bulwark version and build; always 1', labelNames: ['version', 'build'], registers: [registry] })
+  new client.Gauge({ name: 'bulwark_build_info', help: 'Loomix version and build; always 1', labelNames: ['version', 'build'], registers: [registry] })
     .set({ version, build }, 1);
   new client.Gauge({
     name: 'bulwark_uptime_seconds',

@@ -605,7 +605,7 @@ describe('api.tasks links and relations', () => {
   });
   const updates = () => client.updateCalendarTask.mock.calls.map((c) => c[1] as Record<string, unknown>);
 
-  it('creates a task with links and a related mail, a path of this Bulwark made a full URL', async () => {
+  it('creates a task with links and a related mail, a path of this Loomix made a full URL', async () => {
     await call(WRITE, 'tasks.create', {
       title: 'Follow up: Offer',
       links: {

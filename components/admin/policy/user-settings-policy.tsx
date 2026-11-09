@@ -47,7 +47,7 @@ const LOCKABLE = restrictionKeysForPage('policy').filter((def) => isLockableSett
 const TOAST_MINIMUMS = [10, 20, 60];
 
 const UNLOCKABLE_NOTE =
-  'Text size, contrast, motion, fonts and the reading aids can be given a default below but not locked: a lock could leave someone unable to read or use Bulwark.';
+  'Text size, contrast, motion, fonts and the reading aids can be given a default below but not locked: a lock could leave someone unable to read or use Loomix.';
 
 /** The scope this page edits: the one picked on any Organisation page, if it still exists. */
 export function useScopeId(policy: SettingsPolicy): [string, (id: string) => void] {

@@ -298,7 +298,7 @@ export function AnnouncementSection({ draft }: { draft: OrgPolicyDraft }) {
         )}
 
         <p className="text-xs text-muted-foreground">
-          Open tabs pick up a change within 15 minutes, or when the user comes back to the tab. In Bulwark Lite the
+          Open tabs pick up a change within 15 minutes, or when the user comes back to the tab. In Loomix Lite the
           announcement is in policy.json, which anyone can read without signing in, and a Lite installed inside
           Stalwart needs a new bundle upload to change it.{' '}
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline-offset-2 hover:underline">

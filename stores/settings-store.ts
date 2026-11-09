@@ -812,7 +812,7 @@ interface SettingsState extends AccessibilitySettings {
   calendarWorkingDays: number[];
   /** An out-of-office reply with dates puts a busy event in the calendar (lib/vacation-calendar.ts). */
   vacationBlockCalendar: boolean;
-  /** The times of each account's out-of-office event as Bulwark last wrote them, by account id. */
+  /** The times of each account's out-of-office event as Loomix last wrote them, by account id. */
   vacationCalendarBlocks: Record<string, { start: string; end: string }>;
   /** Company calendars (organisation.calendars.feeds) the user hid, by feed id. */
   hiddenCompanyCalendars: string[];

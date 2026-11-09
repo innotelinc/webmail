@@ -301,7 +301,7 @@ describe('changing every occurrence of a series in another time zone', () => {
 // Weekly on Wednesdays from 9 December, 10:00 in Berlin, five times; userb
 // accepted. 16 December is excluded, 30 December retitled, and 6 January
 // moved to 14:00 on its own. 1.0 returns the overrides as PatchObjects; 0.16
-// as Bulwark wrote them on the base event: the occurrence's time pinned, its
+// as Loomix wrote them on the base event: the occurrence's time pinned, its
 // participants copied, and the server's `updated`.
 function seriesWithOverrides(version: Version): CalendarEvent {
   const participants = { org: participant(version, ORGANIZER, true, 'accepted'), b: participant(version, ATTENDEE, false, 'accepted') };

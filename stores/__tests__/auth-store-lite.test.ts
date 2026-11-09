@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Bulwark Lite (static export) has no /api/* routes: sessions are kept in web
+// Loomix Lite (static export) has no /api/* routes: sessions are kept in web
 // storage and renewed against the mail server directly. These tests run the
 // auth store with IS_LITE forced on and assert that nothing under /api/ on
 // our own origin is ever called (config.json / policy.json are static files).

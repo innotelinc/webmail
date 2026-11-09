@@ -6,7 +6,7 @@ import { useCalendarAlerts } from '../use-calendar-alerts';
 import { useStoreReminders } from '../use-store-reminders';
 import { useMissedReminders, useReminderSource } from '@/lib/calendar-reminders/state';
 import { setAppLockCheck } from '@/lib/desktop/app-lock-state';
-import type { BulwarkDesktopBridge, DesktopOsNotification, DesktopOsNotifyResult } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopOsNotification, DesktopOsNotifyResult } from '@/lib/desktop/types';
 import { calendarHooks, clearAllHooks } from '@/lib/plugin-hooks';
 import { useOfflineStore } from '@/lib/offline/state';
 import { emitStoreEvent } from '@/lib/offline/store-events';
@@ -49,7 +49,7 @@ const notify = vi.fn(async (_notification: DesktopOsNotification) => notifyResul
 const openExternal = vi.fn();
 
 function desktop() {
-  window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus: vi.fn() }, shell: { openExternal }, os: { notify } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', windows: { focus: vi.fn() }, shell: { openExternal }, os: { notify } } as unknown as LoomixDesktopBridge;
 }
 
 function setVisibility(state: 'visible' | 'hidden') {

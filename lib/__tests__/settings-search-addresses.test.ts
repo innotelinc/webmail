@@ -13,7 +13,7 @@ import {
 // nothing, and "signature" led to a row that only linked elsewhere. The
 // signatures now sit on Composing, and these words find them.
 const everywhere = (messages: unknown, query: string) => (Object.keys(tabSearchEntries) as SettingsSearchTab[]).flatMap((tab) =>
-  settingsSubResults(messages, tab, 'Bulwark')
+  settingsSubResults(messages, tab, 'Loomix')
     .filter((r) => matchesAllWords(subResultText(r), query))
     .map((r) => `${tab}: ${r.label}`));
 

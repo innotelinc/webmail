@@ -56,7 +56,7 @@ export function PhishingReportSection({ draft }: { draft: OrgPolicyDraft }) {
     <SettingsSection
       id="phishing"
       title="Phishing reports"
-      description="Adds “Report phishing” to the message menus. Bulwark sends the message to the address below, one report per message, without a copy in Sent, and moves it to Junk. Users confirm each report."
+      description="Adds “Report phishing” to the message menus. Loomix sends the message to the address below, one report per message, without a copy in Sent, and moves it to Junk. Users confirm each report."
     >
       <SettingItem
         label="Send reports to"

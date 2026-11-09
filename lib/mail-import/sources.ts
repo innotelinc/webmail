@@ -175,7 +175,7 @@ function plausible(date: string | undefined, now = Date.now()): string | undefin
 
 /**
  * When an mbox message arrived. The envelope line is trusted only where it
- * is the arrival time for sure: Bulwark's own export (receivedAt) and lines
+ * is the arrival time for sure: Loomix's own export (receivedAt) and lines
  * with a time zone (Google Takeout). Elsewhere it may be when the message
  * was copied into the folder (Thunderbird's `From - <date>`, local time),
  * so the Date header comes first and the envelope line is the fallback.

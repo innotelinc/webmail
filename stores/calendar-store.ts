@@ -248,7 +248,7 @@ async function updateBaseEvent(
  * Patch one expanded occurrence through its synthetic id, with only what one
  * occurrence may carry (`buildOccurrencePatch`). A server that predates
  * synthetic-id writes rejects it; the change is then written as a recurrence
- * override on the base event instead (the way Bulwark did it before), and
+ * override on the base event instead (the way Loomix did it before), and
  * that client is remembered as needing the fallback. `patchFor` builds the
  * change; the base-event override asks it for the series keys as well.
  */

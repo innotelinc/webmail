@@ -184,7 +184,7 @@ describe('other sources', () => {
 });
 
 describe('discarding', () => {
-  // pim-p3-6: the app's own question (the Bulwark window in the desktop app), not the OS's message box.
+  // pim-p3-6: the app's own question (the Loomix window in the desktop app), not the OS's message box.
   it('asks with the app\'s own question, then main deletes without asking again', async () => {
     show(session());
     fireEvent.click(screen.getByRole('button', { name: 'discard a.docx' }));

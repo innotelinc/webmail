@@ -82,7 +82,7 @@ function policyWithDomainMax(hours: number): Partial<SettingsPolicy> {
   };
 }
 
-/** A remembered-session cookie as Bulwark wrote it before sign-in times were recorded. */
+/** A remembered-session cookie as Loomix wrote it before sign-in times were recorded. */
 function legacySessionCookie(username: string, password: string): string {
   const key = createHash('sha256').update(SECRET).digest();
   const iv = randomBytes(12);

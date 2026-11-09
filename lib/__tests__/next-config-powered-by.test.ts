@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 describe('X-Powered-By header', () => {
-  it('names Bulwark instead of Next.js, without a version', async () => {
+  it('names Loomix instead of Next.js, without a version', async () => {
     const config = await loadConfig();
     const rules = (await config.headers?.()) ?? [];
     const poweredBy = rules.flatMap((rule) =>

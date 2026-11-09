@@ -682,7 +682,7 @@ function alertsOf(value: unknown, method: string): MapChange<CalendarEventAlert>
     });
 }
 
-/** A link's target: http(s), a `mailto:` address, or a path of this Bulwark made a full URL. */
+/** A link's target: http(s), a `mailto:` address, or a path of this Loomix made a full URL. */
 function readHref(value: unknown, method: string, field: string): string {
   const href = readString(value, method, field, MAX_HREF, { min: 1 });
   if (/[\s\p{Cc}\\]/u.test(href)) throw new Error(`${method}: ${field} must not contain spaces, control characters or backslashes`);

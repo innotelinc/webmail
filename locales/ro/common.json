@@ -70,8 +70,8 @@
     "demo_tagline": "Descoperiți un client de e-mail cu funcționalități complete. Nu este necesar un cont.",
     "demo_no_signup": "Nu este necesară înregistrarea – explorați liber cu date de exemplu",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Acest nume este prea lung.",
     "loading": "Se încarcă…",
     "unsupported": "Acest server de e-mail nu poate păstra etichete partajate, așa că această căsuță afișează etichetele dvs. proprii.",
-    "unavailable": "Etichetele partajate ale acestei căsuțe nu au putut fi încărcate, așa că afișează etichetele dvs. proprii. Bulwark va încerca din nou mai târziu.",
+    "unavailable": "Etichetele partajate ale acestei căsuțe nu au putut fi încărcate, așa că afișează etichetele dvs. proprii. Loomix va încerca din nou mai târziu.",
     "no_rights": "Puteți folosi aceste etichete, dar nu le puteți modifica în această căsuță.",
     "too_many": "Există prea multe etichete partajate. Ștergeți câteva înainte de a adăuga altele.",
-    "save_failed": "Etichetele partajate nu au putut fi salvate. Bulwark va încerca din nou când serverul răspunde.",
-    "save_pending": "Încă nesalvat. Bulwark va încerca din nou când serverul răspunde."
+    "save_failed": "Etichetele partajate nu au putut fi salvate. Loomix va încerca din nou când serverul răspunde.",
+    "save_pending": "Încă nesalvat. Loomix va încerca din nou când serverul răspunde."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1112,7 +1112,7 @@
     "show_less": "Afișați mai puțin",
     "send_failed": "Nu s-a putut trimite e-mailul",
     "send_timeout": "Serverul a încetat să răspundă. Verificați folderul Trimise înainte de a trimite din nou — mesajul poate să fi plecat deja.",
-    "submission_quota": "Serverul păstrează prea multe înregistrări de mesaje trimise pentru acest cont. Bulwark le-a eliminat pe cele pe care a putut; dacă problema persistă, cereți administratorului să mărească limita de trimiteri de e-mail.",
+    "submission_quota": "Serverul păstrează prea multe înregistrări de mesaje trimise pentru acest cont. Loomix le-a eliminat pe cele pe care a putut; dacă problema persistă, cereți administratorului să mărească limita de trimiteri de e-mail.",
     "submission_limit": "Serverul a refuzat să trimită mesajul deoarece s-a atins o limită: {reason}",
     "recipients_refused": "Netrimis: serverul a respins {recipients}.",
     "recipients_partly_refused": "Serverul a respins {recipients}. Ceilalți destinatari primesc mesajul.",
@@ -1856,15 +1856,15 @@
       },
       "push": {
         "title": "Notificări când {appName} este închis",
-        "description": "Primiți notificări de sistem pentru e-mailuri noi chiar și atunci când acest site este închis. Notificările sunt transmise prin intermediul serverului de push Bulwark; serverul nu vede niciodată conținutul e-mailurilor.",
+        "description": "Primiți notificări de sistem pentru e-mailuri noi chiar și atunci când acest site este închis. Notificările sunt transmise prin intermediul serverului de push Loomix; serverul nu vede niciodată conținutul e-mailurilor.",
         "relay_label": "Relay push",
-        "relay_desc": "Implicit este setat serverul de retransmitere găzduit Bulwark. Modificați această setare numai dacă utilizați un server propriu.",
+        "relay_desc": "Implicit este setat serverul de retransmitere găzduit Loomix. Modificați această setare numai dacă utilizați un server propriu.",
         "relay_locked": "Configurat de administrator",
         "relay_locked_desc": "Relay-ul push URL a fost configurat de administratorul dvs. și nu poate fi modificat.",
         "status_active": "Activ pe acest dispozitiv",
         "status_inactive": "Nu este activat pe acest dispozitiv",
         "status_unsupported": "Acest browser nu acceptă Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "Notificările în fundal nu sunt disponibile în demonstrație.",
         "status_busy": "Se lucrează…",
         "enable": "Activați pe acest dispozitiv",
@@ -2488,10 +2488,10 @@
       },
       "link_device": {
         "title": "Aplicație mobilă",
-        "description": "Conectați-vă la aplicația Bulwark Mail de pe telefon fără să introduceți parola acolo. Telefonul primește propria conectare, așa că deconectarea de aici nu îl deconectează.",
+        "description": "Conectați-vă la aplicația Loomix Mail de pe telefon fără să introduceți parola acolo. Telefonul primește propria conectare, așa că deconectarea de aici nu îl deconectează.",
         "generate": "Afișați codul QR",
         "regenerate": "Afișați un cod nou",
-        "instructions": "Deschideți aplicația Bulwark Mail și atingeți „Scan a sign-in code” pe ecranul de conectare (sau „Add account” → „Scan a sign-in code” dacă sunteți deja conectat), apoi îndreptați camera spre acest ecran.",
+        "instructions": "Deschideți aplicația Loomix Mail și atingeți „Scan a sign-in code” pe ecranul de conectare (sau „Add account” → „Scan a sign-in code” dacă sunteți deja conectat), apoi îndreptați camera spre acest ecran.",
         "expires_in": "Acest cod expiră în {seconds} secunde. Poate fi utilizat o singură dată.",
         "expired": "Acest cod a expirat.",
         "error": "Nu s-a putut crea un cod de asociere. Vă rugăm să încercați din nou.",
@@ -2757,7 +2757,7 @@
         "button": "Import"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Cod sursă"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Căutare sus, mesajele se deschid pe toată lățimea"
   },
   "setup": {
-    "title": "Configurarea Bulwark Webmail",
+    "title": "Configurarea Loomix Mail",
     "subtitle": "Configurați instanța de webmail din browser.",
     "loading": "Se încarcă…",
     "back": "Înapoi",
@@ -3734,7 +3734,7 @@
       "regenerate": "Generează din nou",
       "sync": "Sincronizează setările utilizatorilor între dispozitive",
       "sync_hint": "Stochează preferințele utilizatorilor pe server, criptate cu secretul de sesiune.",
-      "telemetry": "Trimite statistici anonime de utilizare pentru a îmbunătăți Bulwark",
+      "telemetry": "Trimite statistici anonime de utilizare pentru a îmbunătăți Loomix",
       "telemetry_hint": "Dezactivat implicit. Un semnal anonim pe zi cu versiunea, platforma și funcțiile activate; niciodată adrese de e-mail, nume de gazdă sau IP-uri. Puteți schimba oricând în setările de administrare."
     },
     "logging": {
@@ -5363,7 +5363,7 @@
     "label": "Blochează-mi calendarul",
     "description": "Adaugă un eveniment ocupat pe durata absenței, ca nimeni să nu vă programeze ședințe atunci.",
     "no_access_managed": "Calendarul acestui cont nu poate fi blocat: nu aveți acces de scriere la el.",
-    "no_calendar": "Calendarul nu poate fi blocat: Bulwark nu a găsit un calendar în care să adauge evenimentul.",
+    "no_calendar": "Calendarul nu poate fi blocat: Loomix nu a găsit un calendar în care să adauge evenimentul.",
     "filter_warning": "Activarea oprește scriptul dvs. de filtre cât timp răspunsul este activ."
   },
   "calendar_delegate": {
@@ -5466,20 +5466,20 @@
   "find_time": {
     "suggest": "Sugerează ore",
     "searching": "Se caută ore libere",
-    "slots_title": "Liber pentru toți cei pe care Bulwark i-a putut verifica",
+    "slots_title": "Liber pentru toți cei pe care Loomix i-a putut verifica",
     "slot": "{day}, de la {start} la {end}",
     "none": "Nu există timp liber în următoarele 10 zile lucrătoare.",
     "picked": "Eveniment mutat la {slot}",
     "rate_limited": "Prea multe interogări în ultimul minut. Încercați din nou peste un minut.",
-    "unavailable": "Disponibilitatea nu este accesibilă pe acest server, așa că Bulwark nu poate sugera ore.",
+    "unavailable": "Disponibilitatea nu este accesibilă pe acest server, așa că Loomix nu poate sugera ore.",
     "not_checked": "Neverificați:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "din afara organizației dvs.",
     "reason_unknown": "ore ocupate necunoscute",
     "reason_not_found": "negăsit pe acest server",
     "reason_error": "nu a putut fi verificat",
-    "unknown_note": "Bulwark vede orele ocupate doar în calendarele partajate cu dvs. Pentru aceste persoane nu poate deosebi liber de nepartajat.",
-    "directory_off": "Bulwark nu poate căuta persoane pe acest server. Administratorul poate activa interogările de director în Stalwart.",
+    "unknown_note": "Loomix vede orele ocupate doar în calendarele partajate cu dvs. Pentru aceste persoane nu poate deosebi liber de nepartajat.",
+    "directory_off": "Loomix nu poate căuta persoane pe acest server. Administratorul poate activa interogările de director în Stalwart.",
     "not_looked_up": "Adresa nu a putut fi căutată",
     "found": "Ore libere găsite: {count}"
   },
@@ -5676,7 +5676,7 @@
     "start_tour": "Începe turul"
   },
   "demo_welcome": {
-    "title": "Bine ați venit la Bulwark Mail",
+    "title": "Bine ați venit la Loomix Mail",
     "description": "Explorați un client de e-mail web cu funcționalități complete – direct în browserul dvs. Toate datele rămân pe dispozitivul dvs., așa că nu ezitați să testați totul.",
     "feature_email": "Citiți și redactați e-mailuri",
     "feature_organize": "Etichete, stele și dosare",
@@ -6110,9 +6110,9 @@
     "cancelled_hint": "Pentru a continua mai târziu, importați din nou aceleași fișiere în același dosar.",
     "close": "Închide",
     "pst_note": "Din fișierele Outlook vin doar e-mailurile. Contactele, elementele de calendar și sarcinile sunt numărate și lăsate deoparte.",
-    "pst_error_encrypted": "Acest fișier Outlook folosește criptare puternică, pe care Bulwark nu o poate citi. În Outlook, exportați e-mailurile într-un fișier .pst nou, fără criptare.",
-    "pst_error_not_pst": "Acest fișier nu este un fișier de date Outlook pe care Bulwark îl poate citi.",
-    "pst_error_unreadable": "Bulwark nu a putut citi acest fișier Outlook.",
+    "pst_error_encrypted": "Acest fișier Outlook folosește criptare puternică, pe care Loomix nu o poate citi. În Outlook, exportați e-mailurile într-un fișier .pst nou, fără criptare.",
+    "pst_error_not_pst": "Acest fișier nu este un fișier de date Outlook pe care Loomix îl poate citi.",
+    "pst_error_unreadable": "Loomix nu a putut citi acest fișier Outlook.",
     "pst_error_worker": "Cititorul de fișiere Outlook nu s-a încărcat. Reîncărcați pagina și încercați din nou.",
     "error_over_quota": "Căsuța poștală este plină, așa că importul s-a oprit. Faceți loc și importați din nou aceleași fișiere în același dosar pentru a continua.",
     "error_forbidden": "Nu puteți adăuga e-mailuri în acest dosar, așa că importul s-a oprit.",
@@ -6173,7 +6173,7 @@
   },
   "desktopImport": {
     "find": "Găsește datele Thunderbird și Outlook…",
-    "find_hint": "Caută în locurile obișnuite de pe acest computer. Bulwark întreabă mai întâi.",
+    "find_hint": "Caută în locurile obișnuite de pe acest computer. Loomix întreabă mai întâi.",
     "scan_declined": "Nu s-a căutat nimic, pentru că nu ați permis.",
     "scan_failed": "Căutarea nu a funcționat. Încercați din nou.",
     "read_declined": "Nu s-a citit niciun fișier, pentru că nu ați permis.",
@@ -6229,7 +6229,7 @@
     "restore": "Restabilește",
     "restored": "{count, plural, one {# mesaj revine} few {# mesaje revin} other {# de mesaje revin}} în dosarul Primite.",
     "restore_partial": "{count, plural, one {# mesaj nu a putut fi restabilit. Rămâne selectat, ca să puteți încerca din nou.} few {# mesaje nu au putut fi restabilite. Rămân selectate, ca să puteți încerca din nou.} other {# de mesaje nu au putut fi restabilite. Rămân selectate, ca să puteți încerca din nou.}}",
-    "restore_hint": "E-mailurile restabilite revin în Primite ca necitite, ordonate după data inițială, deci pot fi mult mai jos în listă. Serverul le restabilește în fundal. Dacă acolo nu reușește, mesajul se pierde și Bulwark nu are cum să afle.",
+    "restore_hint": "E-mailurile restabilite revin în Primite ca necitite, ordonate după data inițială, deci pot fi mult mai jos în listă. Serverul le restabilește în fundal. Dacă acolo nu reușește, mesajul se pierde și Loomix nu are cum să afle.",
     "unknown_sender": "Expeditor necunoscut",
     "no_subject": "(fără subiect)",
     "deleted_on": "Șters pe {date}",
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Golește",
     "persist_refused": "Acest browser poate șterge e-mailurile păstrate când se termină spațiul. Instalarea aplicației de obicei previne asta.",
     "persist_retry": "Cereți browserului să le păstreze",
-    "safari_hint": "Safari șterge datele unui site după 7 zile fără vizite. Adăugați Bulwark pe ecranul principal sau în Dock ca să păstrați e-mailurile pe acest dispozitiv.",
+    "safari_hint": "Safari șterge datele unui site după 7 zile fără vizite. Adăugați Loomix pe ecranul principal sau în Dock ca să păstrați e-mailurile pe acest dispozitiv.",
     "evicted": "Browserul a șters e-mailurile păstrate pe acest dispozitiv. Se descarcă din nou.",
     "evicted_lost": "{count, plural, one {# mesaj sau modificare netrimis s-a pierdut.} few {# mesaje sau modificări netrimise s-au pierdut.} other {# de mesaje sau modificări netrimise s-au pierdut.}}",
     "evicted_dismiss": "OK",
     "storage_full_title": "Spațiul dispozitivului este plin.",
-    "storage_full_text": "Bulwark nu mai salvează e-mailuri aici. Păstrați mai puține e-mailuri sau goliți acest cont pentru a face loc.",
+    "storage_full_text": "Loomix nu mai salvează e-mailuri aici. Păstrați mai puține e-mailuri sau goliți acest cont pentru a face loc.",
     "open_settings": "Deschide setările",
-    "default_on": "Bulwark păstrează e-mailurile pe acest dispozitiv, ca să funcționeze fără conexiune. Puteți schimba asta în Setări.",
+    "default_on": "Loomix păstrează e-mailurile pe acest dispozitiv, ca să funcționeze fără conexiune. Puteți schimba asta în Setări.",
     "conflict_calendar": "Eveniment din calendar",
     "conflict_contacts": "Contact",
     "kept_files_title": "Fișiere păstrate offline",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Adăugarea în vizualizarea sarcinilor",
-        "body": "Afișează secțiuni proprii în detaliile unei sarcini, butoane în lista de sarcini și o listă de sarcini proprie în locul celei din Bulwark."
+        "body": "Afișează secțiuni proprii în detaliile unei sarcini, butoane în lista de sarcini și o listă de sarcini proprie în locul celei din Loomix."
       },
       "ui_files": {
         "title": "Adăugarea în vizualizarea fișierelor",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Comenzi rapide de la tastatură",
       "docs": "Documentație",
       "settings": "Setări…",
-      "about": "Despre Bulwark",
+      "about": "Despre Loomix",
       "from_plugins": "Mai multe de la pluginuri…",
       "pick_gone": "Meniul era depășit. Deschideți-l din nou și încercați încă o dată.",
       "bar_label": "Meniu"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Dacă închideți acum, ce ați scris de la ultima salvare se pierde.",
       "close_anyway": "Închidere oricum",
       "unsent_title": "Unele mesaje nu au fost trimise încă",
-      "unsent_one": "Un mesaj așteaptă să fie trimis. Pleacă la următoarea deschidere a Bulwark.",
-      "unsent_many": "{count} mesaje așteaptă să fie trimise. Pleacă la următoarea deschidere a Bulwark.",
+      "unsent_one": "Un mesaj așteaptă să fie trimis. Pleacă la următoarea deschidere a Loomix.",
+      "unsent_many": "{count} mesaje așteaptă să fie trimise. Pleacă la următoarea deschidere a Loomix.",
       "quit": "Ieșire",
       "leave_title": "Părăsiți pagina cu modificări nesalvate?",
       "leave_detail": "Modificările făcute pe această pagină nu au fost salvate încă.",
@@ -7383,7 +7383,7 @@
       "stay": "Rămâneți"
     },
     "spellcheck": {
-      "offer": "Verificarea ortografică pentru {language} are nevoie de un dicționar. Bulwark îl poate descărca de la Google. Textul dvs. nu este trimis.",
+      "offer": "Verificarea ortografică pentru {language} are nevoie de un dicționar. Loomix îl poate descărca de la Google. Textul dvs. nu este trimis.",
       "download": "Descărcare"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "Pentru 1 oră",
     "tray_pause_tomorrow": "Până mâine",
     "tray_resume": "Reactivează notificările",
-    "tray_open": "Deschide Bulwark",
-    "tray_quit": "Închide Bulwark",
-    "tray_exit": "Ieșire din Bulwark"
+    "tray_open": "Deschide Loomix",
+    "tray_quit": "Închide Loomix",
+    "tray_exit": "Ieșire din Loomix"
   },
   "desktopMenus": {
     "save_draft": "Salvează ciorna",
@@ -7581,25 +7581,25 @@
     "cancel": "Anulați",
     "or_here": "sau conectați-vă aici",
     "timed_out": "Conectarea în browser a durat prea mult. Încercați din nou.",
-    "no_browser": "Bulwark nu a putut deschide browserul. Încercați din nou sau conectați-vă aici.",
+    "no_browser": "Loomix nu a putut deschide browserul. Încercați din nou sau conectați-vă aici.",
     "failed": "Conectarea prin browser nu a reușit. Încercați din nou.",
-    "handoff_banner": "Un program de pe acest computer a cerut această conectare pentru aplicația Bulwark. Acest browser rămâne deconectat de la Bulwark. Dacă nu ați pornit dvs. acest lucru, închideți această filă.",
-    "consent_title": "Vă conectați la aplicația Bulwark?",
-    "consent_description": "Un program de pe acest computer, la portul {port}, cere conectarea pentru {username}. Continuați doar dacă tocmai ați apăsat „Conectați-vă cu browserul…” în aplicația Bulwark de aici. Dacă nu, poate cineva încearcă să intre în contul dvs.: alegeți Nu acum.",
+    "handoff_banner": "Un program de pe acest computer a cerut această conectare pentru aplicația Loomix. Acest browser rămâne deconectat de la Loomix. Dacă nu ați pornit dvs. acest lucru, închideți această filă.",
+    "consent_title": "Vă conectați la aplicația Loomix?",
+    "consent_description": "Un program de pe acest computer, la portul {port}, cere conectarea pentru {username}. Continuați doar dacă tocmai ați apăsat „Conectați-vă cu browserul…” în aplicația Loomix de aici. Dacă nu, poate cineva încearcă să intre în contul dvs.: alegeți Nu acum.",
     "consent_confirm": "Conectați-vă la aplicație",
     "consent_cancel": "Nu acum",
-    "page_done": "Puteți închide această filă și reveni la Bulwark.",
-    "page_failed": "Conectarea nu a reușit. Reveniți la Bulwark și încercați din nou.",
-    "page_link_used": "Acest link funcționează o singură dată. Reveniți la Bulwark și începeți din nou.",
+    "page_done": "Puteți închide această filă și reveni la Loomix.",
+    "page_failed": "Conectarea nu a reușit. Reveniți la Loomix și încercați din nou.",
+    "page_link_used": "Acest link funcționează o singură dată. Reveniți la Loomix și începeți din nou.",
     "page_title": "Conectați-vă la {server}",
-    "page_intro": "Această pagină vine de la aplicația Bulwark de pe acest computer. Parola merge la {server} și nicăieri altundeva.",
+    "page_intro": "Această pagină vine de la aplicația Loomix de pe acest computer. Parola merge la {server} și nicăieri altundeva.",
     "page_username": "Adresă de e-mail sau nume de utilizator",
     "page_password": "Parolă",
     "page_code": "Cod cu doi factori",
     "page_submit": "Conectați-vă",
     "page_wrong_password": "Serverul nu a acceptat acest nume de utilizator și această parolă.",
     "page_code_needed": "Acest cont are nevoie și de un cod cu doi factori. Introduceți din nou parola și codul.",
-    "page_no_answer": "Bulwark nu s-a putut conecta. Verificați dacă serverul este accesibil și încercați din nou.",
+    "page_no_answer": "Loomix nu s-a putut conecta. Verificați dacă serverul este accesibil și încercați din nou.",
     "declined": "Ați refuzat în browser, așa că nu s-a făcut nicio conectare.",
     "too_many": "Prea multe încercări de conectare din această rețea. Așteptați câteva minute și încercați din nou.",
     "page_declined": "Nu s-a transmis nimic. Puteți închide această filă."
@@ -7619,7 +7619,7 @@
     "other_ways": "Alte moduri de conectare",
     "trouble": "Ai probleme?",
     "trouble_cors": "Serverul tău de e-mail trebuie să permită autentificarea de pe acest site. Dacă autentificarea nu reușește, cere celui care administrează serverul să o permită.",
-    "provider_unsupported": "{provider} nu oferă JMAP, modul în care Bulwark comunică cu serverele de e-mail, așa că Bulwark nu se poate conecta încă direct la el."
+    "provider_unsupported": "{provider} nu oferă JMAP, modul în care Loomix comunică cu serverele de e-mail, așa că Loomix nu se poate conecta încă direct la el."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock este activat",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Schimbați modul în care se conectează Bulwark?",
-      "message": "Bulwark repornește și întreabă cum să se conecteze: cu adresa dvs. de e-mail sau prin Bulwark-ul organizației dvs. Conturile dvs. de pe acest computer rămân conectate.",
+      "title": "Schimbați modul în care se conectează Loomix?",
+      "message": "Loomix repornește și întreabă cum să se conecteze: cu adresa dvs. de e-mail sau prin Loomix-ul organizației dvs. Conturile dvs. de pe acest computer rămân conectate.",
       "confirm": "Schimbă",
-      "org_link": "Folosește în schimb Bulwark-ul organizației mele",
+      "org_link": "Folosește în schimb Loomix-ul organizației mele",
       "add_account": "Adaugă cont…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Inserează"
     },
     "sign_in_page": {
-      "open_app": "Deschide Bulwark",
+      "open_app": "Deschide Loomix",
       "done_as": "Conectat ca {address}. Puteți închide această filă."
     }
   },
   "desktop_updates": {
     "title": "Actualizări",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark caută singur actualizări.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix caută singur actualizări.",
     "status_checking": "Se caută actualizări…",
     "status_up_to_date": "Aveți cea mai nouă versiune.",
     "status_downloading": "Se descarcă versiunea {version}…",
     "status_ready": "Versiunea {version} este gata. Se instalează la următoarea închidere sau reporniți acum.",
     "status_available": "Versiunea {version} este disponibilă.",
-    "status_available_per_machine": "Versiunea {version} este disponibilă. Bulwark este instalat pentru toată lumea pe acest computer, așa că actualizările le instalează un administrator.",
-    "status_older": "Aveți o versiune beta. Versiunea stabilă {version} este mai veche, așa că Bulwark rămâne pe această versiune până când cea stabilă o ajunge din urmă.",
-    "status_error": "Nu s-au putut căuta actualizări. Bulwark încearcă din nou mai târziu.",
+    "status_available_per_machine": "Versiunea {version} este disponibilă. Loomix este instalat pentru toată lumea pe acest computer, așa că actualizările le instalează un administrator.",
+    "status_older": "Aveți o versiune beta. Versiunea stabilă {version} este mai veche, așa că Loomix rămâne pe această versiune până când cea stabilă o ajunge din urmă.",
+    "status_error": "Nu s-au putut căuta actualizări. Loomix încearcă din nou mai târziu.",
     "status_off": "Organizația dvs. a dezactivat actualizările din aplicație.",
     "check": "Caută acum",
     "restart": "Repornește pentru actualizare",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Repornește pentru actualizare",
     "shell_check": "Caută actualizări…",
-    "shell_available": "Bulwark {version} este disponibil",
-    "shell_ready_title": "Bulwark este gata de actualizare",
+    "shell_available": "Loomix {version} este disponibil",
+    "shell_ready_title": "Loomix este gata de actualizare",
     "shell_ready_body": "Versiunea {version} se instalează la următoarea închidere. Faceți clic pentru a reporni acum. Ciornele se salvează întâi.",
-    "shell_available_title": "Există o versiune nouă de Bulwark",
-    "shell_none_title": "Bulwark este actualizat",
+    "shell_available_title": "Există o versiune nouă de Loomix",
+    "shell_none_title": "Loomix este actualizat",
     "shell_none_detail": "Aveți versiunea {version}.",
-    "shell_failed_title": "Bulwark nu a putut căuta actualizări",
+    "shell_failed_title": "Loomix nu a putut căuta actualizări",
     "shell_failed_detail": "Verificați conexiunea și încercați mai târziu. Nu s-a schimbat nimic.",
     "shell_beta_title": "Treceți la versiuni beta?",
     "shell_beta_detail": "Primiți versiunile noi mai devreme și pot avea mai multe probleme. Pentru a reveni, instalați o versiune stabilă mai veche sau așteptați să ajungă stabila din urmă.",
     "shell_beta_confirm": "Treci la beta",
-    "shell_older_title": "Reveniți la Bulwark {version}?",
+    "shell_older_title": "Reveniți la Loomix {version}?",
     "shell_older_detail": "Aveți beta {current}. Stabila {target} este mai veche și s-ar putea să nu citească ce a salvat beta pe acest computer. E-mailurile rămân pe server, dar cele păstrate offline se pot descărca din nou, iar modificările netrimise se pot pierde. Dacă așteptați, stabila ajunge beta din urmă și treceți la ea fără acest pas.",
     "shell_older_confirm": "Instalează versiunea mai veche"
   },
@@ -7982,7 +7982,7 @@
       "progress": "{done} din {total} încărcate",
       "cannot_offline": "Serverul nu poate fi accesat. Încă neîncărcate: {names}",
       "cannot_other": "Nu pot fi încărcate: {names}. Activitatea recentă din Setări arată motivul.",
-      "go_note_drive": "Dacă continuați acum, ce nu s-a încărcat se copiază în Documente\\Bulwark – not uploaded. Nu se pierde nimic.",
+      "go_note_drive": "Dacă continuați acum, ce nu s-a încărcat se copiază în Documente\\Loomix – not uploaded. Nu se pierde nimic.",
       "go_note_folder": "Dacă continuați acum, ce nu s-a încărcat rămâne în folderul de pe acest computer.",
       "keep_turn_off": "Păstrează unitatea",
       "keep_sign_out": "Rămâi conectat",
@@ -7996,22 +7996,22 @@
       "rescued": "Fișierele neîncărcate ({count}) sunt acum în {folder}.",
       "rescued_open": "Deschide folderul",
       "rescued_dismiss": "Ascunde",
-      "start_at_login": "Pornește Bulwark la conectarea în Windows",
-      "start_at_login_why": "Unitatea are nevoie ca Bulwark să ruleze, ca OneDrive.",
-      "closed_warning": "Fișierele din unitate nu se deschid cât timp Bulwark este închis.",
-      "where": "În Explorer ca Bulwark Files",
-      "where_letter": "În Explorer ca Bulwark Files ({letter}:)",
+      "start_at_login": "Pornește Loomix la conectarea în Windows",
+      "start_at_login_why": "Unitatea are nevoie ca Loomix să ruleze, ca OneDrive.",
+      "closed_warning": "Fișierele din unitate nu se deschid cât timp Loomix este închis.",
+      "where": "În Explorer ca Loomix Files",
+      "where_letter": "În Explorer ca Loomix Files ({letter}:)",
       "open": "Deschide",
-      "letter_note": "Prin literă, Explorer nu arată starea sincronizării și nici „Păstrați întotdeauna pe acest dispozitiv”. Le găsiți sub Bulwark Files în Explorer.",
+      "letter_note": "Prin literă, Explorer nu arată starea sincronizării și nici „Păstrați întotdeauna pe acest dispozitiv”. Le găsiți sub Loomix Files în Explorer.",
       "letter_failed": "Litera unității nu a putut fi setată. Încercați din nou."
     },
     "tray": {
-      "idle": "Bulwark Files: La zi",
-      "syncing": "Bulwark Files: Se sincronizează. Rămase: {count}",
-      "paused": "Bulwark Files: Întrerupt",
-      "offline": "Bulwark Files: Offline. În așteptare: {count}",
-      "question": "Bulwark Files: Așteaptă răspunsul dvs.",
-      "error": "Bulwark Files: Eroare"
+      "idle": "Loomix Files: La zi",
+      "syncing": "Loomix Files: Se sincronizează. Rămase: {count}",
+      "paused": "Loomix Files: Întrerupt",
+      "offline": "Loomix Files: Offline. În așteptare: {count}",
+      "question": "Loomix Files: Așteaptă răspunsul dvs.",
+      "error": "Loomix Files: Eroare"
     },
     "notify": {
       "conflict_title": "Un fișier a fost modificat în două locuri",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "O dată pe zi: un ID aleatoriu, numerele de versiune ale aplicației, sistemul de operare, de cât timp rulează aplicația și cum se conectează. Cu propriul server de e-mail, și ce funcții sunt pornite, un număr aproximativ de conturi și câte pluginuri și teme aveți. Niciodată e-mailuri, adrese sau nume de servere.",
     "crash_label": "Trimite rapoarte de blocare",
     "crash_description": "Erorile din aplicație pleacă cu un ID aleatoriu, nume de fișiere din codul aplicației și mesaje scurte, curățate. Dacă aplicația însăși se blochează, un fișier de blocare rămâne pe acest computer și pleacă doar dacă îl trimiteți.",
-    "crash_memory": "Un fișier de blocare este o copie a unei părți din memoria aplicației din momentul blocării. Bulwark elimină numele de utilizator, adresele și tokenurile de autentificare pe care le găsește, dar un fișier de blocare poate conține totuși textul e-mailurilor dvs.",
-    "instance_note": "Pe un server Bulwark, administratorul acestuia decide separat ce îi raportează paginile.",
+    "crash_memory": "Un fișier de blocare este o copie a unei părți din memoria aplicației din momentul blocării. Loomix elimină numele de utilizator, adresele și tokenurile de autentificare pe care le găsește, dar un fișier de blocare poate conține totuși textul e-mailurilor dvs.",
+    "instance_note": "Pe un server Loomix, administratorul acestuia decide separat ce îi raportează paginile.",
     "forced_off": "Organizația dvs. a oprit această opțiune.",
     "url_label": "Unde ajung fișierele de blocare",
-    "url_description": "Adresa https care primește un fișier de blocare. Bulwark nu vine cu una.",
+    "url_description": "Adresa https care primește un fișier de blocare. Loomix nu vine cu una.",
     "url_invalid": "Introduceți o adresă https completă.",
     "url_save": "Salvează",
     "files_label": "Fișiere de blocare pe acest computer",
-    "files_description": "Bulwark le păstrează pe cele mai noi și le șterge pe cele mai vechi de o lună.",
+    "files_description": "Loomix le păstrează pe cele mai noi și le șterge pe cele mai vechi de o lună.",
     "files_empty": "Nu există fișiere de blocare.",
     "file_size": "{size} KB",
     "send": "Trimite raportul de blocare…",

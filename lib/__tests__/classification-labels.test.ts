@@ -121,10 +121,10 @@ describe('the subject prefix', () => {
 
 describe('drafts', () => {
   it('keep the pick, "none" and nothing apart', () => {
-    expect(draftLabelProperty('confidential')).toEqual({ 'header:X-Bulwark-Label:asText': 'confidential' });
-    expect(draftLabelProperty(null)).toEqual({ 'header:X-Bulwark-Label:asText': 'none' });
+    expect(draftLabelProperty('confidential')).toEqual({ 'header:X-Loomix-Label:asText': 'confidential' });
+    expect(draftLabelProperty(null)).toEqual({ 'header:X-Loomix-Label:asText': 'none' });
     expect(draftLabelProperty(undefined)).toEqual({});
-    expect(draftLabelChoice({ 'X-Bulwark-Label': ' confidential' })).toBe('confidential');
+    expect(draftLabelChoice({ 'X-Loomix-Label': ' confidential' })).toBe('confidential');
     expect(draftLabelChoice({ 'x-bulwark-label': 'none' })).toBeNull();
     expect(draftLabelChoice({})).toBeUndefined();
   });

@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge, DesktopDevToolsState } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopDevToolsState } from '@/lib/desktop/types';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string, values?: Record<string, unknown>) => (values ? `${key}:${JSON.stringify(values)}` : key),
@@ -24,7 +24,7 @@ function setBridge(state: DesktopDevToolsState | null, platform: 'win32' | 'darw
         },
       },
     }
-    : { version: 1, platform }) as unknown as BulwarkDesktopBridge;
+    : { version: 1, platform }) as unknown as LoomixDesktopBridge;
   return { set, emit: (next: DesktopDevToolsState) => listeners.forEach((listener) => listener(next)) };
 }
 

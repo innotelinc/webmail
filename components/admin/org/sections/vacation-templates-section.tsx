@@ -168,7 +168,7 @@ export function VacationTemplatesSection({ draft }: { draft: OrgPolicyDraft }) {
     <SettingsSection
       id="vacation-templates"
       title="Out-of-office replies"
-      description="Users pick one of these under Settings > Out of office, Bulwark fills in the placeholders, and they can change the text before it is switched on."
+      description="Users pick one of these under Settings > Out of office, Loomix fills in the placeholders, and they can change the text before it is switched on."
     >
       <div className="space-y-4">
         <div className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground" data-testid="org-vacation-placeholders">

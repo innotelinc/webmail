@@ -11,8 +11,8 @@ import { JMAPClient } from '../jmap/client';
  * request there. The v1.0.0 release implements it; 0.16 knows none of it. So
  * ordinary requests never send any of it, and the gets whose server default
  * could grow to include metadata ask for an explicit property list instead.
- * Only the Bulwark metadata adapter (lib/jmap/bulwark-metadata.ts and the
- * client's *BulwarkMetadata methods) reads and writes it, in requests of its
+ * Only the Loomix metadata adapter (lib/jmap/bulwark-metadata.ts and the
+ * client's *LoomixMetadata methods) reads and writes it, in requests of its
  * own and only after the server has answered one (organisation features).
  */
 
@@ -218,9 +218,9 @@ describe('JMAP Metadata in the request-building sources', () => {
   ];
 
   // The metadata adapter is the one place allowed to name Metadata: its own
-  // module, and the bodies of the client's *BulwarkMetadata methods.
+  // module, and the bodies of the client's *LoomixMetadata methods.
   const ADAPTER_FILES = new Set(['lib/jmap/bulwark-metadata.ts']);
-  const ADAPTER_METHOD = /^\s+(?:async\s+)?\w*BulwarkMetadata\s*\(/;
+  const ADAPTER_METHOD = /^\s+(?:async\s+)?\w*LoomixMetadata\s*\(/;
 
   function withoutAdapterMethods(source: string): string {
     const lines = source.split('\n');

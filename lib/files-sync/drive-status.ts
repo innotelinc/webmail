@@ -18,7 +18,7 @@ export interface DriveStatusText {
   quota: (used: number, total: number | null) => string;
   /** Storage nearly full or full, in words. */
   notice: (level: 'warn' | 'full') => string;
-  /** The tray menu's one line: "Bulwark Files: Offline. Waiting: 3". */
+  /** The tray menu's one line: "Loomix Files: Offline. Waiting: 3". */
   tray?: (status: FilesSyncRootStatus | undefined, state: FilesSyncRootState) => string;
 }
 

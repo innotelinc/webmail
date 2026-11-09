@@ -94,7 +94,7 @@ export function jmapServerAllowedByDesktopPolicy(serverUrl: string, snapshot: Po
 }
 
 /**
- * Whether the login page may offer a server of the user's own. A forced Bulwark
+ * Whether the login page may offer a server of the user's own. A forced Loomix
  * server decides that alone, unless the same policy leaves direct connections on.
  * `AllowStandalone` off says the same.
  */

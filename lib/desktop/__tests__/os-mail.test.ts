@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge, DesktopOsNotification } from '../types';
+import type { LoomixDesktopBridge, DesktopOsNotification } from '../types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
 import type { Email, Mailbox } from '@/lib/jmap/types';
 
@@ -72,8 +72,8 @@ const labels = {
   copyCode: (code: string) => `copy ${code}`,
 };
 
-function setBridge(bridge: Partial<BulwarkDesktopBridge> | undefined) {
-  window.bulwarkDesktop = bridge as BulwarkDesktopBridge | undefined;
+function setBridge(bridge: Partial<LoomixDesktopBridge> | undefined) {
+  window.bulwarkDesktop = bridge as LoomixDesktopBridge | undefined;
 }
 
 beforeEach(async () => {

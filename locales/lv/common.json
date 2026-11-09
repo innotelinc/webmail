@@ -70,8 +70,8 @@
     "demo_tagline": "Izmēģiniet pilnvērtīgu e-pasta klientu bez konta izveides.",
     "demo_no_signup": "Reģistrācija nav nepieciešama - brīvi pētiet paraugdatus",
     "mobile_handoff": {
-      "title": "Open the Bulwark mobile app?",
-      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Bulwark link. Continue only if you started this from the Bulwark mobile app.",
+      "title": "Open the Loomix mobile app?",
+      "description": "This sign-in page was opened by an app on this device. Your sign-in for {username} will be handed to the app that registered the Loomix link. Continue only if you started this from the Loomix mobile app.",
       "confirm": "Hand over to the app",
       "cancel": "Stay in the webmail"
     },
@@ -491,11 +491,11 @@
     "too_long": "Šis nosaukums ir pārāk garš.",
     "loading": "Ielādē…",
     "unsupported": "Šis pasta serveris nevar glabāt kopīgotus tagus, tāpēc šī pastkaste rāda jūsu pašu tagus.",
-    "unavailable": "Neizdevās ielādēt šīs pastkastes kopīgotos tagus, tāpēc tā rāda jūsu pašu tagus. Bulwark mēģinās vēlreiz vēlāk.",
+    "unavailable": "Neizdevās ielādēt šīs pastkastes kopīgotos tagus, tāpēc tā rāda jūsu pašu tagus. Loomix mēģinās vēlreiz vēlāk.",
     "no_rights": "Jūs varat izmantot šos tagus, bet šajā pastkastē tos mainīt nevarat.",
     "too_many": "Kopīgoto tagu ir par daudz. Pirms pievienojat jaunus, izdzēsiet dažus.",
-    "save_failed": "Neizdevās saglabāt kopīgotos tagus. Bulwark mēģinās vēlreiz, kad serveris atbildēs.",
-    "save_pending": "Vēl nav saglabāts. Bulwark mēģinās vēlreiz, kad serveris atbildēs."
+    "save_failed": "Neizdevās saglabāt kopīgotos tagus. Loomix mēģinās vēlreiz, kad serveris atbildēs.",
+    "save_pending": "Vēl nav saglabāts. Loomix mēģinās vēlreiz, kad serveris atbildēs."
   },
   "email_viewer": {
     "read_receipt": {
@@ -1109,7 +1109,7 @@
     "show_less": "Rādīt mazāk",
     "send_failed": "Neizdevās nosūtīt vēstuli",
     "send_timeout": "Serveris pārstāja atbildēt. Pirms sūtīt vēlreiz, pārbaudiet mapi Nosūtītie — ziņojums, iespējams, jau ir aizsūtīts.",
-    "submission_quota": "Serverī šim kontam ir pārāk daudz nosūtīto ziņojumu ierakstu. Bulwark noņēma tos, ko varēja; ja tas atkārtojas, lūdziet administratoram palielināt e-pasta sūtījumu ierobežojumu.",
+    "submission_quota": "Serverī šim kontam ir pārāk daudz nosūtīto ziņojumu ierakstu. Loomix noņēma tos, ko varēja; ja tas atkārtojas, lūdziet administratoram palielināt e-pasta sūtījumu ierobežojumu.",
     "submission_limit": "Serveris atteicās nosūtīt ziņojumu, jo ir sasniegts ierobežojums: {reason}",
     "recipients_refused": "Nav nosūtīts: serveris noraidīja {recipients}.",
     "recipients_partly_refused": "Serveris noraidīja {recipients}. Pārējie adresāti saņem ziņojumu.",
@@ -1890,13 +1890,13 @@
       "push": {
         "confirm_disable_message": "Šī ierīce vairs nesaņems brīdinājumus, kad vietne būs aizvērta.",
         "confirm_disable_title": "Atspējot fona paziņojumus?",
-        "description": "Saņem sistēmas paziņojumus par jaunu pastu, kad šī vietne ir aizvērta. Piegādāts caur Bulwark push releju; relejs nekad neredz pasta saturu.",
+        "description": "Saņem sistēmas paziņojumus par jaunu pastu, kad šī vietne ir aizvērta. Piegādāts caur Loomix push releju; relejs nekad neredz pasta saturu.",
         "disable": "Atspējot",
         "enable": "Ieslēgt šajā ierīcē",
         "dismiss_aria": "Aizvērt paziņojumu uzaicinājumu",
         "ios_hint": "Operētājsistēmā iOS vispirms instalējiet vietni sākuma ekrānā – Safari piegādā Web Push tikai instalētajām PWA.",
         "reenable": "Reģistrēt vēlreiz",
-        "relay_desc": "Pēc noklusējuma izmanto izmitināto Bulwark releju. Mainiet tikai tad, ja izmitināt pats.",
+        "relay_desc": "Pēc noklusējuma izmanto izmitināto Loomix releju. Mainiet tikai tad, ja izmitināt pats.",
         "relay_label": "Push relejs",
         "relay_locked": "Iestatījis administrators",
         "relay_locked_desc": "Push releja URL ir iestatījis administrators, un to nevar mainīt.",
@@ -1904,7 +1904,7 @@
         "status_busy": "Notiek darbs…",
         "status_inactive": "Nav iespējots šajā ierīcē",
         "status_unsupported": "Šī pārlūkprogramma neatbalsta Web Push",
-        "status_lite": "Web Push is not available in Bulwark Lite; it needs the Bulwark server.",
+        "status_lite": "Web Push is not available in Loomix Lite; it needs the Loomix server.",
         "status_demo": "Fona paziņojumi demonstrācijā nav pieejami.",
         "title": "Paziņojumi, kad {appName} ir aizvērta",
         "devices_title": "Reģistrētās ierīces",
@@ -2481,10 +2481,10 @@
       },
       "link_device": {
         "title": "Saistīt mobilo lietotni",
-        "description": "Pierakstieties Bulwark Mail lietotnē savā tālrunī, tur neievadot paroli. Tālrunis saņem savu pierakstīšanos, tāpēc izrakstīšanās šeit to neizraksta.",
+        "description": "Pierakstieties Loomix Mail lietotnē savā tālrunī, tur neievadot paroli. Tālrunis saņem savu pierakstīšanos, tāpēc izrakstīšanās šeit to neizraksta.",
         "generate": "Rādīt QR kodu",
         "regenerate": "Rādīt jaunu kodu",
-        "instructions": "Atveriet Bulwark Mail lietotni un pierakstīšanās ekrānā pieskarieties \"Scan a sign-in code\" (vai \"Add account\" → \"Scan a sign-in code\", ja jau esat pierakstījies), pēc tam pavērsiet kameru šeit.",
+        "instructions": "Atveriet Loomix Mail lietotni un pierakstīšanās ekrānā pieskarieties \"Scan a sign-in code\" (vai \"Add account\" → \"Scan a sign-in code\", ja jau esat pierakstījies), pēc tam pavērsiet kameru šeit.",
         "expires_in": "Šī koda derīgums beigsies pēc {seconds} sekundēm. To var izmantot tikai vienu reizi.",
         "expired": "Šī koda derīgums ir beidzies.",
         "error": "Neizdevās izveidot pārošanas kodu. Lūdzu, mēģiniet vēlreiz.",
@@ -2750,7 +2750,7 @@
         "contacts_description": "Kontaktu sinhronizācija, adrešu grāmatu darbības un uzticamie sūtītāji"
       },
       "about": {
-        "title": "Bulwark Webmail",
+        "title": "Loomix Mail",
         "source_code": "Pirmkods"
       },
       "spam_siege": {
@@ -3609,7 +3609,7 @@
     "mountain_view_description": "Meklēšana augšā visā platumā, ziņojumi atveras pilnā platumā"
   },
   "setup": {
-    "title": "Bulwark Webmail iestatīšana",
+    "title": "Loomix Mail iestatīšana",
     "subtitle": "Iestatiet savu tīmekļa pasta instanci pārlūkā.",
     "loading": "Ielādē…",
     "back": "Atpakaļ",
@@ -3734,7 +3734,7 @@
       "regenerate": "Izveidot no jauna",
       "sync": "Sinhronizēt lietotāju iestatījumus starp ierīcēm",
       "sync_hint": "Saglabā lietotāju preferences serverī, šifrētas ar sesijas noslēpumu.",
-      "telemetry": "Sūtīt anonīmu lietojuma statistiku, lai uzlabotu Bulwark",
+      "telemetry": "Sūtīt anonīmu lietojuma statistiku, lai uzlabotu Loomix",
       "telemetry_hint": "Pēc noklusējuma izslēgts. Viens anonīms signāls dienā ar versiju, platformu un ieslēgtajām funkcijām; nekad e-pasta adreses, resursdatoru nosaukumi vai IP adreses. To var jebkurā laikā mainīt administrēšanas iestatījumos."
     },
     "logging": {
@@ -5407,7 +5407,7 @@
     "start_tour": "Sākt ekskursiju"
   },
   "demo_welcome": {
-    "title": "Laipni lūdzam Bulwark Mail",
+    "title": "Laipni lūdzam Loomix Mail",
     "description": "Atklājiet pilnvērtīgu tīmekļa e-pasta klientu tieši pārlūkā. Visi dati tiek glabāti jūsu ierīcē.",
     "feature_email": "Vēstuļu lasīšana un rakstīšana",
     "feature_organize": "Etiķetes, zvaigznītes un mapes",
@@ -5841,9 +5841,9 @@
     "cancelled_hint": "Lai turpinātu vēlāk, vēlreiz importējiet tos pašus failus tajā pašā mapē.",
     "close": "Aizvērt",
     "pst_note": "No Outlook failiem tiek pārnests tikai pasts. Kontakti, kalendāra vienumi un uzdevumi tiek saskaitīti un izlaisti.",
-    "pst_error_encrypted": "Šis Outlook fails izmanto augstu šifrēšanu, ko Bulwark nevar nolasīt. Programmā Outlook eksportējiet pastu jaunā .pst failā bez šifrēšanas.",
-    "pst_error_not_pst": "Šis fails nav Outlook datu fails, ko Bulwark var nolasīt.",
-    "pst_error_unreadable": "Bulwark nevarēja nolasīt šo Outlook failu.",
+    "pst_error_encrypted": "Šis Outlook fails izmanto augstu šifrēšanu, ko Loomix nevar nolasīt. Programmā Outlook eksportējiet pastu jaunā .pst failā bez šifrēšanas.",
+    "pst_error_not_pst": "Šis fails nav Outlook datu fails, ko Loomix var nolasīt.",
+    "pst_error_unreadable": "Loomix nevarēja nolasīt šo Outlook failu.",
     "pst_error_worker": "Outlook failu lasītājs netika ielādēts. Pārlādējiet lapu un mēģiniet vēlreiz.",
     "error_over_quota": "Pastkaste ir pilna, tāpēc importēšana apstājās. Atbrīvojiet vietu un vēlreiz importējiet tos pašus failus tajā pašā mapē, lai turpinātu.",
     "error_forbidden": "Šajā mapē nedrīkstat pievienot pastu, tāpēc importēšana apstājās.",
@@ -5904,7 +5904,7 @@
   },
   "desktopImport": {
     "find": "Meklēt Thunderbird un Outlook datus…",
-    "find_hint": "Meklē ierastajās vietās šajā datorā. Bulwark vispirms pajautā.",
+    "find_hint": "Meklē ierastajās vietās šajā datorā. Loomix vispirms pajautā.",
     "scan_declined": "Nekas netika meklēts, jo jūs to neatļāvāt.",
     "scan_failed": "Meklēšana neizdevās. Mēģiniet vēlreiz.",
     "read_declined": "Neviens fails netika nolasīts, jo jūs to neatļāvāt.",
@@ -5960,7 +5960,7 @@
     "restore": "Atjaunot",
     "restored": "{count, plural, zero {# vēstules atgriežas} one {# vēstule atgriežas} other {# vēstules atgriežas}} jūsu Iesūtnē.",
     "restore_partial": "{count, plural, zero {# vēstules neizdevās atjaunot. Tās paliek atlasītas, lai varat mēģināt vēlreiz.} one {# vēstuli neizdevās atjaunot. Tā paliek atlasīta, lai varat mēģināt vēlreiz.} other {# vēstules neizdevās atjaunot. Tās paliek atlasītas, lai varat mēģināt vēlreiz.}}",
-    "restore_hint": "Atjaunotās vēstules atgriežas Iesūtnē kā nelasītas un sakārtotas pēc sākotnējā datuma, tāpēc tās var būt tālu lejā sarakstā. Serveris tās atjauno fonā. Ja tur tas neizdodas, vēstule tiek zaudēta, un Bulwark to nevar uzzināt.",
+    "restore_hint": "Atjaunotās vēstules atgriežas Iesūtnē kā nelasītas un sakārtotas pēc sākotnējā datuma, tāpēc tās var būt tālu lejā sarakstā. Serveris tās atjauno fonā. Ja tur tas neizdodas, vēstule tiek zaudēta, un Loomix to nevar uzzināt.",
     "unknown_sender": "Nezināms sūtītājs",
     "no_subject": "(bez temata)",
     "deleted_on": "Dzēsts {date}",
@@ -5995,7 +5995,7 @@
     "label": "Bloķēt manu kalendāru",
     "description": "Pievieno aizņemtu notikumu prombūtnes laikam, lai tad neviens neplānotu ar jums sapulces.",
     "no_access_managed": "Šī konta kalendāru nevar bloķēt: jums nav rakstīšanas piekļuves.",
-    "no_calendar": "Kalendāru nevar bloķēt: Bulwark neatrada kalendāru, kur pievienot notikumu.",
+    "no_calendar": "Kalendāru nevar bloķēt: Loomix neatrada kalendāru, kur pievienot notikumu.",
     "filter_warning": "To ieslēdzot, jūsu filtru skripts ir izslēgts, kamēr atbilde ir aktīva."
   },
   "calendar_delegate": {
@@ -6098,20 +6098,20 @@
   "find_time": {
     "suggest": "Ieteikt laikus",
     "searching": "Meklē brīvus laikus",
-    "slots_title": "Brīvs visiem, kurus Bulwark varēja pārbaudīt",
+    "slots_title": "Brīvs visiem, kurus Loomix varēja pārbaudīt",
     "slot": "{day}, {start} līdz {end}",
     "none": "Nākamajās 10 darba dienās nav brīva laika.",
     "picked": "Notikums pārcelts uz {slot}",
     "rate_limited": "Pēdējā minūtē bija pārāk daudz vaicājumu. Mēģiniet vēlreiz pēc minūtes.",
-    "unavailable": "Šajā serverī nav pieejama brīvs/aizņemts informācija, tāpēc Bulwark nevar ieteikt laikus.",
+    "unavailable": "Šajā serverī nav pieejama brīvs/aizņemts informācija, tāpēc Loomix nevar ieteikt laikus.",
     "not_checked": "Nav pārbaudīti:",
     "not_checked_item": "{who}: {reason}",
     "reason_external": "ārpus jūsu organizācijas",
     "reason_unknown": "aizņemtie laiki nav zināmi",
     "reason_not_found": "šajā serverī nav atrasts",
     "reason_error": "neizdevās pārbaudīt",
-    "unknown_note": "Bulwark redz aizņemtos laikus tikai kalendāros, kas kopīgoti ar jums. Šiem cilvēkiem tas nevar atšķirt brīvu laiku no nekopīgota kalendāra.",
-    "directory_off": "Bulwark šajā serverī nevar meklēt cilvēkus. Administrators var ieslēgt direktorija vaicājumus Stalwart.",
+    "unknown_note": "Loomix redz aizņemtos laikus tikai kalendāros, kas kopīgoti ar jums. Šiem cilvēkiem tas nevar atšķirt brīvu laiku no nekopīgota kalendāra.",
+    "directory_off": "Loomix šajā serverī nevar meklēt cilvēkus. Administrators var ieslēgt direktorija vaicājumus Stalwart.",
     "not_looked_up": "Šo adresi neizdevās atrast",
     "found": "Atrasti brīvi laiki: {count}"
   },
@@ -6415,14 +6415,14 @@
     "clear_confirm": "Notīrīt",
     "persist_refused": "Šis pārlūks var izdzēst glabāto e-pastu, kad pietrūkst vietas. Lietotnes instalēšana to parasti novērš.",
     "persist_retry": "Lūgt pārlūku to saglabāt",
-    "safari_hint": "Safari izdzēš vietnes datus pēc 7 dienām bez apmeklējuma. Pievienojiet Bulwark sākuma ekrānam vai Dock, lai e-pasts paliktu šajā ierīcē.",
+    "safari_hint": "Safari izdzēš vietnes datus pēc 7 dienām bez apmeklējuma. Pievienojiet Loomix sākuma ekrānam vai Dock, lai e-pasts paliktu šajā ierīcē.",
     "evicted": "Pārlūks izdzēsa šajā ierīcē glabāto e-pastu. Tas tiek lejupielādēts no jauna.",
     "evicted_lost": "{count, plural, zero {Tika zaudētas # neizsūtītu vēstuļu vai izmaiņu.} one {Tika zaudēta # neizsūtīta vēstule vai izmaiņa.} other {Tika zaudētas # neizsūtītas vēstules vai izmaiņas.}}",
     "evicted_dismiss": "Labi",
     "storage_full_title": "Ierīces krātuve ir pilna.",
-    "storage_full_text": "Bulwark vairs šeit nesaglabā e-pastu. Glabājiet mazāk e-pasta vai notīriet šo kontu, lai atbrīvotu vietu.",
+    "storage_full_text": "Loomix vairs šeit nesaglabā e-pastu. Glabājiet mazāk e-pasta vai notīriet šo kontu, lai atbrīvotu vietu.",
     "open_settings": "Atvērt iestatījumus",
-    "default_on": "Bulwark glabā jūsu e-pastu šajā ierīcē, lai tas darbotos bez savienojuma. To varat mainīt iestatījumos.",
+    "default_on": "Loomix glabā jūsu e-pastu šajā ierīcē, lai tas darbotos bez savienojuma. To varat mainīt iestatījumos.",
     "conflict_calendar": "Kalendāra notikums",
     "conflict_contacts": "Kontaktpersona",
     "kept_files_title": "Bezsaistē glabātie faili",
@@ -6868,7 +6868,7 @@
       },
       "ui_tasks": {
         "title": "Papildināt uzdevumu skatu",
-        "body": "Rādīt savas sadaļas uzdevuma informācijā, pogas uzdevumu sarakstā un savu uzdevumu sarakstu Bulwark saraksta vietā."
+        "body": "Rādīt savas sadaļas uzdevuma informācijā, pogas uzdevumu sarakstā un savu uzdevumu sarakstu Loomix saraksta vietā."
       },
       "ui_files": {
         "title": "Papildināt failu skatu",
@@ -7355,7 +7355,7 @@
       "shortcuts": "Tastatūras īsinājumtaustiņi",
       "docs": "Dokumentācija",
       "settings": "Iestatījumi…",
-      "about": "Par Bulwark",
+      "about": "Par Loomix",
       "from_plugins": "Vairāk no spraudņiem…",
       "pick_gone": "Šī izvēlne bija novecojusi. Atveriet to vēlreiz un mēģiniet vēlreiz.",
       "bar_label": "Izvēlne"
@@ -7374,8 +7374,8 @@
       "unsaved_detail": "Ja aizvērsiet tagad, kas uzrakstīts kopš pēdējās saglabāšanas, tiks zaudēts.",
       "close_anyway": "Tomēr aizvērt",
       "unsent_title": "Daļa pasta vēl nav nosūtīta",
-      "unsent_one": "Viens ziņojums gaida nosūtīšanu. Tas tiks nosūtīts nākamreiz, kad atvērsiet Bulwark.",
-      "unsent_many": "Ziņojumi, kas gaida nosūtīšanu: {count}. Tie tiks nosūtīti nākamreiz, kad atvērsiet Bulwark.",
+      "unsent_one": "Viens ziņojums gaida nosūtīšanu. Tas tiks nosūtīts nākamreiz, kad atvērsiet Loomix.",
+      "unsent_many": "Ziņojumi, kas gaida nosūtīšanu: {count}. Tie tiks nosūtīti nākamreiz, kad atvērsiet Loomix.",
       "quit": "Iziet",
       "leave_title": "Pamest lapu ar nesaglabātām izmaiņām?",
       "leave_detail": "Šajā lapā veiktās izmaiņas vēl nav saglabātas.",
@@ -7383,7 +7383,7 @@
       "stay": "Palikt"
     },
     "spellcheck": {
-      "offer": "Pareizrakstības pārbaudei valodā {language} nepieciešama vārdnīca. Bulwark to var lejupielādēt no Google. Jūsu teksts netiek sūtīts.",
+      "offer": "Pareizrakstības pārbaudei valodā {language} nepieciešama vārdnīca. Loomix to var lejupielādēt no Google. Jūsu teksts netiek sūtīts.",
       "download": "Lejupielādēt"
     },
     "restore": {
@@ -7412,9 +7412,9 @@
     "tray_pause_hour": "Uz 1 stundu",
     "tray_pause_tomorrow": "Līdz rītdienai",
     "tray_resume": "Atkal ieslēgt paziņojumus",
-    "tray_open": "Atvērt Bulwark",
-    "tray_quit": "Aizvērt Bulwark",
-    "tray_exit": "Iziet no Bulwark"
+    "tray_open": "Atvērt Loomix",
+    "tray_quit": "Aizvērt Loomix",
+    "tray_exit": "Iziet no Loomix"
   },
   "desktopMenus": {
     "save_draft": "Saglabāt melnrakstu",
@@ -7581,25 +7581,25 @@
     "cancel": "Atcelt",
     "or_here": "vai piesakieties šeit",
     "timed_out": "Pieteikšanās pārlūkā aizņēma pārāk ilgu laiku. Mēģiniet vēlreiz.",
-    "no_browser": "Bulwark nevarēja atvērt pārlūku. Mēģiniet vēlreiz vai piesakieties šeit.",
+    "no_browser": "Loomix nevarēja atvērt pārlūku. Mēģiniet vēlreiz vai piesakieties šeit.",
     "failed": "Pieteikšanās caur pārlūku neizdevās. Mēģiniet vēlreiz.",
-    "handoff_banner": "Programma šajā datorā pieprasīja šo pieteikšanos Bulwark lietotnei. Šis pārlūks paliek izrakstīts no Bulwark. Ja to nesākāt jūs, aizveriet šo cilni.",
-    "consent_title": "Pieteikties Bulwark lietotnē?",
-    "consent_description": "Programma šajā datorā, portā {port}, prasa pieteikšanos kontam {username}. Turpiniet tikai tad, ja tikko nospiedāt “Pieteikties ar pārlūku…” Bulwark lietotnē šajā datorā. Ja nē, iespējams, kāds mēģina piekļūt jūsu kontam: izvēlieties Ne tagad.",
+    "handoff_banner": "Programma šajā datorā pieprasīja šo pieteikšanos Loomix lietotnei. Šis pārlūks paliek izrakstīts no Loomix. Ja to nesākāt jūs, aizveriet šo cilni.",
+    "consent_title": "Pieteikties Loomix lietotnē?",
+    "consent_description": "Programma šajā datorā, portā {port}, prasa pieteikšanos kontam {username}. Turpiniet tikai tad, ja tikko nospiedāt “Pieteikties ar pārlūku…” Loomix lietotnē šajā datorā. Ja nē, iespējams, kāds mēģina piekļūt jūsu kontam: izvēlieties Ne tagad.",
     "consent_confirm": "Pieteikties lietotnē",
     "consent_cancel": "Ne tagad",
-    "page_done": "Varat aizvērt šo cilni un atgriezties Bulwark.",
-    "page_failed": "Pieteikšanās neizdevās. Atgriezieties Bulwark un mēģiniet vēlreiz.",
-    "page_link_used": "Šī saite darbojas tikai vienreiz. Atgriezieties Bulwark un sāciet no jauna.",
+    "page_done": "Varat aizvērt šo cilni un atgriezties Loomix.",
+    "page_failed": "Pieteikšanās neizdevās. Atgriezieties Loomix un mēģiniet vēlreiz.",
+    "page_link_used": "Šī saite darbojas tikai vienreiz. Atgriezieties Loomix un sāciet no jauna.",
     "page_title": "Pieteikties serverī {server}",
-    "page_intro": "Šī lapa nāk no Bulwark lietotnes šajā datorā. Jūsu parole nonāk serverī {server} un nekur citur.",
+    "page_intro": "Šī lapa nāk no Loomix lietotnes šajā datorā. Jūsu parole nonāk serverī {server} un nekur citur.",
     "page_username": "E-pasta adrese vai lietotājvārds",
     "page_password": "Parole",
     "page_code": "Divu faktoru kods",
     "page_submit": "Pieteikties",
     "page_wrong_password": "Serveris nepieņēma šo lietotājvārdu un paroli.",
     "page_code_needed": "Šim kontam vajag arī divu faktoru kodu. Ievadiet paroli vēlreiz un kodu.",
-    "page_no_answer": "Bulwark nevarēja pieteikties. Pārbaudiet, vai serveris ir sasniedzams, un mēģiniet vēlreiz.",
+    "page_no_answer": "Loomix nevarēja pieteikties. Pārbaudiet, vai serveris ir sasniedzams, un mēģiniet vēlreiz.",
     "declined": "Jūs pārlūkā atteicāt, tāpēc pieteikšanās nenotika.",
     "too_many": "Pārāk daudz pieteikšanās mēģinājumu no šī tīkla. Pagaidiet dažas minūtes un mēģiniet vēlreiz.",
     "page_declined": "Nekas netika nodots. Varat aizvērt šo cilni."
@@ -7619,7 +7619,7 @@
     "other_ways": "Citi pierakstīšanās veidi",
     "trouble": "Neizdodas?",
     "trouble_cors": "Jūsu pasta serverim jāatļauj pieteikšanās no šīs vietnes. Ja pieteikties neizdodas, palūdziet pasta servera uzturētājam to atļaut.",
-    "provider_unsupported": "{provider} nepiedāvā JMAP, veidu, kā Bulwark sazinās ar pasta serveriem, tāpēc Bulwark tam vēl nevar pieslēgties tieši."
+    "provider_unsupported": "{provider} nepiedāvā JMAP, veidu, kā Loomix sazinās ar pasta serveriem, tāpēc Loomix tam vēl nevar pieslēgties tieši."
   },
   "login_a11y": {
     "caps_lock_on": "Caps Lock ir ieslēgts",
@@ -7627,10 +7627,10 @@
   },
   "ux_p3_settings": {
     "connection": {
-      "title": "Mainīt, kā Bulwark savienojas?",
-      "message": "Bulwark tiek restartēts un jautā, kā savienoties: ar jūsu e-pasta adresi vai caur jūsu organizācijas Bulwark. Jūsu konti šajā datorā paliek pierakstīti.",
+      "title": "Mainīt, kā Loomix savienojas?",
+      "message": "Loomix tiek restartēts un jautā, kā savienoties: ar jūsu e-pasta adresi vai caur jūsu organizācijas Loomix. Jūsu konti šajā datorā paliek pierakstīti.",
       "confirm": "Mainīt",
-      "org_link": "Tā vietā izmantot manas organizācijas Bulwark",
+      "org_link": "Tā vietā izmantot manas organizācijas Loomix",
       "add_account": "Pievienot kontu…"
     },
     "picture": {
@@ -7643,22 +7643,22 @@
       "insert": "Ievietot"
     },
     "sign_in_page": {
-      "open_app": "Atvērt Bulwark",
+      "open_app": "Atvērt Loomix",
       "done_as": "Pierakstījies kā {address}. Varat aizvērt šo cilni."
     }
   },
   "desktop_updates": {
     "title": "Atjauninājumi",
-    "version_label": "Bulwark {version}",
-    "status_idle": "Bulwark pats meklē atjauninājumus.",
+    "version_label": "Loomix {version}",
+    "status_idle": "Loomix pats meklē atjauninājumus.",
     "status_checking": "Meklē atjauninājumus…",
     "status_up_to_date": "Jums ir jaunākā versija.",
     "status_downloading": "Lejupielādē versiju {version}…",
     "status_ready": "Versija {version} ir gatava. Tā tiks instalēta nākamajā aizvēršanas reizē, vai restartējiet tūlīt.",
     "status_available": "Ir pieejama versija {version}.",
-    "status_available_per_machine": "Ir pieejama versija {version}. Bulwark ir instalēts visiem šī datora lietotājiem, tāpēc atjauninājumus instalē administrators.",
-    "status_older": "Jums ir beta versija. Stabilā versija {version} ir vecāka, tāpēc Bulwark paliek šajā versijā, līdz stabilā to panāk.",
-    "status_error": "Neizdevās meklēt atjauninājumus. Bulwark mēģinās vēlreiz vēlāk.",
+    "status_available_per_machine": "Ir pieejama versija {version}. Loomix ir instalēts visiem šī datora lietotājiem, tāpēc atjauninājumus instalē administrators.",
+    "status_older": "Jums ir beta versija. Stabilā versija {version} ir vecāka, tāpēc Loomix paliek šajā versijā, līdz stabilā to panāk.",
+    "status_error": "Neizdevās meklēt atjauninājumus. Loomix mēģinās vēlreiz vēlāk.",
     "status_off": "Jūsu organizācija ir izslēgusi atjauninājumus lietotnē.",
     "check": "Meklēt tūlīt",
     "restart": "Restartēt, lai atjauninātu",
@@ -7670,18 +7670,18 @@
     "channel_beta": "Beta",
     "shell_restart": "Restartēt, lai atjauninātu",
     "shell_check": "Meklēt atjauninājumus…",
-    "shell_available": "Pieejams Bulwark {version}",
-    "shell_ready_title": "Bulwark ir gatavs atjaunināšanai",
+    "shell_available": "Pieejams Loomix {version}",
+    "shell_ready_title": "Loomix ir gatavs atjaunināšanai",
     "shell_ready_body": "Versija {version} tiks instalēta nākamajā aizvēršanas reizē. Noklikšķiniet, lai restartētu tūlīt. Melnraksti vispirms tiek saglabāti.",
-    "shell_available_title": "Pieejama jauna Bulwark versija",
-    "shell_none_title": "Bulwark ir atjaunināts",
+    "shell_available_title": "Pieejama jauna Loomix versija",
+    "shell_none_title": "Loomix ir atjaunināts",
     "shell_none_detail": "Jums ir versija {version}.",
-    "shell_failed_title": "Bulwark nevarēja meklēt atjauninājumus",
+    "shell_failed_title": "Loomix nevarēja meklēt atjauninājumus",
     "shell_failed_detail": "Pārbaudiet savienojumu un mēģiniet vēlāk. Nekas nav mainījies.",
     "shell_beta_title": "Pāriet uz beta versijām?",
     "shell_beta_detail": "Jaunas versijas saņemat ātrāk, un tajās var būt vairāk problēmu. Lai atgrieztos, instalējat vecāku stabilo versiju vai gaidāt, līdz stabilā to panāk.",
     "shell_beta_confirm": "Pāriet uz beta",
-    "shell_older_title": "Atgriezties pie Bulwark {version}?",
+    "shell_older_title": "Atgriezties pie Loomix {version}?",
     "shell_older_detail": "Jums ir beta {current}. Stabilā {target} ir vecāka un var nespēt nolasīt, ko beta saglabāja šajā datorā. Pasts paliek serverī, bet bezsaistē saglabātais pasts var tikt lejupielādēts vēlreiz, un nenosūtītās izmaiņas var pazust. Ja pagaidāt, stabilā panāk beta versiju, un pārejat bez šī soļa.",
     "shell_older_confirm": "Instalēt vecāku versiju"
   },
@@ -7982,7 +7982,7 @@
       "progress": "Augšupielādēti {done} no {total}",
       "cannot_offline": "Serveris nav sasniedzams. Vēl nav augšupielādēts: {names}",
       "cannot_other": "Nevar augšupielādēt: {names}. Iemesls ir redzams iestatījumu nesenajās darbībās.",
-      "go_note_drive": "Ja turpināsiet tagad, neaugšupielādētais tiks nokopēts uz Dokumenti\\Bulwark – not uploaded. Nekas netiks zaudēts.",
+      "go_note_drive": "Ja turpināsiet tagad, neaugšupielādētais tiks nokopēts uz Dokumenti\\Loomix – not uploaded. Nekas netiks zaudēts.",
       "go_note_folder": "Ja turpināsiet tagad, neaugšupielādētais paliks mapē šajā datorā.",
       "keep_turn_off": "Paturēt disku",
       "keep_sign_out": "Palikt pierakstītam",
@@ -7996,22 +7996,22 @@
       "rescued": "Neaugšupielādētie faili ({count}) tagad ir šeit: {folder}.",
       "rescued_open": "Atvērt mapi",
       "rescued_dismiss": "Nerādīt",
-      "start_at_login": "Startēt Bulwark, piesakoties sistēmā Windows",
-      "start_at_login_why": "Diskam vajadzīgs, lai Bulwark darbotos, tāpat kā OneDrive.",
-      "closed_warning": "Diska failus nevar atvērt, kamēr Bulwark ir aizvērts.",
-      "where": "Failu pārlūkā kā Bulwark Files",
-      "where_letter": "Failu pārlūkā kā Bulwark Files ({letter}:)",
+      "start_at_login": "Startēt Loomix, piesakoties sistēmā Windows",
+      "start_at_login_why": "Diskam vajadzīgs, lai Loomix darbotos, tāpat kā OneDrive.",
+      "closed_warning": "Diska failus nevar atvērt, kamēr Loomix ir aizvērts.",
+      "where": "Failu pārlūkā kā Loomix Files",
+      "where_letter": "Failu pārlūkā kā Loomix Files ({letter}:)",
       "open": "Atvērt",
-      "letter_note": "Caur diska burtu failu pārlūks nerāda sinhronizācijas statusu un “Vienmēr saglabāt šajā ierīcē”. Tie redzami failu pārlūkā sadaļā Bulwark Files.",
+      "letter_note": "Caur diska burtu failu pārlūks nerāda sinhronizācijas statusu un “Vienmēr saglabāt šajā ierīcē”. Tie redzami failu pārlūkā sadaļā Loomix Files.",
       "letter_failed": "Diska burtu neizdevās iestatīt. Mēģiniet vēlreiz."
     },
     "tray": {
-      "idle": "Bulwark Files: Atjaunināts",
-      "syncing": "Bulwark Files: Sinhronizē. Atlikuši: {count}",
-      "paused": "Bulwark Files: Pauzēts",
-      "offline": "Bulwark Files: Bezsaistē. Gaida: {count}",
-      "question": "Bulwark Files: Gaida jūsu atbildi",
-      "error": "Bulwark Files: Kļūda"
+      "idle": "Loomix Files: Atjaunināts",
+      "syncing": "Loomix Files: Sinhronizē. Atlikuši: {count}",
+      "paused": "Loomix Files: Pauzēts",
+      "offline": "Loomix Files: Bezsaistē. Gaida: {count}",
+      "question": "Loomix Files: Gaida jūsu atbildi",
+      "error": "Loomix Files: Kļūda"
     },
     "notify": {
       "conflict_title": "Fails mainīts divās vietās",
@@ -8177,15 +8177,15 @@
     "telemetry_description": "Reizi dienā: nejaušs ID, lietotnes versiju numuri, jūsu operētājsistēma, cik ilgi lietotne darbojas un kā tā savienojas. Ar savu pasta serveri arī tas, kuras funkcijas ir ieslēgtas, aptuvens kontu skaits un cik spraudņu un motīvu jums ir. Nekad vēstules, adreses vai serveru nosaukumi.",
     "crash_label": "Sūtīt avāriju atskaites",
     "crash_description": "Lietotnes kļūdas tiek sūtītas ar nejaušu ID, failu nosaukumiem no pašas lietotnes koda un īsiem, attīrītiem ziņojumiem. Ja avarē pati lietotne, avārijas fails paliek šajā datorā un to atstāj tikai tad, ja to nosūtāt.",
-    "crash_memory": "Avārijas fails ir daļas lietotnes atmiņas kopija avārijas brīdī. Bulwark noņem atrastos lietotājvārdus, adreses un pierakstīšanās marķierus, bet avārijas failā joprojām var būt jūsu vēstuļu teksts.",
-    "instance_note": "Bulwark serverī tā administrators atsevišķi izlemj, ko lapas tam ziņo.",
+    "crash_memory": "Avārijas fails ir daļas lietotnes atmiņas kopija avārijas brīdī. Loomix noņem atrastos lietotājvārdus, adreses un pierakstīšanās marķierus, bet avārijas failā joprojām var būt jūsu vēstuļu teksts.",
+    "instance_note": "Loomix serverī tā administrators atsevišķi izlemj, ko lapas tam ziņo.",
     "forced_off": "Jūsu organizācija to ir izslēgusi.",
     "url_label": "Kurp nonāk avārijas faili",
-    "url_description": "Https adrese, kas saņem avārijas failu. Bulwark tādu nenodrošina.",
+    "url_description": "Https adrese, kas saņem avārijas failu. Loomix tādu nenodrošina.",
     "url_invalid": "Ievadiet pilnu https adresi.",
     "url_save": "Saglabāt",
     "files_label": "Avārijas faili šajā datorā",
-    "files_description": "Bulwark patur jaunākos un dzēš tos, kas vecāki par mēnesi.",
+    "files_description": "Loomix patur jaunākos un dzēš tos, kas vecāki par mēnesi.",
     "files_empty": "Nav avārijas failu.",
     "file_size": "{size} KB",
     "send": "Sūtīt avārijas atskaiti…",
