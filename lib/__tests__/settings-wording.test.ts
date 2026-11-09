@@ -10,7 +10,7 @@ import { getByPath } from '../settings-search';
 const text = (key: string) => getByPath(en, key) as string;
 
 // Words that keep their capital inside a sentence-case label.
-const PROPER = /^(ASCII-armored|JMAP|Sieve|HTML|PGP|S\/MIME|TOTP|API|IPs|ASCII|BCC|Pro|Junk|Trash|Loomix|Webmail|Siege|Spam|ID|URL|OAuth\/OIDC\)|\(OAuth\/OIDC\)|Mountain|View|Cc|To|ALL|ANY|Z|→|&)$/;
+const PROPER = /^(ASCII-armored|JMAP|Sieve|HTML|PGP|S\/MIME|TOTP|API|IPs|ASCII|BCC|Pro|Junk|Trash|Loomix|Mail|Webmail|Siege|Spam|ID|URL|OAuth\/OIDC\)|\(OAuth\/OIDC\)|Mountain|View|Cc|To|ALL|ANY|Z|→|&)$/;
 
 // Every word after the first, and each part of a hyphenated word after its
 // first part: "Sub-Addressing" counts "Addressing".

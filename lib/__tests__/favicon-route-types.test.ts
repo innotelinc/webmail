@@ -28,6 +28,6 @@ describe('favicon route', () => {
   it.each(['image/svg+xml', 'text/html; charset=utf-8'])('does not pass %s through', async (type) => {
     const res = await favicon('example.com', new Response('<svg><script>alert(1)</script></svg>'.padEnd(64), { headers: { 'content-type': type } }));
     expect(res.headers.get('content-type')).toBe('image/png');
-    expect(res.headers.get('x-bulwark-favicon')).toBe('missing');
+    expect(res.headers.get('x-loomix-favicon')).toBe('missing');
   });
 });

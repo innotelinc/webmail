@@ -65,9 +65,9 @@ describe('GET /api/admin/policy scopes', () => {
   it('says which domains the scopes were picked for, and nothing when all are sent', async () => {
     who.identity = { admin: false, addresses: ['org-alice@example.org', 'org-dave@org-two.test'] };
     const res = await GET(new NextRequest('https://mail.example/api/admin/policy'));
-    expect(res.headers.get('x-bulwark-policy-domains')).toBe('example.org,org-two.test');
+    expect(res.headers.get('x-loomix-policy-domains')).toBe('example.org,org-two.test');
     who.identity = { admin: true };
-    expect((await GET(new NextRequest('https://mail.example/api/admin/policy'))).headers.get('x-bulwark-policy-domains')).toBeNull();
+    expect((await GET(new NextRequest('https://mail.example/api/admin/policy'))).headers.get('x-loomix-policy-domains')).toBeNull();
   });
 
   it('gives the admin every scope', async () => {

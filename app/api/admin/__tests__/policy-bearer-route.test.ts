@@ -69,7 +69,7 @@ async function get(headers: Record<string, string> = {}) {
   const res = await GET(new NextRequest('https://webmail.example/api/admin/policy', {
     headers: { 'x-forwarded-for': clientIp, ...headers },
   }));
-  return { status: res.status, body: await res.json(), domains: res.headers.get('x-bulwark-policy-domains'), scope: res.headers.get('x-bulwark-policy-scope') };
+  return { status: res.status, body: await res.json(), domains: res.headers.get('x-loomix-policy-domains'), scope: res.headers.get('x-loomix-policy-scope') };
 }
 
 beforeEach(() => {

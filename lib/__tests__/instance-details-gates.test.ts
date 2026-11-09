@@ -114,7 +114,7 @@ describe('endpoints for visitors who are not signed in', () => {
 
   it('the policy keeps what the login page needs and drops the deployment map', async () => {
     const res = await policy(req('/api/admin/policy'));
-    expect(res.headers.get('x-bulwark-policy-scope')).toBe('public');
+    expect(res.headers.get('x-loomix-policy-scope')).toBe('public');
     const body = await res.json();
     expect(body.themePolicy).toEqual(POLICY.themePolicy);
     expect(body).toMatchObject({
@@ -123,7 +123,7 @@ describe('endpoints for visitors who are not signed in', () => {
 
     gate.signedIn = true;
     const full = await policy(req('/api/admin/policy'));
-    expect(full.headers.get('x-bulwark-policy-scope')).toBeNull();
+    expect(full.headers.get('x-loomix-policy-scope')).toBeNull();
     expect(await full.json()).toEqual({ ...POLICY, scopes: [] });
   });
 });

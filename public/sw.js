@@ -169,7 +169,7 @@ async function cachedDocument(url) {
  * belong in the new build's cache, not in its own.
  */
 function shellCacheFor(response) {
-  const build = response.headers.get("x-bulwark-build") || "";
+  const build = response.headers.get("x-loomix-build") || "";
   return /^[\w.-]{1,80}$/.test(build) ? SHELL_CACHE_PREFIX + build : SHELL_CACHE;
 }
 
