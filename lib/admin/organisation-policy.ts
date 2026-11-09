@@ -314,7 +314,7 @@ const RESERVED_HEADERS = new Set([
   'from', 'to', 'cc', 'bcc', 'subject', 'date', 'message-id', 'sender', 'reply-to', 'in-reply-to',
   'references', 'mime-version', 'content-type', 'content-transfer-encoding', 'content-disposition',
   'received', 'return-path', 'dkim-signature', 'arc-seal', 'arc-message-signature', 'authentication-results',
-  'sio-label', 'sio-label-history', 'sensitivity', 'x-bulwark-label', 'auto-submitted', 'precedence', 'importance', 'x-priority', 'disposition-notification-to',
+  'sio-label', 'sio-label-history', 'sensitivity', 'x-loomix-label', 'x-bulwark-label', 'auto-submitted', 'precedence', 'importance', 'x-priority', 'disposition-notification-to',
 ]);
 const MAX_LABELS = 50;
 const MAX_FEEDS = 50;
