@@ -11,20 +11,26 @@ import { defineConfig } from '@playwright/test';
 const WEBMAIL_URL = process.env.IT_WEBMAIL_URL ?? 'http://localhost:3000';
 
 /**
- * The enterprise specs need their own throwaway rig (ent-* accounts on a VM
- * Stalwart) and read its passwords from the environment. Without them every
- * spec throws from requireEntEnv and the suite fails, so they are left out of
- * a run that has no rig — they still run wherever the passwords are set.
+ * The enterprise and multi-instance specs need their own throwaway rig (ent-*
+ * accounts on a VM Stalwart, or three replicas reachable over ssh) and read it
+ * from the environment. Without it every test throws from requireEntEnv or
+ * requireHaEnv and the suite fails, so those specs are left out of a run that
+ * has no rig — they still run wherever the rig is configured.
  */
 const ENT_RIG_CONFIGURED = Boolean(process.env.IT_ENT_PASSWORD && process.env.IT_ADMIN_PASSWORD);
-const ENT_SPECS = ENT_RIG_CONFIGURED
+const HA_RIG_CONFIGURED = Boolean(process.env.IT_HA_PASSWORD && process.env.IT_ADMIN_PASSWORD);
+const RIG_GATES = [
+  ...(ENT_RIG_CONFIGURED ? [] : ['requireEntEnv']),
+  ...(HA_RIG_CONFIGURED ? [] : ['requireHaEnv']),
+];
+const ENT_SPECS = RIG_GATES.length === 0
   ? []
   : readdirSync('./integration/tests')
-      .filter(
-        (file) =>
-          file.endsWith('.spec.ts') &&
-          readFileSync(path.join('./integration/tests', file), 'utf8').includes('requireEntEnv('),
-      )
+      .filter((file) => {
+        if (!file.endsWith('.spec.ts')) return false;
+        const source = readFileSync(path.join('./integration/tests', file), 'utf8');
+        return RIG_GATES.some((gate) => source.includes(gate));
+      })
       .map((file) => `**/${file}`);
 
 /**
