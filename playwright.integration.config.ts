@@ -13,15 +13,19 @@ const WEBMAIL_URL = process.env.IT_WEBMAIL_URL ?? 'http://localhost:3000';
 /**
  * The enterprise and multi-instance specs need their own throwaway rig (ent-*
  * accounts on a VM Stalwart, or three replicas reachable over ssh) and read it
- * from the environment. Without it every test throws from requireEntEnv or
- * requireHaEnv and the suite fails, so those specs are left out of a run that
- * has no rig — they still run wherever the rig is configured.
+ * from the environment. Without it every test throws from requireEntEnv,
+ * requireHaEnv or requireOrgEnv and the suite fails, so those specs are left
+ * out of a run that has no rig — they still run wherever the rig is configured.
  */
 const ENT_RIG_CONFIGURED = Boolean(process.env.IT_ENT_PASSWORD && process.env.IT_ADMIN_PASSWORD);
 const HA_RIG_CONFIGURED = Boolean(process.env.IT_HA_PASSWORD && process.env.IT_ADMIN_PASSWORD);
+// The 19-org specs also need a server whose admin dashboard is configured; the
+// CI stack runs without one, so they are rig-only in exactly the same way.
+const ORG_RIG_CONFIGURED = Boolean(process.env.IT_ORG_PASSWORD && process.env.IT_ADMIN_PASSWORD);
 const RIG_GATES = [
   ...(ENT_RIG_CONFIGURED ? [] : ['requireEntEnv']),
   ...(HA_RIG_CONFIGURED ? [] : ['requireHaEnv']),
+  ...(ORG_RIG_CONFIGURED ? [] : ['requireOrgEnv']),
 ];
 const ENT_SPECS = RIG_GATES.length === 0
   ? []
