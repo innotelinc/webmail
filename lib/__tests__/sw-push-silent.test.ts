@@ -79,8 +79,8 @@ describe('service worker never ends a push without a notification (#1322)', () =
     await push(delivery('e1'));
     expect(calls).toHaveLength(2);
     expect(calls[1].title).toBe('Alice');
-    expect(calls[1].options).toMatchObject({ tag: 'bulwark-mail:a', body: 'Hello', renotify: false, silent: true });
-    expect(shade.get('bulwark-mail:a')?.title).toBe('Alice');
+    expect(calls[1].options).toMatchObject({ tag: 'loomix-mail:a', body: 'Hello', renotify: false, silent: true });
+    expect(shade.get('loomix-mail:a')?.title).toBe('Alice');
   });
 
   it('shows and removes a notification when nothing is unread and none is on screen', async () => {

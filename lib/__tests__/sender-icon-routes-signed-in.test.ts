@@ -106,7 +106,7 @@ describe('/api/bimi for a signed-in user', () => {
     await vi.waitFor(() => expect(held).toHaveLength(16));
 
     const res = await bimi(as('/api/bimi?domain=waiting.example'));
-    expect(res.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(res.headers.get('x-loomix-bimi')).toBe('missing');
     expect(res.headers.get('cache-control')).toBe('no-store');
     expect(lookedUp('waiting.example')).toBe(false);
 
@@ -141,7 +141,7 @@ describe('/api/favicon for a signed-in user', () => {
 
     upstream.mockImplementationOnce(async () => new Response(new Uint8Array(300 * 1024).fill(7), { headers: { 'content-type': 'image/png' } }));
     const large = await favicon(as('/api/favicon?domain=large.example'));
-    expect(large.headers.get('x-bulwark-favicon')).toBe('missing');
+    expect(large.headers.get('x-loomix-favicon')).toBe('missing');
     expect(new Uint8Array(await large.arrayBuffer()).byteLength).toBeLessThan(1024);
   });
 
@@ -151,7 +151,7 @@ describe('/api/favicon for a signed-in user', () => {
     expect(upstream).toHaveBeenCalledTimes(LOOKUPS_PER_MINUTE);
 
     const res = await favicon(as('/api/favicon?domain=over.example'));
-    expect(res.headers.get('x-bulwark-favicon')).toBe('missing');
+    expect(res.headers.get('x-loomix-favicon')).toBe('missing');
     expect(res.headers.get('cache-control')).toBe('no-store');
     expect(upstream).toHaveBeenCalledTimes(LOOKUPS_PER_MINUTE);
     // A cached icon is still served.

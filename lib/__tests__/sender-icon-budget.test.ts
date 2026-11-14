@@ -133,7 +133,7 @@ describe('a lookup that finds the drawing busy', () => {
     const waiting = bimi(request('/api/bimi?domain=waiting-brand.example', context('lea@mail.example')));
     await vi.advanceTimersByTimeAsync(16_000);
     const res = await waiting;
-    expect(res.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(res.headers.get('x-loomix-bimi')).toBe('missing');
     expect(res.headers.get('cache-control')).toBe('no-store');
 
     // The drawing is free again: the next request, a minute later, gets the logo.
@@ -142,6 +142,6 @@ describe('a lookup that finds the drawing busy', () => {
     await Promise.all(first);
     await vi.advanceTimersByTimeAsync(60_000);
     const later = await bimi(request('/api/bimi?domain=waiting-brand.example', context('mia@mail.example')));
-    expect(later.headers.get('x-bulwark-bimi')).toBe('self-asserted');
+    expect(later.headers.get('x-loomix-bimi')).toBe('self-asserted');
   });
 });

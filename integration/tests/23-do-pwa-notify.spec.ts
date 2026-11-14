@@ -82,7 +82,7 @@ async function click(sw: Worker, action: string, data: Record<string, unknown>, 
 async function pushed(sw: Worker, accountId: string, emailId: string, keepShown = false): Promise<ShownNotification> {
   return sw.evaluate(async ({ accountId: account, emailId: id, keepShown: keep }) => {
     const registration_ = (self as unknown as { registration: ServiceWorkerRegistration }).registration;
-    if (!keep) for (const old of await registration_.getNotifications({ tag: `bulwark-mail:${account}` })) old.close();
+    if (!keep) for (const old of await registration_.getNotifications({ tag: `loomix-mail:${account}` })) old.close();
     const waits: Promise<unknown>[] = [];
     const event = new Event('push') as Event & Record<string, unknown>;
     Object.assign(event, {
@@ -92,7 +92,7 @@ async function pushed(sw: Worker, accountId: string, emailId: string, keepShown 
     self.dispatchEvent(event);
     await Promise.all(waits);
     const registration = (self as unknown as { registration: ServiceWorkerRegistration }).registration;
-    const [shown] = await registration.getNotifications({ tag: `bulwark-mail:${account}` });
+    const [shown] = await registration.getNotifications({ tag: `loomix-mail:${account}` });
     return { title: shown.title, data: shown.data, actions: [...(shown as unknown as { actions: ShownNotification['actions'] }).actions] };
   }, { accountId, emailId, keepShown });
 }

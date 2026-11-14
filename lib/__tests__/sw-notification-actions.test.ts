@@ -72,7 +72,7 @@ function worker(opts: {
     },
   });
   const click = (action: string, extra: Record<string, unknown> = {}, data: Record<string, unknown> = ONE_MESSAGE) =>
-    loaded.dispatch('notificationclick', { action, ...extra, notification: { data, tag: 'bulwark-mail:a', close() {} } });
+    loaded.dispatch('notificationclick', { action, ...extra, notification: { data, tag: 'loomix-mail:a', close() {} } });
   const posts = () => fetch.mock.calls.filter(([, init]) => init?.method === 'POST');
   return { ...loaded, click, openWindow, fetch, posts };
 }

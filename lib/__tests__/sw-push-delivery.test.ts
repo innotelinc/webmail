@@ -70,8 +70,8 @@ describe('a state-change push naming several accounts', () => {
     const { push, shade, previews } = loadWorker((url) => ({ unreadTotal: 1, slot: 0, email: mail(`m-${url.searchParams.get('accountId')}`) }));
     await push(stateChange({ me: { EmailDelivery: 's1', Email: 's1' }, team: { EmailDelivery: 's2' } }));
     expect(previews.map((url) => url.searchParams.get('accountId'))).toEqual(['me', 'team']);
-    expect([...shade.keys()].sort()).toEqual(['bulwark-mail:me', 'bulwark-mail:team']);
-    expect(shade.get('bulwark-mail:team')?.data).toMatchObject({ accountId: 'team', emailId: 'm-team' });
+    expect([...shade.keys()].sort()).toEqual(['loomix-mail:me', 'loomix-mail:team']);
+    expect(shade.get('loomix-mail:team')?.data).toMatchObject({ accountId: 'team', emailId: 'm-team' });
   });
 
   it('leaves out an account that only changed some other way', async () => {
@@ -111,7 +111,7 @@ describe('what a notification counts', () => {
   it('opens the one new message, however much older mail is unread', async () => {
     const { push, shade } = loadWorker(() => ({ unreadTotal: 40, slot: 0, login: 'fp', email: mail('e1') }));
     await push(delivery('a', 'e1'));
-    const shown = shade.get('bulwark-mail:a')!;
+    const shown = shade.get('loomix-mail:a')!;
     expect(shown.body).toBe('Hello');
     expect(shown.data).toMatchObject({ kind: 'email', emailId: 'e1', accountId: 'a', slot: 0, login: 'fp' });
   });
@@ -120,48 +120,48 @@ describe('what a notification counts', () => {
     const { push, shade } = loadWorker((url) => ({ unreadTotal: 40, slot: 0, email: mail(String(url.searchParams.get('emailId')), `About ${url.searchParams.get('emailId')}`) }));
     await push(delivery('a', 'e1'));
     await push(delivery('a', 'e2'));
-    let shown = shade.get('bulwark-mail:a')!;
+    let shown = shade.get('loomix-mail:a')!;
     expect(shown.body).toBe('About e2\n+1 more message');
     expect(shown.data).toMatchObject({ kind: 'mail-list', accountId: 'a', slot: 0 });
     await push(delivery('a', 'e3', 'e4'));
-    shown = shade.get('bulwark-mail:a')!;
+    shown = shade.get('loomix-mail:a')!;
     expect(shown.body).toBe('About e4\n+3 more messages');
   });
 
   it('starts over once the notification was dismissed', async () => {
     const { push, shade } = loadWorker((url) => ({ unreadTotal: 2, slot: 0, email: mail(String(url.searchParams.get('emailId'))) }));
     await push(delivery('a', 'e1'));
-    shade.get('bulwark-mail:a')!.close();
+    shade.get('loomix-mail:a')!.close();
     await push(delivery('a', 'e2'));
-    expect(shade.get('bulwark-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e2' });
+    expect(shade.get('loomix-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e2' });
   });
 
   it('does not count a redelivered message twice', async () => {
     const { push, shade } = loadWorker((url) => ({ unreadTotal: 2, slot: 0, email: mail(String(url.searchParams.get('emailId'))) }));
     await push(delivery('a', 'e1'));
     await push(delivery('a', 'e1'));
-    expect(shade.get('bulwark-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e1' });
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ silent: true });
+    expect(shade.get('loomix-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e1' });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ silent: true });
   });
 
   it('counts on the state-change path too', async () => {
     let id = 'e1';
     const { push, shade } = loadWorker(() => ({ unreadTotal: 5, slot: 0, email: mail(id) }));
     await push({ kind: 'jmap-state-change', accountId: 'a', changed: { a: { EmailDelivery: 's' } } });
-    expect(shade.get('bulwark-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e1' });
+    expect(shade.get('loomix-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e1' });
     id = 'e2';
     await push({ kind: 'jmap-state-change', accountId: 'a', changed: { a: { EmailDelivery: 's2' } } });
-    expect(shade.get('bulwark-mail:a')!.body).toBe('Hello\n+1 more message');
+    expect(shade.get('loomix-mail:a')!.body).toBe('Hello\n+1 more message');
   });
 
   it('says how many new messages without naming any when details are hidden', async () => {
     const { push, shade } = loadWorker((url) => ({ unreadTotal: 9, slot: 0, redacted: true, email: { id: url.searchParams.get('emailId'), threadId: 't' } }));
     await push(delivery('a', 'e1'));
-    expect(shade.get('bulwark-mail:a')!.body).toBe('You have new mail');
-    expect(shade.get('bulwark-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e1' });
+    expect(shade.get('loomix-mail:a')!.body).toBe('You have new mail');
+    expect(shade.get('loomix-mail:a')!.data).toMatchObject({ kind: 'email', emailId: 'e1' });
     await push(delivery('a', 'e2'));
-    expect(shade.get('bulwark-mail:a')!.title).toBe('New mail (me@example.org)');
-    expect(shade.get('bulwark-mail:a')!.body).toBe('2 new messages');
+    expect(shade.get('loomix-mail:a')!.title).toBe('New mail (me@example.org)');
+    expect(shade.get('loomix-mail:a')!.body).toBe('2 new messages');
   });
 });
 
@@ -191,7 +191,7 @@ describe('with notifications off or do not disturb on', () => {
   it('keeps showing with only the sound off', async () => {
     const { push, shade } = loadWorker(() => ({ unreadTotal: 1, slot: 0, email: mail('e1') }), { prefs: { sound: false } });
     await push(delivery('a', 'e1'));
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ silent: true, renotify: false });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ silent: true, renotify: false });
   });
 
   it('shows for a push without a label, or with nothing stored', async () => {
@@ -249,7 +249,7 @@ describe('which window a click uses', () => {
     return client;
   };
   const clickOn = (w: ReturnType<typeof loadWorker>) => w.dispatch('notificationclick', {
-    notification: { tag: 'bulwark-mail:a', close() {}, data: { kind: 'email', emailId: 'e1', accountId: 'a', slot: 0 } },
+    notification: { tag: 'loomix-mail:a', close() {}, data: { kind: 'email', emailId: 'e1', accountId: 'a', slot: 0 } },
   });
 
   it('leaves a pop-out and a frame alone and takes the app window', async () => {
@@ -311,7 +311,7 @@ describe('nothing new to say', () => {
     });
     await w.push({ kind: 'jmap-state-change', accountId: 'a', changed: { a: { EmailDelivery: 's' } } });
     expect(tags).toHaveLength(1);
-    expect(tags[0]).not.toBe('bulwark-mail:a');
+    expect(tags[0]).not.toBe('loomix-mail:a');
   });
 });
 
@@ -330,7 +330,7 @@ describe('a push naming several accounts, one server slow', () => {
     const w = loadWorker(() => null, { globals: { fetch: fetchSlow } });
     const done = w.push({ kind: 'jmap-state-change', accountId: 'slow', changed: { slow: { EmailDelivery: 's' }, fast: { EmailDelivery: 's' } } });
     await vi.waitFor(() => expect(started).toEqual(['slow', 'fast']));
-    await vi.waitFor(() => expect(w.shade.has('bulwark-mail:fast')).toBe(true));
+    await vi.waitFor(() => expect(w.shade.has('loomix-mail:fast')).toBe(true));
     release();
     await done;
     expect(w.shade.size).toBe(2);
@@ -343,7 +343,7 @@ describe('when the preview is signed out (#1509)', () => {
   it('shows the generic notification without a sound for a push that names no message', async () => {
     const { push, shade } = loadWorker(() => null);
     await push(ping);
-    const shown = shade.get('bulwark-mail:a')!;
+    const shown = shade.get('loomix-mail:a')!;
     expect(shown.title).toBe('New mail (me@example.org)');
     expect(shown.options).toMatchObject({ silent: true, renotify: false });
   });
@@ -351,14 +351,14 @@ describe('when the preview is signed out (#1509)', () => {
   it('still rings when the server named the new message', async () => {
     const { push, shade } = loadWorker(() => null);
     await push(delivery('a', 'e1'));
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ silent: false, renotify: true });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ silent: false, renotify: true });
   });
 
   it('still rings when the preview failed some other way', async () => {
     const down = vi.fn(async () => ({ ok: false, status: 502, json: async () => ({}) }));
     const { push, shade } = loadWorker(() => null, { globals: { fetch: down } });
     await push(ping);
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ silent: false, renotify: true });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ silent: false, renotify: true });
   });
 });
 

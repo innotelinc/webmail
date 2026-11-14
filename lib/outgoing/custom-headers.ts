@@ -73,7 +73,7 @@ export function customHeaderProperties(headers: unknown): Record<string, string>
  * with the admin's extra header, and withLabelHeaders below lets the
  * label's own win over anything left.
  */
-export const LABEL_HEADER_NAMES = ['sio-label', 'sio-label-history', 'sensitivity', 'x-bulwark-label'] as const;
+export const LABEL_HEADER_NAMES = ['sio-label', 'sio-label-history', 'sensitivity', 'x-loomix-label'] as const;
 
 /** `headers` (OutgoingEmail.headers) without the label headers and `extra` names. */
 export function withoutLabelHeaders(

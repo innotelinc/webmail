@@ -60,7 +60,7 @@ describe('/api/bimi', () => {
     resolve.mockResolvedValue(selfAsserted);
     const res = await get('domain=brand.org');
     expect(res.headers.get('content-type')).toBe('image/png');
-    expect(res.headers.get('x-bulwark-bimi')).toBe('self-asserted');
+    expect(res.headers.get('x-loomix-bimi')).toBe('self-asserted');
     expect(res.headers.get('content-security-policy')).toContain('sandbox');
     expect(res.headers.get('cache-control')).toBe('private, max-age=21600');
     expect(Buffer.from(await res.arrayBuffer())).toEqual(PNG);
@@ -71,7 +71,7 @@ describe('/api/bimi', () => {
     resolve.mockResolvedValue(null);
     const res = await get('domain=brand.org');
     expect(res.status).toBe(200);
-    expect(res.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(res.headers.get('x-loomix-bimi')).toBe('missing');
     expect(res.headers.get('cache-control')).toBe('private, max-age=3600');
     const bytes = Buffer.from(await res.arrayBuffer());
     // PNG width and height from the IHDR chunk.
@@ -81,7 +81,7 @@ describe('/api/bimi', () => {
   it('answers "no logo for now" uncached when no lookup could start', async () => {
     lookup.deferred = true;
     const res = await get('domain=brand.org');
-    expect(res.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(res.headers.get('x-loomix-bimi')).toBe('missing');
     expect(res.headers.get('cache-control')).toBe('no-store');
     expect((await get('domain=brand.org&format=json')).headers.get('cache-control')).toBe('no-store');
   });
@@ -108,7 +108,7 @@ describe('/api/bimi', () => {
   it('serves a signed-in browser that sends no Sec-Fetch-Site', async () => {
     resolve.mockResolvedValue(selfAsserted);
     const res = await get('domain=brand.org', null);
-    expect(res.headers.get('x-bulwark-bimi')).toBe('self-asserted');
+    expect(res.headers.get('x-loomix-bimi')).toBe('self-asserted');
   });
 
   // The mobile app loads logos with its native HTTP client and no webmail session.
@@ -117,7 +117,7 @@ describe('/api/bimi', () => {
     resolve.mockResolvedValue(selfAsserted);
     const res = await get('domain=brand.org', null);
     expect(res.status).toBe(200);
-    expect(res.headers.get('x-bulwark-bimi')).toBe('self-asserted');
+    expect(res.headers.get('x-loomix-bimi')).toBe('self-asserted');
     expect(res.headers.get('cache-control')).toBe('private, max-age=21600');
     expect((await get('domain=brand.org&format=json', null)).status).toBe(401);
   });
@@ -125,11 +125,11 @@ describe('/api/bimi', () => {
   it('drops self-published logos when the admin requires a mark certificate', async () => {
     await setConfig({ bimiRequireCertificate: true });
     resolve.mockResolvedValue(selfAsserted);
-    expect((await get('domain=brand.org')).headers.get('x-bulwark-bimi')).toBe('missing');
+    expect((await get('domain=brand.org')).headers.get('x-loomix-bimi')).toBe('missing');
     expect(await (await get('domain=brand.org&format=json')).json()).toEqual({ status: 'none' });
 
     resolve.mockResolvedValue(verified);
-    expect((await get('domain=brand.org')).headers.get('x-bulwark-bimi')).toBe('verified');
+    expect((await get('domain=brand.org')).headers.get('x-loomix-bimi')).toBe('verified');
   });
 
   it('describes what backs the logo in JSON', async () => {

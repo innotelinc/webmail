@@ -57,7 +57,7 @@ describe('/api/bimi for the mobile app, without a session', () => {
     const res = await bimi(get(`/api/bimi?domain=app-${headers['user-agent'].length}.example`, headers));
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toBe('image/png');
-    expect(res.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(res.headers.get('x-loomix-bimi')).toBe('missing');
     expect(res.headers.get('cache-control')).toBe('private, max-age=3600');
     expect(resolveTxt).toHaveBeenCalled();
   });
@@ -90,7 +90,7 @@ describe('/api/bimi for the mobile app, without a session', () => {
     for (let i = 0; i < SESSIONLESS_LOOKUPS_PER_MINUTE; i++) await bimi(get(`/api/bimi?domain=n${i}.example`, android('192.0.2.20')));
     expect(resolveTxt).toHaveBeenCalledTimes(SESSIONLESS_LOOKUPS_PER_MINUTE);
     const over = await bimi(get('/api/bimi?domain=over.example', android('192.0.2.20')));
-    expect(over.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(over.headers.get('x-loomix-bimi')).toBe('missing');
     expect(over.headers.get('cache-control')).toBe('no-store');
     expect(lookedUp('over.example')).toBe(false);
     // Another address has its own budget.

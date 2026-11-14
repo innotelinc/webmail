@@ -169,7 +169,7 @@ async function cachedDocument(url) {
  * belong in the new build's cache, not in its own.
  */
 function shellCacheFor(response) {
-  const build = response.headers.get("x-bulwark-build") || "";
+  const build = response.headers.get("x-loomix-build") || "";
   return /^[\w.-]{1,80}$/.test(build) ? SHELL_CACHE_PREFIX + build : SHELL_CACHE;
 }
 
@@ -632,7 +632,7 @@ async function handlePush(event) {
   // older one with broader types. A failed preview would turn it into a
   // generic "New mail" that rings, so it doesn't get that far.
   if (changed && emailIds.length === 0 && withNewMail.length === 0) {
-    await showWithoutAlert("bulwark-mail:" + (named || "default"));
+    await showWithoutAlert("loomix-mail:" + (named || "default"));
     return;
   }
   // Previews still on their way after their notification was shown.
@@ -647,7 +647,7 @@ async function handlePush(event) {
       // this site: see showWithoutAlert.
       await self.registration.showNotification(accountLabel ? `New mail (${accountLabel})` : "New mail", {
         body: "You have new mail",
-        tag: "bulwark-mail:" + (accountId || "default"),
+        tag: "loomix-mail:" + (accountId || "default"),
         icon: `${BASE_PATH}/api/pwa-icon/192`,
         badge: `${BASE_PATH}/api/pwa-icon/192`,
         data: { kind: "mail-list", accountId },
@@ -666,7 +666,7 @@ async function notifyAccount(accountId, emailIds, accountLabel, lingering = []) 
   // re-buzz for that old message.
   const notified = await readNotifiedIds(accountId, accountLabel);
   const freshIds = emailIds.filter((id) => !notified.includes(id));
-  const groupTag = "bulwark-mail:" + (accountId || "default");
+  const groupTag = "loomix-mail:" + (accountId || "default");
   if (emailIds.length > 0 && freshIds.length === 0) {
     await showWithoutAlert(groupTag);
     return;
@@ -1025,7 +1025,7 @@ async function closeMailNotifications() {
     const shown = await self.registration.getNotifications();
     for (const notification of shown) {
       const tag = typeof notification.tag === "string" ? notification.tag : "";
-      if (tag.startsWith("bulwark-mail:") || tag.startsWith("calendar-reminder:")) notification.close();
+      if (tag.startsWith("loomix-mail:") || tag.startsWith("calendar-reminder:")) notification.close();
     }
   } catch (_) {
     // Nothing more a worker can do.

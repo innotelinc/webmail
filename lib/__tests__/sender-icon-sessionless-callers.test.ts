@@ -179,7 +179,7 @@ describe('the pool that sessionless clients share', () => {
     for (const [address, headers] of [['192.0.2.40', ANDROID], ['192.0.2.41', IOS]] as const) {
       const res = await bimi(sessionless('/api/bimi?domain=brand.example', address, headers));
       expect(res.status).toBe(200);
-      expect(res.headers.get('x-bulwark-bimi')).toBe('self-asserted');
+      expect(res.headers.get('x-loomix-bimi')).toBe('self-asserted');
       expect(res.headers.get('cache-control')).toBe('private, max-age=21600');
       expect(Buffer.from(await res.arrayBuffer()).subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
     }
@@ -200,7 +200,7 @@ describe('the pool that sessionless clients share', () => {
     // The others were answered at once: no logo for now, and nothing for a cache to keep.
     const answered = (await Promise.all(app.map((request) => Promise.race([request, settle().then(() => null)])))).filter((res) => res !== null);
     expect(answered).toHaveLength(app.length - SESSIONLESS_MAX_IN_FLIGHT);
-    expect(answered.every((res) => res.headers.get('cache-control') === 'no-store' && res.headers.get('x-bulwark-bimi') === 'missing')).toBe(true);
+    expect(answered.every((res) => res.headers.get('cache-control') === 'no-store' && res.headers.get('x-loomix-bimi') === 'missing')).toBe(true);
 
     // Four signed-in users with as many slow lookups as one user may run: all 64 start.
     const users = ['ada@example.org', 'ben@example.org', 'cleo@example.org', 'dev@example.org'];
@@ -223,7 +223,7 @@ describe('the pool that sessionless clients share', () => {
     expect(lookups()).toBe(SESSIONLESS_LOOKUPS_PER_MINUTE_TOTAL);
     const over = await bimi(sessionless('/api/bimi?domain=minute-over.example', '203.0.113.200', IOS));
     expect(over.status).toBe(200);
-    expect(over.headers.get('x-bulwark-bimi')).toBe('missing');
+    expect(over.headers.get('x-loomix-bimi')).toBe('missing');
     expect(over.headers.get('cache-control')).toBe('no-store');
     expect(lookedUp('minute-over.example')).toBe(false);
 

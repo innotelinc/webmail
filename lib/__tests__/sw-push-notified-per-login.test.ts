@@ -70,7 +70,7 @@ describe('a reply typed on a notification', () => {
     await worker.dispatch('notificationclick', {
       action: 'reply',
       reply: 'Private words',
-      notification: { data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp-alice' }, tag: 'bulwark-mail:a', close() {} },
+      notification: { data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp-alice' }, tag: 'loomix-mail:a', close() {} },
     });
     expect(await stored(caches, 'pending-reply')).toMatchObject({ emailId: 'e1', text: 'Private words', login: 'fp-alice' });
   });

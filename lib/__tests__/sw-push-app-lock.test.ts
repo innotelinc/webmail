@@ -58,7 +58,7 @@ describe('a push while the app lock is on', () => {
   it('closes what\'s already on screen when it locks', async () => {
     const close = vi.fn();
     const { worker } = setup([{ id: 'c' }], [
-      { tag: 'bulwark-mail:a', title: 'Secret sender', close },
+      { tag: 'loomix-mail:a', title: 'Secret sender', close },
     ]);
     await worker.dispatch('message', { data: { type: 'app-lock', state: 'locked' } });
     expect(close).toHaveBeenCalled();

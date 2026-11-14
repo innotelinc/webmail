@@ -21,7 +21,7 @@ function fakeClient() {
 }
 
 const onScreen = [
-  { tag: 'bulwark-mail:jmap-a', title: 'Secret sender (alice)', body: 'Secret subject', close: vi.fn() },
+  { tag: 'loomix-mail:jmap-a', title: 'Secret sender (alice)', body: 'Secret subject', close: vi.fn() },
   { tag: 'calendar-reminder:k1', title: 'Secret meeting', body: 'In 10 minutes', close: vi.fn() },
 ];
 

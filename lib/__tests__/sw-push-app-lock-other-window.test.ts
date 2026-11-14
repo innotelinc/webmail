@@ -115,7 +115,7 @@ describe('app lock: "unlocked" only counts while the tab that holds the key is o
 
     await worker.dispatch('notificationclick', {
       action: 'archive',
-      notification: { data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp' }, tag: 'bulwark-mail:a', close() {} },
+      notification: { data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp' }, tag: 'loomix-mail:a', close() {} },
     });
     expect(posts()).toHaveLength(0);
   });
@@ -196,7 +196,7 @@ describe('app lock: what the worker goes by', () => {
 
 describe('app lock: what is on screen from before', () => {
   const onScreen = () => ({
-    tag: 'bulwark-mail:a',
+    tag: 'loomix-mail:a',
     title: 'Secret sender',
     body: 'Secret subject 482913',
     data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp', ids: ['e1'] },
@@ -246,7 +246,7 @@ describe('app lock: what is on screen from before', () => {
     for (const action of ['mark-read', 'archive']) {
       await worker.dispatch('notificationclick', {
         action,
-        notification: { data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp' }, tag: 'bulwark-mail:a', close() {} },
+        notification: { data: { kind: 'email', emailId: 'e1', threadId: 't1', accountId: 'a', slot: 0, login: 'fp' }, tag: 'loomix-mail:a', close() {} },
       });
     }
     expect(posts()).toHaveLength(0);

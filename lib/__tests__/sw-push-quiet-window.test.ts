@@ -77,17 +77,17 @@ describe('service worker quiet window', () => {
     const { push, shade } = loadWorker();
 
     await push(delivery('a', 'e1'));
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ renotify: true, silent: false });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ renotify: true, silent: false });
 
     vi.setSystemTime(new Date('2026-09-30T10:00:05Z'));
     await push(delivery('b', 'e2'));
     // Shown, but without a second sound.
-    expect(shade.get('bulwark-mail:b')!.options).toMatchObject({ renotify: false, silent: true });
+    expect(shade.get('loomix-mail:b')!.options).toMatchObject({ renotify: false, silent: true });
 
     // Silent alerts do not extend the window: 31 s after the audible one it rings again.
     vi.setSystemTime(new Date('2026-09-30T10:00:31Z'));
     await push(delivery('b', 'e3'));
-    expect(shade.get('bulwark-mail:b')!.options).toMatchObject({ renotify: true, silent: false });
+    expect(shade.get('loomix-mail:b')!.options).toMatchObject({ renotify: true, silent: false });
   });
 
   it('stays silent when the notification sound setting is off (#1289)', async () => {
@@ -97,14 +97,14 @@ describe('service worker quiet window', () => {
     const { push, shade, cacheStore } = loadWorker({ [prefsKey]: { sound: false } });
 
     await push(delivery('a', 'e1'));
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ renotify: false, silent: true });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ renotify: false, silent: true });
 
     // A silent alert opens no quiet window: with the sound back on, another
     // account's delivery seconds later rings.
     vi.setSystemTime(new Date('2026-09-30T10:00:05Z'));
     cacheStore.set(prefsKey, JSON.stringify({ sound: true }));
     await push(delivery('b', 'e2'));
-    expect(shade.get('bulwark-mail:b')!.options).toMatchObject({ renotify: true, silent: false });
+    expect(shade.get('loomix-mail:b')!.options).toMatchObject({ renotify: true, silent: false });
   });
 
   it('still rings for a second message in the same account inside the window', async () => {
@@ -115,6 +115,6 @@ describe('service worker quiet window', () => {
     await push(delivery('a', 'e1'));
     vi.setSystemTime(new Date('2026-09-30T10:00:10Z'));
     await push(delivery('a', 'e2'));
-    expect(shade.get('bulwark-mail:a')!.options).toMatchObject({ renotify: true, silent: false });
+    expect(shade.get('loomix-mail:a')!.options).toMatchObject({ renotify: true, silent: false });
   });
 });

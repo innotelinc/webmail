@@ -205,11 +205,14 @@ jobs:
       - name: Mirror to the edge image name
         if: needs.prepare.outputs.mirror_image_name != ''
         working-directory: /tmp/digests
+        env:
+          MIRROR_IMAGE_NAME: ${{ needs.prepare.outputs.mirror_image_name }}
+          IMAGE_NAME: ${{ needs.prepare.outputs.image_name }}
         run: |
           docker buildx imagetools create \
-            -t "${{ needs.prepare.outputs.mirror_image_name }}:latest" \
-            -t "${{ needs.prepare.outputs.mirror_image_name }}:sha-${GITHUB_SHA::7}" \
-            $(printf '${{ needs.prepare.outputs.image_name }}@sha256:%s ' *)
+            -t "$MIRROR_IMAGE_NAME:latest" \
+            -t "$MIRROR_IMAGE_NAME:sha-${GITHUB_SHA::7}" \
+            $(printf '%s@sha256:%s ' "$IMAGE_NAME" *)
 
       - name: Inspect image
         id: inspect
