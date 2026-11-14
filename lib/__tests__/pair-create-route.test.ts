@@ -363,7 +363,7 @@ function grant(): PairingGrant {
     expiresIn: 3600,
     issuedAt: Date.now(),
     tokenEndpoint: `${SERVER}/auth/token`,
-    clientId: 'bulwark-webmail',
+    clientId: 'loomix-mail',
     confidential: false,
     trusted: true,
   };
@@ -385,7 +385,7 @@ describe('pair/create password step-up', () => {
       accountName: USER,
       accountSecret: PASSWORD,
       mfaToken: '123456',
-      clientId: 'bulwark-webmail',
+      clientId: 'loomix-mail',
       redirectUri: 'bulwarkmobile://auth/callback',
       codeChallengeMethod: 'S256',
     })]);
@@ -393,7 +393,7 @@ describe('pair/create password step-up', () => {
     expect(exchange).toMatchObject({
       grant_type: 'authorization_code',
       code: 'client-code-1',
-      client_id: 'bulwark-webmail',
+      client_id: 'loomix-mail',
       redirect_uri: 'bulwarkmobile://auth/callback',
     });
     expect(exchange).not.toHaveProperty('client_secret');
@@ -412,7 +412,7 @@ describe('pair/create password step-up', () => {
       refresh_token: 'refresh-1',
       expires_in: 3600,
       token_endpoint: `${SERVER}/auth/token`,
-      client_id: 'bulwark-webmail',
+      client_id: 'loomix-mail',
     });
     expect(await status(res.body.status_id)).toBe('redeemed');
   });
@@ -483,7 +483,7 @@ describe('pair/create password step-up', () => {
     const [method, args] = (JSON.parse(setCall!.body) as { methodCalls: [string, Record<string, unknown>][] }).methodCalls[0];
     expect(method).toBe('x:AppPassword/set');
     const created = (args.create as Record<string, Record<string, unknown>>).imp;
-    expect(created.description).toMatch(/^Bulwark mobile \(paired \d{4}-\d{2}-\d{2}\)$/);
+    expect(created.description).toMatch(/^Loomix mobile \(paired \d{4}-\d{2}-\d{2}\)$/);
     expect(created).not.toHaveProperty('expiresAt');
 
     const redeemed = await redeem(res.body.pairing_code);
@@ -544,7 +544,7 @@ describe('pair/create password step-up', () => {
   it('retries with the webmail client and redirect when the server refuses the app client', async () => {
     config.oauthClientId = 'webmail-client';
     handler = mailServer({
-      apiAuth: (body) => (body.clientId === 'bulwark-webmail'
+      apiAuth: (body) => (body.clientId === 'loomix-mail'
         ? new Response('client not registered', { status: 401 })
         : body.accountSecret === PASSWORD ? authenticated() : json({ type: 'failure' })),
     });
@@ -552,7 +552,7 @@ describe('pair/create password step-up', () => {
     expect(res.status).toBe(200);
 
     expect(apiAuthCalls()).toEqual([
-      expect.objectContaining({ clientId: 'bulwark-webmail', redirectUri: 'bulwarkmobile://auth/callback' }),
+      expect.objectContaining({ clientId: 'loomix-mail', redirectUri: 'bulwarkmobile://auth/callback' }),
       expect.objectContaining({ clientId: 'webmail-client', redirectUri: `${WEBMAIL}/auth/callback` }),
     ]);
     expect(tokenCalls()).toEqual([
@@ -577,8 +577,8 @@ describe('pair/create password step-up', () => {
     const res = await create({ password: PASSWORD, redirect_uri: `${WEBMAIL}/auth/callback` });
     expect(res.status).toBe(200);
     expect(apiAuthCalls().map((b) => [b.clientId, b.redirectUri])).toEqual([
-      ['bulwark-webmail', 'bulwarkmobile://auth/callback'],
-      ['bulwark-webmail', `${WEBMAIL}/auth/callback`],
+      ['loomix-mail', 'bulwarkmobile://auth/callback'],
+      ['loomix-mail', `${WEBMAIL}/auth/callback`],
     ]);
   });
 
@@ -650,20 +650,20 @@ describe('pair/create with a confidential client', () => {
     config.oauthClientSecret = 'webmail-client-secret';
     const res = await create({ password: PASSWORD, webmail_base: `${WEBMAIL}/mail/` });
     expect(res.status).toBe(200);
-    expect(tokenCalls()[0]).toMatchObject({ client_id: 'bulwark-webmail', client_secret: 'webmail-client-secret' });
+    expect(tokenCalls()[0]).toMatchObject({ client_id: 'loomix-mail', client_secret: 'webmail-client-secret' });
 
     const redeemed = await redeem(res.body.pairing_code);
     expect(redeemed.body).toMatchObject({
       flow: 'oauth',
       access_token: 'access-1',
       token_endpoint: `${WEBMAIL}/mail/api/auth/pair/token`,
-      client_id: 'bulwark-webmail',
+      client_id: 'loomix-mail',
     });
     expect(redeemed.body.refresh_token).not.toBe('refresh-1');
     expect(openPhoneRefreshToken(redeemed.body.refresh_token)).toEqual({
       refreshToken: 'refresh-1',
       serverId: null,
-      clientId: 'bulwark-webmail',
+      clientId: 'loomix-mail',
       tokenEndpoint: `${SERVER}/auth/token`,
       trusted: true,
     });

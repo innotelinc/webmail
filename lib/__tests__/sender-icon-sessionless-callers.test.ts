@@ -86,7 +86,7 @@ const lookups = (of?: string) => resolveTxt.mock.calls.filter(([name]) => (of ? 
 
 /** What the app's image loader sends. */
 const ANDROID = { 'user-agent': 'okhttp/4.12.0', 'accept-encoding': 'gzip' };
-const IOS = { 'user-agent': 'Bulwark/92 CFNetwork/1568.100.1 Darwin/24.0.0', accept: 'image/*,*/*;q=0.8', 'accept-language': 'de-DE,de;q=0.9', 'accept-encoding': 'gzip, deflate, br' };
+const IOS = { 'user-agent': 'Loomix/92 CFNetwork/1568.100.1 Darwin/24.0.0', accept: 'image/*,*/*;q=0.8', 'accept-language': 'de-DE,de;q=0.9', 'accept-encoding': 'gzip, deflate, br' };
 /**
  * What a browser sends for <img referrerpolicy="no-referrer" src="/api/bimi?domain=..."> in a
  * sandboxed frame, where it sends no fetch metadata: no cookie (the frame is another site to the

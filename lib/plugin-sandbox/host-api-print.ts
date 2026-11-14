@@ -8,7 +8,7 @@
 // may not run scripts, under the reader's strict CSP, so it loads nothing
 // from the network. Images have to come as data: URLs.
 //
-// A PDF the plugin made (`{ pdf }` in place of `{ html }`, Bulwark 1.21 and
+// A PDF the plugin made (`{ pdf }` in place of `{ html }`, Loomix 1.21 and
 // later) opens in the app's file preview instead, which brings up its print
 // dialog (host-api-file-viewer.ts).
 

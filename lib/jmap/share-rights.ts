@@ -1,12 +1,12 @@
 /**
- * The rights Bulwark grants when it shares a folder, calendar, address book
+ * The rights Loomix grants when it shares a folder, calendar, address book
  * or file (`shareWith/<principalId>`), as named presets. The share dialog of
  * a single item and the Delegates page both build their patches from here.
  *
  * What Stalwart stores differs from what it was sent in places:
  * - 1.0 keeps `maySetSeen` and `maySetKeywords` of a mailbox as one right, so
  *   a "read" grant (seen yes, keywords no) reads back with both true.
- * - v1.0.0 adds `maySetMetadata` to every type. Bulwark never sends it (0.16
+ * - v1.0.0 adds `maySetMetadata` to every type. Loomix never sends it (0.16
  *   would refuse the property), and the server stores false.
  * - Stalwart before 0.16.6 names file rights mayRead / mayWrite / mayShare;
  *   JMAPClient.setFileNodeShare converts on the way out.

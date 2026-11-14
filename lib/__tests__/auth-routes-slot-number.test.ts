@@ -20,12 +20,12 @@ vi.mock('@/lib/oauth/token-exchange', async (importOriginal) => ({
   exchangeCodeForTokens: async () => ({ access_token: 'AT', refresh_token: 'RT', expires_in: 3600 }),
 }));
 vi.mock('@/lib/auth/stalwart-password-login', () => ({
-  STALWART_LOOPBACK_REDIRECT_URI: 'http://127.0.0.1/bulwark-webmail/callback',
+  STALWART_LOOPBACK_REDIRECT_URI: 'http://127.0.0.1/loomix-mail/callback',
   stalwartPasswordLogin: async () => ({
     ok: true,
     tokens: { access_token: 'AT', refresh_token: 'RT', expires_in: 3600 },
     tokenEndpoint: 'https://mail.example.org/auth/token',
-    clientId: 'bulwark-webmail',
+    clientId: 'loomix-mail',
   }),
   stalwartDefaultClientId: async (_serverUrl: string, clientId: string) => clientId,
 }));

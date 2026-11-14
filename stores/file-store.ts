@@ -148,7 +148,7 @@ interface FileState {
   clearClient: () => void;
   checkSupport: () => Promise<boolean>;
   /**
-   * One-time upgrade of files created by older Bulwark builds, which encoded
+   * One-time upgrade of files created by older Loomix builds, which encoded
    * the folder tree into flat node names with a Unicode separator. Reparents
    * those nodes into the real FileNode hierarchy. No-op once migrated.
    * Returns true if any node was migrated.

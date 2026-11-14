@@ -234,7 +234,7 @@ describe('settings search index', () => {
     for (const [tab, entries] of Object.entries(tabSearchEntries)) {
       for (const entry of entries) {
         // Rows that name the app show the stock name, as the index does.
-        const text = withAppName(getByPath(en, entry.label), 'Bulwark') as string;
+        const text = withAppName(getByPath(en, entry.label), 'Loomix') as string;
         // The desktop app's rows are all drawn in the Windows variant; a Mac row there is the Dock's.
         const variantName = entry.when?.startsWith('desktop') ? 'desktop' : entry.when === 'browser' || entry.when === 'notMountainView' ? 'base' : (entry.when ?? 'base');
         if (entry.when === 'desktopMac') continue;
@@ -253,7 +253,7 @@ describe('settings search index', () => {
     // A browser's row isn't in the desktop app (the push section, the browser's mail links).
     for (const [tab, entries] of Object.entries(tabSearchEntries)) {
       for (const entry of entries.filter((e) => e.when === 'browser')) {
-        const text = withAppName(getByPath(en, entry.label), 'Bulwark') as string;
+        const text = withAppName(getByPath(en, entry.label), 'Loomix') as string;
         if (TAB_PAGES[tab].some((page) => out.desktop[page].on.includes(text))) problems.push(`${tab}: ${entry.label} is drawn in the desktop app`);
       }
     }
@@ -264,7 +264,7 @@ describe('settings search index', () => {
       const errors = parts.filter((part) => part.error).map((part) => part.error);
       if (errors.length) { problems.push(`${tab} in Mountain View: ${errors.join('; ')}`); continue; }
       for (const entry of entries.filter((e) => !e.when || e.when === 'notMountainView')) {
-        const text = withAppName(getByPath(en, entry.label), 'Bulwark') as string;
+        const text = withAppName(getByPath(en, entry.label), 'Loomix') as string;
         const drawn = parts.some((part) => part.on.includes(text));
         if (!entry.when && !drawn) problems.push(`${tab}: ${entry.label} isn't drawn in Mountain View but has no condition`);
         if (entry.when === 'notMountainView' && drawn) problems.push(`${tab}: ${entry.label} is drawn in Mountain View`);
@@ -272,7 +272,7 @@ describe('settings search index', () => {
     }
     // Every section a page draws has an entry, so searching its name finds it.
     for (const [tab, entries] of Object.entries(tabSearchEntries)) {
-      const indexed = new Set(entries.map((entry) => withAppName(getByPath(en, entry.label), 'Bulwark') as string));
+      const indexed = new Set(entries.map((entry) => withAppName(getByPath(en, entry.label), 'Loomix') as string));
       // A section named like its page is the page itself, which the search lists anyway.
       indexed.add(getByPath(en, settingsTabLabelKey(tab as never)) as string);
       for (const page of TAB_PAGES[tab]) {
@@ -306,10 +306,10 @@ describe('settings search results for advanced rows', () => {
         window.bulwarkDesktop = undefined;
         useFilesSyncStore.getState().reset();
         if (entry.when?.startsWith('desktop')) applyDesktopBridge();
-        const text = withAppName(getByPath(en, entry.label), 'Bulwark') as string;
+        const text = withAppName(getByPath(en, entry.label), 'Loomix') as string;
         const others = advanced
           .filter((other) => other !== entry)
-          .map((other) => withAppName(getByPath(en, other.label), 'Bulwark') as string);
+          .map((other) => withAppName(getByPath(en, other.label), 'Loomix') as string);
         const views = TAB_PAGES[tab].map((page) => {
           const Page = pages[page as keyof typeof pages];
           return render(

@@ -113,7 +113,7 @@ describe('stalwartPasswordLogin on Stalwart 1.0', () => {
 
   it('registers its own client when the default one is unknown, then signs in with it', async () => {
     stub(v1(['swc1.registered']));
-    const result = await login('bulwark-webmail', true);
+    const result = await login('loomix-mail', true);
 
     expect(result).toMatchObject({ ok: true, clientId: 'swc1.registered' });
     const register = JSON.parse(calls.find((c) => c.url === `${SERVER}/auth/register`)!.body);
@@ -126,9 +126,9 @@ describe('stalwartPasswordLogin on Stalwart 1.0', () => {
 
   it('reuses the registered client for the next sign-in', async () => {
     stub(v1(['swc1.registered']));
-    await login('bulwark-webmail', true);
+    await login('loomix-mail', true);
     calls = [];
-    await login('bulwark-webmail', true);
+    await login('loomix-mail', true);
 
     expect(calls.map((c) => c.url)).toEqual([`${SERVER}/api/auth`, `${SERVER}/auth/token`]);
   });
@@ -161,11 +161,11 @@ describe('stalwartPasswordLogin on Stalwart 1.0', () => {
 describe('stalwartPasswordLogin on Stalwart 0.16', () => {
   it('signs in with the default client and the field-style request', async () => {
     stub(v016);
-    const result = await login('bulwark-webmail', true);
+    const result = await login('loomix-mail', true);
 
-    expect(result).toMatchObject({ ok: true, clientId: 'bulwark-webmail' });
+    expect(result).toMatchObject({ ok: true, clientId: 'loomix-mail' });
     const body = JSON.parse(calls[0].body);
-    expect(body).toMatchObject({ clientId: 'bulwark-webmail', redirectUri: REDIRECT, codeChallengeMethod: 'S256', mfaToken: '123456' });
+    expect(body).toMatchObject({ clientId: 'loomix-mail', redirectUri: REDIRECT, codeChallengeMethod: 'S256', mfaToken: '123456' });
     expect(tokenParams().get('code')).toBe('old-code');
     expect(calls.some((c) => c.url.endsWith('/auth/register'))).toBe(false);
   });
@@ -174,17 +174,17 @@ describe('stalwartPasswordLogin on Stalwart 0.16', () => {
 describe('stalwartDefaultClientId', () => {
   it('keeps the default client on 0.16, which has no client check', async () => {
     stub(v016);
-    expect(await stalwartDefaultClientId(SERVER, 'bulwark-webmail', true)).toBe('bulwark-webmail');
+    expect(await stalwartDefaultClientId(SERVER, 'loomix-mail', true)).toBe('loomix-mail');
     expect(calls.some((c) => c.url.endsWith('/auth/register'))).toBe(false);
   });
 
   it('names the registered client on 1.0, where the default one is unknown', async () => {
     stub(v1(['swc1.registered']));
-    expect(await stalwartDefaultClientId(SERVER, 'bulwark-webmail', true)).toBe('swc1.registered');
+    expect(await stalwartDefaultClientId(SERVER, 'loomix-mail', true)).toBe('swc1.registered');
   });
 
   it('keeps a default client the admin registered on 1.0', async () => {
-    stub(v1(['bulwark-webmail']));
-    expect(await stalwartDefaultClientId(SERVER, 'bulwark-webmail', true)).toBe('bulwark-webmail');
+    stub(v1(['loomix-mail']));
+    expect(await stalwartDefaultClientId(SERVER, 'loomix-mail', true)).toBe('loomix-mail');
   });
 });

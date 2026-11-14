@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import { DEFAULT_POLICY_SNAPSHOT, type PolicyEntry, type PolicySnapshot } from '@/lib/desktop/policy-schema';
 import { resetDesktopPrefsCache, setDesktopPref } from '@/lib/desktop/preferences';
 import { useAuthStore } from '@/stores/auth-store';
@@ -32,7 +32,7 @@ function desktop(policy?: PolicyEntry<'ComposeInNewWindow'>) {
     windows: {},
     // A new object per policy, as the shell's contextBridge hands out.
     policy: { get: () => snapshot, onChange: () => () => {} },
-  } as unknown as BulwarkDesktopBridge;
+  } as unknown as LoomixDesktopBridge;
 }
 
 const FORCED_ON = { value: true, source: 'forced-machine', locked: true } as const;

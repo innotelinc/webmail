@@ -4,7 +4,7 @@ import { FileBrowser } from '@/components/files/file-browser';
 import { FileDetailsPanel } from '@/components/files/file-details-panel';
 import { useFileStore, type FileResource } from '@/stores/file-store';
 import { useFilesSyncStore } from '@/stores/files-sync-store';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import type { FilesSyncController, FilesSyncItemStatus } from '@/lib/files-sync/types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
 
@@ -32,7 +32,7 @@ function controller(covered: string[]) {
 }
 
 function setPlatform(platform: 'win32' | 'darwin' | 'linux') {
-  window.bulwarkDesktop = { version: 1, platform } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform } as unknown as LoomixDesktopBridge;
 }
 
 function renderBrowser(resources: FileResource[] = [NOTES, PLANS]) {

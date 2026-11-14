@@ -22,7 +22,7 @@ vi.mock('@/lib/browser-navigation', () => ({
   withBasePath: (p: string) => p,
 }));
 vi.mock('next/link', () => ({ default: ({ children }: { children: React.ReactNode }) => children }));
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 
 const base = {
   description: 'd', totalDownloads: 3, rating: { average: 0, count: 0 }, tags: [], featured: false, deprecated: false,
@@ -30,7 +30,7 @@ const base = {
   latest: { version: '1.0.0', channel: 'stable' },
 };
 const LISTINGS = [
-  { ...base, slug: 'send-checks', name: 'Send Checks', type: 'plugin', pluginType: 'hook', permissions: ['email:send', 'email:read'], author: { displayName: 'Bulwark Team' } },
+  { ...base, slug: 'send-checks', name: 'Send Checks', type: 'plugin', pluginType: 'hook', permissions: ['email:send', 'email:read'], author: { displayName: 'Loomix Team' } },
   { ...base, slug: 'bolt', name: 'Bolt', type: 'theme', pluginType: null, permissions: [], author: { displayName: 'Someone' } },
 ];
 
@@ -51,7 +51,7 @@ describe('Quick install', () => {
 
     const dialog = await screen.findByRole('alertdialog');
     expect(within(dialog).getByText('Install Send Checks?')).toBeTruthy();
-    expect(within(dialog).getByText(/By Bulwark Team\./)).toBeTruthy();
+    expect(within(dialog).getByText(/By Loomix Team\./)).toBeTruthy();
     // The next-intl mock returns keys: the user-facing permission titles.
     expect(within(dialog).getByText('email_send.title')).toBeTruthy();
     expect(within(dialog).getByText('email_read.title')).toBeTruthy();

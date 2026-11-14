@@ -261,7 +261,7 @@ export function AuthPage() {
         <div className="mt-4 space-y-4 [overflow-wrap:anywhere]">
           <div>
             <label htmlFor="setup-origin" className="block text-xs font-medium text-foreground mb-1">
-              Webmail origin
+              Mail origin
             </label>
             <input
               id="setup-origin"
@@ -362,7 +362,7 @@ export function AuthPage() {
             </div>
           )}
           <p className="text-[0.6875rem] text-muted-foreground">
-            On Stalwart 1.0 this also registers a client for Bulwark Mobile: <code>bulwark-mobile</code>, no secret, redirect URI <code>org.bulwarkmail.mobile:/auth/callback</code>.
+            On Stalwart 1.0 this also registers a client for Loomix Mobile: <code>bulwark-mobile</code>, no secret, redirect URI <code>org.bulwarkmail.mobile:/auth/callback</code>.
           </p>
         </div>
       </Dialog>
@@ -412,7 +412,7 @@ export function AuthPage() {
         <SettingsSection id="sso" title="Single sign-on">
           <ConfigToggleItem label="Auto SSO" description="Automatically redirect to SSO provider on load" configKey="autoSsoEnabled" value={currentValue('autoSsoEnabled') as boolean} source={config.autoSsoEnabled?.source} onChange={handleChange} onRevert={handleRevert} />
           <ConfigToggleItem label="End provider session on sign-out" description="Signing out of an SSO account also signs out of the identity provider, when it advertises an end_session_endpoint or a logout URL is set below. Turn off if the provider is shared with apps that should stay signed in." configKey="oauthEndSession" value={currentValue('oauthEndSession') as boolean} source={config.oauthEndSession?.source} onChange={handleChange} onRevert={handleRevert} />
-          <ConfigToggleItem label="Revoke tokens on sign-out" description="Signing out asks the identity provider to revoke Bulwark's refresh token. On Stalwart 1.0 this also removes Bulwark from the user's connected applications, so the next sign-in asks for consent again. Turn off to keep the consent; the token then stays valid at the provider until it expires." configKey="oauthRevokeOnSignOut" value={currentValue('oauthRevokeOnSignOut') as boolean} source={config.oauthRevokeOnSignOut?.source} onChange={handleChange} onRevert={handleRevert} />
+          <ConfigToggleItem label="Revoke tokens on sign-out" description="Signing out asks the identity provider to revoke Loomix's refresh token. On Stalwart 1.0 this also removes Loomix from the user's connected applications, so the next sign-in asks for consent again. Turn off to keep the consent; the token then stays valid at the provider until it expires." configKey="oauthRevokeOnSignOut" value={currentValue('oauthRevokeOnSignOut') as boolean} source={config.oauthRevokeOnSignOut?.source} onChange={handleChange} onRevert={handleRevert} />
           <ConfigTextItem label="Provider logout URL" description="For providers whose discovery has no end_session_endpoint, such as Stalwart. Used instead of the discovered endpoint when set, with the same parameters. Must be https. Applies to the global OAuth settings; servers in the server list set their own." configKey="oauthEndSessionUrl" value={currentValue('oauthEndSessionUrl') as string} source={config.oauthEndSessionUrl?.source} onChange={handleChange} onRevert={handleRevert} placeholder="https://auth.example.com/logout" wide />
           <ConfigTextItem label="Post-logout redirect URI" description="Where the provider sends users after signing them out. Register it with the provider as a post-logout redirect URI first, or it will refuse the logout. Leave blank to stay on the provider's signed-out page. Set up with Stalwart registers and fills in this webmail's login page when it is empty." configKey="oauthPostLogoutRedirectUri" value={currentValue('oauthPostLogoutRedirectUri') as string} source={config.oauthPostLogoutRedirectUri?.source} onChange={handleChange} onRevert={handleRevert} placeholder="https://mail.example.com/en/login" wide />
         </SettingsSection>
@@ -443,7 +443,7 @@ export function AuthPage() {
         </SettingsSection>
 
         <SettingsSection id="session" title="Session and security">
-          <ConfigSelectItem label="Cookie SameSite" description="When the browser sends the sign-in cookies with requests from other sites. Lax suits most setups; None is needed when Bulwark is embedded in another site, and Strict blocks links into Bulwark from elsewhere." configKey="cookieSameSite" value={currentValue('cookieSameSite') as string} source={config.cookieSameSite?.source} options={['lax', 'strict', 'none']} onChange={handleChange} onRevert={handleRevert} />
+          <ConfigSelectItem label="Cookie SameSite" description="When the browser sends the sign-in cookies with requests from other sites. Lax suits most setups; None is needed when Loomix is embedded in another site, and Strict blocks links into Loomix from elsewhere." configKey="cookieSameSite" value={currentValue('cookieSameSite') as string} source={config.cookieSameSite?.source} options={['lax', 'strict', 'none']} onChange={handleChange} onRevert={handleRevert} />
           <ConfigTextItem label="Allowed frame ancestors" configKey="allowedFrameAncestors" value={currentValue('allowedFrameAncestors') as string} source={config.allowedFrameAncestors?.source} onChange={handleChange} onRevert={handleRevert} placeholder="'none' or https://..." wide />
           <ConfigTextItem label="Parent origin" description="For embedded mode communication" configKey="parentOrigin" value={currentValue('parentOrigin') as string} source={config.parentOrigin?.source} onChange={handleChange} onRevert={handleRevert} />
         </SettingsSection>

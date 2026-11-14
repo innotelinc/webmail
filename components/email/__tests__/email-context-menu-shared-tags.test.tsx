@@ -65,9 +65,9 @@ beforeEach(async () => {
     getSharedAccounts: () => [],
     getAccountInfo: () => ({ isPersonal: false }),
     getPrincipalTypes: async () => ({ team: 'group' }),
-    advertisesBulwarkMetadata: () => true,
-    supportsBulwarkMetadata: () => true,
-    getBulwarkMetadata: async () => ({ tags: { tags: { urgent: { label: 'Team urgent', color: 'red' } } } }),
+    advertisesLoomixMetadata: () => true,
+    supportsLoomixMetadata: () => true,
+    getLoomixMetadata: async () => ({ tags: { tags: { urgent: { label: 'Team urgent', color: 'red' } } } }),
     discoverKeywords: async () => ({ keywords: {}, scanned: 0, total: 0, complete: true }),
   };
   useAuthStore.setState({

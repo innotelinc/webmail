@@ -1,6 +1,6 @@
 name: "Lite: Docker image"
 
-# Bulwark Lite as a container (Dockerfile.lite): the static export behind an
+# Loomix Lite as a container (Dockerfile.lite): the static export behind an
 # unprivileged nginx. Every run first builds a demo image and drives it with
 # the Lite E2E suite, so the nginx routing and headers are tested, not only
 # the files. Then:

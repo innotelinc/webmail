@@ -38,7 +38,7 @@ function oauthGrant(overrides: Partial<Extract<PairingGrant, { flow: 'oauth' }>>
     expiresIn: 3600,
     issuedAt: Date.now(),
     tokenEndpoint: `${SERVER}/auth/token`,
-    clientId: 'bulwark-webmail',
+    clientId: 'loomix-mail',
     confidential: false,
     trusted: true,
     ...overrides,
@@ -134,7 +134,7 @@ describe('pair/redeem', () => {
       access_token: 'access-1',
       refresh_token: 'refresh-1',
       token_endpoint: `${SERVER}/auth/token`,
-      client_id: 'bulwark-webmail',
+      client_id: 'loomix-mail',
     });
   });
 
@@ -148,7 +148,7 @@ describe('pair/redeem', () => {
     expect(openPhoneRefreshToken(res.body.refresh_token)).toEqual({
       refreshToken: 'refresh-1',
       serverId: 'main',
-      clientId: 'bulwark-webmail',
+      clientId: 'loomix-mail',
       tokenEndpoint: `${SERVER}/auth/token`,
       trusted: true,
     });

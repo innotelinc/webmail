@@ -21,7 +21,7 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 vi.mock('@/hooks/use-config', () => ({
   useConfig: () => ({
-    appName: 'Webmail',
+    appName: 'Mail',
     isLoading: false,
     error: null,
     jmapServerUrl: '',

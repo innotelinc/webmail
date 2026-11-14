@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 /**
  * Liveness: 200 while the process answers. Nothing else is checked, so a
- * Stalwart or store outage never makes an orchestrator restart Bulwark.
+ * Stalwart or store outage never makes an orchestrator restart Loomix.
  * Readiness is /api/health/ready. https://bulwarkmail.org/docs/deployment/monitoring#health
  */
 const HEADERS = { 'Cache-Control': 'no-store' };

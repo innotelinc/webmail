@@ -249,7 +249,7 @@ export function useConfig(): AppConfig {
   // Already fetched: its state from the first render, and nothing to set after mounting.
   const fromCache = useRef(configCache);
   const [config, setConfig] = useState<AppConfig>(() => fromCache.current ? configState(fromCache.current) : {
-    appName: configCache?.appName || 'Webmail',
+    appName: configCache?.appName || 'Mail',
     jmapServerUrl: configCache?.jmapServerUrl || '',
     oauthEnabled: configCache?.oauthEnabled || false,
     oauthOnly: configCache?.oauthOnly || false,
@@ -263,11 +263,11 @@ export function useConfig(): AppConfig {
     stalwartFeaturesEnabled: configCache?.stalwartFeaturesEnabled ?? true,
     stalwartJmapPassthroughEnabled: configCache?.stalwartJmapPassthroughEnabled ?? true,
     devMode: configCache?.devMode || false,
-    faviconUrl: configCache?.faviconUrl || '/branding/Bulwark_Favicon.svg',
+    faviconUrl: configCache?.faviconUrl || '/branding/Loomix_Favicon.svg',
     appLogoLightUrl: configCache?.appLogoLightUrl || '',
     appLogoDarkUrl: configCache?.appLogoDarkUrl || '',
-    loginLogoLightUrl: configCache?.loginLogoLightUrl || '/branding/Bulwark_Logo_Color.svg',
-    loginLogoDarkUrl: configCache?.loginLogoDarkUrl || '/branding/Bulwark_Logo_White.svg',
+    loginLogoLightUrl: configCache?.loginLogoLightUrl || '/branding/Loomix_Logo_Color.svg',
+    loginLogoDarkUrl: configCache?.loginLogoDarkUrl || '/branding/Loomix_Logo_White.svg',
     loginCompanyName: configCache?.loginCompanyName || '',
     loginImprintUrl: configCache?.loginImprintUrl || '',
     loginPrivacyPolicyUrl: configCache?.loginPrivacyPolicyUrl || '',

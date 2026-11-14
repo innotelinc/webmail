@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import JSZip from 'jszip';
 
-const appName = vi.hoisted(() => ({ value: 'Webmail' }));
+const appName = vi.hoisted(() => ({ value: 'Mail' }));
 
 vi.mock('@/lib/admin/session', () => ({
   requireAdminAuth: vi.fn(async () => ({ session: { sub: 'admin' } })),
@@ -117,9 +117,9 @@ describe('GET /api/admin/marketplace/[slug]', () => {
       { id: 'http:proxy', title: 'Use accounts you connect', body: "Send requests through Acme Mail's server.", highRisk: true },
     ]);
 
-    appName.value = 'Webmail';
+    appName.value = 'Mail';
     body = await (await preview()).json();
-    expect(body.extension.permissionDetails[0].body).toBe("Send requests through Bulwark's server.");
+    expect(body.extension.permissionDetails[0].body).toBe("Send requests through Loomix's server.");
   });
 
   it('refuses a malformed version instead of forwarding it', async () => {

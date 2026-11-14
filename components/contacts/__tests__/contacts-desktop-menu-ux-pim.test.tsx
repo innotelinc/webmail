@@ -2,7 +2,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ContactCard } from '@/lib/jmap/types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 
 // pim-15: the desktop app's Edit > Search contacts and File > Import > Contacts…,
 // on the whole Contacts app with the shell around it stubbed out.
@@ -59,7 +59,7 @@ function renderContacts() {
 
 function fakeBridge() {
   const setState = vi.fn();
-  window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState, onCommand: () => () => {} } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState, onCommand: () => () => {} } } as unknown as LoomixDesktopBridge;
   return { setState };
 }
 

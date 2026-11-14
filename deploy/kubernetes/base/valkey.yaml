@@ -1,4 +1,4 @@
-# The shared store every Bulwark replica uses. One Valkey with persistence
+# The shared store every Loomix replica uses. One Valkey with persistence
 # (AOF) and noeviction: an evicting policy would silently drop settings and
 # admin config under memory pressure. A managed Redis or Valkey works as well;
 # then delete this file from kustomization.yaml and point REDIS_URL at it.

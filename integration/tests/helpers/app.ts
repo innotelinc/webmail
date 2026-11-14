@@ -1,5 +1,5 @@
 /**
- * Page-level helpers for driving the Bulwark webmail in integration tests.
+ * Page-level helpers for driving the Loomix webmail in integration tests.
  *
  * Selectors rely on the data-testid hooks added to the mail UI (sidebar folder
  * rows + counters, account switcher, composer). Folder counters are read from

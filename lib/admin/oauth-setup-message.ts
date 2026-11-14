@@ -16,9 +16,9 @@ export interface OAuthSetupResult {
 /** What the admin page says after "Set up with Stalwart" worked. */
 export function oauthSetupSuccessMessage(data: OAuthSetupResult): string {
   const mobile = data.mobileClient === 'created' || data.mobileClient === 'updated'
-    ? ` Bulwark Mobile client ${data.mobileClient} (${data.mobileClientId}, ${data.mobileRedirectUri}).`
+    ? ` Loomix Mobile client ${data.mobileClient} (${data.mobileClientId}, ${data.mobileRedirectUri}).`
     : data.mobileClient === 'failed'
-      ? ` Stalwart refused the Bulwark Mobile client (${data.mobileClientId}); the app registers its own instead, without access to account settings.`
+      ? ` Stalwart refused the Loomix Mobile client (${data.mobileClientId}); the app registers its own instead, without access to account settings.`
       : '';
   const scopes: string[] = Array.isArray(data.stalwartScopes) ? data.stalwartScopes : [];
   const limited = scopes.length > 0 && !scopes.includes(STALWART_SCOPE_FULL)

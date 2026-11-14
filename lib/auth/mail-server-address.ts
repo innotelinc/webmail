@@ -31,7 +31,7 @@ const UNSUPPORTED: Record<string, string> = {
   'mac.com': 'iCloud Mail',
 };
 
-/** The provider's name when this domain belongs to one that Bulwark can't reach, else null. */
+/** The provider's name when this domain belongs to one that Loomix can't reach, else null. */
 export function unsupportedProvider(domain: string): string | null {
   const d = domain.toLowerCase();
   if (UNSUPPORTED[d]) return UNSUPPORTED[d];

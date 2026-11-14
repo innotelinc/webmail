@@ -103,7 +103,7 @@ describe('a message opened from a bulwark:// link', () => {
 });
 
 describe('PopoutMessageApp', () => {
-  // desktop-p2-5: "<subject> - <account> - Bulwark" was the main window's title too.
+  // desktop-p2-5: "<subject> - <account> - Loomix" was the main window's title too.
   it('in the desktop app, leaves the account out of its title; in a browser, keeps it', async () => {
     const title = vi.mocked(useDocumentTitle);
     title.mockClear();

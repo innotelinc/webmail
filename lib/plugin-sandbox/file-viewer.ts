@@ -1,4 +1,4 @@
-// A file a plugin asked Bulwark to show in its own file preview
+// A file a plugin asked Loomix to show in its own file preview
 // (api.ui.openFile, and api.ui.print with a PDF): one at a time, held as a
 // Blob in memory, shown by components/plugins/plugin-file-viewer-host.tsx.
 // The preview makes its blob: URL from it and revokes the URL when it closes;

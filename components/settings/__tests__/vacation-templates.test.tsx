@@ -122,7 +122,7 @@ describe('out-of-office templates', () => {
     expect(server.client.setVacationResponse.mock.calls[0][0]).toMatchObject({ fromDate: '2026-12-22T00:00:00.000Z', toDate: '2027-01-03T23:00:00Z' });
   });
 
-  it('shows and fills the dates in the time zone set in Bulwark, not the browser’s', async () => {
+  it('shows and fills the dates in the time zone set in Loomix, not the browser’s', async () => {
     await openCard([{ ...TEMPLATE, text: 'Back {end}', subject: '' }], 'Asia/Tokyo');
     const inputs = document.querySelectorAll('input[type="datetime-local"]');
     expect((inputs[0] as HTMLInputElement).value).toBe('2026-12-21T17:00');

@@ -4,9 +4,9 @@
  * is treated as absent rather than guessed at.
  */
 
-import { DESKTOP_BRIDGE_VERSION, type BulwarkDesktopBridge } from './types';
+import { DESKTOP_BRIDGE_VERSION, type LoomixDesktopBridge } from './types';
 
-export function getDesktopBridge(): BulwarkDesktopBridge | null {
+export function getDesktopBridge(): LoomixDesktopBridge | null {
   if (typeof window === 'undefined') return null;
   const bridge = window.bulwarkDesktop;
   if (!bridge || typeof bridge !== 'object') return null;

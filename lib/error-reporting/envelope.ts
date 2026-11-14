@@ -3,7 +3,7 @@ import type { Frame } from './stack';
 
 /**
  * The Sentry envelope format, which Bugsink, GlitchTip and Sentry accept.
- * Only what Bulwark sends: one event item per envelope.
+ * Only what Loomix sends: one event item per envelope.
  * https://develop.sentry.dev/sdk/data-model/envelopes/
  */
 
@@ -63,7 +63,7 @@ export interface ErrorReport {
   name: string;
   message: string;
   frames: Frame[];
-  /** One of Bulwark's fixed codes, when the error has one. */
+  /** One of Loomix's fixed codes, when the error has one. */
   code?: string;
   handled: boolean;
   /** How it was caught: onerror, unhandledrejection, boundary, global-error, jmap, request, logger. */
@@ -106,7 +106,7 @@ export function buildEvent(report: ErrorReport, ctx: EventContext): Record<strin
     level: 'error',
     release: ctx.release,
     environment: ctx.environment,
-    // Bulwark's own grouping: the same key as the per-day counts.
+    // Loomix's own grouping: the same key as the per-day counts.
     fingerprint: [ctx.fingerprint],
     exception: {
       values: [{

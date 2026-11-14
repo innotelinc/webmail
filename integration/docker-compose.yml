@@ -1,6 +1,6 @@
 name: bulwark-integration
 
-# Integration-test backend for the Bulwark webmail. A single Stalwart mail
+# Integration-test backend for the Loomix webmail. A single Stalwart mail
 # server (JMAP + SMTP submission + IMAP), declaratively bootstrapped with the
 # alice/bob/carol test mailboxes. The webmail itself is started by Playwright
 # (webServer in playwright.integration.config.ts) so the dev-loop / debugger
@@ -14,7 +14,7 @@ services:
         # The Stalwart image the test server is built on (see run-tests.sh).
         STALWART_IMAGE: ${STALWART_IMAGE:-stalwartlabs/stalwart:v0.16}
     container_name: bulwark-it-stalwart
-    # JMAP + Webmail + admin on 8025, SMTP submission on 1025 (internal 587),
+    # JMAP + Mail + admin on 8025, SMTP submission on 1025 (internal 587),
     # IMAP on 1143 (internal 143). The browser talks JMAP to localhost:8025;
     # the test harness submits mail over SMTP to localhost:1025.
     ports:
@@ -57,7 +57,7 @@ services:
       # mode, which skips the first-run setup wizard.
       JMAP_SERVER_URL: http://localhost:8025
       STALWART_FEATURES: "true"
-      APP_NAME: "Bulwark Webmail (Integration)"
+      APP_NAME: "Loomix Mail (Integration)"
       # Enables "Remember me" / settings-sync cookies. Not required for the
       # sync tests but harmless and avoids noisy warnings.
       SESSION_SECRET: integration-not-a-real-secret

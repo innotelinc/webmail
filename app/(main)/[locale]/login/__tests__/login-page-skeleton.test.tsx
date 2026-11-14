@@ -24,7 +24,7 @@ const config = vi.hoisted(() => ({ loading: true, oauthOnly: false }));
 
 vi.mock('@/hooks/use-config', () => ({
   useConfig: () => ({
-    appName: 'Webmail',
+    appName: 'Mail',
     isLoading: config.loading,
     error: null,
     jmapServerUrl: 'https://mail.example.org',

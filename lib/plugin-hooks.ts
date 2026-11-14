@@ -607,7 +607,7 @@ export const calendarHooks = {
   onCalendarChange: new HookBus(),
   onCalendarVisibilityToggle: new HookBus(),
   onICalSubscriptionChange: new HookBus(),
-  // Intercept hook - fires before Bulwark shows a reminder (an event's or a
+  // Intercept hook - fires before Loomix shows a reminder (an event's or a
   // task's display alert), in every open tab. Return false to show it
   // yourself: no toast, no sound and no title alert for that reminder.
   // Fails open within the default budget, so a hung plugin delays a

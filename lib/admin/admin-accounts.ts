@@ -1,6 +1,6 @@
 /**
  * Mail accounts the admin names in the dashboard (`adminAccounts`) that get
- * into the Bulwark admin dashboard like a Stalwart superuser does, without
+ * into the Loomix admin dashboard like a Stalwart superuser does, without
  * an admin role in Stalwart. Each entry is tied to one configured mail
  * server; `stalwartAdminAccess` decides what being listed grants.
  */

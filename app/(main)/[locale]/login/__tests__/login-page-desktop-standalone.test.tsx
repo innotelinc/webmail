@@ -22,7 +22,7 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 vi.mock('@/hooks/use-config', () => ({
   useConfig: () => ({
-    appName: 'Bulwark',
+    appName: 'Loomix',
     isLoading: false,
     error: null,
     jmapServerUrl: '',
@@ -81,10 +81,10 @@ describe('the desktop app, with a server of one\'s own', () => {
   it('names the window as the sign-in page, not the mail view it came from', async () => {
     // A fresh profile opens the mail view first, which names the window, and it then
     // sends the page here. No server is set up yet, and the title must still change.
-    document.title = 'Mail - Bulwark';
+    document.title = 'Mail - Loomix';
     render(<LoginPage />);
     await browserButton();
-    expect(document.title).toBe('sign_in - Bulwark');
+    expect(document.title).toBe('sign_in - Loomix');
   }, 30_000);
 
   it('puts the email address before the browser button', async () => {
@@ -142,7 +142,7 @@ describe('the desktop app, with a server of one\'s own', () => {
   }, 30_000);
 });
 
-// settings-p3-1: the way back to "My organisation gave me a Bulwark web address".
+// settings-p3-1: the way back to "My organisation gave me a Loomix web address".
 describe('the organisation link', () => {
   afterEach(() => {
     changeConnection.available = true;

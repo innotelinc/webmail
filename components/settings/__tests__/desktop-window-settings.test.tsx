@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import { DEFAULT_POLICY_SNAPSHOT, type PolicySnapshot } from '@/lib/desktop/policy-schema';
 import { readDesktopPrefs, resetDesktopPrefsCache } from '@/lib/desktop/preferences';
 
@@ -17,7 +17,7 @@ function desktop(policy: Partial<PolicySnapshot> = {}) {
     platform: 'win32',
     windows: {},
     policy: { get: () => snapshot, onChange: () => () => {} },
-  } as unknown as BulwarkDesktopBridge;
+  } as unknown as LoomixDesktopBridge;
 }
 
 beforeEach(() => {

@@ -88,7 +88,7 @@ describe('root layout generateViewport - theme color (#671)', () => {
     withConfig({ appName: 'Test Mail' });
     for (const lite of [false, true]) {
       edition.lite = lite;
-      const appName = lite ? process.env.NEXT_PUBLIC_APP_NAME || 'Webmail' : 'Test Mail';
+      const appName = lite ? process.env.NEXT_PUBLIC_APP_NAME || 'Mail' : 'Test Mail';
       const layout = await RootLayout({ children: null });
       const head = Children.toArray(layout.props.children).find(
         (child) => isValidElement(child) && child.type === 'head',

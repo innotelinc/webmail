@@ -22,7 +22,7 @@ const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /**
- * The sender Bulwark writes on its envelope lines. The import trusts the
+ * The sender Loomix writes on its envelope lines. The import trusts the
  * date of a line with this sender (it is receivedAt), unlike the date on
  * other programs' lines, which may be when the message was copied.
  */

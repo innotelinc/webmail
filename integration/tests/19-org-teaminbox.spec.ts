@@ -215,7 +215,7 @@ test('alice assigns a team message to bob', async ({ browser }) => {
     await expect(forBobBadge).toHaveAttribute('title', `Assigned to Org Bob <${ORG.bob}>`);
     await expect(forBobBadge).toHaveText('Org');
   } else {
-    await expect(forBobBadge).toHaveAttribute('title', /Assigned to (Org Bob|a team member whose name Bulwark doesn't know)/);
+    await expect(forBobBadge).toHaveAttribute('title', /Assigned to (Org Bob|a team member whose name Loomix doesn't know)/);
   }
 
   // Alice's own mailbox gets no team actions and no filters.

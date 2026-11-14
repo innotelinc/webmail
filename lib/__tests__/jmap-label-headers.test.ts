@@ -63,10 +63,10 @@ describe('label headers', () => {
     const captured = mockServer();
     await createClient().createDraft(['bob@example.org'], 'x', 'body', undefined, undefined, 'identity-1', 'user@example.com',
       undefined, undefined, undefined, undefined, undefined, undefined, { classification: 'confidential' });
-    expect(created(captured)['header:X-Bulwark-Label:asText']).toBe('confidential');
+    expect(created(captured)['header:X-Loomix-Label:asText']).toBe('confidential');
     const again = mockServer();
     await createClient().createDraft(['bob@example.org'], 'x', 'body', undefined, undefined, 'identity-1', 'user@example.com',
       undefined, undefined, undefined, undefined, undefined, undefined, { classification: null });
-    expect(created(again)['header:X-Bulwark-Label:asText']).toBe('none');
+    expect(created(again)['header:X-Loomix-Label:asText']).toBe('none');
   });
 });

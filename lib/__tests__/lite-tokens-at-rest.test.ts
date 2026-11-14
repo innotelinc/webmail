@@ -43,7 +43,7 @@ describe('Lite sign-in tokens in web storage', () => {
 
   for (const persistent of [true, false]) {
     it(`does not leave the refresh token readable (${persistent ? 'remembered' : 'this tab only'})`, () => {
-      saveLiteRefreshToken(0, { serverUrl: 'https://mail.example.org', username: 'alice@example.org', refreshToken: REFRESH, clientId: 'bulwark-webmail' }, persistent);
+      saveLiteRefreshToken(0, { serverUrl: 'https://mail.example.org', username: 'alice@example.org', refreshToken: REFRESH, clientId: 'loomix-mail' }, persistent);
       expect(everythingAScriptCanRead()).not.toContain(REFRESH);
     });
 
@@ -55,7 +55,7 @@ describe('Lite sign-in tokens in web storage', () => {
 
   // Control: the session still resumes for the app itself.
   it('still gives the app its own token back', () => {
-    saveLiteRefreshToken(0, { serverUrl: 'https://mail.example.org', username: 'alice@example.org', refreshToken: REFRESH, clientId: 'bulwark-webmail' }, true);
+    saveLiteRefreshToken(0, { serverUrl: 'https://mail.example.org', username: 'alice@example.org', refreshToken: REFRESH, clientId: 'loomix-mail' }, true);
     expect(readLiteRefreshToken(0)?.username).toBe('alice@example.org');
   });
 });
@@ -107,7 +107,7 @@ describe('sealed Lite tokens', () => {
   });
 
   it('stores only the sealed tokens, under a key script cannot copy out, and resumes after a reload', async () => {
-    saveLiteRefreshToken(2, { serverUrl: `${SERVER}/`, username: 'alice@example.org', refreshToken: REFRESH, clientId: 'bulwark-webmail' }, true);
+    saveLiteRefreshToken(2, { serverUrl: `${SERVER}/`, username: 'alice@example.org', refreshToken: REFRESH, clientId: 'loomix-mail' }, true);
     saveLiteAccessToken(2, ACCESS, 1800, true);
     await settleLiteTokenStorage();
 
@@ -116,7 +116,7 @@ describe('sealed Lite tokens', () => {
     expect(stored).not.toContain(ACCESS);
     // Whose token it is stays readable.
     expect(JSON.parse(localStorage.getItem('bulwark-lite:refresh:2')!)).toEqual({
-      serverUrl: SERVER, username: 'alice@example.org', clientId: 'bulwark-webmail', id: expect.any(String), sealed: expect.any(String),
+      serverUrl: SERVER, username: 'alice@example.org', clientId: 'loomix-mail', id: expect.any(String), sealed: expect.any(String),
     });
     const db = await indexedDbContents();
     expect(db.values).toHaveLength(1);
@@ -130,7 +130,7 @@ describe('sealed Lite tokens', () => {
     expect(readLiteAccessToken(2)).toBeNull();
     await expect(liteRefreshTokens(2)).resolves.toMatchObject({ accessToken: ACCESS, refreshToken: REFRESH });
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(readLiteRefreshToken(2)).toEqual({ serverUrl: SERVER, username: 'alice@example.org', clientId: 'bulwark-webmail', refreshToken: REFRESH });
+    expect(readLiteRefreshToken(2)).toEqual({ serverUrl: SERVER, username: 'alice@example.org', clientId: 'loomix-mail', refreshToken: REFRESH });
     expect(readLiteAccessToken(2)?.accessToken).toBe(ACCESS);
 
     // Once that one is used up, the renewal presents the unsealed refresh token.
@@ -143,7 +143,7 @@ describe('sealed Lite tokens', () => {
 
   it('seals tokens a browser kept in plain form, in every slot, and keeps the user signed in', async () => {
     const expiresAt = Math.floor(Date.now() / 1000) + 1800;
-    localStorage.setItem('bulwark-lite:refresh:1', JSON.stringify({ serverUrl: SERVER, username: 'bob', refreshToken: REFRESH, clientId: 'bulwark-webmail' }));
+    localStorage.setItem('bulwark-lite:refresh:1', JSON.stringify({ serverUrl: SERVER, username: 'bob', refreshToken: REFRESH, clientId: 'loomix-mail' }));
     localStorage.setItem('bulwark-lite:access:1', JSON.stringify({ accessToken: ACCESS, expiresAt }));
     sessionStorage.setItem('bulwark-lite:refresh:3', JSON.stringify({ serverUrl: SERVER, username: 'carol', refreshToken: 'fake-tab-refresh-3' }));
 

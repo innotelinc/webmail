@@ -73,7 +73,7 @@ export interface ImportOptions {
   /** Recreate the files' folders under the target; otherwise everything goes into it. */
   keepFolders: boolean;
   files: ImportFile[];
-  /** The Bulwark account, for the checkpoints. */
+  /** The Loomix account, for the checkpoints. */
   scope: string;
   /** Continue after the items an earlier run of the same import handled. */
   resume: boolean;

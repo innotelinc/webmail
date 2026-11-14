@@ -47,7 +47,7 @@ beforeEach(() => {
 /** What the app's image loader sends on Android (OkHttp) and iOS (CFNetwork), from the client address `address`. */
 const android = (address: string) => ({ 'user-agent': 'okhttp/4.12.0', 'accept-encoding': 'gzip', 'x-forwarded-for': address });
 const ios = (address: string) => ({
-  'user-agent': 'Bulwark/92 CFNetwork/1568.100.1 Darwin/24.0.0', accept: 'image/*,*/*;q=0.8', 'accept-language': 'de-DE,de;q=0.9', 'accept-encoding': 'gzip, deflate, br', 'x-forwarded-for': address,
+  'user-agent': 'Loomix/92 CFNetwork/1568.100.1 Darwin/24.0.0', accept: 'image/*,*/*;q=0.8', 'accept-language': 'de-DE,de;q=0.9', 'accept-encoding': 'gzip, deflate, br', 'x-forwarded-for': address,
 });
 const get = (path: string, headers: Record<string, string>) => new NextRequest(`https://webmail.example${path}`, { headers });
 const lookedUp = (domain: string) => resolveTxt.mock.calls.some(([name]) => name === `_dmarc.${domain}`);

@@ -5,7 +5,7 @@
 // sidebar) read from here instead of the legacy `usePluginStore.slots` map.
 //
 // These are the offers the host shows: a retired plugin's offer is left out
-// while Bulwark does its job itself (lib/plugin-sandbox/host-features.ts), so
+// while Loomix does its job itself (lib/plugin-sandbox/host-features.ts), so
 // nothing is built for a slot nobody will see.
 
 import { useMemo, useSyncExternalStore } from 'react';

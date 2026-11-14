@@ -1,6 +1,6 @@
 # Integration tests — webmail ⇆ Stalwart
 
-End-to-end tests that run the **Bulwark webmail against a real Stalwart mail
+End-to-end tests that run the **Loomix webmail against a real Stalwart mail
 server** in Docker and drive it with Playwright. The focus is the mail/folder
 **synchronisation** behaviour that multi-account webmail clients get wrong:
 unread/total counters, folder-list sync, and the account-scoped Unified Mailbox.
@@ -165,7 +165,7 @@ because the UI behaviour is currently incomplete. Worth a look:
 | --------------- | ------------------ | ---------------------------------------------------------- |
 | `IT_NO_DOCKER`  | unset              | `1` = don't manage docker in global-setup (stack already up) |
 | `IT_TEARDOWN`   | unset              | `1` = `docker compose down -v` after the suite             |
-| `IT_WEBMAIL_URL`| `http://localhost:3000` | Webmail origin                                        |
+| `IT_WEBMAIL_URL`| `http://localhost:3000` | Mail origin                                        |
 | `IT_JMAP_URL`   | `http://localhost:8025` | Stalwart JMAP/admin base URL                          |
 | `IT_SMTP_PORT`  | `1025`             | Stalwart submission port                                   |
 | `IT_ACCOUNT_USERS` | `alice,bob,carol` | Local parts of the three test accounts, for a stack with other users |

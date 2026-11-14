@@ -3,7 +3,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { FileBrowser } from '../file-browser';
 import { useFileStore, type FileResource } from '@/stores/file-store';
 import { resetDesktopCommands, runDesktopCommand } from '@/lib/desktop/commands';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
 
 // pim-15: the desktop app's Edit > Search files.
@@ -78,7 +78,7 @@ afterEach(() => {
 describe('Files in the desktop menus', () => {
   it('Edit > Search files is on offer and puts the cursor in the files search', async () => {
     const setState = vi.fn();
-    window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState, onCommand: () => () => {} } } as unknown as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState, onCommand: () => () => {} } } as unknown as LoomixDesktopBridge;
     renderBrowser();
     await waitFor(() => expect(setState).toHaveBeenCalled());
     expect(setState.mock.lastCall![0]).toMatchObject({ 'edit.search': true });
@@ -91,7 +91,7 @@ describe('Files in the desktop menus', () => {
   // pim-p3-18: File > New folder… and Upload files… in Files.
   it('File > New folder… and Upload files… are on offer and do what the toolbar does', async () => {
     const setState = vi.fn();
-    window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState, onCommand: () => () => {} } } as unknown as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState, onCommand: () => () => {} } } as unknown as LoomixDesktopBridge;
     renderBrowser();
     await waitFor(() => expect(setState).toHaveBeenCalled());
     expect(setState.mock.lastCall![0]).toMatchObject({ 'file.newFolder': true, 'file.uploadFiles': true });

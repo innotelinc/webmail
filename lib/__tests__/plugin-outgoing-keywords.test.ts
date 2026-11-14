@@ -35,7 +35,7 @@ describe('outgoing keywords: what may go on the message', () => {
     }
   });
 
-  it('refuses system keywords except the star and Bulwark tags', () => {
+  it('refuses system keywords except the star and Loomix tags', () => {
     for (const keyword of ['$seen', '$Seen', '$draft', '$answered', '$forwarded', '$junk', '$notjunk', '$phishing', '$mdnsent', '$hasattachment', '$important', '$label:', '$labelx']) {
       expect(outgoingKeywordProblem(keyword)).toMatch(/system keyword/);
     }

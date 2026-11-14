@@ -56,8 +56,8 @@ describe('a message opened again', () => {
   it('keeps the label a sent copy went out with (Undo, Cancel and edit), a draft’s own pick first', () => {
     usePolicyStore.setState({ policy: { ...DEFAULT_POLICY, organisation: { ...DEFAULT_ORGANISATION_POLICY, labels: policy } } });
     expect(reopenedLabelChoice({ 'SIO-Label': 'marking="CONFIDENTIAL"; bgcolor=#d97706' })).toBe('confidential');
-    expect(reopenedLabelChoice({ 'X-Bulwark-Label': 'none', 'SIO-Label': 'marking="CONFIDENTIAL"' })).toBeNull();
-    expect(reopenedLabelChoice({ 'X-Bulwark-Label': 'public' })).toBe('public');
+    expect(reopenedLabelChoice({ 'X-Loomix-Label': 'none', 'SIO-Label': 'marking="CONFIDENTIAL"' })).toBeNull();
+    expect(reopenedLabelChoice({ 'X-Loomix-Label': 'public' })).toBe('public');
     expect(reopenedLabelChoice({})).toBeUndefined();
   });
 });

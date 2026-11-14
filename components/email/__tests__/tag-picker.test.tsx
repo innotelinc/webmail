@@ -184,10 +184,10 @@ describe('TagPicker new tag in a group account', () => {
   const client = {
     getAccountId: () => 'me',
     getPrincipalTypes: async () => ({ team: 'group' }),
-    advertisesBulwarkMetadata: () => true,
-    supportsBulwarkMetadata: () => true,
-    getBulwarkMetadata: vi.fn(async () => ({ tags: stored })),
-    patchBulwarkMetadata: vi.fn(async (_id: string | undefined, _key: string, patches: Array<{ path: string[]; value: unknown }>) => {
+    advertisesLoomixMetadata: () => true,
+    supportsLoomixMetadata: () => true,
+    getLoomixMetadata: vi.fn(async () => ({ tags: stored })),
+    patchLoomixMetadata: vi.fn(async (_id: string | undefined, _key: string, patches: Array<{ path: string[]; value: unknown }>) => {
       const tags = { ...((stored.tags ?? {}) as Record<string, unknown>) };
       for (const { path, value } of patches) tags[path[1]] = value;
       stored = { tags };
@@ -203,7 +203,7 @@ describe('TagPicker new tag in a group account', () => {
   beforeEach(() => {
     resetSharedTags();
     stored = { tags: { urgent: { label: 'Urgent', color: 'red' } } };
-    client.patchBulwarkMetadata.mockClear();
+    client.patchLoomixMetadata.mockClear();
     useSettingsStore.setState({ emailKeywords: [{ id: 'work', label: 'Work', color: 'blue' }], nestedTags: false });
     useAuthStore.setState({
       client: client as never,
@@ -237,7 +237,7 @@ describe('TagPicker new tag in a group account', () => {
     fireEvent.keyDown(field, { key: 'Enter' });
 
     await waitFor(() => expect(onToggle).toHaveBeenCalledWith('work'));
-    expect(client.patchBulwarkMetadata).toHaveBeenCalledWith('team', 'tags', [
+    expect(client.patchLoomixMetadata).toHaveBeenCalledWith('team', 'tags', [
       { path: ['tags', 'work'], value: { label: 'Work', color: expect.any(String) } },
     ]);
     expect(useSettingsStore.getState().emailKeywords).toEqual([{ id: 'work', label: 'Work', color: 'blue' }]);
@@ -259,7 +259,7 @@ describe('TagPicker new tag in a group account', () => {
   });
 
   it('still makes a personal tag where the group has no shared tags to offer', async () => {
-    client.advertisesBulwarkMetadata = () => false;
+    client.advertisesLoomixMetadata = () => false;
     try {
       const onToggle = vi.fn();
       render(<TagPicker selectedIds={[]} onToggle={onToggle} scope={SCOPE} />);
@@ -271,9 +271,9 @@ describe('TagPicker new tag in a group account', () => {
       fireEvent.keyDown(field, { key: 'Enter' });
       expect(useSettingsStore.getState().emailKeywords.map((k) => k.id)).toEqual(['work', 'receipts']);
       expect(onToggle).toHaveBeenCalledWith('receipts');
-      expect(client.patchBulwarkMetadata).not.toHaveBeenCalled();
+      expect(client.patchLoomixMetadata).not.toHaveBeenCalled();
     } finally {
-      client.advertisesBulwarkMetadata = () => true;
+      client.advertisesLoomixMetadata = () => true;
     }
   });
 });

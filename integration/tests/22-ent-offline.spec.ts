@@ -971,11 +971,11 @@ test('at 390 px: the offline settings, the outbox and the reload prompt fit', as
     script.src = '/_next/static/chunks/gone-after-a-deploy.js';
     document.head.appendChild(script);
   });
-  const prompt = page.getByText('A new version of Bulwark is ready.').first();
+  const prompt = page.getByText('A new version of Loomix is ready.').first();
   await expect(prompt).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole('button', { name: 'Reload' }).first()).toBeVisible();
   // Once it has slid in, the whole toast is on the screen.
-  const toastCard = page.locator('.toast-item', { hasText: 'A new version of Bulwark is ready.' }).first();
+  const toastCard = page.locator('.toast-item', { hasText: 'A new version of Loomix is ready.' }).first();
   await expect.poll(async () => {
     const box = await toastCard.boundingBox();
     return box ? box.x >= 0 && box.x + box.width <= 390 : false;
@@ -1396,7 +1396,7 @@ test('a deploy makes the open tab offer a reload and serves no stale chunks', as
   // here, which asks at most once a minute.
   await page.waitForTimeout(Math.max(0, 62_000 - (Date.now() - loadedAt)));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  const prompt = page.getByText('A new version of Bulwark is ready.').first();
+  const prompt = page.getByText('A new version of Loomix is ready.').first();
   await expect(prompt).toBeVisible({ timeout: 30_000 });
   await shot(page, 'f-reload-prompt');
   await page.getByRole('button', { name: 'Reload' }).first().click();

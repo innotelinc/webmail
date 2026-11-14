@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { askInWindow, dialogWindowsAvailable, messageRuns, readDialogTheme } from '../dialog-window';
-import type { BulwarkDesktopBridge, DesktopDialogWindowRequest } from '../types';
+import type { LoomixDesktopBridge, DesktopDialogWindowRequest } from '../types';
 
 function setBridge(dialogs: Record<string, unknown> | undefined) {
-  window.bulwarkDesktop = (dialogs ? { version: 1, platform: 'win32', dialogs } : undefined) as BulwarkDesktopBridge | undefined;
+  window.bulwarkDesktop = (dialogs ? { version: 1, platform: 'win32', dialogs } : undefined) as LoomixDesktopBridge | undefined;
 }
 
 afterEach(() => {

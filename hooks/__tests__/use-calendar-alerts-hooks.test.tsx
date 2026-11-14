@@ -223,7 +223,7 @@ describe('a plugin that shows the reminder itself', () => {
     expect(sounds.title).not.toHaveBeenCalled();
   });
 
-  it('leaves the reminder to Bulwark when the handler fails', async () => {
+  it('leaves the reminder to Loomix when the handler fails', async () => {
     useTaskStore.setState({ tasks: [] });
     vi.spyOn(console, 'error').mockImplementation(() => {});
     calendarHooks.onBeforeCalendarAlert.register('t', () => { throw new Error('broken'); });

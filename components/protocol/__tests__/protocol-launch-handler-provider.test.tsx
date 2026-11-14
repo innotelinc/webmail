@@ -23,7 +23,7 @@ vi.mock('@/i18n/navigation', () => ({
   useRouter: () => ({ push: hoisted.push, replace: vi.fn(), back: vi.fn() }),
   usePathname: () => hoisted.pathname.current,
 }));
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 vi.mock('@/stores/toast-store', () => ({ toast: { error: hoisted.toastError, info: hoisted.toastInfo, success: vi.fn() } }));
 vi.mock('@/lib/compose-flush-registry', () => ({ flushComposers: hoisted.flushComposers }));
 vi.mock('@/lib/launch-handoff', async (importOriginal) => ({

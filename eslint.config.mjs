@@ -54,7 +54,7 @@ export default [
     },
   },
   {
-    // Node-only build tooling (Bulwark Lite pipeline).
+    // Node-only build tooling (Loomix Lite pipeline).
     files: ["scripts/**/*.mjs"],
     languageOptions: {
       globals: {

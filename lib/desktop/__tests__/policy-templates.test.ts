@@ -66,7 +66,7 @@ describe('the ADMX', () => {
     expect(Array.from(root.children).map((child) => child.localName)).toEqual(['policyNamespaces', 'resources', 'supportedOn', 'categories', 'policies']);
     const target = all(doc, 'target')[0];
     expect(target.getAttribute('prefix')).toBeTruthy();
-    expect(target.getAttribute('namespace')).toBe('Bulwark.Policies.Desktop');
+    expect(target.getAttribute('namespace')).toBe('Loomix.Policies.Desktop');
     expect(all(doc, 'resources')[0].getAttribute('minRequiredRevision')).toBe('1.0');
   });
 

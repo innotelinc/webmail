@@ -329,7 +329,7 @@ export const useFilterStore = create<FilterStore>()((set, get) => ({
   },
 
   addRule: (rule) => {
-    // Insert new bulwark rules before external/opaque rules so Bulwark's
+    // Insert new bulwark rules before external/opaque rules so Loomix's
     // managed section stays contiguous.
     set((state) => {
       const bulwark = state.rules.filter(r => !r.origin || r.origin === 'bulwark');
@@ -441,7 +441,7 @@ export interface VacationFilters {
   forward: VacationForward | null;
   /**
    * Forwarding can be set up: it runs from the filters script next to the
-   * included vacation script, so it needs `include`, a script Bulwark can
+   * included vacation script, so it needs `include`, a script Loomix can
    * read, a server that allows a redirect and what the block uses besides
    * (its period, its spam check, the copy). Forwarding that is on is offered
    * all the same, so that it can be switched off.
@@ -451,7 +451,7 @@ export interface VacationFilters {
   audience: VacationAudience | null;
   /**
    * The auto-reply can be narrowed to some senders: it then runs from the
-   * filters script, so this needs `include`, `envelope` and a script Bulwark
+   * filters script, so this needs `include`, `envelope` and a script Loomix
    * can read.
    */
   audienceAvailable: boolean;

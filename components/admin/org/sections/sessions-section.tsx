@@ -18,7 +18,7 @@ const FIELDS: SessionField[] = [
   {
     key: 'idleMinutes',
     label: 'Sign out after inactivity',
-    description: 'Signs users out of every account in the browser after this many minutes without activity in any Bulwark tab. Open messages are saved as drafts first.',
+    description: 'Signs users out of every account in the browser after this many minutes without activity in any Loomix tab. Open messages are saved as drafts first.',
     unit: 'minutes',
     max: 7 * 24 * 60,
     zero: 'Off',

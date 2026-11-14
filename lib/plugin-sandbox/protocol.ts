@@ -50,7 +50,7 @@ export interface BackgroundInit {
   locale: string;
   /** Resolved presentation/regional preferences (time format, date locale, time zone). */
   regional?: RegionalSnapshot;
-  /** Bulwark features that replace plugins (api.host.features); host pushes updates via 'host-change'. */
+  /** Loomix features that replace plugins (api.host.features); host pushes updates via 'host-change'. */
   hostFeatures?: HostFeaturesView;
 }
 
@@ -281,7 +281,7 @@ export interface ThemeChangeMsg { type: 'theme-change'; theme: ThemeSnapshot; }
 /** Host → sandbox: the user changed this plugin's settings. */
 export interface SettingsChangeMsg { type: 'settings-change'; settings: Record<string, unknown>; }
 
-/** Host → sandbox: a Bulwark feature that replaces plugins was turned on or off. */
+/** Host → sandbox: a Loomix feature that replaces plugins was turned on or off. */
 export interface HostChangeMsg { type: 'host-change'; features: HostFeaturesView; }
 
 export interface PropsUpdateMsg { type: 'props-update'; props: Record<string, unknown>; }

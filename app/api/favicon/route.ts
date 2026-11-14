@@ -45,7 +45,7 @@ const TRANSPARENT_PNG = Buffer.from(
 const MISSING_FAVICON_HEADERS = {
   'Content-Type': 'image/png',
   'Cache-Control': 'private, max-age=86400', // 1 day
-  'X-Bulwark-Favicon': 'missing',
+  'X-Loomix-Favicon': 'missing',
 };
 // Nothing was fetched yet (busy, or this caller's budget or running fetches
 // are used up): the next request asks again.

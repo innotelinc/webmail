@@ -7,7 +7,7 @@
  * Env:
  *   IT_WEBMAIL_URL     the dev server (scratch ADMIN_CONFIG_DIR)
  *   IT_ORG_PASSWORD    password of the org-* accounts (vault "Stalwart test – org-* throwaway accounts")
- *   IT_ADMIN_PASSWORD  the dev server's admin password (vault "Bulwark dev rig – org features admin")
+ *   IT_ADMIN_PASSWORD  the dev server's admin password (vault "Loomix dev rig – org features admin")
  *   IT_ORG_SERVER      label for screenshots and logs: 0.16, 1.0, 1.0.0
  */
 import { type Browser, type BrowserContext, type Page, expect } from '@playwright/test';

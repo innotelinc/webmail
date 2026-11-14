@@ -12,7 +12,7 @@ import { IS_LITE } from '@/lib/lite';
 
 /**
  * The General page: language and time, which links the browser hands to
- * Bulwark (the former Default apps tab; its handler routes do not exist in
+ * Loomix (the former Default apps tab; its handler routes do not exist in
  * the static Lite build, and the desktop app has its own "Default mail app"
  * row on the Desktop app page instead), and the getting-started tour.
  * Settings reorg 2026-11-05: the app lock went to Privacy & security, the

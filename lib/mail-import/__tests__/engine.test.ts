@@ -125,7 +125,7 @@ describe('runImport', () => {
     expect(fake.imported[0].text.startsWith('Subject: m0\n')).toBe(true);
   });
 
-  it('takes the arrival time from Bulwark\'s own envelope line and leaves the state headers out of the stored message', async () => {
+  it('takes the arrival time from Loomix\'s own envelope line and leaves the state headers out of the stored message', async () => {
     const fake = fakeClient();
     const raw = 'From bulwark-export Sat Jan  2 03:04:05 2021\nStatus: RO\nX-Mozilla-Status: 0001\nSubject: s\nDate: Tue, 5 May 2020 10:00:00 +0000\n\nbody\n';
     await runImport(options(fake.client, [file(raw)]));

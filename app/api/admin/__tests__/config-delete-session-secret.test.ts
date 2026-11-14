@@ -49,7 +49,7 @@ const storedConfig = () => JSON.parse(readFileSync(path.join(configDir, 'config.
 // Before every case, so no case depends on what another one did.
 beforeEach(async () => {
   // What the setup wizard's Security step leaves behind.
-  writeFileSync(path.join(configDir, 'config.json'), JSON.stringify({ setupComplete: true, appName: 'Webmail', sessionSecret: WIZARD_SECRET }));
+  writeFileSync(path.join(configDir, 'config.json'), JSON.stringify({ setupComplete: true, appName: 'Mail', sessionSecret: WIZARD_SECRET }));
   await configManager.reload();
 });
 
@@ -91,6 +91,6 @@ describe('DELETE /api/admin/config and the session secret', () => {
       const res = await patchConfig(request('PATCH', `{"${key}": "x"}`));
       expect(res.status, key).toBe(400);
     }
-    expect(storedConfig()).toEqual({ setupComplete: true, appName: 'Webmail', sessionSecret: WIZARD_SECRET });
+    expect(storedConfig()).toEqual({ setupComplete: true, appName: 'Mail', sessionSecret: WIZARD_SECRET });
   });
 });

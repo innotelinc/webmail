@@ -31,7 +31,7 @@ export const TOP_BANNERS_SHARE = 0.3;
 const BANNER_ROW_MIN = 32;
 
 export function PluginSlot({ name, className, extraProps }: PluginSlotProps) {
-  // Without a retired plugin's offer while Bulwark does its job (host-features.ts).
+  // Without a retired plugin's offer while Loomix does its job (host-features.ts).
   const allOffers = usePluginSlotOffers(name);
   // One frame per plugin, and a frame fills its panel only in a slot made
   // for that, whatever the plugin's frame reported.

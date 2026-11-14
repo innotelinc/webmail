@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Bulwark Lite (static export) has no /api/* routes: sessions are kept in web
+// Loomix Lite (static export) has no /api/* routes: sessions are kept in web
 // storage and renewed against the mail server directly. These tests run the
 // auth store with IS_LITE forced on and assert that nothing under /api/ on
 // our own origin is ever called (config.json / policy.json are static files).
@@ -165,7 +165,7 @@ describe('auth-store in the static Lite build', () => {
     expect(state.accessToken).toBe('AT-1');
     expect(state.client?.getAuthHeader()).toBe('Bearer AT-1');
     // The client the token was issued to rides along, so refreshes present the same one.
-    expect(readLiteRefreshToken(0)).toEqual({ serverUrl: SERVER, username: 'alice', refreshToken: 'RT-1', clientId: 'bulwark-webmail' });
+    expect(readLiteRefreshToken(0)).toEqual({ serverUrl: SERVER, username: 'alice', refreshToken: 'RT-1', clientId: 'loomix-mail' });
     expect(localStorage.getItem('bulwark-lite:refresh:0')).not.toBeNull();
     expect(localStorage.getItem('bulwark-lite:access:0')).not.toBeNull();
     expect(readLiteAccessToken(0)?.accessToken).toBe('AT-1');
@@ -493,7 +493,7 @@ describe('auth-store in the static Lite build', () => {
     saveLiteRefreshToken(0, { serverUrl: SERVER, username: 'alice@example.com', refreshToken: 'RT-old', tokenEndpoint: `${SERVER}/auth/token`, revocationEndpoint: `${SERVER}/auth/revoke` }, true);
     vi.spyOn(JMAPClient.prototype, 'getUsername').mockReturnValue('alice@example.com');
     const redirect = `${SERVER}/webmail/oauth/callback`;
-    saveLiteOAuthFlow({ tokenEndpoint: `${SERVER}/auth/token`, clientId: 'bulwark-webmail', redirectUri: redirect, persistent: true });
+    saveLiteOAuthFlow({ tokenEndpoint: `${SERVER}/auth/token`, clientId: 'loomix-mail', redirectUri: redirect, persistent: true });
     sessionStorage.setItem('oauth_cookie_slot', '1');
 
     expect(await useAuthStore.getState().loginWithOAuth(SERVER, 'CODE', 'VERIFIER', redirect)).toBe(true);

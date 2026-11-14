@@ -1,7 +1,7 @@
 /**
  * Company calendars on the server (organisation.calendars.feeds).
  *
- * A feed address may carry a token, so full Bulwark never hands it to the
+ * A feed address may carry a token, so full Loomix never hands it to the
  * browser: the policy users get has every feed's `url` emptied
  * (stripFeedUrls), and /api/fetch-ical fetches a feed by id from the
  * caller's own scoped policy (feedForSubject). Lite has no server: there the

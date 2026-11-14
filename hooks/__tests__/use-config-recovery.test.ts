@@ -199,7 +199,7 @@ describe('Lite configuration compatibility', () => {
     mocks.apiFetch.mockResolvedValueOnce(new Response(null, { status: 404 }));
     const { fetchConfig } = await import('../use-config');
     const data = await fetchConfig();
-    expect(data.appName).toBe('Webmail');
+    expect(data.appName).toBe('Mail');
     expect(data.allowCustomJmapEndpoint).toBe(true);
     expect(mocks.apiFetch).toHaveBeenCalledExactlyOnceWith('/config.json', { cache: 'no-store' });
     expect(vi.getTimerCount()).toBe(0);

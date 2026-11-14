@@ -67,18 +67,18 @@ export function applyLiteConfig(raw: unknown, defaults?: { jmapServerUrl?: strin
     : [];
 
   return {
-    appName: str(input.appName, '') || 'Webmail',
+    appName: str(input.appName, '') || 'Mail',
     jmapServerUrl,
     oauthClientId: '',
     oauthIssuerUrl: '',
     oauthScopes: '',
     oauthResource: '',
     rememberMeEnabled: bool(input.rememberMeEnabled, true),
-    faviconUrl: str(input.faviconUrl, '') || '/branding/Bulwark_Favicon.svg',
+    faviconUrl: str(input.faviconUrl, '') || '/branding/Loomix_Favicon.svg',
     appLogoLightUrl: str(input.appLogoLightUrl, ''),
     appLogoDarkUrl: str(input.appLogoDarkUrl, ''),
-    loginLogoLightUrl: str(input.loginLogoLightUrl, '') || '/branding/Bulwark_Logo_Color.svg',
-    loginLogoDarkUrl: str(input.loginLogoDarkUrl, '') || '/branding/Bulwark_Logo_White.svg',
+    loginLogoLightUrl: str(input.loginLogoLightUrl, '') || '/branding/Loomix_Logo_Color.svg',
+    loginLogoDarkUrl: str(input.loginLogoDarkUrl, '') || '/branding/Loomix_Logo_White.svg',
     loginCompanyName: str(input.loginCompanyName, ''),
     loginImprintUrl: str(input.loginImprintUrl, ''),
     loginPrivacyPolicyUrl: str(input.loginPrivacyPolicyUrl, ''),

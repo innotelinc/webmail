@@ -18,7 +18,7 @@ import { answerFields, oauthErrorCode } from '@/lib/oauth/answer-summary';
 // is enabled; 1.0 gets a client of its own, see defaultClientOptions), so
 // refreshing/revoking those tokens must fall back to the same id instead of
 // failing on the missing OAUTH_CLIENT_ID (#873).
-export const DEFAULT_CLIENT_ID = 'bulwark-webmail';
+export const DEFAULT_CLIENT_ID = 'loomix-mail';
 
 export interface ClientConfigOptions {
   /**

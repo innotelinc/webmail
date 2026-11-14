@@ -17,7 +17,7 @@ vi.mock('next-intl', () => ({
     values ? `${key} ${Object.values(values).join(' ')}` : key,
   useLocale: () => 'en',
 }));
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Webmail' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Mail' }) }));
 
 const plugins = new Map<string, InstalledPlugin>();
 vi.mock('@/lib/plugin-sandbox/registry', () => ({

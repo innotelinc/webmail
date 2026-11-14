@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 
 /** The webmail's view of the bridge, and the http server route. */
 
 // The client's first import compiles a good part of the app.
 vi.setConfig({ testTimeout: 60_000 });
 
-function setBridge(bridge: Partial<BulwarkDesktopBridge> | undefined) {
-  window.bulwarkDesktop = bridge as BulwarkDesktopBridge | undefined;
+function setBridge(bridge: Partial<LoomixDesktopBridge> | undefined) {
+  window.bulwarkDesktop = bridge as LoomixDesktopBridge | undefined;
 }
 
 afterEach(() => {
@@ -160,7 +160,7 @@ describe('runDesktopBrowserSignIn', () => {
       answerPassword: vi.fn(),
       outcome: vi.fn(async (): Promise<unknown> => ({ ok: true, code: '', state: 'main-state' })),
     };
-    setBridge({ version: 1, platform: 'win32', auth: { claim: () => controls } } as unknown as BulwarkDesktopBridge);
+    setBridge({ version: 1, platform: 'win32', auth: { claim: () => controls } } as unknown as LoomixDesktopBridge);
     return controls;
   }
 
@@ -302,7 +302,7 @@ describe('runInstanceBrowserSignIn', () => {
       complete: vi.fn(async (flowId: string, url: string) => complete(flowId, url)),
       cancel: vi.fn(),
     };
-    setBridge({ version: 1, platform: 'win32', auth: { claim: () => controls } } as unknown as BulwarkDesktopBridge);
+    setBridge({ version: 1, platform: 'win32', auth: { claim: () => controls } } as unknown as LoomixDesktopBridge);
     return controls;
   }
 
@@ -354,7 +354,7 @@ describe('who gets the sign-in calls', () => {
     const { claimBrowserSignIn } = await import('../browser-sign-in');
     const controls = {};
     const claim = vi.fn(() => controls);
-    setBridge({ version: 1, platform: 'win32', auth: { claim } } as unknown as BulwarkDesktopBridge);
+    setBridge({ version: 1, platform: 'win32', auth: { claim } } as unknown as LoomixDesktopBridge);
     expect(claimBrowserSignIn()).toBe(controls);
     expect(claimBrowserSignIn()).toBe(controls);
     expect(claim).toHaveBeenCalledTimes(1);
@@ -364,14 +364,14 @@ describe('who gets the sign-in calls', () => {
     const { browserSignInAvailable } = await import('../browser-sign-in');
     setBridge(undefined);
     expect(browserSignInAvailable()).toBe(false);
-    setBridge({ version: 1, platform: 'win32' } as unknown as BulwarkDesktopBridge);
+    setBridge({ version: 1, platform: 'win32' } as unknown as LoomixDesktopBridge);
     expect(browserSignInAvailable()).toBe(false);
     const claim = () => ({});
-    setBridge({ version: 1, platform: 'win32', auth: { claim } } as unknown as BulwarkDesktopBridge);
+    setBridge({ version: 1, platform: 'win32', auth: { claim } } as unknown as LoomixDesktopBridge);
     expect(browserSignInAvailable()).toBe(true);
     const { EMPTY_POLICY_LAYERS, resolvePolicies } = await import('../policy-schema');
     const snapshot = resolvePolicies({ ...EMPTY_POLICY_LAYERS, forcedMachine: { BrowserSignIn: false } });
-    setBridge({ version: 1, platform: 'win32', auth: { claim }, policy: { get: () => snapshot, onChange: () => () => {} } } as unknown as BulwarkDesktopBridge);
+    setBridge({ version: 1, platform: 'win32', auth: { claim }, policy: { get: () => snapshot, onChange: () => () => {} } } as unknown as LoomixDesktopBridge);
     expect(browserSignInAvailable()).toBe(false);
   });
 });

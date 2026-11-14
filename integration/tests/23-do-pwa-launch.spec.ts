@@ -45,7 +45,7 @@ const ICS: LaunchFile = {
   body: [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Bulwark//Test//EN',
+    'PRODID:-//Loomix//Test//EN',
     'BEGIN:VEVENT',
     `UID:launch-${RUN}@example.org`,
     'DTSTAMP:20261103T100000Z',

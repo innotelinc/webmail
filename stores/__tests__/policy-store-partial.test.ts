@@ -11,7 +11,7 @@ import { DEFAULT_POLICY } from '@/lib/admin/types';
 
 function answer(policy: object, scope?: string) {
   return new Response(JSON.stringify(policy), {
-    headers: scope ? { 'X-Bulwark-Policy-Scope': scope } : {},
+    headers: scope ? { 'X-Loomix-Policy-Scope': scope } : {},
   });
 }
 

@@ -10,7 +10,7 @@ vi.mock('@/lib/browser-navigation', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/browser-navigation')>()),
   apiFetch: (...args: unknown[]) => apiFetch(...args),
 }));
-const appName = vi.hoisted(() => ({ value: 'Webmail' }));
+const appName = vi.hoisted(() => ({ value: 'Mail' }));
 vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: appName.value }) }));
 
 import { PluginConnectDialog } from '../plugin-connect-dialog';
@@ -19,7 +19,7 @@ import { originFromInput, requestConnect, type ConnectResult } from '@/lib/plugi
 beforeEach(() => {
   apiFetch.mockReset();
   apiFetch.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
-  appName.value = 'Webmail';
+  appName.value = 'Mail';
 });
 
 function open(mode: 'password' | 'signin' = 'password') {
@@ -65,10 +65,10 @@ describe('connect dialog', () => {
     expect(JSON.parse(apiFetch.mock.calls[0][1].body)).not.toHaveProperty('secret');
   });
 
-  it('names the app as configured, and Bulwark on a stock install', async () => {
+  it('names the app as configured, and Loomix on a stock install', async () => {
     const first = render(<PluginConnectDialog />);
     const result = open('signin');
-    expect(screen.getByText(/intro_signin /)).toHaveTextContent('"appName":"Bulwark"');
+    expect(screen.getByText(/intro_signin /)).toHaveTextContent('"appName":"Loomix"');
     first.unmount();
 
     appName.value = 'Acme Mail';

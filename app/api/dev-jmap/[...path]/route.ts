@@ -138,13 +138,13 @@ const emails: MockEmail[] = [
     id: 'email-001', threadId: 'thread-001', mailboxIds: { 'mb-inbox': true }, keywords: {}, size: 4200, receivedAt: daysAgo(0),
     from: [{ name: 'Sophie Müller', email: 'sophie@eurotech.example' }],
     to: [{ name: 'Dev User', email: 'dev@localhost' }], cc: [],
-    subject: 'Willkommen bei Bulwark Webmail!',
-    preview: 'Hallo! Welcome to Bulwark - a modern, open-source webmail client for Stalwart Mail Server, built fresh on JMAP.',
+    subject: 'Willkommen bei Loomix Mail!',
+    preview: 'Hallo! Welcome to Loomix - a modern, open-source webmail client for Stalwart Mail Server, built fresh on JMAP.',
     hasAttachment: false,
     textBody: [{ partId: 'p1', blobId: 'blob-001', size: 2200, type: 'text/plain' }],
     htmlBody: [],
     bodyValues: {
-      p1: { value: 'Hallo!\n\nWelcome to Bulwark - a modern, open-source webmail client for Stalwart Mail Server, built fresh on the JMAP protocol. No PHP, no 2008 architecture, no plugin-of-plugins archaeology; just clean TypeScript and Next.js, instant push, and a UI that feels like a native app instead of a Gmail polyfill.\n\nWhy JMAP matters: one TLS connection instead of long-polling, push notifications the moment new mail arrives, batched mutations so a click never waits on three round-trips, and threading stitched on the server rather than reassembled in the browser. The result is a webmail that feels quick on a flaky train Wi-Fi and quicker on fibre.\n\nMail, calendar, contacts, and files - everything Stalwart already serves, surfaced through a single window. Threaded inbox with full-text search and Sieve filters. Month, week, day and agenda views with recurring events and iMIP invitations. Multiple address books with vCard import and export. File previews backed by Stalwart\'s JMAP FileNode storage. S/MIME, templates, keyboard shortcuts, dark mode, dozens of languages - the boring stuff that should just work, working.\n\nTwo containers behind your reverse proxy of choice is all it takes to host it yourself: Stalwart for the server side, Bulwark for the client. Caddy, Traefik, nginx - pick one, there are working examples for each. Stalwart stays the source of truth, Bulwark is what you point your browser at, and the setup wizard handles the parts that would otherwise live in a config file.\n\nIt is AGPL, the codebase is small enough to read in an afternoon, and the extension directory already hosts a growing collection of plugins and themes. If something is missing, you can fork it, file an issue, or send a patch - a person will read it.\n\nBeste Grüße,\nSophie' },
+      p1: { value: 'Hallo!\n\nWelcome to Loomix - a modern, open-source webmail client for Stalwart Mail Server, built fresh on the JMAP protocol. No PHP, no 2008 architecture, no plugin-of-plugins archaeology; just clean TypeScript and Next.js, instant push, and a UI that feels like a native app instead of a Gmail polyfill.\n\nWhy JMAP matters: one TLS connection instead of long-polling, push notifications the moment new mail arrives, batched mutations so a click never waits on three round-trips, and threading stitched on the server rather than reassembled in the browser. The result is a webmail that feels quick on a flaky train Wi-Fi and quicker on fibre.\n\nMail, calendar, contacts, and files - everything Stalwart already serves, surfaced through a single window. Threaded inbox with full-text search and Sieve filters. Month, week, day and agenda views with recurring events and iMIP invitations. Multiple address books with vCard import and export. File previews backed by Stalwart\'s JMAP FileNode storage. S/MIME, templates, keyboard shortcuts, dark mode, dozens of languages - the boring stuff that should just work, working.\n\nTwo containers behind your reverse proxy of choice is all it takes to host it yourself: Stalwart for the server side, Loomix for the client. Caddy, Traefik, nginx - pick one, there are working examples for each. Stalwart stays the source of truth, Loomix is what you point your browser at, and the setup wizard handles the parts that would otherwise live in a config file.\n\nIt is AGPL, the codebase is small enough to read in an afternoon, and the extension directory already hosts a growing collection of plugins and themes. If something is missing, you can fork it, file an issue, or send a patch - a person will read it.\n\nBeste Grüße,\nSophie' },
     },
   },
   {
@@ -183,7 +183,7 @@ const emails: MockEmail[] = [
     id: 'email-004', threadId: 'thread-004', mailboxIds: { 'mb-inbox': true }, keywords: { '$label:work/clients': true, '$label:receipts': true }, size: 6200, receivedAt: daysAgo(0),
     from: [{ name: 'GitHub', email: 'notifications@github.example' }],
     to: [{ name: 'Dev User', email: 'dev@localhost' }], cc: [],
-    subject: '[bulwark-webmail] Theme choice is ignored after an OS theme change (#42)',
+    subject: '[loomix-mail] Theme choice is ignored after an OS theme change (#42)',
     preview: 'karel-devries opened issue #42: setting the theme to Dark explicitly, then switching the OS to light, drops back to the OS theme on reload.',
     hasAttachment: false,
     textBody: [{ partId: 'p1', blobId: 'blob-007', size: 620, type: 'text/plain' }],
@@ -383,8 +383,8 @@ const emails: MockEmail[] = [
     textBody: [{ partId: 'p1', blobId: 'blob-034', size: 640, type: 'text/plain' }],
     htmlBody: [{ partId: 'p2', blobId: 'blob-035', size: 860, type: 'text/html' }],
     bodyValues: {
-      p1: { value: 'Salut,\n\nJMAP-342 is up: https://github.example/bulwark-webmail/pull/342\n\nWhat is in it: a parser for vCard 3.0 and 4.0, batch import with a progress bar, and duplicate detection that matches on UID first and falls back to the email address.\n\nWhat I would like you to look at: the merge dialogue when a duplicate has conflicting fields. I went with "keep both, mark one primary" and I am not convinced that is the right call. The alternative is a field-by-field picker, which is more clicks but less surprising.\n\nThe 3.0 tests are thin. I will add the line-folding cases before it merges.\n\nÉlise' },
-      p2: { value: '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#24292f;"><p>Salut,</p><p>JMAP-342 is up: <a href="#" style="color:#0969da;text-decoration:none;">bulwark-webmail/pull/342</a></p><p><strong>What is in it:</strong> a parser for vCard 3.0 and 4.0, batch import with a progress bar, and duplicate detection that matches on UID first and falls back to the email address.</p><p><strong>What I would like you to look at:</strong> the merge dialogue when a duplicate has conflicting fields. I went with &ldquo;keep both, mark one primary&rdquo; and I am not convinced that is the right call. The alternative is a field-by-field picker, which is more clicks but less surprising.</p><p>The 3.0 tests are thin. I will add the line-folding cases before it merges.</p><p>Élise</p></div>' },
+      p1: { value: 'Salut,\n\nJMAP-342 is up: https://github.example/loomix-mail/pull/342\n\nWhat is in it: a parser for vCard 3.0 and 4.0, batch import with a progress bar, and duplicate detection that matches on UID first and falls back to the email address.\n\nWhat I would like you to look at: the merge dialogue when a duplicate has conflicting fields. I went with "keep both, mark one primary" and I am not convinced that is the right call. The alternative is a field-by-field picker, which is more clicks but less surprising.\n\nThe 3.0 tests are thin. I will add the line-folding cases before it merges.\n\nÉlise' },
+      p2: { value: '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#24292f;"><p>Salut,</p><p>JMAP-342 is up: <a href="#" style="color:#0969da;text-decoration:none;">loomix-mail/pull/342</a></p><p><strong>What is in it:</strong> a parser for vCard 3.0 and 4.0, batch import with a progress bar, and duplicate detection that matches on UID first and falls back to the email address.</p><p><strong>What I would like you to look at:</strong> the merge dialogue when a duplicate has conflicting fields. I went with &ldquo;keep both, mark one primary&rdquo; and I am not convinced that is the right call. The alternative is a field-by-field picker, which is more clicks but less surprising.</p><p>The 3.0 tests are thin. I will add the line-folding cases before it merges.</p><p>Élise</p></div>' },
     },
   },
   {
@@ -626,7 +626,7 @@ const emails: MockEmail[] = [
     id: 'email-039', threadId: 'thread-034', mailboxIds: { 'mb-inbox': true }, keywords: {}, size: 6400, receivedAt: hoursAgo(0.25),
     from: [{ name: 'CI', email: 'ci@fjord-systems.example' }],
     to: [{ name: 'Dev User', email: 'dev@localhost' }], cc: [],
-    subject: '❌ bulwark-webmail #482 failed on main',
+    subject: '❌ loomix-mail #482 failed on main',
     preview: 'Two tests failed in email-sanitization.test.ts. Both of them are about style attributes.',
     hasAttachment: false,
     textBody: [{ partId: 'p1', blobId: 'blob-060', size: 620, type: 'text/plain' }],
@@ -645,7 +645,7 @@ const emails: MockEmail[] = [
 
   <tr><td style="padding:22px 26px 0 26px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;line-height:1.7;">
-      <tr><td width="90" style="color:#8b949e;">Repository</td><td style="color:#24292f;">bulwark-webmail</td></tr>
+      <tr><td width="90" style="color:#8b949e;">Repository</td><td style="color:#24292f;">loomix-mail</td></tr>
       <tr><td style="color:#8b949e;">Commit</td><td style="color:#24292f;"><span style="font-family:'SF Mono',Menlo,Consolas,monospace;">a3f9c21</span> fix: sanitize CSS in email bodies</td></tr>
       <tr><td style="color:#8b949e;">Author</td><td style="color:#24292f;">Élise Moreau</td></tr>
       <tr><td style="color:#8b949e;">Runner</td><td style="color:#24292f;">ubuntu-24.04, node 22</td></tr>
@@ -1049,8 +1049,8 @@ const IDENTITIES: MockIdentity[] = [
     email: 'dev@localhost',
     replyTo: null,
     bcc: null,
-    textSignature: 'Dev User\nBulwark Webmail Developer',
-    htmlSignature: '<p>Dev User<br><em>Bulwark Webmail Developer</em></p>',
+    textSignature: 'Dev User\nLoomix Mail Developer',
+    htmlSignature: '<p>Dev User<br><em>Loomix Mail Developer</em></p>',
     mayDelete: false,
   },
 ];

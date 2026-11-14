@@ -1,6 +1,6 @@
 /**
  * Where a message was before it went to Trash, so "Restore" can put it back there.
- * JMAP doesn't keep that, so this device notes it when Bulwark moves mail to Trash.
+ * JMAP doesn't keep that, so this device notes it when Loomix moves mail to Trash.
  * A message deleted elsewhere, or one whose folder is gone, goes back to the Inbox
  * of its own account.
  */

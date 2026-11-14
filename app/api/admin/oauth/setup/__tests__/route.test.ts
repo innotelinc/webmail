@@ -179,10 +179,10 @@ describe('POST /api/admin/oauth/setup', () => {
     const res = await setup();
     expect(res.status).toBe(200);
     expect(jmapCalls.slice(0, 2).map(([name]) => name)).toEqual(['x:OAuthClient/query', 'x:OAuthClient/set']);
-    expect((setCalls()[0].create as Record<string, Record<string, unknown>>).new.clientId).toBe('bulwark-webmail');
+    expect((setCalls()[0].create as Record<string, Record<string, unknown>>).new.clientId).toBe('loomix-mail');
   });
 
-  it('registers a public first-party client for Bulwark Mobile on Stalwart 1.0 (#1459)', async () => {
+  it('registers a public first-party client for Loomix Mobile on Stalwart 1.0 (#1459)', async () => {
     const res = await setup();
     expect(res.status).toBe(200);
     expect((await res.json()).mobileClient).toBe('created');
@@ -196,7 +196,7 @@ describe('POST /api/admin/oauth/setup', () => {
     expect(mobile).not.toHaveProperty('secret');
   });
 
-  it('takes over an existing Bulwark Mobile client and drops its secret', async () => {
+  it('takes over an existing Loomix Mobile client and drops its secret', async () => {
     existing = { 'bulwark-mobile': 'm' };
     const res = await setup();
     expect((await res.json()).mobileClient).toBe('updated');
@@ -304,7 +304,7 @@ describe('POST /api/admin/oauth/setup', () => {
     // No mobile client either: first-party clients are a 1.0 thing.
     expect(jmapCalls.map(([name]) => name)).toEqual(['x:OAuthClient/query', 'x:OAuthClient/set', 'x:OAuthClient/set']);
     const create = (jmapCalls[2][1].create as Record<string, Record<string, unknown>>).new;
-    expect(create.clientId).toBe('bulwark-webmail');
+    expect(create.clientId).toBe('loomix-mail');
     expect(create).not.toHaveProperty('firstParty');
     expect((await res.json()).mobileClient).toBe('skipped');
   });
@@ -342,7 +342,7 @@ describe('POST /api/admin/oauth/setup', () => {
     });
 
     it('updates an existing client with the scopes and gives the mobile client the same', async () => {
-      existing = { 'bulwark-webmail': 'w', 'bulwark-mobile': 'm' };
+      existing = { 'loomix-mail': 'w', 'bulwark-mobile': 'm' };
       const res = await setup();
       expect((await res.json()).mobileClient).toBe('updated');
       const [webmail, mobile] = setCalls();

@@ -1,5 +1,5 @@
 // Host side of api.ui.openFile, and of api.ui.print with a PDF: a file the
-// plugin made (a case file as one PDF, a scanned image) opens in Bulwark's
+// plugin made (a case file as one PDF, a scanned image) opens in Loomix's
 // own file preview, the one attachments and Files use, with its Download and
 // Print. A plugin frame can't open a window or a tab, and openExternalUrl
 // takes only http(s) links.

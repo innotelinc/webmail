@@ -33,7 +33,7 @@ const GRANT: PairingGrant = {
   expiresIn: 3600,
   issuedAt: T0,
   tokenEndpoint: 'https://mail.example.org/auth/token',
-  clientId: 'bulwark-webmail',
+  clientId: 'loomix-mail',
   confidential: false,
   trusted: true,
 };

@@ -2,16 +2,16 @@ import { NextResponse } from 'next/server';
 import { bootState, storeRefusal } from './index';
 
 const MESSAGES = {
-  starting: 'Bulwark is starting and connecting to its shared store.',
-  'store-lost': 'Bulwark lost its shared store data and is waiting for it to be restored.',
-  blocked: 'This Bulwark instance has local data that conflicts with the shared store. See the server log.',
+  starting: 'Loomix is starting and connecting to its shared store.',
+  'store-lost': 'Loomix lost its shared store data and is waiting for it to be restored.',
+  blocked: 'This Loomix instance has local data that conflicts with the shared store. See the server log.',
   refused:
-    'Bulwark does not use its shared store because the store address has no password. Set a password in ' +
+    'Loomix does not use its shared store because the store address has no password. Set a password in ' +
     'REDIS_URL, or set SHARED_STORE_ALLOW_NO_PASSWORD=true if only this deployment can reach the store.',
 } as const;
 
 const INVALID_URL =
-  'Bulwark does not use its shared store because REDIS_URL is not a valid URL. A password with / ? # @ or % ' +
+  'Loomix does not use its shared store because REDIS_URL is not a valid URL. A password with / ? # @ or % ' +
   'in it has to be percent-encoded.';
 
 /**

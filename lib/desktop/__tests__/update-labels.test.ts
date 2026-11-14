@@ -33,7 +33,7 @@ describe('the updater text the shell gets', () => {
       const text = en[key.replace('desktop_updates.', '')];
       return Object.entries(values ?? {}).reduce((out, [name, value]) => out.replaceAll(`{${name}}`, value), text);
     });
-    expect(labels.menuUpdateAvailable).toBe('Bulwark {version} is available');
+    expect(labels.menuUpdateAvailable).toBe('Loomix {version} is available');
     expect(labels.updateOlderDetail).toContain('{current}');
     expect(labels.updateOlderDetail).toContain('{target}');
     expect(Object.values(labels).every((text) => typeof text === 'string' && text.length > 0)).toBe(true);

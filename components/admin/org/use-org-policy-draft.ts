@@ -203,7 +203,7 @@ export function useOrgPolicyDraft(dirtyId: string) {
         const stored = ((await res.json().catch(() => null)) as { policy?: SettingsPolicy } | null)?.policy;
         if (stored) adopt(stored, res.headers.get('ETag'));
         else await load();
-        setMessage({ type: 'success', text: 'Saved. Users get the change the next time Bulwark loads.' });
+        setMessage({ type: 'success', text: 'Saved. Users get the change the next time Loomix loads.' });
       } else {
         const data = await res.json().catch(() => ({}));
         setMessage({ type: 'error', text: data.error || 'Could not save the policy' });

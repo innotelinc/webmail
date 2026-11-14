@@ -46,7 +46,7 @@ vi.mock('@/lib/oauth/token-exchange', () => ({
   }),
   hasClientSecret: () => confidential,
   getClientSecret: () => (confidential ? 'webmail-client-secret' : ''),
-  DEFAULT_CLIENT_ID: 'bulwark-webmail',
+  DEFAULT_CLIENT_ID: 'loomix-mail',
 }));
 
 import { encryptPayload } from '@/lib/auth/crypto';

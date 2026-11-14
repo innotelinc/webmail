@@ -605,7 +605,7 @@ function icsServer(title: string): Promise<{ server: Server; url: string; hits: 
   const day = nextWorkingDay();
   const ymd = `${day.getFullYear()}${pad(day.getMonth() + 1)}${pad(day.getDate())}`;
   const body = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Bulwark spec//EN',
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Loomix spec//EN',
     'BEGIN:VEVENT', `UID:b-company-${TS}@example.org`, `DTSTAMP:${ymd}T000000Z`, `DTSTART;VALUE=DATE:${ymd}`, `SUMMARY:${title}`, 'END:VEVENT',
     'END:VCALENDAR', '',
   ].join('\r\n');

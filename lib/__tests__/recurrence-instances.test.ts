@@ -183,7 +183,7 @@ describe('buildOccurrencePatch', () => {
       privacy: 'public',
       organizerCalendarAddress: 'mailto:me@example.com',
       method: 'request',
-      prodId: '-//Bulwark//EN',
+      prodId: '-//Loomix//EN',
       sentBy: 'mailto:assistant@example.com',
       recurrenceRule: { frequency: 'daily' },
       excludedRecurrenceRule: null,

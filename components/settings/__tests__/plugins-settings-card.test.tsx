@@ -10,7 +10,7 @@ import { usePolicyStore } from '@/stores/policy-store';
 import type { InstalledPlugin } from '@/lib/plugin-types';
 
 const plugin = (overrides: Partial<InstalledPlugin>) => ({
-  id: 'send-checks', name: 'Send Checks', version: '1.0.0', author: 'Bulwark',
+  id: 'send-checks', name: 'Send Checks', version: '1.0.0', author: 'Loomix',
   description: 'Checks for IBAN and card numbers before a message is sent.',
   type: 'hook', permissions: [], entrypoint: 'index.js', enabled: false, status: 'installed', managed: true, settings: {},
   ...overrides,

@@ -62,7 +62,7 @@ describe('policy fetch failures', () => {
   });
 
   it("doesn't keep the public part a signed-out page gets", async () => {
-    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(DEFAULT_POLICY), { headers: { 'X-Bulwark-Policy-Scope': 'public' } }));
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(DEFAULT_POLICY), { headers: { 'X-Loomix-Policy-Scope': 'public' } }));
     await usePolicyStore.getState().fetchPolicy();
     expect(localStorage.getItem(POLICY_CACHE_KEY)).toBeNull();
   });

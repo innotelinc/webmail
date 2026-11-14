@@ -61,7 +61,7 @@ if (basePath && !basePath.startsWith("/")) {
   );
 }
 
-// Bulwark Lite (see lib/lite.ts and scripts/lite/): the same tree exported as
+// Loomix Lite (see lib/lite.ts and scripts/lite/): the same tree exported as
 // static files. `npm run build:lite` sets the flag; a plain `next build` never
 // sees it, so the standalone/Docker build is unaffected.
 // Locale prefix mode (i18n/routing.ts). Empty is unset, as the Dockerfile
@@ -77,7 +77,7 @@ if (!["never", "always", "as-needed"].includes(localePrefix)) {
 const isLite = process.env.NEXT_PUBLIC_BULWARK_LITE === "1";
 if (isLite && localePrefix !== "always") {
   // Without the proxy nothing rewrites /mail to /<locale>/mail.
-  throw new Error("Bulwark Lite requires NEXT_PUBLIC_LOCALE_PREFIX=always (use `npm run build:lite`)");
+  throw new Error("Loomix Lite requires NEXT_PUBLIC_LOCALE_PREFIX=always (use `npm run build:lite`)");
 }
 
 // Browser source maps, for resolving the stack traces in error reports.
@@ -138,14 +138,14 @@ const nextConfig: NextConfig = {
         async headers() {
           return [
             {
-              // Lets people see a site runs Bulwark. No version, so it tells
+              // Lets people see a site runs Loomix. No version, so it tells
               // a scanner nothing about which fixes are missing.
               source: "/:path*",
               headers: [
                 { key: "X-Powered-By", value: "bulwarkmail.org" },
                 // Which build answered (#523): the service worker files a page
                 // or a chunk under that build, not under its own.
-                { key: "X-Bulwark-Build", value: buildId },
+                { key: "X-Loomix-Build", value: buildId },
               ],
             },
             {

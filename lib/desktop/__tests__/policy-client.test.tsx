@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 import { EMPTY_POLICY_LAYERS, resolvePolicies, type PolicyLayer, type PolicySnapshot } from '../policy-schema';
 import { customServerAllowedByDesktopPolicy, desktopOfflinePolicy, desktopPolicyValue, jmapServerAllowedByDesktopPolicy, pluginAllowedByDesktopPolicy, pluginMayRunByDesktopPolicy, pluginUploadsAllowedByDesktopPolicy, useDesktopPolicy } from '../policy';
 import { accountRefusedByDesktopPolicy, planForRefusedAccounts } from '../refused-accounts';
@@ -26,7 +26,7 @@ function setBridgePolicy(snapshot: PolicySnapshot) {
         return () => { listeners = listeners.filter((l) => l !== listener); };
       },
     },
-  } as BulwarkDesktopBridge;
+  } as LoomixDesktopBridge;
 }
 
 afterEach(() => {
@@ -42,7 +42,7 @@ describe('in a browser', () => {
   });
 
   it('a shell that predates the policy member counts as no policy', () => {
-    window.bulwarkDesktop = { version: 1, platform: 'win32' } as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32' } as LoomixDesktopBridge;
     expect(pluginAllowedByDesktopPolicy('anything')).toBe(true);
   });
 });

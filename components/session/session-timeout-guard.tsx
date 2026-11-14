@@ -89,7 +89,7 @@ const IDLE_STATE: SessionTimerState = { phase: "active", kind: null, deadline: n
 
 /**
  * The organisation's idle timeout and maximum session length
- * (policy.json `organisation.session`). Activity in any Bulwark tab keeps
+ * (policy.json `organisation.session`). Activity in any Loomix tab keeps
  * every tab signed in; a warning counts down first; at zero the open and
  * minimised composers save their drafts and every account signs out, with
  * the reason on the login page. What the accounts keep on the device hides until

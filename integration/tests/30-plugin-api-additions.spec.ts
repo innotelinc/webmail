@@ -8,7 +8,7 @@ import { JMAP_URL } from './helpers/config';
 import { JmapClient } from './helpers/jmap';
 
 /**
- * The plugin API of Bulwark 1.21 through the real UI, with a test plugin
+ * The plugin API of Loomix 1.21 through the real UI, with a test plugin
  * (integration/fixtures/plugin-api-probe) that uses it and records what it
  * got: api.composer.setSubject from a button in the composer's top bar, the
  * composer id in onBeforeEmailSend and onTransformOutgoingEmail, keywords on
@@ -318,7 +318,7 @@ test('a mailto: link hands the plugin its parameters', async () => {
   const mailto = `mailto:${OTHER}?subject=${encodeURIComponent(`Mailto ${RUN}`)}&x-${ID}-case=02%2F2026`;
   await page.goto('/');
   await accountSwitcher(page).waitFor({ state: 'visible', timeout: 60_000 });
-  // Clicked somewhere else, through Bulwark's mail link handler: the open Bulwark tab writes it.
+  // Clicked somewhere else, through Loomix's mail link handler: the open Loomix tab writes it.
   const handler = await page.context().newPage();
   await handler.goto(`/protocol/mailto?url=${encodeURIComponent(mailto)}`);
   // The composer opens in a tab of the app (this one or one the handler opens).

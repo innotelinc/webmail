@@ -2,7 +2,7 @@ import { act, fireEvent, render, renderHook, screen } from '@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/hooks/use-config', () => ({
-  useConfig: () => ({ appName: 'Bulwark', faviconUrl: '', appLogoLightUrl: '', appLogoDarkUrl: '' }),
+  useConfig: () => ({ appName: 'Loomix', faviconUrl: '', appLogoLightUrl: '', appLogoDarkUrl: '' }),
 }));
 vi.mock('@/stores/toast-store', () => ({ toast: { info: vi.fn(), error: vi.fn(), success: vi.fn(), warning: vi.fn() } }));
 vi.mock('@/contexts/drag-drop-context', () => ({
@@ -27,7 +27,7 @@ import { useUIStore } from '@/stores/ui-store';
 
 // The other paths of the device policies (Organisation > Devices): the
 // plugin APIs, .eml previews, dragging messages out, the export file, and
-// the install prompt after the user dismissed Bulwark's own card.
+// the install prompt after the user dismissed Loomix's own card.
 
 function setDevices(devices: Record<string, boolean>) {
   const policy = { ...DEFAULT_POLICY, organisation: { ...DEFAULT_ORGANISATION_POLICY, devices: { ...DEFAULT_ORGANISATION_POLICY.devices, ...devices } } };
@@ -118,7 +118,7 @@ describe('the export file', () => {
 });
 
 describe('install prompt', () => {
-  it('holds back the browser’s banner under the policy even after the user dismissed Bulwark’s card', () => {
+  it('holds back the browser’s banner under the policy even after the user dismissed Loomix’s card', () => {
     localStorage.setItem('pwa-install-dismissed', '1');
     setDevices({ noInstallPrompt: true });
     render(<PWAInstallPrompt />);

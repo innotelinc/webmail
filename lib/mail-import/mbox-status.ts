@@ -10,7 +10,7 @@
  * - `X-Keywords:` and `X-Mozilla-Keys:` keywords, separated by spaces or commas.
  * - `X-Gmail-Labels:` (Google Takeout) "Unread" and "Starred".
  *
- * A message with none of these is imported as read, as Bulwark always did.
+ * A message with none of these is imported as read, as Loomix always did.
  */
 
 export interface MboxState {

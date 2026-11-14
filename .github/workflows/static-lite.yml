@@ -1,6 +1,6 @@
 name: "Lite: Static bundle"
 
-# Bulwark Lite: the static export of the webmail (see docs in README.md,
+# Loomix Lite: the static export of the webmail (see docs in README.md,
 # "Static Lite build"). Runs the build on every push as a regression check,
 # attaches the zips to releases, and lets maintainers build a custom variant
 # (fixed server URL, sub-path mount, locale subset, demo) on demand.
@@ -31,7 +31,7 @@ on:
       app_name:
         description: "App name"
         required: false
-        default: "Bulwark Webmail"
+        default: "Loomix Mail"
       base_path:
         description: "Sub-path mount for the static target, e.g. /webmail (baked into asset URLs; the stalwart target ignores it)"
         required: false

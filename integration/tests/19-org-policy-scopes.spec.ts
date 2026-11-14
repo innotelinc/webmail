@@ -137,7 +137,7 @@ test('the whole policy exports to one file and imports back', async ({ browser }
   const file = JSON.parse(await readFile(exported, 'utf-8'));
   expect(file.scopes.map((s: { label: string }) => s.label)).toEqual(['Org two', 'Org team']);
 
-  // Change it outside Bulwark, as someone keeping it in git would.
+  // Change it outside Loomix, as someone keeping it in git would.
   file.scopes = file.scopes.filter((s: { label: string }) => s.label !== 'Org two');
   const edited = path.join(path.dirname(exported), 'edited-policy.json');
   await writeFile(edited, JSON.stringify(file));

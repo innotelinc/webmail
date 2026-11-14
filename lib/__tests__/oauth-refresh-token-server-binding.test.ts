@@ -24,12 +24,12 @@ vi.mock('@/lib/security/url-guard', async (importOriginal) => ({
 }));
 // The sign-in itself is not under test: the typed server accepts the password and code.
 vi.mock('@/lib/auth/stalwart-password-login', () => ({
-  STALWART_LOOPBACK_REDIRECT_URI: 'http://127.0.0.1/bulwark-webmail/callback',
+  STALWART_LOOPBACK_REDIRECT_URI: 'http://127.0.0.1/loomix-mail/callback',
   stalwartPasswordLogin: async (opts: { serverUrl: string }) => ({
     ok: true,
     tokens: { access_token: 'AT-OWN', refresh_token: 'RT-OWN-SERVER', expires_in: 3600 },
     tokenEndpoint: `${opts.serverUrl}/auth/token`,
-    clientId: 'bulwark-webmail',
+    clientId: 'loomix-mail',
   }),
   stalwartDefaultClientId: async (_serverUrl: string, clientId: string) => clientId,
 }));
@@ -249,7 +249,7 @@ describe('a refresh token only goes to the server that issued it', () => {
     const { writeCustomUpstream } = await import('@/lib/oauth/custom-upstream');
     const store = await (await import('next/headers')).cookies();
     jar.set('jmap_rt', 'RT-OWN-SERVER');
-    writeCustomUpstream(store as never, 0, { serverUrl: 'https://own.example', clientId: 'bulwark-webmail' }, true);
+    writeCustomUpstream(store as never, 0, { serverUrl: 'https://own.example', clientId: 'loomix-mail' }, true);
     const res = await renew();
     expect(res.status).toBe(401);
     expect(sentAnywhere('RT-OWN-SERVER')).toEqual([]);

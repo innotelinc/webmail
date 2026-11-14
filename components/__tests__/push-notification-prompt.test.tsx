@@ -7,7 +7,7 @@ import { useUIStore } from "@/stores/ui-store";
 
 const mocks = vi.hoisted(() => ({
   pathname: "/en",
-  appName: "Webmail",
+  appName: "Mail",
   translate: vi.fn((key: string, _values?: Record<string, unknown>) => key),
   enabled: false,
   supported: true,
@@ -114,7 +114,7 @@ describe("PushNotificationPrompt", () => {
     vi.useFakeTimers();
     localStorage.clear();
     mocks.pathname = "/en";
-    mocks.appName = "Webmail";
+    mocks.appName = "Mail";
     mocks.translate.mockClear();
     mocks.supported = true;
     mocks.enabled = false;
@@ -163,11 +163,11 @@ describe("PushNotificationPrompt", () => {
     expect(mocks.translate).toHaveBeenCalledWith("title", { appName: "Acme Mail" });
   });
 
-  it("names the app Bulwark in the title on a stock install", async () => {
+  it("names the app Loomix in the title on a stock install", async () => {
     render(<PushNotificationPrompt />);
     await advancePromptDelay();
 
-    expect(mocks.translate).toHaveBeenCalledWith("title", { appName: "Bulwark" });
+    expect(mocks.translate).toHaveBeenCalledWith("title", { appName: "Loomix" });
   });
 
   it("enables push through the existing web-push flow", async () => {

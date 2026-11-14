@@ -162,7 +162,7 @@ describe('liteTokenLogin', () => {
           accountName: 'alice',
           accountSecret: 'pw',
           mfaToken: '123456',
-          clientId: 'bulwark-webmail',
+          clientId: 'loomix-mail',
           redirectUri: 'https://lite.example/en/auth/callback',
           codeChallengeMethod: 'S256',
         });
@@ -189,7 +189,7 @@ describe('liteTokenLogin', () => {
       redirectUri: 'https://lite.example/en/auth/callback',
     });
 
-    expect(tokens).toEqual({ accessToken: 'AT', expiresIn: 1200, refreshToken: 'RT', clientId: 'bulwark-webmail' });
+    expect(tokens).toEqual({ accessToken: 'AT', expiresIn: 1200, refreshToken: 'RT', clientId: 'loomix-mail' });
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
@@ -202,7 +202,7 @@ describe('liteTokenLogin', () => {
       return jsonResponse({ access_token: 'AT' });
     });
     const tokens = await liteTokenLogin({ serverUrl: SERVER, username: 'a', password: 'p', redirectUri: 'https://x/cb' });
-    expect(tokens).toEqual({ accessToken: 'AT', expiresIn: 3600, refreshToken: null, clientId: 'bulwark-webmail' });
+    expect(tokens).toEqual({ accessToken: 'AT', expiresIn: 3600, refreshToken: null, clientId: 'loomix-mail' });
   });
 
   it.each([
@@ -252,9 +252,9 @@ describe('liteTokenLogin', () => {
   }
 
   it('signs in at Stalwart 1.0 with a client it knows', async () => {
-    fetchMock.mockImplementation(stalwart10(['bulwark-webmail']));
+    fetchMock.mockImplementation(stalwart10(['loomix-mail']));
     const tokens = await liteTokenLogin({ serverUrl: SERVER, username: 'a', password: 'p', redirectUri: 'https://x/cb' });
-    expect(tokens).toEqual({ accessToken: 'AT', expiresIn: 3600, refreshToken: 'RT', clientId: 'bulwark-webmail' });
+    expect(tokens).toEqual({ accessToken: 'AT', expiresIn: 3600, refreshToken: 'RT', clientId: 'loomix-mail' });
   });
 
   it('registers a client at Stalwart 1.0 when it knows none by the default name', async () => {
@@ -262,7 +262,7 @@ describe('liteTokenLogin', () => {
     const tokens = await liteTokenLogin({ serverUrl: SERVER, username: 'a', password: 'p', redirectUri: 'https://x/cb' });
     expect(tokens).toMatchObject({ accessToken: 'AT', clientId: 'swc1.lite' });
     const token = fetchMock.mock.calls.find(([url]) => String(url) === `${SERVER}/auth/token`)!;
-    expect(new URLSearchParams(String(token[1]?.body)).get('redirect_uri')).toBe('http://127.0.0.1/bulwark-webmail/callback');
+    expect(new URLSearchParams(String(token[1]?.body)).get('redirect_uri')).toBe('http://127.0.0.1/loomix-mail/callback');
   });
 
   it('lets network failures propagate untouched', async () => {
@@ -293,7 +293,7 @@ describe('liteRefreshTokens', () => {
       const params = new URLSearchParams(String(init?.body));
       expect(params.get('grant_type')).toBe('refresh_token');
       expect(params.get('refresh_token')).toBe('RT1');
-      expect(params.get('client_id')).toBe('bulwark-webmail');
+      expect(params.get('client_id')).toBe('loomix-mail');
       return jsonResponse({ access_token: 'AT2', expires_in: 900, refresh_token: 'RT2' });
     });
 

@@ -326,7 +326,7 @@ test.describe('an installed External Mail Warning 1.5.1', () => {
       .toEqual(['partner.example', 'other-partner.example']);
     await page.close();
 
-    // Only the recipient warning on: one question on send, Bulwark's own;
+    // Only the recipient warning on: one question on send, Loomix's own;
     // the plugin keeps its banner.
     await putPolicy(admin, { ...(await getPolicy(admin)), organisation: { externalMail: { senderLabel: false, recipientWarning: true } } });
     alice = await userPage(browser, ORG.alice);
@@ -342,8 +342,8 @@ test.describe('an installed External Mail Warning 1.5.1', () => {
     await waitForSubject(ORG.dave, `Core asks ${RUN}`);
     await alice.context().close();
 
-    // Only the label on: Bulwark's chip instead of the plugin's banner; the
-    // plugin still asks on send, Bulwark doesn't.
+    // Only the label on: Loomix's chip instead of the plugin's banner; the
+    // plugin still asks on send, Loomix doesn't.
     await putPolicy(admin, { ...(await getPolicy(admin)), organisation: { externalMail: { senderLabel: true, recipientWarning: false } } });
     alice = await userPage(browser, ORG.alice);
     await expect(alice.locator('iframe[src*="/plugin-sandbox"]').first()).toBeAttached({ timeout: 30000 });

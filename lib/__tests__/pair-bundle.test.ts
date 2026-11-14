@@ -40,7 +40,7 @@ function oauthGrant(overrides: Partial<Extract<PairingGrant, { flow: 'oauth' }>>
     expiresIn: 3600,
     issuedAt: NOW,
     tokenEndpoint: `${SERVER}/auth/token`,
-    clientId: 'bulwark-webmail',
+    clientId: 'loomix-mail',
     confidential: false,
     trusted: true,
     ...overrides,
@@ -100,7 +100,7 @@ describe('buildRedeemBundle', () => {
       refresh_token: 'refresh-1',
       expires_in: 3600,
       token_endpoint: `${SERVER}/auth/token`,
-      client_id: 'bulwark-webmail',
+      client_id: 'loomix-mail',
     });
   });
 
@@ -123,14 +123,14 @@ describe('buildRedeemBundle', () => {
     expect(bundle.flow).toBe('oauth');
     if (bundle.flow !== 'oauth') return;
     expect(bundle.token_endpoint).toBe(`${WEBMAIL}${PAIR_TOKEN_PROXY_PATH}`);
-    expect(bundle.client_id).toBe('bulwark-webmail');
+    expect(bundle.client_id).toBe('loomix-mail');
     expect(bundle.access_token).toBe('access-1');
     expect(bundle.refresh_token).toBeDefined();
     expect(bundle.refresh_token).not.toContain('refresh-1');
     expect(openPhoneRefreshToken(bundle.refresh_token!)).toEqual({
       refreshToken: 'refresh-1',
       serverId: 'srv-1',
-      clientId: 'bulwark-webmail',
+      clientId: 'loomix-mail',
       tokenEndpoint: `${SERVER}/auth/token`,
       trusted: true,
     });
@@ -165,7 +165,7 @@ describe('sealed phone refresh tokens', () => {
   const VALUE: SealedRefresh = {
     refreshToken: 'refresh-1',
     serverId: null,
-    clientId: 'bulwark-webmail',
+    clientId: 'loomix-mail',
     tokenEndpoint: `${SERVER}/auth/token`,
     trusted: true,
   };
@@ -193,7 +193,7 @@ describe('sealed phone refresh tokens', () => {
   });
 
   it('do not open from a blob sealed for another purpose', () => {
-    const fields = { r: 'refresh-1', s: null, c: 'bulwark-webmail', e: `${SERVER}/auth/token`, t: true };
+    const fields = { r: 'refresh-1', s: null, c: 'loomix-mail', e: `${SERVER}/auth/token`, t: true };
     expect(openPhoneRefreshToken(encryptPayload(fields, 'pair-reauth'))).toBeNull();
     expect(openPhoneRefreshToken(encryptPayload(fields, 'session-context'))).toBeNull();
     expect(openPhoneRefreshToken(encryptPayload(fields, 'sso-pending'))).toBeNull();
@@ -208,7 +208,7 @@ describe('sealed phone refresh tokens', () => {
   });
 
   it('reject payloads with missing or malformed fields', () => {
-    const good = { r: 'refresh-1', s: null, c: 'bulwark-webmail', e: `${SERVER}/auth/token`, t: true };
+    const good = { r: 'refresh-1', s: null, c: 'loomix-mail', e: `${SERVER}/auth/token`, t: true };
     for (const bad of [
       { ...good, r: '' },
       { ...good, r: 1 },

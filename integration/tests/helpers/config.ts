@@ -10,7 +10,7 @@ export const DOMAIN = process.env.IT_DOMAIN ?? 'example.org';
 /** Shared password for every test mailbox (TEST_ACCOUNT_PASSWORD in .env). */
 export const ACCOUNT_PASSWORD = process.env.IT_ACCOUNT_PASSWORD ?? 'test-pass-123';
 
-/** Webmail app origin (containerised, published on the host). */
+/** Mail app origin (containerised, published on the host). */
 export const WEBMAIL_URL = process.env.IT_WEBMAIL_URL ?? 'http://localhost:3000';
 
 /** Stalwart JMAP + admin base URL (host-published). */

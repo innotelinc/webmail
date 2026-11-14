@@ -1,9 +1,9 @@
 /**
  * The admin policy's directory rules (`directorySameDomainOnly`,
  * `directoryHiddenLocalparts`) for every list of the server's accounts that
- * Bulwark shows: the contacts directory and recipient suggestions, sharing,
+ * Loomix shows: the contacts directory and recipient suggestions, sharing,
  * delegation, free/busy and the plugins' directory lookups. They narrow what
- * Bulwark shows, not what the server answers: Stalwart still lists every
+ * Loomix shows, not what the server answers: Stalwart still lists every
  * account to a client that asks for them itself.
  */
 
@@ -112,7 +112,7 @@ export function inDirectoryScope(email: string | null | undefined, scope: Direct
 }
 
 /**
- * The client's principal listing (loadPrincipalDirectory) as Bulwark shows
+ * The client's principal listing (loadPrincipalDirectory) as Loomix shows
  * it: with the admin policy's directory rules. Every list of the server's
  * accounts goes through this; a listing that can't be scoped counts as failed
  * rather than shown whole. Never rejects.

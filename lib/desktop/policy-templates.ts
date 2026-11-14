@@ -22,10 +22,10 @@ import {
 type Language = keyof PolicyText;
 
 const NAMESPACE = 'http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions';
-const SUPPORTED = 'SUPPORTED_Bulwark_Desktop';
-const ROOT_CATEGORY = 'Bulwark';
-const FORCED_CATEGORY = 'Bulwark_Desktop';
-const RECOMMENDED_CATEGORY = 'Bulwark_Desktop_Recommended';
+const SUPPORTED = 'SUPPORTED_Loomix_Desktop';
+const ROOT_CATEGORY = 'Loomix';
+const FORCED_CATEGORY = 'Loomix_Desktop';
+const RECOMMENDED_CATEGORY = 'Loomix_Desktop_Recommended';
 
 const CATEGORY_IDS = Object.keys(POLICY_CATEGORIES) as PolicyCategory[];
 
@@ -34,7 +34,7 @@ function xml(text: string): string {
 }
 
 function categoryId(category: PolicyCategory): string {
-  return `Bulwark_Desktop_${category}`;
+  return `Loomix_Desktop_${category}`;
 }
 
 /** A policy appears twice in the tree: forced, and as a default the user can change. */
@@ -105,7 +105,7 @@ function policyElement(key: PolicyKey, recommended: boolean, id: string): string
 
 export function generateAdmx(): string {
   const categories = [
-    `    <category name="${ROOT_CATEGORY}" displayName="$(string.Category_Bulwark)"/>`,
+    `    <category name="${ROOT_CATEGORY}" displayName="$(string.Category_Loomix)"/>`,
     `    <category name="${FORCED_CATEGORY}" displayName="$(string.Category_Desktop)"><parentCategory ref="${ROOT_CATEGORY}"/></category>`,
     `    <category name="${RECOMMENDED_CATEGORY}" displayName="$(string.Category_Recommended)"><parentCategory ref="${ROOT_CATEGORY}"/></category>`,
     ...CATEGORY_IDS.map(
@@ -118,7 +118,7 @@ export function generateAdmx(): string {
     '<!-- Generated from lib/desktop/policy-schema.ts by scripts/generate-desktop-policies.mjs. Do not edit. -->',
     `<policyDefinitions xmlns="${NAMESPACE}" revision="1.0" schemaVersion="1.0">`,
     '  <policyNamespaces>',
-    '    <target prefix="bulwark" namespace="Bulwark.Policies.Desktop"/>',
+    '    <target prefix="bulwark" namespace="Loomix.Policies.Desktop"/>',
     '  </policyNamespaces>',
     '  <resources minRequiredRevision="1.0"/>',
     '  <supportedOn>',
@@ -138,11 +138,11 @@ export function generateAdmx(): string {
 }
 
 const INTRO: PolicyText = {
-  en: 'Settings for the Bulwark desktop app.',
-  de: 'Einstellungen für die Bulwark-Desktop-App.',
+  en: 'Settings for the Loomix desktop app.',
+  de: 'Einstellungen für die Loomix-Desktop-App.',
 };
-const SUPPORTED_TEXT: PolicyText = { en: 'All versions of Bulwark Desktop', de: 'Alle Versionen von Bulwark Desktop' };
-const RECOMMENDED_TEXT: PolicyText = { en: 'Bulwark Desktop: defaults users can change', de: 'Bulwark Desktop: Standardwerte, die Benutzer ändern können' };
+const SUPPORTED_TEXT: PolicyText = { en: 'All versions of Loomix Desktop', de: 'Alle Versionen von Loomix Desktop' };
+const RECOMMENDED_TEXT: PolicyText = { en: 'Loomix Desktop: defaults users can change', de: 'Loomix Desktop: Standardwerte, die Benutzer ändern können' };
 
 function presentationFor(key: PolicyKey, id: string, language: Language): string | null {
   const definition: PolicyDefinition = POLICY_SCHEMA[key];
@@ -163,8 +163,8 @@ function presentationFor(key: PolicyKey, id: string, language: Language): string
 
 export function generateAdml(language: Language): string {
   const strings: [string, string][] = [
-    ['Category_Bulwark', 'Bulwark'],
-    ['Category_Desktop', 'Bulwark Desktop'],
+    ['Category_Loomix', 'Loomix'],
+    ['Category_Desktop', 'Loomix Desktop'],
     ['Category_Recommended', RECOMMENDED_TEXT[language]],
     [SUPPORTED, SUPPORTED_TEXT[language]],
     ...CATEGORY_IDS.map((category): [string, string] => [`Category_${category}`, POLICY_CATEGORIES[category][language]]),
@@ -185,7 +185,7 @@ export function generateAdml(language: Language): string {
     '<?xml version="1.0" encoding="utf-8"?>',
     '<!-- Generated from lib/desktop/policy-schema.ts by scripts/generate-desktop-policies.mjs. Do not edit. -->',
     `<policyDefinitionResources xmlns="${NAMESPACE}" revision="1.0" schemaVersion="1.0">`,
-    '  <displayName>Bulwark Desktop</displayName>',
+    '  <displayName>Loomix Desktop</displayName>',
     `  <description>${xml(INTRO[language])}</description>`,
     '  <resources>',
     '    <stringTable>',
@@ -248,7 +248,7 @@ export function generateMobileconfig(): string {
     PayloadIdentifier: `${POLICY_BUNDLE_ID}.policy.settings`,
     PayloadUUID: stableUuid('settings'),
     PayloadEnabled: true,
-    PayloadDisplayName: 'Bulwark settings',
+    PayloadDisplayName: 'Loomix settings',
     InstanceUrl,
     ...forced,
     // Not forced: a default the user can change.
@@ -260,7 +260,7 @@ export function generateMobileconfig(): string {
     PayloadVersion: 1,
     PayloadIdentifier: `${POLICY_BUNDLE_ID}.policy`,
     PayloadUUID: stableUuid('profile'),
-    PayloadDisplayName: 'Bulwark Desktop',
+    PayloadDisplayName: 'Loomix Desktop',
     PayloadDescription: 'A sample profile. Remove what you do not want to set, and change the rest.',
     PayloadScope: 'System',
   };
@@ -283,17 +283,17 @@ export function generatePoliciesJson(): string {
 /** Relative path under desktop-policies/ to its content. */
 export function generatePolicyFiles(): Record<string, string> {
   return {
-    'Bulwark.admx': generateAdmx(),
-    'en-US/Bulwark.adml': generateAdml('en'),
-    'de-DE/Bulwark.adml': generateAdml('de'),
+    'Loomix.admx': generateAdmx(),
+    'en-US/Loomix.adml': generateAdml('en'),
+    'de-DE/Loomix.adml': generateAdml('de'),
     [`${POLICY_BUNDLE_ID}.mobileconfig`]: generateMobileconfig(),
     'policies.json': generatePoliciesJson(),
     'README.txt': [
       'Generated by scripts/generate-desktop-policies.mjs. Do not edit these files.',
       '',
-      'Windows: copy Bulwark.admx to %SystemRoot%\\PolicyDefinitions, and the en-US and',
+      'Windows: copy Loomix.admx to %SystemRoot%\\PolicyDefinitions, and the en-US and',
       'de-DE folders next to it (or to the central store in SYSVOL). In Intune, import',
-      'Bulwark.admx and en-US\\Bulwark.adml.',
+      'Loomix.admx and en-US\\Loomix.adml.',
       '',
       `macOS: ${POLICY_BUNDLE_ID}.mobileconfig is a sample. Change it and deploy it by MDM.`,
       '',

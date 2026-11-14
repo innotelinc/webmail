@@ -58,7 +58,7 @@ export function PWAInstallPrompt() {
   const composing = useUIStore((state) => state.composingCount > 0);
   // Organisation > Devices > No install prompt, if any account signed in
   // here has it: no card, and the browser's own install banner is held back
-  // too. The browser's menu can still install Bulwark.
+  // too. The browser's menu can still install Loomix.
   const noInstallPrompt = useStrictestDevices().noInstallPrompt;
 
   useEffect(() => {

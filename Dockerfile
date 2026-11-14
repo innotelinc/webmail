@@ -75,7 +75,7 @@ COPY --from=bundle /sourcemaps /
 
 FROM node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS runner
 
-LABEL org.opencontainers.image.title="Bulwark Webmail"
+LABEL org.opencontainers.image.title="Loomix Mail"
 LABEL org.opencontainers.image.description="Modern webmail client built with Next.js and the JMAP protocol"
 LABEL org.opencontainers.image.source="https://github.com/bulwarkmail/webmail"
 LABEL org.opencontainers.image.url="https://github.com/bulwarkmail/webmail"

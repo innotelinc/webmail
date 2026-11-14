@@ -82,11 +82,11 @@ describe('Lite on Stalwart: runtime mount and client id', () => {
     expect(lite.liteMountedAssetUrl(`${origin}/other/x.mjs`)).toBe(`${origin}/other/x.mjs`);
   });
 
-  it('uses the Application oauthClientId when Stalwart injected one, else bulwark-webmail', async () => {
+  it('uses the Application oauthClientId when Stalwart injected one, else loomix-mail', async () => {
     const { tokens } = await loadStalwartModules();
-    expect(tokens.getLiteClientId()).toBe('bulwark-webmail');
+    expect(tokens.getLiteClientId()).toBe('loomix-mail');
     w.__BULWARK_LITE_OAUTH_CLIENT_ID__ = '  ';
-    expect(tokens.getLiteClientId()).toBe('bulwark-webmail');
+    expect(tokens.getLiteClientId()).toBe('loomix-mail');
     w.__BULWARK_LITE_OAUTH_CLIENT_ID__ = 'my-webmail';
     expect(tokens.getLiteClientId()).toBe('my-webmail');
   });

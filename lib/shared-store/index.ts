@@ -91,7 +91,7 @@ const REFUSAL_LOG: Record<StoreRefusal, string> = {
     'The shared store address (REDIS_URL or REDIS_URL_FILE) is not a valid URL. A password with / ? # @ or % ' +
     'in it has to be percent-encoded; openssl rand -hex 32 makes one that needs no encoding.',
   'no-password':
-    'The shared store address (REDIS_URL or REDIS_URL_FILE) has no password, so Bulwark does not connect. ' +
+    'The shared store address (REDIS_URL or REDIS_URL_FILE) has no password, so Loomix does not connect. ' +
     'Set a password on the store and put it in the address (redis://:<password>@host:6379/0), or set ' +
     'SHARED_STORE_ALLOW_NO_PASSWORD=true if nothing but this deployment can reach the store.',
 };

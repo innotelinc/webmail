@@ -71,9 +71,9 @@ beforeEach(() => {
     getPrincipals: vi.fn(async () => []),
     getPrincipalTypes: vi.fn(async () => ({ ch: 'group', cx: 'individual' })),
     batchUpdateKeywords: vi.fn(async () => undefined),
-    supportsBulwarkMetadata: vi.fn(() => false),
-    getBulwarkMetadata: vi.fn(async () => null),
-    setBulwarkMetadata: vi.fn(async () => undefined),
+    supportsLoomixMetadata: vi.fn(() => false),
+    getLoomixMetadata: vi.fn(async () => null),
+    setLoomixMetadata: vi.fn(async () => undefined),
   };
   useAuthStore.setState({ client: client as unknown as IJMAPClient, activeAccountId: 'login1' });
   usePolicyStore.setState({ subject: { email: 'org-alice@example.org', groups: ['org-team@example.org'] } });
@@ -319,28 +319,28 @@ describe('accountData (shared plugin data in a mail account)', () => {
   });
 
   it('keeps the plugin\'s value under its own entry of the account\'s Inbox', async () => {
-    client.supportsBulwarkMetadata.mockReturnValue(true);
-    client.getBulwarkMetadata.mockResolvedValue({ tags: [1], 'plugin.team-inbox': { names: { cj: 'Bob' } } });
+    client.supportsLoomixMetadata.mockReturnValue(true);
+    client.getLoomixMetadata.mockResolvedValue({ tags: [1], 'plugin.team-inbox': { names: { cj: 'Bob' } } });
     await expect(call(plugin(['email:read']), 'accountData.get', 'ch')).resolves.toEqual({ supported: true, value: { names: { cj: 'Bob' } } });
-    expect(client.getBulwarkMetadata).toHaveBeenCalledWith('ch');
+    expect(client.getLoomixMetadata).toHaveBeenCalledWith('ch');
     await call(plugin(['email:write']), 'accountData.set', 'ch', { names: {} });
-    expect(client.setBulwarkMetadata).toHaveBeenCalledWith('ch', 'plugin.team-inbox', { names: {} });
+    expect(client.setLoomixMetadata).toHaveBeenCalledWith('ch', 'plugin.team-inbox', { names: {} });
   });
 
-  it('refuses an account the user doesn\'t reach and a value over 4 KB, leaving room for Bulwark\'s own entries', async () => {
-    client.supportsBulwarkMetadata.mockReturnValue(true);
+  it('refuses an account the user doesn\'t reach and a value over 4 KB, leaving room for Loomix\'s own entries', async () => {
+    client.supportsLoomixMetadata.mockReturnValue(true);
     await expect(call(plugin(['email:read']), 'accountData.get', 'zz')).rejects.toThrow(/no mail account/);
     await expect(call(plugin(['email:write']), 'accountData.set', 'ch', 'x'.repeat(5000))).rejects.toThrow(/at most 4096/);
-    expect(client.setBulwarkMetadata).not.toHaveBeenCalled();
+    expect(client.setLoomixMetadata).not.toHaveBeenCalled();
     await call(plugin(['email:write']), 'accountData.set', 'ch', 'x'.repeat(4000));
-    expect(client.setBulwarkMetadata).toHaveBeenCalledTimes(1);
+    expect(client.setLoomixMetadata).toHaveBeenCalledTimes(1);
   });
 
   it('reads at most 30 times a minute', async () => {
-    client.supportsBulwarkMetadata.mockReturnValue(true);
-    client.getBulwarkMetadata.mockResolvedValue({});
+    client.supportsLoomixMetadata.mockReturnValue(true);
+    client.getLoomixMetadata.mockResolvedValue({});
     for (let i = 0; i < 30; i++) await call(plugin(['email:read']), 'accountData.get', 'ch');
     await expect(call(plugin(['email:read']), 'accountData.get', 'ch')).rejects.toThrow(/too many reads/);
-    expect(client.getBulwarkMetadata).toHaveBeenCalledTimes(30);
+    expect(client.getLoomixMetadata).toHaveBeenCalledTimes(30);
   });
 });

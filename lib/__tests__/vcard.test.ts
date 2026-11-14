@@ -575,7 +575,7 @@ describe("vCard 4.0 export (issue #1407)", () => {
     expect(vcf).toBe([
       "BEGIN:VCARD",
       "VERSION:4.0",
-      "PRODID:-//Bulwark Mail//Bulwark Webmail//EN",
+      "PRODID:-//Loomix Mail//Loomix Mail//EN",
       "UID;VALUE=text:sabre-vobject-5e64d0ac-69da-4393-bfe4-87844b9a7db6",
       "REV:20250728T121700Z",
       "N:Doe;Jane;;;",
@@ -690,7 +690,7 @@ describe("MEMBER export", () => {
   });
 
   it("writes a member key that is already a URI as it is", () => {
-    // Groups made in Bulwark key members by uid (urn:uuid:); CardDAV groups
+    // Groups made in Loomix key members by uid (urn:uuid:); CardDAV groups
     // keep whatever MEMBER value the client sent.
     const vcf = generateVCard([group({ "urn:uuid:0f3c9d2e": true, "mailto:ann@example.com": true })]);
     const lines = vcf.split("\r\n");

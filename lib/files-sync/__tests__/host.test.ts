@@ -184,7 +184,7 @@ describe('the host', () => {
 
   it('turning the drive off says where the files that weren\'t uploaded went, and opens that folder', async () => {
     const r = rig({ drive: true, wanted: ['a1'] });
-    r.disk.rescueAnswer = { folder: 'C:\\Users\\ann\\Documents\\Bulwark – not uploaded\\2026-11-04', count: 2, failed: 0 };
+    r.disk.rescueAnswer = { folder: 'C:\\Users\\ann\\Documents\\Loomix – not uploaded\\2026-11-04', count: 2, failed: 0 };
     r.host.start();
     r.host.setAccounts([r.account], 'a1');
     await settle(r.host);
@@ -394,13 +394,13 @@ describe('OS notifications and the tray line (files-p3-5)', () => {
 
   it("gives main the tray's line for the drive", async () => {
     const r = rig({ drive: true, wanted: ['a1'] });
-    const text = { ...TEXT, tray: (status: { state?: string } | undefined, state: string) => `Bulwark Files: ${state}` };
+    const text = { ...TEXT, tray: (status: { state?: string } | undefined, state: string) => `Loomix Files: ${state}` };
     (r.host as unknown as { deps: { driveStatusText: () => unknown } }).deps.driveStatusText = () => text;
     r.host.start();
     r.host.setAccounts([r.account], 'a1');
     await settle(r.host);
     await settle(r.host);
-    expect(r.disk.driveStatuses.at(-1)?.status.tray).toBe('Bulwark Files: idle');
+    expect(r.disk.driveStatuses.at(-1)?.status.tray).toBe('Loomix Files: idle');
     r.host.stop();
   });
 });

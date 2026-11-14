@@ -37,7 +37,7 @@ describe('relatedBodyStructure', () => {
   });
 
   it('matches a cid given in angle brackets or another case', () => {
-    const structure = relatedBodyStructure('<img src="CID:Img1@Webmail">', [{ ...IMAGE, cid: '<img1@webmail>' }]);
+    const structure = relatedBodyStructure('<img src="CID:Img1@Mail">', [{ ...IMAGE, cid: '<img1@webmail>' }]);
     expect(structure?.type).toBe('multipart/alternative');
   });
 

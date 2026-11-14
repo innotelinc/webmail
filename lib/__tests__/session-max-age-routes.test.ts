@@ -55,8 +55,8 @@ vi.mock('@/lib/oauth/token-exchange', () => ({
   getMetadata: async () => ({ revocation_endpoint: 'https://id.example.org/revoke' }),
   getRequiredConfig: () => ({ clientId: 'webmail' }),
   getTokenEndpoint: async () => 'https://id.example.org/token',
-  defaultClientOptions: async () => ({ fallbackClientId: 'bulwark-webmail' }),
-  DEFAULT_CLIENT_ID: 'bulwark-webmail',
+  defaultClientOptions: async () => ({ fallbackClientId: 'loomix-mail' }),
+  DEFAULT_CLIENT_ID: 'loomix-mail',
 }));
 
 const stateDir = mkdtempSync(path.join(tmpdir(), 'bw-session-age-'));
@@ -82,7 +82,7 @@ function policyWithDomainMax(hours: number): Partial<SettingsPolicy> {
   };
 }
 
-/** A remembered-session cookie as Bulwark wrote it before sign-in times were recorded. */
+/** A remembered-session cookie as Loomix wrote it before sign-in times were recorded. */
 function legacySessionCookie(username: string, password: string): string {
   const key = createHash('sha256').update(SECRET).digest();
   const iv = randomBytes(12);

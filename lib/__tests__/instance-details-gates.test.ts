@@ -104,7 +104,7 @@ describe('endpoints for visitors who are not signed in', () => {
     config.values.loginShowVersion = false;
     const hidden = await (await connectorCapabilities()).json();
     expect(hidden.version).toBeNull();
-    expect(hidden.product).toBe('bulwark-webmail');
+    expect(hidden.product).toBe('loomix-mail');
     expect(hidden.targets.length).toBeGreaterThan(0);
   });
 

@@ -20,7 +20,7 @@ import { scrubAttributes, scrubSpanName, type Attributes } from './scrub';
  * Everything else comes from the standard OTEL_* variables, which the OTLP
  * exporter and the env resource detector read themselves.
  *
- * Next's own spans (requests, rendering, route handlers) and Bulwark's spans
+ * Next's own spans (requests, rendering, route handlers) and Loomix's spans
  * for the calls it makes (lib/metrics/upstream.ts) go through the same
  * provider; a processor scrubs every span before export (./scrub.ts).
  *
@@ -54,7 +54,7 @@ export class ScrubbingSpanProcessor implements SpanProcessor {
 
 export function createProvider(exporter: SpanExporter, batch = true): NodeTracerProvider {
   const resource = resourceFromAttributes({
-    'service.name': process.env.OTEL_SERVICE_NAME?.trim() || 'bulwark-webmail',
+    'service.name': process.env.OTEL_SERVICE_NAME?.trim() || 'loomix-mail',
     'service.version': process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0',
   }).merge(detectResources({ detectors: [envDetector] }));
   const inner: SpanProcessor = batch ? new BatchSpanProcessor(exporter) : new SimpleSpanProcessor(exporter);

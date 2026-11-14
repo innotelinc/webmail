@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/hooks/use-config', () => ({
   useConfig: () => ({
-    appName: 'Webmail',
+    appName: 'Mail',
     loginLogoLightUrl: '/branding/light.svg',
     loginLogoDarkUrl: '/branding/dark.svg',
   }),

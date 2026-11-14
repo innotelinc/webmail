@@ -11,7 +11,7 @@
  * only label the copy, the user changes them with one click, and a plugin
  * with email:write can already set them on any message:
  * - `$flagged`, the star (flag the Sent copy for a follow-up);
- * - `$label:<id>`, Bulwark's own tags (file the Sent copy under the user's tag).
+ * - `$label:<id>`, Loomix's own tags (file the Sent copy under the user's tag).
  */
 
 import { KEYWORD_PREFIX } from '@/lib/thread-utils';

@@ -128,7 +128,7 @@ export function PluginsPage() {
     setSavingPolicy(false);
     setMessage(errors.length > 0
       ? { type: 'error', text: `Couldn't save everything. ${errors.join('; ')}` }
-      : { type: 'success', text: 'Plugins saved. Users get the change when they next open or reload Bulwark.' });
+      : { type: 'success', text: 'Plugins saved. Users get the change when they next open or reload Loomix.' });
   }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -189,7 +189,7 @@ export function PluginsPage() {
     <div>
       <AdminPageHeader
         title="Plugins"
-        description="Plugins installed for every user of this Bulwark. Open one to configure it."
+        description="Plugins installed for every user of this Loomix. Open one to configure it."
         actions={(
           <>
             <AdminButtonLink href={adminPath('marketplace')}>
@@ -328,7 +328,7 @@ export function PluginsPage() {
         onSave={() => void save()}
         onDiscard={() => { setPolicy(savedPolicy); setEnabledDraft({}); }}
         saveLabel="Save"
-        note="Users get the change when they next open or reload Bulwark"
+        note="Users get the change when they next open or reload Loomix"
       />
     </div>
   );

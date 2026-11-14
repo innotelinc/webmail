@@ -17,7 +17,7 @@ import { emailItem, openComposer, setSubject, waitDraftSaved } from './helpers/a
  * VM 106 test server. The admin sets one minute with a 30-second warning for
  * example.org on Organisation > Security, Off for org-two.test, and two
  * minutes for everyone else. org-alice gets the warning, stays, then lets it
- * run out: Bulwark saves her minimised draft and signs her out with the
+ * run out: Loomix saves her minimised draft and signs her out with the
  * reason on the login page. org-dave's domain has no timeout. The admin's
  * policy is put back afterwards.
  */

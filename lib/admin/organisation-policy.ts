@@ -59,7 +59,7 @@ export interface CompanyFeed {
   /** The ICS address; '' when `urlHeld`. */
   url: string;
   /**
-   * Set in the policy full Bulwark hands to users: the server keeps the
+   * Set in the policy full Loomix hands to users: the server keeps the
    * address back (it may hold a token) and fetches the feed by id
    * (app/api/fetch-ical, lib/admin/company-feeds.ts).
    */
@@ -309,7 +309,7 @@ const HEADER_NAME_RE = /^[\x21-\x39\x3b-\x7e]{1,76}$/;
 // Prefixes JMAP refuses at the top level or that say how mail travelled.
 const RESERVED_HEADER_PREFIXES = ['content-', 'list-', 'resent-', 'arc-'];
 // Headers the extra classification header may not be: they carry the
-// message itself, or the labels Bulwark writes anyway.
+// message itself, or the labels Loomix writes anyway.
 const RESERVED_HEADERS = new Set([
   'from', 'to', 'cc', 'bcc', 'subject', 'date', 'message-id', 'sender', 'reply-to', 'in-reply-to',
   'references', 'mime-version', 'content-type', 'content-transfer-encoding', 'content-disposition',

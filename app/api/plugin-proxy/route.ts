@@ -29,9 +29,9 @@ function parseCapture(raw: string | null): CaptureSpec | null | undefined {
  * POST /api/plugin-proxy?plugin=<id>&credential=<id>&url=<target>
  *
  * Forwards a plugin's request to `url` with the named credential added. The
- * target method goes in `X-Bulwark-Method` (default GET); the request body
+ * target method goes in `X-Loomix-Method` (default GET); the request body
  * and headers are passed through, minus cookies, auth and transport headers.
- * `X-Bulwark-Capture: {"secret":"appPassword","username":"loginName"}` stores
+ * `X-Loomix-Capture: {"secret":"appPassword","username":"loginName"}` stores
  * those JSON fields of the response as the credential instead of returning
  * them (Nextcloud Login Flow v2).
  *
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   }
   const capture = parseCapture(request.headers.get('x-bulwark-capture'));
   if (capture === null) {
-    return NextResponse.json({ error: 'Invalid X-Bulwark-Capture header', code: 'bad_capture' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid X-Loomix-Capture header', code: 'bad_capture' }, { status: 400 });
   }
 
   try {

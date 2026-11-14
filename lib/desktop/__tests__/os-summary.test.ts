@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 import type { IJMAPClient } from '@/lib/jmap/client-interface';
 
 /**
@@ -17,7 +17,7 @@ const other = { getAccountId: () => 'acc2' } as unknown as IJMAPClient;
 async function start() {
   const { startOsSummary } = await import('../os-summary');
   const setSummary = vi.fn();
-  window.bulwarkDesktop = { version: 1, platform: 'win32', os: { setSummary } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', os: { setSummary } } as unknown as LoomixDesktopBridge;
   const handle = startOsSummary(() => 'en');
   await vi.advanceTimersByTimeAsync(DELAY + 10);
   setSummary.mockClear();

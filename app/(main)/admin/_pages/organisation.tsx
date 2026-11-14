@@ -180,7 +180,7 @@ function EffectivePolicy({ draft }: { draft: OrgPolicyDraft }) {
               : `Applies, in this order: Everyone, ${resolved.matched.map((id) => sourceLabel(id, draft.scopes)).join(', ')}.`}
           </p>
           {rows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Everything is at Bulwark&apos;s defaults.</p>
+            <p className="text-sm text-muted-foreground">Everything is at Loomix&apos;s defaults.</p>
           ) : (
             <div className="overflow-x-auto rounded-md border border-border">
               <table className="w-full text-sm">
@@ -204,7 +204,7 @@ function EffectivePolicy({ draft }: { draft: OrgPolicyDraft }) {
             </div>
           )}
           <p className="text-xs text-muted-foreground">
-            Bulwark can only see groups that have a mailbox: a user counts as a member when the group&apos;s account is in their session.
+            Loomix can only see groups that have a mailbox: a user counts as a member when the group&apos;s account is in their session.
           </p>
         </div>
       )}

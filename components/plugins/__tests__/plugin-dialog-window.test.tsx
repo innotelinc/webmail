@@ -13,7 +13,7 @@ vi.mock('../plugin-iframe-slot', () => ({ PluginIframeSlot: () => null }));
 import { PluginDialogHost } from '../plugin-dialog-host';
 import { awaitDialog, awaitPrompt, head, resetDialogLimits, resolveHead } from '@/lib/plugin-sandbox/host-dialog';
 import { usePluginStore } from '@/stores/plugin-store';
-import type { BulwarkDesktopBridge, DesktopDialogWindowAnswer, DesktopDialogWindowRequest } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopDialogWindowAnswer, DesktopDialogWindowRequest } from '@/lib/desktop/types';
 
 type Show = (request: DesktopDialogWindowRequest) => Promise<DesktopDialogWindowAnswer>;
 let answer: (value: DesktopDialogWindowAnswer) => void;
@@ -24,7 +24,7 @@ beforeEach(() => {
   while (head()) resolveHead(null);
   resetDialogLimits();
   show = vi.fn<Show>(() => new Promise((resolve) => (answer = resolve)));
-  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), show, cancel: vi.fn() } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), show, cancel: vi.fn() } } as unknown as LoomixDesktopBridge;
   disablePlugin = vi.fn();
   usePluginStore.setState({ plugins: [{ id: 'elw', name: 'External Link Warning' }] as never, disablePlugin } as never);
 });

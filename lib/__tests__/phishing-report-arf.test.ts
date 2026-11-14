@@ -31,7 +31,7 @@ describe('buildArfParts', () => {
     expect(head.split(`--${boundary}\r\n`)).toHaveLength(4);
     expect(head).toContain('Content-Type: message/feedback-report\r\n');
     expect(head).toContain('\r\nFeedback-Type: fraud\r\n');
-    expect(head).toMatch(/\r\nUser-Agent: Bulwark\/\S+\r\n/);
+    expect(head).toMatch(/\r\nUser-Agent: Loomix\/\S+\r\n/);
     expect(head).toContain('\r\nVersion: 1\r\n');
     expect(head).toContain('\r\nArrival-Date: Thu, 01 Oct 2026 10:00:00 +0000\r\n');
     expect(head).toContain('\r\nOriginal-Rcpt-To: alice@example.org\r\n');

@@ -59,7 +59,7 @@ describe('policy store scopes', () => {
 
   it('knows which domains the fetched scopes cover', async () => {
     expect(usePolicyStore.getState().coversAddress('x@anywhere.test')).toBe(true);
-    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(POLICY), { headers: { 'X-Bulwark-Policy-Domains': 'example.org' } }));
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(POLICY), { headers: { 'X-Loomix-Policy-Domains': 'example.org' } }));
     await usePolicyStore.getState().fetchPolicy();
     expect(usePolicyStore.getState().coversAddress('org-alice@Example.org')).toBe(true);
     expect(usePolicyStore.getState().coversAddress('org-dave@org-two.test')).toBe(false);

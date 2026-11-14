@@ -29,7 +29,7 @@ describe('Lite tokens when the key database never answers', () => {
 
   it('still finishes a renewal', async () => {
     const tokens = await import('@/lib/auth/lite-tokens');
-    tokens.saveLiteRefreshToken(0, { serverUrl: SERVER, username: 'alice@example.org', refreshToken: 'made-up-refresh-token-0001', clientId: 'bulwark-webmail' }, true);
+    tokens.saveLiteRefreshToken(0, { serverUrl: SERVER, username: 'alice@example.org', refreshToken: 'made-up-refresh-token-0001', clientId: 'loomix-mail' }, true);
     tokens.saveLiteAccessToken(0, 'made-up-access-token-0001', 3600, true);
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ access_token: 'made-up-access-token-0002', expires_in: 3600 }), { status: 200 })));
 
@@ -44,7 +44,7 @@ describe('Lite tokens when the key database never answers', () => {
 
   it('keeps the session in the page and leaves no half-written record behind', async () => {
     const tokens = await import('@/lib/auth/lite-tokens');
-    tokens.saveLiteRefreshToken(0, { serverUrl: SERVER, username: 'alice@example.org', refreshToken: 'made-up-refresh-token-0003', clientId: 'bulwark-webmail' }, true);
+    tokens.saveLiteRefreshToken(0, { serverUrl: SERVER, username: 'alice@example.org', refreshToken: 'made-up-refresh-token-0003', clientId: 'loomix-mail' }, true);
     await vi.advanceTimersByTimeAsync(5 * 60 * 1000);
 
     // The page still has its token.

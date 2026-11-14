@@ -51,7 +51,7 @@ import {
  * lib/oauth/token-exchange.ts, which cannot be imported here: that module
  * reads secrets from the filesystem and must stay out of the browser bundle.
  */
-export const LITE_CLIENT_ID = 'bulwark-webmail';
+export const LITE_CLIENT_ID = 'loomix-mail';
 
 /**
  * The client id Lite presents to Stalwart: the `oauthClientId` of the

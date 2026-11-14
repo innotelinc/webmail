@@ -3,7 +3,7 @@
  * into the mailbox with blob upload + Email/import (SMTP on the shared test
  * servers doesn't work), so the Authentication-Results each mail needs is
  * written at the top of the raw message, below a Received line: Email/import
- * adds no header of its own, and Bulwark only believes an
+ * adds no header of its own, and Loomix only believes an
  * Authentication-Results header that a Received header sits above.
  */
 import { JMAP_URL } from './config';

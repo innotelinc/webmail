@@ -1,4 +1,4 @@
-# Bulwark itself: any number of replicas, no volumes. Everything they share
+# Loomix itself: any number of replicas, no volumes. Everything they share
 # (admin config, plugins, branding, synced settings, sign-in limits, sessions)
 # lives in the Valkey store; see https://bulwarkmail.org/docs/deployment/multi-instance
 apiVersion: v1

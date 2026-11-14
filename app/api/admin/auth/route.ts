@@ -34,7 +34,7 @@ function signInUnavailable(): NextResponse {
  *
  * `x:Tenant/query` requires `sysTenantQuery`, which Stalwart's default roles
  * grant to the server-wide superuser only. The dashboard configures the
- * whole instance, and Bulwark has no notion of tenants, so an admin of one
+ * whole instance, and Loomix has no notion of tenants, so an admin of one
  * tenant must not pass: `x:Account/query` (the probe this replaced) also
  * answers for tenant admins, whose role carries `sysAccount*`
  * (GHSA-v6hr). A result means superuser; a method error (typically
@@ -116,9 +116,9 @@ async function checkStalwartAdmin(
   mode: StalwartAdminAccessMode,
   knownCreds?: StalwartCredentials | null,
 ): Promise<StalwartAdminVia> {
-  // Operators who keep Stalwart and Bulwark administration separate (#870)
+  // Operators who keep Stalwart and Loomix administration separate (#870)
   // turn the check off entirely: no shield, no auto-login, and nothing
-  // about the Stalwart account influences the Bulwark admin dashboard.
+  // about the Stalwart account influences the Loomix admin dashboard.
   if (mode === 'off') return null;
 
   // When users may connect to arbitrary JMAP servers, the cookie-stored

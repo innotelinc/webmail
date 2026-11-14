@@ -59,7 +59,7 @@ beforeEach(() => {
 
 describe('password + TOTP sign-in scope', () => {
   it('asks for the Stalwart scopes configured for the admin\'s client', async () => {
-    config.oauthClientId = 'bulwark-webmail';
+    config.oauthClientId = 'loomix-mail';
     config.oauthExtraScopes = 'urn:stalwart:oauth:scope:security urn:stalwart:oauth:scope:settings';
     const scope = await signIn();
     expect(scope).toEqual(expect.arrayContaining([
@@ -71,7 +71,7 @@ describe('password + TOTP sign-in scope', () => {
   });
 
   it('takes them from an explicit scope list too, without its other scopes', async () => {
-    config.oauthClientId = 'bulwark-webmail';
+    config.oauthClientId = 'loomix-mail';
     config.oauthScopes = 'openid email profile urn:stalwart:oauth:scope:full';
     const scope = await signIn();
     expect(scope).toContain('urn:stalwart:oauth:scope:full');
@@ -79,7 +79,7 @@ describe('password + TOTP sign-in scope', () => {
   });
 
   it('asks for the data scopes only when none are configured', async () => {
-    config.oauthClientId = 'bulwark-webmail';
+    config.oauthClientId = 'loomix-mail';
     expect((await signIn()).some((s) => s.startsWith('urn:stalwart:'))).toBe(false);
   });
 

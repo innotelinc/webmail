@@ -5,13 +5,13 @@ import { DEFAULT_POLICY } from '@/lib/admin/types';
 describe('applyLiteConfig (config.json for the static build)', () => {
   it('fills every field with the defaults useConfig assumes when the file is empty', () => {
     const config = applyLiteConfig({});
-    expect(config.appName).toBe('Webmail');
+    expect(config.appName).toBe('Mail');
     expect(config.jmapServerUrl).toBe('');
     expect(config.rememberMeEnabled).toBe(true);
     expect(config.loginShowRememberMe).toBe(false);
     expect(config.loginShowTotp).toBe(true);
-    expect(config.faviconUrl).toBe('/branding/Bulwark_Favicon.svg');
-    expect(config.loginLogoLightUrl).toBe('/branding/Bulwark_Logo_Color.svg');
+    expect(config.faviconUrl).toBe('/branding/Loomix_Favicon.svg');
+    expect(config.loginLogoLightUrl).toBe('/branding/Loomix_Logo_Color.svg');
     expect(config.jmapServers).toEqual([]);
     expect(config.demoMode).toBe(false);
     expect(config.oauthRevokeOnSignOut).toBe(true);
@@ -62,12 +62,12 @@ describe('applyLiteConfig (config.json for the static build)', () => {
 
   it('ignores values of the wrong type instead of crashing', () => {
     const config = applyLiteConfig({ appName: 12, rememberMeEnabled: 'yes', loginShowVersion: 0, jmapServers: 'x' });
-    expect(config.appName).toBe('Webmail');
+    expect(config.appName).toBe('Mail');
     expect(config.rememberMeEnabled).toBe(true);
     expect(config.loginShowVersion).toBe(true);
     expect(config.jmapServers).toEqual([]);
-    expect(applyLiteConfig(null).appName).toBe('Webmail');
-    expect(applyLiteConfig('garbage').appName).toBe('Webmail');
+    expect(applyLiteConfig(null).appName).toBe('Mail');
+    expect(applyLiteConfig('garbage').appName).toBe('Mail');
   });
 
   it('keeps an http(s) source code URL and drops any other scheme', () => {

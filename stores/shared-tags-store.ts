@@ -60,7 +60,7 @@ export interface SharedTagsEntry {
 }
 
 export type SharedTagsClient = Pick<IJMAPClient, 'discoverKeywords'>
-  & Partial<Pick<IJMAPClient, 'getPrincipalTypes' | 'supportsBulwarkMetadata' | 'advertisesBulwarkMetadata' | 'getBulwarkMetadata' | 'patchBulwarkMetadata'>>;
+  & Partial<Pick<IJMAPClient, 'getPrincipalTypes' | 'supportsLoomixMetadata' | 'advertisesLoomixMetadata' | 'getLoomixMetadata' | 'patchLoomixMetadata'>>;
 
 /** Messages scanned for tags nobody named: one request's worth. */
 export const DISCOVERY_SCAN_LIMIT = 500;
@@ -118,7 +118,7 @@ function setEntry(key: string, patch: Partial<SharedTagsEntry>): void {
 
 /** Whether the client's metadata pause is over for the account. */
 const mayAskMetadata = (client: SharedTagsClient, accountId: string) =>
-  typeof client.supportsBulwarkMetadata === 'function' && client.supportsBulwarkMetadata(accountId);
+  typeof client.supportsLoomixMetadata === 'function' && client.supportsLoomixMetadata(accountId);
 
 function scheduleGroupRetry(key: string): void {
   const previous = retryTimers.get(key);
@@ -171,18 +171,18 @@ async function read(key: string, client: SharedTagsClient, accountId: string): P
     groupConfirmed.add(key);
   }
 
-  const advertised = typeof client.advertisesBulwarkMetadata === 'function'
-    ? client.advertisesBulwarkMetadata(accountId)
+  const advertised = typeof client.advertisesLoomixMetadata === 'function'
+    ? client.advertisesLoomixMetadata(accountId)
     : mayAskMetadata(client, accountId);
-  if (!advertised || typeof client.getBulwarkMetadata !== 'function') {
+  if (!advertised || typeof client.getLoomixMetadata !== 'function') {
     // 0.16: no request at all.
     setEntry(key, { status: 'unsupported', loadedAt: Date.now() });
     return;
   }
 
-  // getBulwarkMetadata sends its request on its own and answers null on any
+  // getLoomixMetadata sends its request on its own and answers null on any
   // failure, a dropped connection included; it then pauses the account.
-  const metadata = mayAskMetadata(client, accountId) ? await client.getBulwarkMetadata(accountId) : null;
+  const metadata = mayAskMetadata(client, accountId) ? await client.getLoomixMetadata(accountId) : null;
   if (clients.get(key) !== client) return;
   if (!metadata) {
     // A failed read keeps the last good tags.
@@ -291,7 +291,7 @@ async function writeChanges(
   // Throws MetadataTooLargeError before anything is sent; nothing is kept then.
   planSharedTagsSave(stored, all);
   try {
-    if (typeof client.patchBulwarkMetadata !== 'function' || typeof client.getBulwarkMetadata !== 'function') {
+    if (typeof client.patchLoomixMetadata !== 'function' || typeof client.getLoomixMetadata !== 'function') {
       throw new MetadataUnsupportedError();
     }
     // With nothing stored, patch first anyway: another member may have just
@@ -301,7 +301,7 @@ async function writeChanges(
     for (let attempt = 0; ; attempt++) {
       const plan = planSharedTagsSave(stored, all);
       try {
-        const { newState } = await client.patchBulwarkMetadata(accountId, SHARED_TAGS_KEY, plan.patches);
+        const { newState } = await client.patchLoomixMetadata(accountId, SHARED_TAGS_KEY, plan.patches);
         if (newState) {
           const own = ownStates.get(key) ?? new Set<string>();
           own.add(newState);
@@ -312,7 +312,7 @@ async function writeChanges(
       } catch (error) {
         if (!(error instanceof MetadataPatchError) || attempt > 0) throw error;
         // Not (or no longer) the map shape: read it, convert it, write it whole.
-        const metadata = await client.getBulwarkMetadata(accountId);
+        const metadata = await client.getLoomixMetadata(accountId);
         if (!metadata) throw new MetadataUnsupportedError();
         stored = readSharedTags(metadata[SHARED_TAGS_KEY]);
       }

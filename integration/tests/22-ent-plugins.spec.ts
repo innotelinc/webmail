@@ -72,8 +72,8 @@ async function installPlugin(admin: BrowserContext, id: string, zip: string): Pr
     multipart: { file: { name: `${id}.zip`, mimeType: 'application/zip', buffer: readFileSync(zip) } },
   });
   const text = await installed.text();
-  if (/Needs Bulwark 1\.20\.0/.test(text)) {
-    throw new Error(`${id} needs Bulwark 1.20.0: build and start the server with NEXT_PUBLIC_APP_VERSION=1.20.0 (see the header of this spec)`);
+  if (/Needs Loomix 1\.20\.0/.test(text)) {
+    throw new Error(`${id} needs Loomix 1.20.0: build and start the server with NEXT_PUBLIC_APP_VERSION=1.20.0 (see the header of this spec)`);
   }
   expect(installed.ok(), text).toBe(true);
 }

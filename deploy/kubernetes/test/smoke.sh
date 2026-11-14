@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Smoke test for a running deployment of deploy/kubernetes:
-#   - Valkey and every Bulwark replica become ready, on the shared store;
+#   - Valkey and every Loomix replica become ready, on the shared store;
 #   - an admin session made on one replica is valid on every other one;
 #   - a config change saved on one replica reaches the others within 5 s;
 #   - deleting a pod and a rolling restart don't fail requests through the

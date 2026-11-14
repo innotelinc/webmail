@@ -153,7 +153,7 @@ export function EventContextMenu({
           onClick={handle(onCopyMeetingLink)}
         />
       )}
-      {/* Permalink into Bulwark (#733) - distinct from the meeting URL above,
+      {/* Permalink into Loomix (#733) - distinct from the meeting URL above,
           which points at whatever conferencing tool the organiser used. */}
       <ContextMenuItem
         icon={LinkIcon}

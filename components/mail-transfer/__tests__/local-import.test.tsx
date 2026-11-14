@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { BulwarkDesktopBridge, DesktopLocalImportBridge, DesktopLocalImportFile } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopLocalImportBridge, DesktopLocalImportFile } from '@/lib/desktop/types';
 import { LocalImportPanel } from '../local-import-panel';
 import { MailTransferHost } from '../mail-transfer-host';
 import { forgetLocalImportFor, resumeLocalImport, startLocalImport, stopTryingRefused } from '../local-import-job';
@@ -36,7 +36,7 @@ function bridge(over: Partial<DesktopLocalImportBridge> = {}): DesktopLocalImpor
     releaseAll: vi.fn(async () => {}),
     ...over,
   };
-  (window as unknown as { bulwarkDesktop: BulwarkDesktopBridge }).bulwarkDesktop = { version: 1, platform: 'win32', localImport };
+  (window as unknown as { bulwarkDesktop: LoomixDesktopBridge }).bulwarkDesktop = { version: 1, platform: 'win32', localImport };
   return localImport;
 }
 

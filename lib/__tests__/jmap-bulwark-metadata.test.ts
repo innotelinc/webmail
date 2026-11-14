@@ -3,7 +3,7 @@ import { JMAPClient } from '../jmap/client';
 import { MetadataRefusedError, MetadataTooLargeError, MetadataUnsupportedError, bulwarkEntries, isValidMetadataKey } from '../jmap/bulwark-metadata';
 import recorded from './fixtures/stalwart-1.0.0-template-metadata.json';
 
-// Bulwark keeps shared tags and templates in the Inbox metadata of an
+// Loomix keeps shared tags and templates in the Inbox metadata of an
 // account, one namespace per item (each namespace holds at most 8 KB on
 // Stalwart v1.0.0). Servers without metadata, and the pre-release 1.0 build
 // that drops the connection on these calls, count as "not supported".
@@ -62,10 +62,10 @@ const inboxAnswer = (metadata: unknown, property = 'metadata') => json({
   ],
 });
 
-describe('getBulwarkMetadata', () => {
-  it('reads Bulwark\'s namespaces of the Inbox in a request of its own', async () => {
+describe('getLoomixMetadata', () => {
+  it('reads Loomix\'s namespaces of the Inbox in a request of its own', async () => {
     answer = () => inboxAnswer({ 'org.bulwarkmail.tags': [{ id: 'urgent' }], 'org.bulwarkmail.template.a': { name: 'A' }, 'other.example': 1 });
-    expect(await client.getBulwarkMetadata('team')).toEqual({ tags: [{ id: 'urgent' }], 'template.a': { name: 'A' } });
+    expect(await client.getLoomixMetadata('team')).toEqual({ tags: [{ id: 'urgent' }], 'template.a': { name: 'A' } });
     expect(requests).toHaveLength(1);
     expect(requests[0].using).toContain('urn:ietf:params:jmap:metadata');
     expect(requests[0].methodCalls.map((c) => c[0])).toEqual(['Mailbox/query', 'Mailbox/get']);
@@ -74,35 +74,35 @@ describe('getBulwarkMetadata', () => {
 
   it('reads private metadata when asked', async () => {
     answer = () => inboxAnswer({ 'org.bulwarkmail.templates': { x: 1 } }, 'privateMetadata');
-    expect(await client.getBulwarkMetadata('me', { private: true })).toEqual({ templates: { x: 1 } });
+    expect(await client.getLoomixMetadata('me', { private: true })).toEqual({ templates: { x: 1 } });
     expect(requests[0].methodCalls[1][1].properties).toEqual(['id', 'privateMetadata']);
   });
 
   it('asks nothing of an account without the capability', async () => {
     answer = () => { throw new Error('should not be asked'); };
-    expect(client.supportsBulwarkMetadata('old')).toBe(false);
-    expect(await client.getBulwarkMetadata('old')).toBeNull();
+    expect(client.supportsLoomixMetadata('old')).toBe(false);
+    expect(await client.getLoomixMetadata('old')).toBeNull();
     expect(requests).toHaveLength(0);
   });
 
   it('treats a dropped connection as unsupported and leaves the account alone afterwards', async () => {
     answer = () => { throw new TypeError('Failed to fetch'); };
-    expect(await client.getBulwarkMetadata('team')).toBeNull();
+    expect(await client.getLoomixMetadata('team')).toBeNull();
     const asked = requests.length;
-    expect(client.supportsBulwarkMetadata('team')).toBe(false);
-    expect(await client.getBulwarkMetadata('team')).toBeNull();
+    expect(client.supportsLoomixMetadata('team')).toBe(false);
+    expect(await client.getLoomixMetadata('team')).toBeNull();
     expect(requests).toHaveLength(asked);
     // Other accounts are not affected.
-    expect(client.supportsBulwarkMetadata('me')).toBe(true);
+    expect(client.supportsLoomixMetadata('me')).toBe(true);
   });
 });
 
-describe('setBulwarkMetadata', () => {
+describe('setLoomixMetadata', () => {
   it('patches one namespace of the Inbox and nothing else', async () => {
     answer = (body) => body.methodCalls[0][0] === 'Mailbox/set'
       ? json({ methodResponses: [['Mailbox/set', { updated: { 'inbox-1': null } }, '0']] })
       : inboxAnswer({});
-    await client.setBulwarkMetadata('team', 'tags', [{ id: 'urgent', color: '#f00' }]);
+    await client.setLoomixMetadata('team', 'tags', [{ id: 'urgent', color: '#f00' }]);
     const set = requests.find((r) => r.methodCalls[0][0] === 'Mailbox/set')!;
     expect(set.methodCalls[0][1]).toEqual({
       accountId: 'team',
@@ -114,20 +114,20 @@ describe('setBulwarkMetadata', () => {
     answer = (body) => body.methodCalls[0][0] === 'Mailbox/set'
       ? json({ methodResponses: [['Mailbox/set', { notUpdated: { 'inbox-1': { type: 'invalidProperties', description: 'Metadata size 70413 exceeds the maximum of 65536 bytes.' } } }, '0']] })
       : inboxAnswer({});
-    await expect(client.setBulwarkMetadata('team', 'template.big', { body: 'x'.repeat(9000) })).rejects.toBeInstanceOf(MetadataTooLargeError);
+    await expect(client.setLoomixMetadata('team', 'template.big', { body: 'x'.repeat(9000) })).rejects.toBeInstanceOf(MetadataTooLargeError);
     expect(requests.some((r) => r.methodCalls[0][0] === 'Mailbox/set')).toBe(false);
-    await expect(client.setBulwarkMetadata('team', 'template.ok', { body: 'small' })).rejects.toBeInstanceOf(MetadataTooLargeError);
+    await expect(client.setLoomixMetadata('team', 'template.ok', { body: 'small' })).rejects.toBeInstanceOf(MetadataTooLargeError);
   });
 
   it('says unsupported for an account without metadata', async () => {
-    await expect(client.setBulwarkMetadata('old', 'tags', [])).rejects.toBeInstanceOf(MetadataUnsupportedError);
+    await expect(client.setLoomixMetadata('old', 'tags', [])).rejects.toBeInstanceOf(MetadataUnsupportedError);
   });
 
   it('passes on the type of Stalwart\'s refusal (recorded on v1.0.0)', async () => {
     answer = (body) => body.methodCalls[0][0] === 'Mailbox/set'
       ? json({ methodResponses: [['Mailbox/set', { ...(recorded.setForbidden.methodResponses[0][1] as object), notUpdated: { 'inbox-1': (recorded.setForbidden.methodResponses[0][1] as { notUpdated: { a: unknown } }).notUpdated.a } }, '0']] })
       : inboxAnswer({});
-    const error = await client.setBulwarkMetadata('team', 'template.x', { name: 'x' }).catch((e) => e);
+    const error = await client.setLoomixMetadata('team', 'template.x', { name: 'x' }).catch((e) => e);
     expect(error).toBeInstanceOf(MetadataRefusedError);
     expect(error.type).toBe('forbidden');
     expect(error.message).toBe('Not allowed to modify metadata.');
@@ -142,8 +142,8 @@ describe('an answer without the metadata property', () => {
         ['Mailbox/get', { list: [{ id: 'inbox-1' }] }, 'g'],
       ],
     });
-    expect(await client.getBulwarkMetadata('team')).toBeNull();
-    expect(client.supportsBulwarkMetadata('team')).toBe(false);
+    expect(await client.getLoomixMetadata('team')).toBeNull();
+    expect(client.supportsLoomixMetadata('team')).toBe(false);
   });
 });
 

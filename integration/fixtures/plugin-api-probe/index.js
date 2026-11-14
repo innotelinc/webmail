@@ -1,5 +1,5 @@
 // A plugin for integration/tests/30-plugin-api-additions.spec.ts: it uses the
-// plugin API of Bulwark 1.21 and records what it got in its storage, which
+// plugin API of Loomix 1.21 and records what it got in its storage, which
 // the spec reads back from the page.
 'use strict';
 

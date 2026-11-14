@@ -74,9 +74,9 @@ describe('enterprise sections: defaults and sanitising', () => {
     }
   });
 
-  it('refuses the header Bulwark keeps the label of a draft in', () => {
-    expect(sanitizeOrganisationPolicy({ labels: { extraHeader: 'X-Bulwark-Label' } }).labels.extraHeader).toBe('');
-    expect(isLabelExtraHeaderName('X-Bulwark-Label')).toBe(false);
+  it('refuses the header Loomix keeps the label of a draft in', () => {
+    expect(sanitizeOrganisationPolicy({ labels: { extraHeader: 'X-Loomix-Label' } }).labels.extraHeader).toBe('');
+    expect(isLabelExtraHeaderName('X-Loomix-Label')).toBe(false);
     expect(isLabelExtraHeaderName('X-Classification')).toBe(true);
   });
 

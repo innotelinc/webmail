@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { Dialog } from '../dialog';
-import type { BulwarkDesktopBridge } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge } from '@/lib/desktop/types';
 
 // In the desktop app a Dialog is drawn into a window of its own: the page opens an
 // about:blank window named bulwark-dialog-…, copies its styles over and renders the same
@@ -56,7 +56,7 @@ let opened: FakeWindow[] = [];
 function desktop(showWindow: (name: string) => Promise<boolean> = async () => true) {
   opened = [];
   const show = vi.fn(showWindow);
-  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), showWindow: show } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), showWindow: show } } as unknown as LoomixDesktopBridge;
   vi.spyOn(window, 'open').mockImplementation(((_url: string, name: string) => {
     const win = fakeWindow(name);
     opened.push(win);
@@ -194,7 +194,7 @@ describe('Dialog in the desktop app', () => {
   });
 
   it('stays in the page without the shell\'s windows, when asked to, or when the shell refuses', async () => {
-    window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn() } } as unknown as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn() } } as unknown as LoomixDesktopBridge;
     const open = vi.spyOn(window, 'open');
     const first = render(<PinDialog onSave={vi.fn()} onClose={vi.fn()} />);
     expect(screen.getByRole('dialog', { name: 'Choose a PIN' })).toBeTruthy();

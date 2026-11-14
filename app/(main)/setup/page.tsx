@@ -59,7 +59,7 @@ interface WizardConfig {
 }
 
 const EMPTY_CONFIG: WizardConfig = {
-  appName: 'Bulwark Webmail',
+  appName: 'Loomix Mail',
   jmapServerUrl: '',
   stalwartFeaturesEnabled: true,
   jmapServers: [],
@@ -352,7 +352,7 @@ function CompletedScreen() {
         </div>
         <h1 className="text-xl font-semibold">{t('done.title')}</h1>
         <p className="text-sm text-muted-foreground mt-2">
-          {t('done.body', { appName: 'Bulwark Webmail' })}
+          {t('done.body', { appName: 'Loomix Mail' })}
         </p>
       </div>
       <div className="mt-6 space-y-2">
@@ -424,7 +424,7 @@ function AlreadyConfiguredScreen() {
         </div>
         <h1 className="text-xl font-semibold">{t('already.title')}</h1>
         <p className="text-sm text-muted-foreground mt-2">
-          {t('already.body', { appName: 'Bulwark Webmail' })}
+          {t('already.body', { appName: 'Loomix Mail' })}
         </p>
       </div>
       <div className="mt-6 space-y-2">
@@ -1164,7 +1164,7 @@ function BrandingStep({ config, setConfig, onNext, onBack }: Pick<StepProps, 'co
     try {
       // Only send fields with a value. Empty strings would create an admin
       // override that shadows the system default and suppress the bundled
-      // Bulwark logo on the login page.
+      // Loomix logo on the login page.
       const allFields = {
         faviconUrl: config.faviconUrl,
         appLogoLightUrl: config.appLogoLightUrl,

@@ -17,7 +17,7 @@
  * No SIO-Label-History: it needs who changed it and when, and RFC 7444
  * says it may leak.
  *
- * Drafts keep the user's choice in `X-Bulwark-Label` (the label id, or
+ * Drafts keep the user's choice in `X-Loomix-Label` (the label id, or
  * `none` for a choice of no label), the way they keep the priority.
  */
 
@@ -28,7 +28,7 @@ export type LabelsPolicy = OrganisationPolicy['labels'];
 
 export const SIO_LABEL_HEADER = 'SIO-Label';
 export const SENSITIVITY_HEADER = 'Sensitivity';
-export const DRAFT_LABEL_HEADER = 'X-Bulwark-Label';
+export const DRAFT_LABEL_HEADER = 'X-Loomix-Label';
 /** A draft whose sender picked "no label". */
 export const NO_LABEL = 'none';
 

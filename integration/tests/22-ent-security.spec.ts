@@ -399,7 +399,7 @@ test('item 2: the ARF format arrives as a feedback report', async ({ browser }) 
   expect(raw).toMatch(/Content-Type: multipart\/report; report-type=feedback-report/);
   expect(raw).toContain('Feedback-Type: fraud');
   expect(raw).toContain('Version: 1');
-  expect(raw).toMatch(/User-Agent: Bulwark\//);
+  expect(raw).toMatch(/User-Agent: Loomix\//);
   expect(raw).toContain('Content-Type: message/rfc822');
   expect(attachedMessage(raw)).toContain(`Subject: ${subject}`);
   await alice.context().close();

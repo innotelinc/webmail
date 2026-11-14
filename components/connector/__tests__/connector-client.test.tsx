@@ -7,7 +7,7 @@ import { CONNECTOR_SURFACES } from '@/lib/boot-skeleton/surfaces';
 // A connector link that can't be opened explains why in the reader's
 // language (keys in tests), not in English only.
 
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 vi.mock('@/lib/browser-navigation', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/browser-navigation')>()),
   replaceWindowLocation: vi.fn(),

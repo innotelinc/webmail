@@ -25,7 +25,7 @@ const buildOAuthParams = vi.fn();
 const getMetadata = vi.fn();
 const getRequiredConfig = vi.fn();
 const exchangeCodeForTokens = vi.fn();
-const defaultClientOptions = vi.fn(async (_serverId?: unknown) => ({ fallbackClientId: 'bulwark-webmail' }));
+const defaultClientOptions = vi.fn(async (_serverId?: unknown) => ({ fallbackClientId: 'loomix-mail' }));
 vi.mock('@/lib/oauth/token-exchange', () => ({
   exchangeCodeForTokens: (...args: unknown[]) => exchangeCodeForTokens(...args),
   buildOAuthParams: (...args: unknown[]) => buildOAuthParams(...args),
@@ -33,7 +33,7 @@ vi.mock('@/lib/oauth/token-exchange', () => ({
   getRequiredConfig: (...args: unknown[]) => getRequiredConfig(...args),
   getTokenEndpoint: (...args: unknown[]) => getTokenEndpoint(...args),
   defaultClientOptions: (serverId: unknown) => defaultClientOptions(serverId),
-  DEFAULT_CLIENT_ID: 'bulwark-webmail',
+  DEFAULT_CLIENT_ID: 'loomix-mail',
 }));
 
 let configValues: Record<string, unknown> = {};
@@ -315,16 +315,16 @@ describe('oauth token route - access token cache (#552)', () => {
     // Tokens minted by the TOTP login route exist even when no OAuth client is
     // configured; the refresh must offer the same default client id instead of
     // failing on the missing OAUTH_CLIENT_ID.
-    expect(getTokenEndpoint).toHaveBeenCalledWith(null, { fallbackClientId: 'bulwark-webmail' });
+    expect(getTokenEndpoint).toHaveBeenCalledWith(null, { fallbackClientId: 'loomix-mail' });
     expect(buildOAuthParams).toHaveBeenCalledWith(
       { grant_type: 'refresh_token', refresh_token: 'totp-minted-refresh-token' },
       null,
-      { fallbackClientId: 'bulwark-webmail' },
+      { fallbackClientId: 'loomix-mail' },
     );
   });
 
   it('refreshes with the client the TOTP login registered on Stalwart 1.0', async () => {
-    // 1.0 knows no client named bulwark-webmail; the login signed in with a
+    // 1.0 knows no client named loomix-mail; the login signed in with a
     // client it registered, and a refresh naming another client is refused.
     defaultClientOptions.mockResolvedValueOnce({ fallbackClientId: 'swc1.registered' });
     cookieStore.set('jmap_rt', 'totp-minted-refresh-token');

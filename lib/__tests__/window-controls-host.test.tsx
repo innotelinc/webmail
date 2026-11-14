@@ -326,7 +326,7 @@ describe('the window controls over the app', () => {
 
   it('draws no row of its own: no title, no strip, nothing on the page at all', () => {
     overlayAt(0, window.innerWidth - 138);
-    document.title = 'A subject - Bulwark';
+    document.title = 'A subject - Loomix';
     const { container } = render(<WindowControlsHost />);
     expect(container.innerHTML).toBe('');
     expect(document.body.textContent).not.toContain('A subject');

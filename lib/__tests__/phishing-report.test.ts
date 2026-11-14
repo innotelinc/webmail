@@ -47,7 +47,7 @@ describe('the forwarded report', () => {
     const args = client.sendEmail.mock.calls[0] as unknown[];
     expect(args[0]).toEqual(['soc@example.org']);
     expect(args[1]).toBe('Phishing: Your parcel');
-    expect(String(args[2])).toContain('Reported as phishing by Alice <alice@example.org> with Bulwark');
+    expect(String(args[2])).toContain('Reported as phishing by Alice <alice@example.org> with Loomix');
     expect(args[5]).toBe('id-me');
     const attachments = args[10] as Array<Record<string, unknown>>;
     expect(attachments).toHaveLength(1);

@@ -15,7 +15,7 @@ describe('fileErrorKind', () => {
     expect(fileErrorKind(setError('tooLarge', 'File is too large.'))).toBe('tooLarge');
   });
 
-  it('treats Bulwark\'s own depth check like the server\'s', () => {
+  it('treats Loomix\'s own depth check like the server\'s', () => {
     expect(fileErrorKind(folderDepthError())).toBe('tooDeep');
   });
 

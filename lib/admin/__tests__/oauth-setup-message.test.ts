@@ -25,7 +25,7 @@ describe('oauthSetupSuccessMessage', () => {
     const text = oauthSetupSuccessMessage(RESULT);
     expect(text).toContain('OAuth client created on Stalwart (https://mail.example.org).');
     expect(text).toContain('32 redirect URI(s) registered for https://webmail.example.org.');
-    expect(text).toContain('Bulwark Mobile client created (bulwark-mobile, org.bulwarkmail.mobile:/auth/callback).');
+    expect(text).toContain('Loomix Mobile client created (bulwark-mobile, org.bulwarkmail.mobile:/auth/callback).');
     expect(text).not.toContain('Only a Stalwart superuser');
   });
 

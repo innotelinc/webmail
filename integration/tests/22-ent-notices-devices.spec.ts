@@ -271,7 +271,7 @@ test('item 11: a template fills its placeholders, and nothing is saved before th
     await shot(alice, 'd-vacation-template');
     await expect.poll(async () => (await vacation()).textBody, { timeout: 20_000 }).toContain('please write to ent-bob@example.org');
     const saved = await vacation();
-    // en-US, in the browser's zone (no zone set in Bulwark): 08:00 UTC is a time of day, so it is written out.
+    // en-US, in the browser's zone (no zone set in Loomix): 08:00 UTC is a time of day, so it is written out.
     expect(saved.textBody).toMatch(/I am away until Monday, January 4, 2027 at \d{1,2}:00/);
     // {name} is the identity's name.
     expect(saved.textBody).toMatch(/\n\n\S.*$/);

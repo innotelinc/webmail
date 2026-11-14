@@ -1,5 +1,5 @@
 /**
- * File > Change connection… and the sign-in page's "Use my organisation's Bulwark
+ * File > Change connection… and the sign-in page's "Use my organisation's Loomix
  * instead": the app restarts on its first screen, which asks how to connect. That's a
  * restart with every window closing, so it asks first, in the app's own question window,
  * and says the accounts stay. The welcome tips were seen before; they don't come back
@@ -25,7 +25,7 @@ export function changeConnectionAvailable(): boolean {
 /**
  * Asks, then restarts. False when the answer was no, or nothing could ask. `page` 'org':
  * the first screen opens on the organisation's web address instead of the email address,
- * for "Use my organisation's Bulwark instead" (desktop#5).
+ * for "Use my organisation's Loomix instead" (desktop#5).
  */
 export async function askAndChangeConnection(text: ChangeConnectionText, page?: 'org'): Promise<boolean> {
   const change = getDesktopBridge()?.menu?.changeConnection;

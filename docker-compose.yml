@@ -3,7 +3,7 @@ services:
     image: ghcr.io/bulwarkmail/webmail:latest
     ports:
       # This machine only, for a reverse proxy on it (see the docs, "Reverse
-      # proxy"). To reach Bulwark from other machines over plain HTTP, write
+      # proxy"). To reach Loomix from other machines over plain HTTP, write
       # "3000:3000"; without a proxy in front, sign-in limits then go by
       # whatever address a client puts in X-Forwarded-For.
       - "127.0.0.1:3000:3000"
@@ -13,7 +13,7 @@ services:
     env_file:
       - .env.local
     volumes:
-      # These six volumes together are everything Bulwark keeps under /app/data.
+      # These six volumes together are everything Loomix keeps under /app/data.
       # A fresh install can use one `bulwark-data:/app/data` volume instead.
       #
       # Encrypted user settings (SETTINGS_DATA_DIR).

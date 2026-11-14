@@ -1,4 +1,4 @@
-# Bulwark Webmail on Kubernetes: three replicas sharing one Valkey store.
+# Loomix Mail on Kubernetes: three replicas sharing one Valkey store.
 # https://bulwarkmail.org/docs/deployment/kubernetes
 #
 #   cp base/secrets.env.example base/secrets.env   # fill in the three secrets

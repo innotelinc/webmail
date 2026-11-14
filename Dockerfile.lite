@@ -1,4 +1,4 @@
-# Bulwark Lite as a container: the static export behind an unprivileged nginx,
+# Loomix Lite as a container: the static export behind an unprivileged nginx,
 # no Node.js at runtime. Mount your own config.json (and policy.json) over the
 # ones in /usr/share/nginx/html to configure it - see README.md, "Static Lite
 # build".
@@ -39,8 +39,8 @@ RUN LITE_TARGET=static NEXT_PUBLIC_BASE_PATH= npm run build:lite && \
 
 FROM nginxinc/nginx-unprivileged:1.31-alpine-slim@sha256:a8cb0f33d51fa107c96fd2bd3a71aaf564ec131e9d2bdf8700944f0ed8b170d7
 
-LABEL org.opencontainers.image.title="Bulwark Webmail Lite"
-LABEL org.opencontainers.image.description="Bulwark Webmail as static files behind nginx; talks to the JMAP server straight from the browser"
+LABEL org.opencontainers.image.title="Loomix Mail Lite"
+LABEL org.opencontainers.image.description="Loomix Mail as static files behind nginx; talks to the JMAP server straight from the browser"
 LABEL org.opencontainers.image.source="https://github.com/bulwarkmail/webmail"
 LABEL org.opencontainers.image.url="https://github.com/bulwarkmail/webmail"
 LABEL org.opencontainers.image.licenses="AGPL-3.0-only"

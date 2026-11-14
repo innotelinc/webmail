@@ -37,7 +37,7 @@ interface LoginServerFieldProps {
   onEdit: () => void;
   /** The user pressed Change on a server that was found: they want another one, nothing went wrong. */
   changing?: boolean;
-  /** A provider Bulwark can't reach (Gmail, Outlook.com, iCloud Mail), by name. */
+  /** A provider Loomix can't reach (Gmail, Outlook.com, iCloud Mail), by name. */
   provider: string | null;
   error: ServerFieldError;
   /** The browser's CORS hint, behind "Having trouble?". Not in the desktop app, which has no website to allow. */

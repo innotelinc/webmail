@@ -4,7 +4,7 @@ import { liteErrorReporting } from '../lite';
 
 const DSN = 'https://6f0b9c79ed3a4315b76595bc2536ac40@errors.example.org/3';
 
-// Bulwark Lite has no server: policy.json carries the error reporting address.
+// Loomix Lite has no server: policy.json carries the error reporting address.
 describe('Lite error reporting from policy.json', () => {
   it('is off without a valid DSN', () => {
     expect(liteErrorReporting({})).toBeNull();

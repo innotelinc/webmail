@@ -218,13 +218,13 @@ describe('ownFilterScriptStops', () => {
     getSieveScriptContent: async (blobId: string) => scripts.find((s) => s.name === blobId)!.content,
   });
 
-  it('warns for an active script Bulwark can\'t keep running, and not for its own', async () => {
+  it('warns for an active script Loomix can\'t keep running, and not for its own', async () => {
     const own = generateScript([]);
-    // Edited by hand so that Bulwark can't read it back: it can't be kept next to the reply.
+    // Edited by hand so that Loomix can't read it back: it can't be kept next to the reply.
     const handEdited = own.replace('"version"', '"version" oops');
     expect(handEdited).not.toBe(own);
     expect(await ownFilterScriptStops(sieve([{ name: 'mine', isActive: true, content: handEdited }]))).toBe(true);
-    // Scripts of other clients that Bulwark reads keep running next to the reply.
+    // Scripts of other clients that Loomix reads keep running next to the reply.
     expect(await ownFilterScriptStops(sieve([{ name: 'roundcube', isActive: true, content: 'require ["fileinto"];\r\nif address :is "from" "x@example.org" { fileinto "X"; }\r\n' }]))).toBe(false);
     expect(await ownFilterScriptStops(sieve([{ name: 'filters', isActive: true, content: own }]))).toBe(false);
     expect(await ownFilterScriptStops(sieve([{ name: 'filters', isActive: true, content: own }], ['fileinto']))).toBe(true);

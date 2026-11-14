@@ -39,7 +39,7 @@ async function measured<T extends { status: number }>(target: UpstreamTarget, ru
 
 async function traced<T extends { status: number }>(target: UpstreamTarget, run: (traceHeaders: TraceHeaders) => Promise<T>): Promise<T> {
   const api = await import('@opentelemetry/api');
-  const tracer = api.trace.getTracer('bulwark-webmail');
+  const tracer = api.trace.getTracer('loomix-mail');
   return tracer.startActiveSpan(`upstream ${target}`, {
     kind: api.SpanKind.CLIENT,
     attributes: { 'bulwark.upstream.target': target },

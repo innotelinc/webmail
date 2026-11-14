@@ -1,4 +1,4 @@
-# Webmail image for integration testing — runs Next.js in DEVELOPMENT mode.
+# Mail image for integration testing — runs Next.js in DEVELOPMENT mode.
 #
 # Why dev mode rather than the production Dockerfile at the repo root?
 # The browser talks JMAP directly to Stalwart at http://localhost:8025 (plain

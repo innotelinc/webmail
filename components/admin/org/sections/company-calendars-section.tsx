@@ -161,7 +161,7 @@ export function CompanyCalendarsSection({ draft }: { draft: OrgPolicyDraft }) {
 
         <div className="space-y-1 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground" data-testid="org-feed-notes">
           <p>
-            Bulwark&apos;s server fetches the feeds, at most once per refresh interval for everyone, and keeps the addresses to
+            Loomix&apos;s server fetches the feeds, at most once per refresh interval for everyone, and keeps the addresses to
             itself: users never see them. A feed may be on your intranet when its address names it: an intranet IP address
             (10.x, 172.16-31.x, 192.168.x), a .local or .internal name, or a name without dots. Loopback and link-local
             addresses are never reached. Feeds stay reachable with &quot;No third-party traffic&quot; on and are listed on
@@ -172,7 +172,7 @@ export function CompanyCalendarsSection({ draft }: { draft: OrgPolicyDraft }) {
             against Stalwart&apos;s upload limit (1000 files or 50 MB an hour per user). Keep feeds small and the interval long.
           </p>
           <p>
-            Bulwark Lite has no server: the browser fetches the feed itself, so the feed host must send CORS headers
+            Loomix Lite has no server: the browser fetches the feed itself, so the feed host must send CORS headers
             (Access-Control-Allow-Origin), and policy.json is a public file there, so don&apos;t put tokens in the addresses. A
             Lite build without third-party traffic only reaches the mail server: put the feed on the same host as Lite or the
             mail server.{' '}

@@ -254,7 +254,7 @@ describe('app lock: what is on screen from before', () => {
 
   it('closes a calendar reminder at a lock, and leaves the prompt that names nothing', async () => {
     const reminder = { tag: 'calendar-reminder:k1', title: 'Secret meeting', close: vi.fn() };
-    const prompt = { tag: 'bulwark-mailto-focus', title: 'Bulwark', close: vi.fn() };
+    const prompt = { tag: 'bulwark-mailto-focus', title: 'Loomix', close: vi.fn() };
     const mail = onScreen();
     const { worker, clients } = await setup({ notifications: [reminder, prompt, mail] });
     clients.push(client('app', '/mail/folder/inbox'));

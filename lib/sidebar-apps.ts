@@ -201,7 +201,7 @@ export function appFrameRights(
 }
 
 /**
- * Origins of the policy's inline apps granted a feature. Bulwark's own
+ * Origins of the policy's inline apps granted a feature. Loomix's own
  * `Permissions-Policy` header turns camera and microphone off, which no
  * frame's `allow` can widen, so the proxy names these origins there.
  */

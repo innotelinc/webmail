@@ -51,7 +51,7 @@ const META = 'urn:ietf:params:jmap:metadata';
 
 let original: Record<string, unknown>;
 
-/** Bulwark's template entries in the Inbox metadata of an account the user can open. */
+/** Loomix's template entries in the Inbox metadata of an account the user can open. */
 async function templateEntries(email: string, accountName = email): Promise<Record<string, Record<string, unknown>>> {
   const client = await JmapClient.connect(email, ORG_PASSWORD);
   const accountId = accountName === email ? client.accountId : client.accountIdByName(accountName);
@@ -63,7 +63,7 @@ async function templateEntries(email: string, accountName = email): Promise<Reco
   return Object.fromEntries(Object.entries(metadata).filter(([key]) => key === 'org.bulwarkmail.templates' || key.startsWith('org.bulwarkmail.template.')));
 }
 
-/** Removes Bulwark's template entries (never the shared tags or anything else) from an Inbox. */
+/** Removes Loomix's template entries (never the shared tags or anything else) from an Inbox. */
 async function clearTemplateEntries(email: string, accountName = email): Promise<void> {
   const client = await JmapClient.connect(email, ORG_PASSWORD);
   const accountId = accountName === email ? client.accountId : client.accountIdByName(accountName);

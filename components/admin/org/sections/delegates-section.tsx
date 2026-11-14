@@ -26,7 +26,7 @@ export function DelegatesSection({ draft }: { draft: OrgPolicyDraft }) {
         </p>
       )}
       <p className="text-xs text-muted-foreground">
-        Both limit what Bulwark offers. Stalwart doesn&apos;t enforce them, so users can still share through other clients. Shared
+        Both limit what Loomix offers. Stalwart doesn&apos;t enforce them, so users can still share through other clients. Shared
         mailboxes of groups are yours to manage in Stalwart.
       </p>
     </SettingsSection>

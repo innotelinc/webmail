@@ -51,7 +51,7 @@ beforeEach(() => {
 
 describe('Account: how you sign in, on Lite', () => {
   it('says password after a password sign-in', () => {
-    saveLiteRefreshToken(1, { serverUrl: SERVER, username: 'sam@x.test', refreshToken: 'fake-refresh', clientId: 'bulwark-webmail' }, true);
+    saveLiteRefreshToken(1, { serverUrl: SERVER, username: 'sam@x.test', refreshToken: 'fake-refresh', clientId: 'loomix-mail' }, true);
     render(<AccountSettings />);
     expect(screen.getByText('auth_method_basic')).toBeInTheDocument();
     expect(screen.queryByText('auth_method_oauth')).toBeNull();

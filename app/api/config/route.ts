@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
   };
 
   const appName =
-    branded<string>('appName', '') || process.env.NEXT_PUBLIC_APP_NAME || 'Webmail';
+    branded<string>('appName', '') || process.env.NEXT_PUBLIC_APP_NAME || 'Mail';
   const jmapServerUrl = configManager.get<string>('jmapServerUrl') || process.env.NEXT_PUBLIC_JMAP_SERVER_URL || '';
   const oauthEnabled = configManager.get<boolean>('oauthEnabled', false);
   const oauthOnly = oauthEnabled && configManager.get<boolean>('oauthOnly', false);
@@ -76,11 +76,11 @@ export async function GET(request: NextRequest) {
       stalwartFeaturesEnabled,
       stalwartJmapPassthroughEnabled,
       devMode: configManager.get<boolean>('devMode', false),
-      faviconUrl: branded<string>('faviconUrl', '/branding/Bulwark_Favicon.svg'),
+      faviconUrl: branded<string>('faviconUrl', '/branding/Loomix_Favicon.svg'),
       appLogoLightUrl: branded<string>('appLogoLightUrl', ''),
       appLogoDarkUrl: branded<string>('appLogoDarkUrl', ''),
-      loginLogoLightUrl: branded<string>('loginLogoLightUrl', '/branding/Bulwark_Logo_Color.svg'),
-      loginLogoDarkUrl: branded<string>('loginLogoDarkUrl', '/branding/Bulwark_Logo_White.svg'),
+      loginLogoLightUrl: branded<string>('loginLogoLightUrl', '/branding/Loomix_Logo_Color.svg'),
+      loginLogoDarkUrl: branded<string>('loginLogoDarkUrl', '/branding/Loomix_Logo_White.svg'),
       loginCompanyName: branded<string>('loginCompanyName', ''),
       loginImprintUrl: branded<string>('loginImprintUrl', ''),
       loginPrivacyPolicyUrl: branded<string>('loginPrivacyPolicyUrl', ''),

@@ -1,5 +1,5 @@
 /**
- * One path for everything Bulwark does to a message on its way out, for
+ * One path for everything Loomix does to a message on its way out, for
  * every surface that sends: the composer and quick reply. Features register
  * here instead of patching each send function:
  *

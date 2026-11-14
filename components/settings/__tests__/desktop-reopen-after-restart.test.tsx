@@ -5,7 +5,7 @@ import type { DesktopOsSettings as Settings } from '@/lib/desktop/types';
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 
 const { DesktopOsSettings } = await import('../desktop-os-settings');
 

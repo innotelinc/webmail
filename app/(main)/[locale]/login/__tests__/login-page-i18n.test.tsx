@@ -22,7 +22,7 @@ const configOverrides = vi.hoisted(() => ({ value: {} as Record<string, unknown>
 
 vi.mock('@/hooks/use-config', () => ({
   useConfig: () => ({
-    appName: 'Webmail',
+    appName: 'Mail',
     isLoading: false,
     error: null,
     jmapServerUrl: 'https://mail.example.org',

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '../types';
+import type { LoomixDesktopBridge } from '../types';
 
 // The question window, answered with Change.
 vi.mock('../dialog-window', () => ({
@@ -12,7 +12,7 @@ import { askAndChangeConnection } from '../change-connection';
 const TEXT = { title: 'Change connection?', message: 'The app restarts.', confirm: 'Change', cancel: 'Cancel' };
 
 function bridgeWith(change: (...args: unknown[]) => Promise<boolean>) {
-  window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState: () => {}, changeConnection: change } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', menu: { setState: () => {}, changeConnection: change } } as unknown as LoomixDesktopBridge;
 }
 
 afterEach(() => {

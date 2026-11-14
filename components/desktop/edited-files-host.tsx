@@ -272,7 +272,7 @@ export function EditedFilesHost() {
   };
 
   /**
-   * The app's own question (in the desktop app the Bulwark question window), not the OS's
+   * The app's own question (in the desktop app the Loomix question window), not the OS's
    * message box, with words for where the file came from. Its yes is the question main
    * would ask, so main deletes without asking again.
    */

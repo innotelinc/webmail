@@ -5,10 +5,10 @@ import { parseScript } from '../parser';
 import { generateScript } from '../generator';
 import type { FilterRule } from '@/lib/jmap/sieve-types';
 
-function makeBulwarkRule(overrides: Partial<FilterRule> = {}): FilterRule {
+function makeLoomixRule(overrides: Partial<FilterRule> = {}): FilterRule {
   return {
     id: 'bw-1',
-    name: 'Bulwark Rule',
+    name: 'Loomix Rule',
     enabled: true,
     matchType: 'all',
     conditions: [{ field: 'from', comparator: 'contains', value: 'test@example.com' }],
@@ -84,9 +84,9 @@ describe('external rule preservation (issue #201)', () => {
     });
   });
 
-  describe('parser - mixed Bulwark + external', () => {
-    it('returns Bulwark rules from metadata and external rules from the rest', () => {
-      const bulwark = [makeBulwarkRule({ name: 'Bulwark A' })];
+  describe('parser - mixed Loomix + external', () => {
+    it('returns Loomix rules from metadata and external rules from the rest', () => {
+      const bulwark = [makeLoomixRule({ name: 'Loomix A' })];
       const bulwarkScript = generateScript(bulwark);
       const mixedScript = `${bulwarkScript}\n# External appended by Nextcloud\nif header :contains "List-Id" "devs" {\n    fileinto "Dev";\n}\n`;
 
@@ -97,13 +97,13 @@ describe('external rule preservation (issue #201)', () => {
       const bulwarkParsed = result.rules.filter(r => !r.origin || r.origin === 'bulwark');
       const externalParsed = result.rules.filter(r => r.origin === 'external');
       expect(bulwarkParsed).toHaveLength(1);
-      expect(bulwarkParsed[0].name).toBe('Bulwark A');
+      expect(bulwarkParsed[0].name).toBe('Loomix A');
       expect(externalParsed).toHaveLength(1);
       expect(externalParsed[0].originLabel).toBe('Nextcloud');
     });
 
-    it('does not return Bulwark-emitted if-blocks as external duplicates', () => {
-      const bulwark = [makeBulwarkRule({ name: 'My Bulwark Rule' })];
+    it('does not return Loomix-emitted if-blocks as external duplicates', () => {
+      const bulwark = [makeLoomixRule({ name: 'My Loomix Rule' })];
       const script = generateScript(bulwark);
       const result = parseScript(script);
 
@@ -112,13 +112,13 @@ describe('external rule preservation (issue #201)', () => {
       expect(result.rules[0].origin).toBeUndefined();
     });
 
-    it('does not duplicate a Bulwark rule whose values contain literal braces', () => {
+    it('does not duplicate a Loomix rule whose values contain literal braces', () => {
       // Regression for an issue where a value like "Report Domain: {x}" caused
       // parseIfBlockToRule's naive indexOf('{') to point inside the value
       // instead of at the body, so the if-block fell back to an opaque rule
       // that escaped the bulwark-name dedup filter.
       const bulwark = [
-        makeBulwarkRule({
+        makeLoomixRule({
           name: 'DMARC reports',
           matchType: 'any',
           conditions: [
@@ -138,7 +138,7 @@ describe('external rule preservation (issue #201)', () => {
   });
 
   describe('generator - external splice', () => {
-    it('appends external rawBlocks verbatim after Bulwark-managed output', () => {
+    it('appends external rawBlocks verbatim after Loomix-managed output', () => {
       const externalRule: FilterRule = {
         id: 'ext-0',
         name: 'External',
@@ -151,19 +151,19 @@ describe('external rule preservation (issue #201)', () => {
         originLabel: 'Nextcloud',
         rawBlock: '# Nextcloud Mail\nif header :contains "List-Id" "x" {\n    fileinto "Lists";\n}\n',
       };
-      const rules: FilterRule[] = [makeBulwarkRule(), externalRule];
+      const rules: FilterRule[] = [makeLoomixRule(), externalRule];
       const script = generateScript(rules);
 
-      expect(script).toContain('# Rule: Bulwark Rule');
+      expect(script).toContain('# Rule: Loomix Rule');
       expect(script).toContain('# Nextcloud Mail');
-      expect(script).toContain('# --- External rules (managed outside Bulwark) ---');
-      const bulwarkIdx = script.indexOf('# Rule: Bulwark Rule');
+      expect(script).toContain('# --- External rules (managed outside Loomix) ---');
+      const bulwarkIdx = script.indexOf('# Rule: Loomix Rule');
       const externalIdx = script.indexOf('# Nextcloud Mail');
       expect(bulwarkIdx).toBeLessThan(externalIdx);
     });
 
     it('unions external requires into the top-level require line', () => {
-      const script = generateScript([makeBulwarkRule()], undefined, {
+      const script = generateScript([makeLoomixRule()], undefined, {
         externalRequires: ['fileinto', 'imap4flags', 'body'],
       });
       const requireLine = script.split('\n').find(l => l.startsWith('require'))!;
@@ -172,9 +172,9 @@ describe('external rule preservation (issue #201)', () => {
       expect(requireLine).toContain('"body"');
     });
 
-    it('strips origin/rawBlock/originLabel from Bulwark rules when writing metadata', () => {
+    it('strips origin/rawBlock/originLabel from Loomix rules when writing metadata', () => {
       const bulwarkWithJunk: FilterRule = {
-        ...makeBulwarkRule(),
+        ...makeLoomixRule(),
         origin: 'bulwark',
         originLabel: 'shouldnotbehere',
         rawBlock: 'shouldnotbehere',
@@ -199,11 +199,11 @@ describe('external rule preservation (issue #201)', () => {
         origin: 'external',
         rawBlock: '# ext\nif header :is "From" "x@y" { keep; }',
       };
-      const script = generateScript([makeBulwarkRule(), ext]);
+      const script = generateScript([makeLoomixRule(), ext]);
       const match = script.match(/@metadata:begin\n(.*)\n@metadata:end/);
       const metadata = JSON.parse(match![1]);
       expect(metadata.rules).toHaveLength(1);
-      expect(metadata.rules[0].name).toBe('Bulwark Rule');
+      expect(metadata.rules[0].name).toBe('Loomix Rule');
     });
   });
 
@@ -213,7 +213,7 @@ describe('external rule preservation (issue #201)', () => {
       'utf-8',
     );
 
-    it('identifies Bulwark, Roundcube, Nextcloud, External, and opaque rules', () => {
+    it('identifies Loomix, Roundcube, Nextcloud, External, and opaque rules', () => {
       const result = parseScript(fixture);
 
       expect(result.isOpaque).toBe(false);
@@ -248,7 +248,7 @@ describe('external rule preservation (issue #201)', () => {
       expect(regenerated).toContain(':comparator "i;ascii-numeric"');
       // Require tokens from the external content are preserved.
       expect(regenerated).toContain('"relational"');
-      // Bulwark rules are still present.
+      // Loomix rules are still present.
       expect(regenerated).toContain('# Rule: Archive newsletters');
     });
   });
@@ -270,14 +270,14 @@ describe('external rule preservation (issue #201)', () => {
       expect(names).toContain('VIP');
     });
 
-    it('does not destroy external rules when Bulwark regenerates after an edit', () => {
-      const initial = `${generateScript([makeBulwarkRule({ name: 'Mine' })])}\n# rule:[Untouchable]\nif header :is "X-Spam" "yes" {\n    discard;\n}\n`;
+    it('does not destroy external rules when Loomix regenerates after an edit', () => {
+      const initial = `${generateScript([makeLoomixRule({ name: 'Mine' })])}\n# rule:[Untouchable]\nif header :is "X-Spam" "yes" {\n    discard;\n}\n`;
 
       const parsed = parseScript(initial);
       const externalBefore = parsed.rules.filter(r => r.origin === 'external');
       expect(externalBefore).toHaveLength(1);
 
-      // Simulate a user edit - update the Bulwark rule name
+      // Simulate a user edit - update the Loomix rule name
       const edited = parsed.rules.map(r => (r.origin === 'external' || r.origin === 'opaque' ? r : { ...r, name: 'Mine (edited)' }));
       const regenerated = generateScript(edited, parsed.vacation, { externalRequires: parsed.externalRequires });
       const reparsed = parseScript(regenerated);
@@ -289,7 +289,7 @@ describe('external rule preservation (issue #201)', () => {
     });
 
     it('writes the same script on every save, with no blank lines piling up around external rules', () => {
-      const initial = `${generateScript([makeBulwarkRule({ name: 'Mine' })])}\n\n# rule:[First]\nif header :is "X-Spam" "yes" {\n    discard;\n}\n\n\n# rule:[Second]\nif header :contains "Subject" "invoice" {\n    fileinto "Finance";\n}\n\n`;
+      const initial = `${generateScript([makeLoomixRule({ name: 'Mine' })])}\n\n# rule:[First]\nif header :is "X-Spam" "yes" {\n    discard;\n}\n\n\n# rule:[Second]\nif header :contains "Subject" "invoice" {\n    fileinto "Finance";\n}\n\n`;
       const save = (script: string) => {
         const parsed = parseScript(script);
         return generateScript(parsed.rules, parsed.vacation, { externalRequires: parsed.externalRequires });
@@ -302,7 +302,7 @@ describe('external rule preservation (issue #201)', () => {
       expect(second).toBe(first);
       expect(third).toBe(first);
       expect(first).not.toMatch(/\n\n\n/);
-      expect(first).toContain('# --- External rules (managed outside Bulwark) ---\n# rule:[First]');
+      expect(first).toContain('# --- External rules (managed outside Loomix) ---\n# rule:[First]');
       expect(first).toContain('}\n\n# rule:[Second]');
     });
   });
@@ -359,7 +359,7 @@ describe('external rule preservation (issue #201)', () => {
     });
 
     it('round-trips a Nextcloud region verbatim through parse → generate → parse', () => {
-      const bulwark = makeBulwarkRule({ name: 'Test' });
+      const bulwark = makeLoomixRule({ name: 'Test' });
       const initial = `${generateScript([bulwark])}\n${nextcloudScript}`;
 
       const parsed = parseScript(initial);
@@ -381,7 +381,7 @@ describe('external rule preservation (issue #201)', () => {
     });
 
     it('does not emit duplicate "External rules" headers across repeated saves', () => {
-      const bulwark = makeBulwarkRule({ name: 'Test' });
+      const bulwark = makeLoomixRule({ name: 'Test' });
       const initial = `${generateScript([bulwark])}\n${nextcloudScript}`;
 
       let script = initial;
@@ -392,13 +392,13 @@ describe('external rule preservation (issue #201)', () => {
         });
       }
 
-      const headerCount = (script.match(/# --- External rules \(managed outside Bulwark\) ---/g) || []).length;
+      const headerCount = (script.match(/# --- External rules \(managed outside Loomix\) ---/g) || []).length;
       expect(headerCount).toBe(1);
     });
 
     it('ignores marker lines inside a rule value, so the value never turns into live Sieve', () => {
       const value = `x\n${NEXTCLOUD_MARKER}\nredirect "attacker@example.com";\n${NEXTCLOUD_MARKER}\ny`;
-      const bulwark = makeBulwarkRule({ conditions: [{ field: 'subject', comparator: 'contains', value }] });
+      const bulwark = makeLoomixRule({ conditions: [{ field: 'subject', comparator: 'contains', value }] });
 
       const parsed = parseScript(generateScript([bulwark]));
       expect(parsed.rules.filter(r => r.originLabel === 'Nextcloud')).toHaveLength(0);

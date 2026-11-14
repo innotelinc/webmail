@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { ConfirmDialog } from '../confirm-dialog';
-import type { BulwarkDesktopBridge, DesktopDialogWindowAnswer, DesktopDialogWindowRequest } from '@/lib/desktop/types';
+import type { LoomixDesktopBridge, DesktopDialogWindowAnswer, DesktopDialogWindowRequest } from '@/lib/desktop/types';
 
 // In the desktop app the app's confirm (Empty trash, Delete forever, Sign out, …) is a
 // window of its own; without the shell's dialogs.show it stays in the page.
@@ -10,7 +10,7 @@ type Show = (request: DesktopDialogWindowRequest) => Promise<DesktopDialogWindow
 
 function desktop(show: Show) {
   const cancel = vi.fn();
-  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), show: vi.fn(show), cancel } } as unknown as BulwarkDesktopBridge;
+  window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn(), show: vi.fn(show), cancel } } as unknown as LoomixDesktopBridge;
   return { show: window.bulwarkDesktop!.dialogs!.show as unknown as ReturnType<typeof vi.fn<Show>>, cancel };
 }
 
@@ -87,7 +87,7 @@ describe('ConfirmDialog in the desktop app', () => {
     expect(show).not.toHaveBeenCalled();
     view.unmount();
 
-    window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn() } } as unknown as BulwarkDesktopBridge;
+    window.bulwarkDesktop = { version: 1, platform: 'win32', dialogs: { confirm: vi.fn() } } as unknown as LoomixDesktopBridge;
     const older = render(<ConfirmDialog isOpen onClose={vi.fn()} onConfirm={vi.fn()} {...props} />);
     expect(screen.getByRole('alertdialog', { name: 'Empty trash?' })).toBeTruthy();
     older.unmount();

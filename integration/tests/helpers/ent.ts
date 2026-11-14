@@ -6,10 +6,10 @@
  *
  * Start them with C:\Users\info\worktrees\enterprise-rig\run-spec.sh, which
  * checks the ent-* accounts on the VM first and sets:
- *   IT_WEBMAIL_URL     the Bulwark server (scratch ADMIN_CONFIG_DIR)
+ *   IT_WEBMAIL_URL     the Loomix server (scratch ADMIN_CONFIG_DIR)
  *   IT_JMAP_URL        the Stalwart server
  *   IT_ENT_PASSWORD    password of the ent-* accounts (vault "Stalwart test – ent-* throwaway accounts")
- *   IT_ADMIN_PASSWORD  the Bulwark server's admin password (vault "Bulwark dev rig – enterprise pack admin")
+ *   IT_ADMIN_PASSWORD  the Loomix server's admin password (vault "Loomix dev rig – enterprise pack admin")
  *   IT_ENT_SERVER      label for screenshots and logs: 0.16 or 1.0
  *   IT_ACCOUNT_USERS   ent-alice,ent-bob,ent-carol (the suite's global setup polls the first one)
  *

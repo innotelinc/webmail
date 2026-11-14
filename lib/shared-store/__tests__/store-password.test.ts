@@ -197,7 +197,7 @@ describe('what a replica with a refused store answers', () => {
   it('leaves an accepted store as it was: starting, then serving', async () => {
     process.env.REDIS_URL = 'redis://:a-made-up-password@valkey.internal:6379/0';
     expect(bootState()).toBe('starting');
-    expect((await answer('/')).text).toBe('Bulwark is starting and connecting to its shared store.');
+    expect((await answer('/')).text).toBe('Loomix is starting and connecting to its shared store.');
     setBootState('ready');
     expect(bootGateResponse('/')).toBeNull();
   });

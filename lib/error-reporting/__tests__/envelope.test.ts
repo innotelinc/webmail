@@ -80,7 +80,7 @@ describe('buildEvent', () => {
     expect(event.debug_meta).toEqual({ images: [{ type: 'sourcemap', code_file: '/_next/static/chunks/1.js', debug_id: 'bc67f7db-7f3b-7be2-6f94-966cd7825cc2' }] });
   });
 
-  it('groups by Bulwark\'s fingerprint and carries the release', () => {
+  it('groups by Loomix\'s fingerprint and carries the release', () => {
     expect(event.fingerprint).toEqual(['ffff0000ffff0000']);
     expect(event.release).toBe('1.20.0+abc1234');
     expect(event.tags).toEqual({ route: '/mail/…' });

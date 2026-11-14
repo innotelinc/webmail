@@ -22,7 +22,7 @@
  * Servers without metadata, and the pre-release 1.0 build that drops the
  * connection on metadata requests, never answer: their accounts keep using
  * the browser's list, and none of this touches the connection state
- * (client.getBulwarkMetadata catches every failure, and pauses the account
+ * (client.getLoomixMetadata catches every failure, and pauses the account
  * for ten minutes).
  */
 
@@ -99,7 +99,7 @@ export function pendingRound(localAccountId: string): Promise<SyncOutcome> | und
 async function syncRound(localAccountId: string, client: TemplateClient, browserList: () => BrowserList): Promise<SyncOutcome> {
   const accountId = client.getAccountId();
   if (!accountId || !hasMetadata(client, accountId)) return 'unsupported';
-  const entries = await client.getBulwarkMetadata(accountId);
+  const entries = await client.getLoomixMetadata(accountId);
   if (!entries) return 'unsupported';
 
   const server = templatesFromMetadata(entries);
@@ -140,7 +140,7 @@ async function syncRound(localAccountId: string, client: TemplateClient, browser
     }
     if (!reachable) continue;
     try {
-      await client.setBulwarkMetadata(accountId, templateKey(template.id), templateValue(template));
+      await client.setLoomixMetadata(accountId, templateKey(template.id), templateValue(template));
       serverAfter[template.id] = template;
     } catch (error) {
       if (error instanceof MetadataTooLargeError) {
@@ -159,7 +159,7 @@ async function syncRound(localAccountId: string, client: TemplateClient, browser
   const markerAllowed = browser.status !== 'unknown';
   if (reachable && markerAllowed && (!marker || !sameTombstones(marker.deleted, plan.deletedTemplateIds))) {
     try {
-      await client.setBulwarkMetadata(accountId, MARKER_KEY, { version: MARKER_VERSION, deleted: plan.deletedTemplateIds });
+      await client.setLoomixMetadata(accountId, MARKER_KEY, { version: MARKER_VERSION, deleted: plan.deletedTemplateIds });
       serverDeleted = plan.deletedTemplateIds;
       markerOnServer = true;
     } catch (error) {
@@ -170,7 +170,7 @@ async function syncRound(localAccountId: string, client: TemplateClient, browser
   for (const id of plan.deletes) {
     if (!reachable || serverDeleted[id] === undefined) continue;
     try {
-      await client.setBulwarkMetadata(accountId, templateKey(id), null);
+      await client.setLoomixMetadata(accountId, templateKey(id), null);
       delete serverAfter[id];
     } catch (error) {
       debug.warn('templates', 'Could not remove a template from the account:', error);

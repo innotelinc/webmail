@@ -17,9 +17,9 @@ import { folderRow } from './helpers/app';
  * on a VM 106 test server.
  *
  * No test server has a Stalwart Enterprise license yet, so x:ArchivedItem
- * answers `forbidden` everywhere and the feature has to hide itself: Bulwark
+ * answers `forbidden` everywhere and the feature has to hide itself: Loomix
  * asks once, then shows no Settings entry and no Trash link. An admin scope
- * that hides `deletedItemsRecovery` keeps Bulwark from asking at all.
+ * that hides `deletedItemsRecovery` keeps Loomix from asking at all.
  *
  * The licensed case (IT_RECOVERY_LICENSED=1, on a server with a license and
  * `archiveDeletedItemsFor` set): org-alice deletes a message for good, finds
@@ -85,7 +85,7 @@ test.describe('without an Enterprise license', () => {
     expect(r.methodResponses[0][1]).toMatchObject({ type: 'forbidden' });
   });
 
-  test('Bulwark asks once, then shows no Trash link and no Settings entry', async ({ browser }) => {
+  test('Loomix asks once, then shows no Trash link and no Settings entry', async ({ browser }) => {
     const page = await userPage(browser, ORG.alice);
     const asked = watchArchiveQueries(page);
     const answer = page.waitForResponse((res) => isArchiveQuery(res.request().postData()), { timeout: 30000 });
@@ -161,7 +161,7 @@ test('the admin hides it for a group and limits the days for a domain on Organis
   await admin.close();
 });
 
-test('a member of the hidden group gets nothing and Bulwark never asks the server', async ({ browser }) => {
+test('a member of the hidden group gets nothing and Loomix never asks the server', async ({ browser }) => {
   const page = await userPage(browser, ORG.alice);
   const asked = watchArchiveQueries(page);
   await openTrash(page);
@@ -173,7 +173,7 @@ test('a member of the hidden group gets nothing and Bulwark never asks the serve
 });
 
 test('someone outside the group is still asked about', async ({ browser }) => {
-  // carol is in example.org but not in the group: Bulwark asks the server for her.
+  // carol is in example.org but not in the group: Loomix asks the server for her.
   const page = await userPage(browser, ORG.carol);
   const answer = page.waitForResponse((res) => isArchiveQuery(res.request().postData()), { timeout: 30000 });
   await openTrash(page);

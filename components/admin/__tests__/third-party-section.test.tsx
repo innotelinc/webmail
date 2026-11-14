@@ -87,7 +87,7 @@ describe('listReachableHosts', () => {
       oauthIssuerUrl: 'https://ignored.example',
       extensionDirectoryUrl: 'https://extensions.bulwarkmail.org',
       wopiClientUrl: 'https://office.corp.example',
-      loginLogoLightUrl: '/branding/Bulwark_Logo_Color.svg',
+      loginLogoLightUrl: '/branding/Loomix_Logo_Color.svg',
       appLogoLightUrl: 'https://cdn.corp.example/logo.svg',
     };
     const hosts = listReachableHosts({

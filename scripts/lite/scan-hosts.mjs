@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Scans a finished Lite export for outside hosts (#903). Every http(s) or
 // ws(s) host literal, and every protocol-relative //host in a string, must be
-// the configured JMAP server, a placeholder, one of Bulwark's built-in outside
+// the configured JMAP server, a placeholder, one of Loomix's built-in outside
 // hosts (switched off at runtime by noThirdPartyTraffic) or a known string
 // that is never requested, in the kind of file it is listed for. Anything else
 // fails the build in CI (.github/workflows/static-lite.yml).
@@ -35,10 +35,10 @@ const PAGES = /\.(html|txt)$/;
 
 /** Strings in the bundle that are never requested, by where they may appear and why. */
 export const LITE_BUNDLE_NON_REQUEST = [
-  { files: CHUNKS, why: "Bulwark's built-in hosts, off at runtime with noThirdPartyTraffic", hosts: LITE_BUILT_IN_HOSTS },
+  { files: CHUNKS, why: "Loomix's built-in hosts, off at runtime with noThirdPartyTraffic", hosts: LITE_BUILT_IN_HOSTS },
   { files: CHUNKS, why: "error and docs links of bundled libraries (Next.js, React, JSZip, ProseMirror, core-js, date-fns)", hosts: ["nextjs.org", "react.dev", "stuk.github.io", "prosemirror.net", "github.com", "foo.bar"] },
   { files: CHUNKS, why: "example addresses the translations localise", hosts: ["eksempel.dk", "mail.eksempel.dk", "piemers.lv", "pasts.piemers.lv", "ornek.com", "mail.ornek.com"] },
-  { files: CHUNKS, why: "links inside the sample mail of the demo mode (lib/demo/fixtures)", hosts: ["zoom.us", "notion.so", "www.figma.com", "vercel.com", "i.scdn.co", "cf.bstatic.com", "open.spotify.com", "linear.app", "sentry.io", "app.docusign.com", "github.com", "bulwark-webmail.vercel.app"] },
+  { files: CHUNKS, why: "links inside the sample mail of the demo mode (lib/demo/fixtures)", hosts: ["zoom.us", "notion.so", "www.figma.com", "vercel.com", "i.scdn.co", "cf.bstatic.com", "open.spotify.com", "linear.app", "sentry.io", "app.docusign.com", "github.com", "loomix-mail.vercel.app"] },
   { files: CHUNKS, why: "JMAP capability URI and XML namespaces", hosts: ["bulwarkmail.com", "www.w3.org", "creativecommons.org"] },
   { files: CHUNKS, why: "schema.org vocabulary names in booking markup (lib/structured-mail), matched and never requested", hosts: ["schema.org"] },
   { files: /./, why: "docs links in the translations and the README", hosts: ["bulwarkmail.org", "github.com"] },

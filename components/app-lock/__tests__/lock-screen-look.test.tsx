@@ -10,7 +10,7 @@ import { useAccountStore } from '@/stores/account-store';
 import type { Email, Mailbox } from '@/lib/jmap/types';
 import type { AccountEntry } from '@/stores/account-store';
 
-vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Bulwark' }) }));
+vi.mock('@/hooks/use-config', () => ({ useConfig: () => ({ appName: 'Loomix' }) }));
 
 const helloState = vi.hoisted(() => vi.fn());
 vi.mock('@/lib/app-lock/controller', async (original) => ({

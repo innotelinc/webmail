@@ -31,7 +31,7 @@ describe('new mail alerts', () => {
       emailNotificationsEnabled: true, emailNotificationSound: true, announceNewMail: true,
       doNotDisturb: false, visualAlerts: false,
     });
-    document.title = 'Inbox - Bulwark';
+    document.title = 'Inbox - Loomix';
   });
   afterEach(() => {
     stopTitleAlert();
@@ -78,7 +78,7 @@ describe('new mail alerts', () => {
     act(() => { vi.advanceTimersByTime(NEW_MAIL_BATCH_MS + 100); });
     expect(playNotificationSound).not.toHaveBeenCalled();
     expect(polite()).toBe('');
-    expect(document.title).toBe('Inbox - Bulwark');
+    expect(document.title).toBe('Inbox - Loomix');
   });
 
   it('swaps the tab title slowly with Visual alerts on while the tab is in the background', () => {
@@ -90,8 +90,8 @@ describe('new mail alerts', () => {
     arrive('b');
     expect(document.title).toBe('new_mail_count:{"count":2}');
     act(() => { vi.advanceTimersByTime(TITLE_ALERT_INTERVAL_MS); });
-    expect(document.title).toBe('Inbox - Bulwark');
+    expect(document.title).toBe('Inbox - Loomix');
     act(() => { vi.advanceTimersByTime(TITLE_ALERT_INTERVAL_MS * TITLE_ALERT_MAX_SWAPS); });
-    expect(document.title).toBe('Inbox - Bulwark');
+    expect(document.title).toBe('Inbox - Loomix');
   });
 });

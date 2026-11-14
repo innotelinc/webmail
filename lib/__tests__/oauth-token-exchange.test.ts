@@ -45,7 +45,7 @@ describe('token-exchange client id fallback (#873)', () => {
 
   it('uses the fallback client id when no client is configured', () => {
     const config = getRequiredConfig(null, { fallbackClientId: DEFAULT_CLIENT_ID });
-    expect(config.clientId).toBe('bulwark-webmail');
+    expect(config.clientId).toBe('loomix-mail');
     // Discovery must target the mail server itself - that is where the TOTP
     // login route minted the token.
     expect(config.discoveryUrl).toBe('https://mail.example.com');
@@ -63,7 +63,7 @@ describe('token-exchange client id fallback (#873)', () => {
       null,
       { fallbackClientId: DEFAULT_CLIENT_ID },
     );
-    expect(params.get('client_id')).toBe('bulwark-webmail');
+    expect(params.get('client_id')).toBe('loomix-mail');
     expect(params.get('grant_type')).toBe('refresh_token');
   });
 });

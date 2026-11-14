@@ -7,7 +7,7 @@ describe('totpIssuer', () => {
   });
 
   it('keeps Stalwart on a stock install', () => {
-    expect(totpIssuer('Webmail')).toBe('Stalwart');
+    expect(totpIssuer('Mail')).toBe('Stalwart');
     expect(totpIssuer('')).toBe('Stalwart');
     expect(totpIssuer('  ')).toBe('Stalwart');
     expect(totpIssuer(undefined)).toBe('Stalwart');

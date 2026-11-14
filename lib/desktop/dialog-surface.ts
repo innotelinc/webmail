@@ -177,7 +177,7 @@ export function openDialogSurface(opener: Window, options: DialogSurfaceOptions)
   }
 
   const source = document;
-  doc.title = options.title || 'Bulwark';
+  doc.title = options.title || 'Loomix';
   const base = doc.createElement('base');
   base.href = source.baseURI;
   doc.head.appendChild(base);

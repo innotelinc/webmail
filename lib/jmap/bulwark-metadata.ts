@@ -1,5 +1,5 @@
 /**
- * Bulwark's own data in JMAP metadata (urn:ietf:params:jmap:metadata) of an
+ * Loomix's own data in JMAP metadata (urn:ietf:params:jmap:metadata) of an
  * account's Inbox: shared tag definitions and team templates in a group
  * account, personal templates in the user's own account.
  *
@@ -40,7 +40,7 @@ export class MetadataRefusedError extends Error {
 }
 
 export class MetadataUnsupportedError extends Error {
-  constructor(message = 'This server keeps no metadata for Bulwark') {
+  constructor(message = 'This server keeps no metadata for Loomix') {
     super(message);
     this.name = 'MetadataUnsupportedError';
   }
@@ -84,7 +84,7 @@ export function advertisesMailboxMetadata(accountCapabilities: Record<string, un
   return cap?.dataTypes?.Mailbox?.supportsVendorNamespaces === true;
 }
 
-/** Bulwark's entries of a `metadata` or `privateMetadata` object, by key. */
+/** Loomix's entries of a `metadata` or `privateMetadata` object, by key. */
 export function bulwarkEntries(metadata: unknown): Record<string, unknown> {
   if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return {};
   const prefix = `${BULWARK_NAMESPACE}.`;

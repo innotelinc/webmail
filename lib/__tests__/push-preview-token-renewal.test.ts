@@ -49,8 +49,8 @@ vi.mock('@/lib/oauth/token-exchange', () => ({
   getMetadata: async () => ({}),
   getRequiredConfig: () => ({ clientId: 'webmail' }),
   getTokenEndpoint: async () => 'https://id.example.org/token',
-  defaultClientOptions: async () => ({ fallbackClientId: 'bulwark-webmail' }),
-  DEFAULT_CLIENT_ID: 'bulwark-webmail',
+  defaultClientOptions: async () => ({ fallbackClientId: 'loomix-mail' }),
+  DEFAULT_CLIENT_ID: 'loomix-mail',
 }));
 
 vi.mock('@/lib/admin/server-device-policy', () => ({

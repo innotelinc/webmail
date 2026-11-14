@@ -147,7 +147,7 @@ describe('the frame check', () => {
 describe('the frame refusal', () => {
   /** A real document with the app in it, to run the refusal against. */
   function appDocument() {
-    const doc = document.implementation.createHTMLDocument('Bulwark');
+    const doc = document.implementation.createHTMLDocument('Loomix');
     doc.body.innerHTML = '<div id="app">app</div>';
     return doc;
   }

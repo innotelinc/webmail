@@ -4,7 +4,7 @@
  * quick reply and a plugin's forward (api.email.forward). The bus fails
  * closed: a handler that throws or runs out of time stops the send.
  *
- * Not run for mail Bulwark sends on its own (calendar invitations and RSVP
+ * Not run for mail Loomix sends on its own (calendar invitations and RSVP
  * replies, read receipts, List-Unsubscribe mails, phishing reports) nor for
  * a crypto plugin's raw send, which happens after the composer's check.
  */

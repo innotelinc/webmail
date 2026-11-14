@@ -1,14 +1,14 @@
 /**
  * Parameters for plugins in a link that opens the composer: a mailto: link
  * (in a message, on a web page, from another program through the desktop
- * app) or a Bulwark link (`/?compose=1&...`, `bulwark://new?...`).
+ * app) or a Loomix link (`/?compose=1&...`, `bulwark://new?...`).
  *
  *   mailto:a@b.de?subject=Mahnung&x-akte-case=01%2F2026
  *
  * A query parameter named `x-<plugin id>-<name>` belongs to the plugin with
  * that id: once the composer is open, that plugin alone hears
  * onComposeFromLink({ composerId, params: { <name>: <value> } }), with the
- * prefix gone. Other plugins see nothing of it, and Bulwark itself ignores
+ * prefix gone. Other plugins see nothing of it, and Loomix itself ignores
  * the parameter. Plugin ids may hold hyphens, so a parameter goes to the
  * plugin with the longest id it starts with.
  *

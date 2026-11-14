@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_POLICY_SNAPSHOT, type PolicySnapshot } from '../policy-schema';
-import type { BulwarkDesktopBridge, DesktopRecentFilesBridge } from '../types';
+import type { LoomixDesktopBridge, DesktopRecentFilesBridge } from '../types';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { listRecentFiles, readRecentFile, recentFilesOffered, recentWhen, shortFolder, useRecentFilesOffered } from '../recent-files';
@@ -38,7 +38,7 @@ function setBridge(recentFiles?: Partial<DesktopRecentFilesBridge>, policy: Part
     platform: 'win32',
     policy: { get: () => snapshot, onChange: () => () => {} },
     ...(recentFiles ? { recentFiles: recentFiles as DesktopRecentFilesBridge } : {}),
-  } as BulwarkDesktopBridge;
+  } as LoomixDesktopBridge;
 }
 
 const off = { RecentFilesInAttach: { value: false, source: 'forced-machine', locked: true } } as Partial<PolicySnapshot>;

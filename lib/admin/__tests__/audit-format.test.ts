@@ -3,7 +3,7 @@ import { formatAuditDetail } from '../audit-format';
 
 describe('formatAuditDetail', () => {
   it('names what a reverted setting was, not "undefined → undefined"', () => {
-    expect(formatAuditDetail({ key: 'appName', oldValue: 'Webmail' })).toBe('appName: reverted from Webmail');
+    expect(formatAuditDetail({ key: 'appName', oldValue: 'Mail' })).toBe('appName: reverted from Mail');
   });
 
   it('writes object values out, not [object Object]', () => {

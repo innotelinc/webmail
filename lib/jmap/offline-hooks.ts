@@ -18,7 +18,7 @@ export interface OfflineResponse {
 
 /** What the hooks need to know about the client asking. */
 export interface OfflineClientRef {
-  /** Server URL and login, to find the Bulwark account. */
+  /** Server URL and login, to find the Loomix account. */
   getServerUrl(): string;
   getUsername(): string;
   getAccountId(): string;

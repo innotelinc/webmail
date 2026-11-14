@@ -37,7 +37,7 @@ let untouched: Record<string, unknown> | undefined;
 async function pluginZip(): Promise<Buffer> {
   const zip = new JSZip();
   zip.file('manifest.json', JSON.stringify({
-    id: PLUGIN, name: 'Print style test', version: '1.0.0', author: 'Bulwark tests',
+    id: PLUGIN, name: 'Print style test', version: '1.0.0', author: 'Loomix tests',
     description: 'Registers a print style with a letterhead.', type: 'hook', permissions: [], entrypoint: 'index.js',
   }));
   zip.file('index.js', `"use strict";

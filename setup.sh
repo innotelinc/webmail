@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Bulwark Webmail - Interactive Setup Script
+# Loomix Mail - Interactive Setup Script
 # =============================================================================
 set -euo pipefail
 
@@ -52,7 +52,7 @@ ENV_FILE="${SCRIPT_DIR}/.env.local"
 REPO_URL="https://github.com/bulwarkmail/webmail.git"
 
 # Config values (defaults)
-CFG_APP_NAME="Bulwark Webmail"
+CFG_APP_NAME="Loomix Mail"
 CFG_JMAP_SERVER_URL=""
 CFG_ALLOW_CUSTOM_JMAP_ENDPOINT="false"
 CFG_STALWART_FEATURES="true"
@@ -251,7 +251,7 @@ read_key() {
 }
 
 # -- .env.local Values ---------------------------------------------------------
-# Each way of running Bulwark reads .env.local differently:
+# Each way of running Loomix reads .env.local differently:
 #   npm start (Next's env loader): single quotes keep # and spaces, but $NAME
 #     is replaced even inside them; \$ stands for a dollar sign.
 #   docker compose (env_file): a single-quoted value is taken as it is.
@@ -507,7 +507,7 @@ screen_welcome() {
     local version
     version=$(cat "${SCRIPT_DIR}/VERSION" 2>/dev/null || echo "dev")
 
-    print_center "${BOLD}Welcome to Bulwark Webmail${RESET}"
+    print_center "${BOLD}Welcome to Loomix Mail${RESET}"
     print_center "${DIM}v${version}${RESET}"
     echo ""
     echo ""
@@ -605,7 +605,7 @@ screen_server_config() {
     draw_header
 
     section_header 1 "Server Configuration" \
-        "Point Bulwark Webmail at your mail server."
+        "Point Loomix Mail at your mail server."
 
     echo -e "  ${BOLD}General${RESET}"
     echo -e "    ${DIM}This name appears in the browser tab and on the login page.${RESET}"
@@ -793,7 +793,7 @@ screen_security_config() {
     echo ""
     echo -e "  ${BOLD}Anonymous Usage Stats${RESET}"
     echo ""
-    echo -e "  Bulwark can send one anonymous heartbeat per day. It helps us see how"
+    echo -e "  Loomix can send one anonymous heartbeat per day. It helps us see how"
     echo -e "  many instances run, on what platforms, and which features are enabled"
     echo -e "  so we can ${BOLD}make the product better${RESET}."
     echo ""
@@ -802,7 +802,7 @@ screen_security_config() {
     echo -e "    ${STAR} ${BOLD}Off by default${RESET} - you can change it any time in the admin UI"
     echo ""
 
-    prompt_yesno "Enable anonymous telemetry to help improve Bulwark?" "$CFG_TELEMETRY" "CFG_TELEMETRY"
+    prompt_yesno "Enable anonymous telemetry to help improve Loomix?" "$CFG_TELEMETRY" "CFG_TELEMETRY"
 
     if [[ "$CFG_TELEMETRY" == "true" ]]; then
         echo ""
@@ -821,7 +821,7 @@ screen_logging_config() {
     draw_header
 
     section_header 4 "Logging" \
-        "Control how Bulwark Webmail writes logs."
+        "Control how Loomix Mail writes logs."
 
     echo -e "  ${BOLD}Log Format${RESET}"
     echo ""
@@ -878,7 +878,7 @@ screen_login_customization() {
 
     echo -e "  ${BOLD}Icons${RESET}"
     echo -e "    ${DIM}Custom favicon for the browser tab (SVG recommended, 32×32 to 512×512px)${RESET}"
-    echo -e "    ${DIM}Leave blank to use the default Bulwark favicon.${RESET}"
+    echo -e "    ${DIM}Leave blank to use the default Loomix favicon.${RESET}"
     prompt_value "Favicon URL" "$CFG_FAVICON_URL" "CFG_FAVICON_URL"
     echo ""
     echo -e "    ${DIM}Source image for PWA icons (192×192 and 512×512 are auto-generated).${RESET}"
@@ -902,7 +902,7 @@ screen_login_customization() {
     prompt_value "App logo URL (dark mode)" "$CFG_APP_LOGO_DARK_URL" "CFG_APP_LOGO_DARK_URL"
     echo ""
     echo -e "    ${DIM}Custom logo URLs for the login page (SVG recommended, 32×32 to 512×512px)${RESET}"
-    echo -e "    ${DIM}Leave blank to use the default Bulwark logo.${RESET}"
+    echo -e "    ${DIM}Leave blank to use the default Loomix logo.${RESET}"
     prompt_value "Login logo URL (light mode)" "$CFG_LOGIN_LOGO_LIGHT_URL" "CFG_LOGIN_LOGO_LIGHT_URL"
     echo ""
     prompt_value "Login logo URL (dark mode)" "$CFG_LOGIN_LOGO_DARK_URL" "CFG_LOGIN_LOGO_DARK_URL"
@@ -920,7 +920,7 @@ screen_login_customization() {
     echo ""
 
     echo -e "  ${BOLD}Extension Directory${RESET}"
-    echo -e "    ${DIM}URL of the BulwarkMail extension directory for the admin marketplace.${RESET}"
+    echo -e "    ${DIM}URL of the LoomixMail extension directory for the admin marketplace.${RESET}"
     echo -e "    ${DIM}Set this to enable browsing and installing plugins/themes.${RESET}"
     echo -e "    ${DIM}Leave blank to disable the marketplace.${RESET}"
     prompt_value "Extension directory URL" "$CFG_EXTENSION_DIRECTORY_URL" "CFG_EXTENSION_DIRECTORY_URL"
@@ -939,7 +939,7 @@ screen_deployment() {
     draw_header
 
     section_header 6 "Deployment Method" \
-        "Choose how you want to run Bulwark Webmail."
+        "Choose how you want to run Loomix Mail."
 
     local docker_available=false
     command -v docker &>/dev/null && docker_available=true
@@ -1141,7 +1141,7 @@ write_env_file() {
     chmod 600 "$ENV_FILE"
     cat > "$ENV_FILE" << ENVEOF
 # =============================================================================
-# Bulwark Webmail -- Configuration
+# Loomix Mail -- Configuration
 # Generated by setup.sh on $(date '+%Y-%m-%d %H:%M:%S')
 $(env_format_line)
 # =============================================================================
@@ -1193,7 +1193,7 @@ ENVEOF
     cat >> "$ENV_FILE" << ENVEOF
 
 # -- Anonymous Telemetry -------------------------------------------------------
-# Opt-in, anonymous heartbeats (no PII). Off by default; helps improve Bulwark.
+# Opt-in, anonymous heartbeats (no PII). Off by default; helps improve Loomix.
 # Toggleable later in the admin UI unless this is set. See
 # https://bulwarkmail.org/docs/legal/privacy/telemetry
 ENVEOF
@@ -1376,7 +1376,7 @@ run_deployment() {
             echo -e "  ${BOLD}To run the container:${RESET}"
             echo ""
             echo -e "    ${CYAN}docker run -d \\${RESET}"
-            echo -e "    ${CYAN}  --name bulwark-webmail \\${RESET}"
+            echo -e "    ${CYAN}  --name loomix-mail \\${RESET}"
             echo -e "    ${CYAN}  -p ${CFG_PORT}:3000 \\${RESET}"
             echo -e "    ${CYAN}  --env-file .env.local \\${RESET}"
             echo -e "    ${CYAN}  --restart unless-stopped \\${RESET}"
@@ -1448,7 +1448,7 @@ screen_complete() {
     echo ""
     hr
     echo ""
-    print_center "${DIM}Thank you for using Bulwark Webmail!${RESET}"
+    print_center "${DIM}Thank you for using Loomix Mail!${RESET}"
     echo ""
 }
 

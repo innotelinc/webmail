@@ -1,5 +1,5 @@
 // What the host tells plugins about its own features (`api.host.features`),
-// so a plugin can step back where Bulwark now does the job itself. Sent with
+// so a plugin can step back where Loomix now does the job itself. Sent with
 // every frame's init and again whenever it changes (the admin's policy, an
 // account switch to another scope).
 //

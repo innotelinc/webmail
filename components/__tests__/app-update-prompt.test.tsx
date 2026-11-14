@@ -1,7 +1,7 @@
 import { act, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/hooks/use-config", () => ({ useConfig: () => ({ appName: "Webmail" }) }));
+vi.mock("@/hooks/use-config", () => ({ useConfig: () => ({ appName: "Mail" }) }));
 
 const update = vi.hoisted(() => ({
   newerBuildId: vi.fn<() => Promise<string | null>>(),

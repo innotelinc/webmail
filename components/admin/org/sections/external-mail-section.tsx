@@ -171,7 +171,7 @@ export function ExternalMailSection({ draft }: { draft: OrgPolicyDraft }) {
             </p>
             <p className="text-muted-foreground">
               {outdated
-                ? `Version ${plugin.version || 'unknown'} is installed. For each switch that is on, Bulwark skips the matching part of the plugin (its send confirm, or its banner and new-mail toast) so nobody is warned twice; version ${PLUGIN_STEPS_BACK_FROM} and later step back by themselves.`
+                ? `Version ${plugin.version || 'unknown'} is installed. For each switch that is on, Loomix skips the matching part of the plugin (its send confirm, or its banner and new-mail toast) so nobody is warned twice; version ${PLUGIN_STEPS_BACK_FROM} and later step back by themselves.`
                 : 'It turns off its own send confirm, banner and toast for each switch that is on here.'}{' '}
               &ldquo;Import from the plugin&rdquo; copies its safe domains into the list above.{' '}
               <AdminLink href={`/admin/plugins/${EXTERNAL_MAIL_WARNING_PLUGIN_ID}`} className="underline underline-offset-2 hover:text-foreground">Open the plugin</AdminLink>

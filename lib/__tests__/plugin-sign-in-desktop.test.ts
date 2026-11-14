@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { BulwarkDesktopBridge } from '../desktop/types';
+import type { LoomixDesktopBridge } from '../desktop/types';
 
 const ORIGIN = window.location.origin;
 
-function setBridge(bridge: Partial<BulwarkDesktopBridge> | undefined) {
-  window.bulwarkDesktop = bridge as BulwarkDesktopBridge | undefined;
+function setBridge(bridge: Partial<LoomixDesktopBridge> | undefined) {
+  window.bulwarkDesktop = bridge as LoomixDesktopBridge | undefined;
 }
 
 function signInUrl(state: string, redirect = `${ORIGIN}/en/plugins/oauth/callback`): URL {

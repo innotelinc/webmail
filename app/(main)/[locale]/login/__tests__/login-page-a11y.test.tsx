@@ -21,7 +21,7 @@ vi.mock('@/i18n/navigation', () => ({
 
 vi.mock('@/hooks/use-config', () => ({
   useConfig: () => ({
-    appName: 'Webmail',
+    appName: 'Mail',
     isLoading: false,
     error: null,
     jmapServerUrl: 'https://mail.example.org',
@@ -56,7 +56,7 @@ describe('login form accessibility', () => {
     const username = await renderForm();
     expect(username).toHaveAttribute('autocomplete', 'username');
     expect(screen.getByLabelText('password_label')).toHaveAttribute('autocomplete', 'current-password');
-    expect(document.title).toBe('sign_in - Webmail');
+    expect(document.title).toBe('sign_in - Mail');
   }, 30_000);
 
   it('links the operator\'s accessibility statement and barrier report in the footer (OP-01)', async () => {

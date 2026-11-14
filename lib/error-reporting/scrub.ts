@@ -92,7 +92,7 @@ const WORD_OR_PLACEHOLDER = /\[(?:email|url|token|file|id|ip|number|redacted)\]|
 
 /**
  * Words an error message may keep: English function words and the words
- * JavaScript engines, browsers, Next.js and Bulwark's own errors are made of.
+ * JavaScript engines, browsers, Next.js and Loomix's own errors are made of.
  * Anything else could be content and is replaced.
  */
 const COMMON_WORDS = new Set(`
