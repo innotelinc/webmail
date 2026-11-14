@@ -125,7 +125,7 @@ describe('drafts', () => {
     expect(draftLabelProperty(null)).toEqual({ 'header:X-Loomix-Label:asText': 'none' });
     expect(draftLabelProperty(undefined)).toEqual({});
     expect(draftLabelChoice({ 'X-Loomix-Label': ' confidential' })).toBe('confidential');
-    expect(draftLabelChoice({ 'x-bulwark-label': 'none' })).toBeNull();
+    expect(draftLabelChoice({ 'x-loomix-label': 'none' })).toBeNull();
     expect(draftLabelChoice({})).toBeUndefined();
   });
 });
