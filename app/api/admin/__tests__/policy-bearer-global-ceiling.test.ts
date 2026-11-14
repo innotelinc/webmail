@@ -55,7 +55,7 @@ async function get(address: string, token: string) {
   }));
   return {
     status: res.status,
-    scope: res.headers.get('x-bulwark-policy-scope'),
+    scope: res.headers.get('x-loomix-policy-scope'),
     retryAfter: res.headers.get('retry-after'),
     body: await res.json(),
   };
@@ -119,7 +119,7 @@ describe('refused Bearer tokens on GET /api/admin/policy', () => {
     for (let i = 0; i < 20; i++) await get(address(i), wrong(i));
     const res = await GET(new NextRequest('https://webmail.example/api/admin/policy', { headers: { 'x-forwarded-for': '198.51.100.80' } }));
     expect(res.status).toBe(200);
-    expect(res.headers.get('x-bulwark-policy-scope')).toBe('public');
+    expect(res.headers.get('x-loomix-policy-scope')).toBe('public');
   });
 
   it('answers a token that checked out before in full past the ceiling, without asking the mail server', async () => {
