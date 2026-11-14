@@ -19,6 +19,7 @@ import {
   encodeCachedAccessToken,
   refreshTokenCookieName,
   refreshTokenServerCookieName,
+  sessionCookiePath,
 } from '@/lib/oauth/tokens';
 import { customUpstreamCookieName, readCustomUpstream, writeCustomUpstream, type CustomUpstream } from '@/lib/oauth/custom-upstream';
 import { loggableError, oauthErrorCode } from '@/lib/oauth/answer-summary';
@@ -267,7 +268,8 @@ export function storeRenewedTokens(
   const { remember, age, basePath, server } = opts;
   if (tokens.refresh_token) {
     const options = getSignInCookieOptions(remember);
-    cookieStore.set(refreshTokenCookieName(slot), tokens.refresh_token, options);
+    const sessionPath = sessionCookiePath(basePath);
+    cookieStore.set(refreshTokenCookieName(slot), tokens.refresh_token, { ...options, path: sessionPath });
     // The stamp follows the rotated token, with the same sign-in time, server and lifetime.
     if (age) {
       writeSignInStamp(cookieStore, slot, {
@@ -280,8 +282,8 @@ export function storeRenewedTokens(
     }
     // Written again with the token's lifetime, so neither runs out before it.
     const serverCookie = refreshTokenServerCookieName(slot);
-    if (server.serverId) cookieStore.set(serverCookie, server.serverId, options);
-    else if (cookieStore.get(serverCookie)) cookieStore.delete(serverCookie);
+    if (server.serverId) cookieStore.set(serverCookie, server.serverId, { ...options, path: sessionPath });
+    else if (cookieStore.get(serverCookie)) cookieStore.delete({ name: serverCookie, path: sessionPath });
     if (server.upstream) writeCustomUpstream(cookieStore, slot, server.upstream, remember);
   }
 

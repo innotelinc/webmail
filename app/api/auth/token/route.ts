@@ -7,6 +7,7 @@ import {
   refreshTokenServerCookieName,
   accessTokenCookieName,
   accessTokenCookiePath,
+  sessionCookiePath,
   decodeCachedAccessToken,
 } from '@/lib/oauth/tokens';
 import {
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
     if (tokens.refresh_token) {
       const cookieName = refreshTokenCookieName(slot);
       const options = getSignInCookieOptions(remember);
-      cookieStore.set(cookieName, tokens.refresh_token, options);
+      cookieStore.set(cookieName, tokens.refresh_token, { ...options, path: sessionCookiePath(request.nextUrl.basePath) });
       // The stamp also names the server that issued the token, which is
       // where it is renewed and revoked (lib/oauth/slot-renewal.ts).
       writeSignInStamp(cookieStore, slot, {
@@ -196,10 +197,11 @@ export async function POST(request: NextRequest) {
     // handlers can route the refresh/revocation calls to the right token
     // endpoint without the client having to track it across page loads.
     const serverCookieName = refreshTokenServerCookieName(slot);
+    const sessionPath = sessionCookiePath(request.nextUrl.basePath);
     if (serverId) {
-      cookieStore.set(serverCookieName, serverId, getCookieOptions());
+      cookieStore.set(serverCookieName, serverId, { ...getCookieOptions(), path: sessionPath });
     } else if (cookieStore.get(serverCookieName)) {
-      cookieStore.delete(serverCookieName);
+      cookieStore.delete({ name: serverCookieName, path: sessionPath });
     }
     if (customUpstream) writeCustomUpstream(cookieStore, slot, customUpstream, remember);
 
@@ -314,8 +316,8 @@ export async function PUT(request: NextRequest) {
       // (invalid/expired/revoked grant). A 5xx or 429 is an outage - keeping
       // the cookie lets the session resume once the server is back.
       if (status === 400 || status === 401 || status === 403) {
-        cookieStore.delete(cookieName);
-        cookieStore.delete(refreshTokenServerCookieName(slot));
+        cookieStore.delete({ name: cookieName, path: sessionCookiePath(request.nextUrl.basePath) });
+        cookieStore.delete({ name: refreshTokenServerCookieName(slot), path: sessionCookiePath(request.nextUrl.basePath) });
         cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(request.nextUrl.basePath) });
         clearCustomUpstream(cookieStore, slot);
         clearIdToken(cookieStore, slot, request.nextUrl.basePath);
@@ -400,7 +402,7 @@ async function signOutSlot(
   // cleared - signing out of every slot would otherwise answer with a
   // Set-Cookie header per slot and cookie, too large for some proxies.
   for (const name of [cookieName, refreshTokenServerCookieName(slot)]) {
-    if (cookieStore.get(name)) cookieStore.delete(name);
+    if (cookieStore.get(name)) cookieStore.delete({ name, path: sessionCookiePath(basePath) });
   }
   // The cached access token lives on its own path, so it needs the matching one.
   if (cookieStore.get(accessTokenCookieName(slot))) {

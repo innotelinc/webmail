@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { logger } from '@/lib/logger';
 import { loggableError } from '@/lib/oauth/answer-summary';
-import { getPasswordLoginScope, refreshTokenCookieName, refreshTokenServerCookieName } from '@/lib/oauth/tokens';
+import { getPasswordLoginScope, refreshTokenCookieName, refreshTokenServerCookieName, sessionCookiePath } from '@/lib/oauth/tokens';
 import { getCookieOptions, getSignInCookieOptions } from '@/lib/oauth/cookie-config';
 import { readFileEnv } from '@/lib/read-file-env';
 import { configManager } from '@/lib/admin/config-manager';
@@ -246,13 +246,17 @@ async function storeAndRespond(
   upstream: { serverUrl: string; clientId: string } | null,
 ): Promise<NextResponse> {
   const cookieStore = await cookies();
+  // This helper has no request in hand; the build-time base path Next used is
+  // the same value the other routes read from it, and it is what the cookie's
+  // path has to match for the browser to send it back.
+  const sessionPath = sessionCookiePath(process.env.NEXT_PUBLIC_BASE_PATH || undefined);
   // A sign-in: the maximum session length counts from here (lib/auth/session-age.ts).
   const signedInAt = Date.now();
   if (tokens.refresh_token) {
     const cookieName = refreshTokenCookieName(slot);
     // Without "Remember me" the sign-in ends with the browser session.
     const options = getSignInCookieOptions(rememberMe);
-    cookieStore.set(cookieName, tokens.refresh_token, options);
+    cookieStore.set(cookieName, tokens.refresh_token, { ...options, path: sessionPath });
     // The token is renewed and revoked only at the server that issued it.
     writeSignInStamp(cookieStore, slot, {
       signedInAt,
@@ -263,9 +267,9 @@ async function storeAndRespond(
   }
   const serverCookieName = refreshTokenServerCookieName(slot);
   if (serverId) {
-    cookieStore.set(serverCookieName, serverId, getCookieOptions());
+    cookieStore.set(serverCookieName, serverId, { ...getCookieOptions(), path: sessionPath });
   } else {
-    cookieStore.delete(serverCookieName);
+    cookieStore.delete({ name: serverCookieName, path: sessionPath });
   }
   if (upstream && tokens.refresh_token) writeCustomUpstream(cookieStore, slot, upstream, rememberMe);
 

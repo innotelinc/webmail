@@ -12,7 +12,7 @@ import { buildRedeemBundle } from '@/lib/auth/pair-bundle';
 import { isHandoffCodeChallenge, stashHandoff } from '@/lib/auth/handoff-store';
 import { desktopHandoffTarget } from '@/lib/auth/mobile-handoff';
 import { isStoreUnavailable, storeUnavailableResponse } from '@/lib/auth/store-unavailable';
-import { refreshTokenCookieName, refreshTokenServerCookieName } from '@/lib/oauth/tokens';
+import { refreshTokenCookieName, refreshTokenServerCookieName, sessionCookiePath } from '@/lib/oauth/tokens';
 import { getCookieOptions, getSignInCookieOptions } from '@/lib/oauth/cookie-config';
 import { storeIdToken } from '@/lib/oauth/end-session';
 import { rejectCrossOriginRequest } from '@/lib/security/same-origin';
@@ -180,16 +180,17 @@ export async function POST(request: NextRequest) {
         const cookieName = refreshTokenCookieName(slot);
         // Without "Remember me" the sign-in ends with the browser session.
         const options = getSignInCookieOptions(remember);
-        cookieStore.set(cookieName, tokens.refresh_token, options);
+        cookieStore.set(cookieName, tokens.refresh_token, { ...options, path: sessionCookiePath(request.nextUrl.basePath) });
         // A sign-in: the maximum session length counts from here (lib/auth/session-age.ts),
         // and the token is renewed and revoked only at this server.
         writeSignInStamp(cookieStore, slot, { signedInAt, refreshToken: tokens.refresh_token, serverId: pendingServerId }, options);
       }
       const serverCookieName = refreshTokenServerCookieName(slot);
+      const sessionPath = sessionCookiePath(request.nextUrl.basePath);
       if (pendingServerId) {
-        cookieStore.set(serverCookieName, pendingServerId, getCookieOptions());
+        cookieStore.set(serverCookieName, pendingServerId, { ...getCookieOptions(), path: sessionPath });
       } else {
-        cookieStore.delete(serverCookieName);
+        cookieStore.delete({ name: serverCookieName, path: sessionPath });
       }
       storeIdToken(cookieStore, slot, tokens.id_token, request.nextUrl.basePath, [tokens.refresh_token, pendingServerId], remember);
     }
