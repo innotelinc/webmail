@@ -15,6 +15,7 @@ import {
 } from '@/lib/oauth/token-exchange';
 import {
   accessTokenCookieName,
+  accessTokenCookiePath,
   encodeCachedAccessToken,
   refreshTokenCookieName,
   refreshTokenServerCookieName,
@@ -61,16 +62,19 @@ export function cacheAccessToken(
   expiresIn: number,
   otherCookieValues: ReadonlyArray<string | null | undefined>,
   remember: boolean,
+  basePath?: string,
 ): string | null {
   const name = accessTokenCookieName(slot);
+  const path = accessTokenCookiePath(basePath);
   const value = encodeCachedAccessToken(accessToken, expiresIn);
   if (!value || !fitsSetCookieBudget([...otherCookieValues, value])) {
-    // Drop any stale entry rather than leaving a mismatch.
-    if (cookieStore.get(name)) cookieStore.delete(name);
+    // Drop any stale entry rather than leaving a mismatch. The cookie is
+    // path-scoped, so a bare delete (which targets `/`) would not reach it.
+    if (cookieStore.get(name)) cookieStore.delete({ name, path });
     return null;
   }
   // The value carries its own expiry, so a session cookie needs no maxAge.
-  cookieStore.set(name, value, remember ? { ...getCookieOptions(), maxAge: expiresIn } : getSignInCookieOptions(false));
+  cookieStore.set(name, value, remember ? { ...getCookieOptions(), maxAge: expiresIn, path } : { ...getSignInCookieOptions(false), path });
   return value;
 }
 
@@ -282,7 +286,7 @@ export function storeRenewedTokens(
   }
 
   const expiresIn = tokens.expires_in || 3600;
-  const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, expiresIn, [tokens.refresh_token], remember);
+  const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, expiresIn, [tokens.refresh_token], remember, basePath);
   // Providers may reissue the id token on refresh. Only a slot signed in
   // through the provider keeps one; a password login's slot gains none here.
   if (typeof tokens.id_token === 'string' && cookieStore.get(idTokenCookieName(slot))) {

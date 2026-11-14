@@ -6,6 +6,7 @@ import {
   refreshTokenCookieName,
   refreshTokenServerCookieName,
   accessTokenCookieName,
+  accessTokenCookiePath,
   decodeCachedAccessToken,
 } from '@/lib/oauth/tokens';
 import {
@@ -189,7 +190,7 @@ export async function POST(request: NextRequest) {
         ...(customUpstream ? { customServer: customUpstream.serverUrl } : {}),
       }, options);
     }
-    const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, tokens.expires_in || 3600, [tokens.refresh_token, serverId], remember);
+    const cachedAccessToken = cacheAccessToken(cookieStore, slot, tokens.access_token, tokens.expires_in || 3600, [tokens.refresh_token, serverId], remember, request.nextUrl.basePath);
     storeIdToken(cookieStore, slot, tokens.id_token, request.nextUrl.basePath, [tokens.refresh_token, cachedAccessToken, serverId], remember);
     // Persist which server entry minted this refresh token so the PUT/DELETE
     // handlers can route the refresh/revocation calls to the right token
@@ -224,7 +225,7 @@ export async function PUT(request: NextRequest) {
     const remember = request.nextUrl.searchParams.get('remember') !== 'false';
 
     if (!refreshToken) {
-      cookieStore.delete(accessTokenCookieName(slot));
+      cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(request.nextUrl.basePath) });
       return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
     }
 
@@ -315,7 +316,7 @@ export async function PUT(request: NextRequest) {
       if (status === 400 || status === 401 || status === 403) {
         cookieStore.delete(cookieName);
         cookieStore.delete(refreshTokenServerCookieName(slot));
-        cookieStore.delete(accessTokenCookieName(slot));
+        cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(request.nextUrl.basePath) });
         clearCustomUpstream(cookieStore, slot);
         clearIdToken(cookieStore, slot, request.nextUrl.basePath);
         // Only invalid_grant says the login itself is over. invalid_client, or
@@ -398,8 +399,12 @@ async function signOutSlot(
   // to resume a session the user ended. Only cookies the browser sent are
   // cleared - signing out of every slot would otherwise answer with a
   // Set-Cookie header per slot and cookie, too large for some proxies.
-  for (const name of [cookieName, refreshTokenServerCookieName(slot), accessTokenCookieName(slot)]) {
+  for (const name of [cookieName, refreshTokenServerCookieName(slot)]) {
     if (cookieStore.get(name)) cookieStore.delete(name);
+  }
+  // The cached access token lives on its own path, so it needs the matching one.
+  if (cookieStore.get(accessTokenCookieName(slot))) {
+    cookieStore.delete({ name: accessTokenCookieName(slot), path: accessTokenCookiePath(basePath) });
   }
   clearSignInStamp(cookieStore, slot);
   clearCustomUpstream(cookieStore, slot);

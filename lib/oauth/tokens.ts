@@ -54,6 +54,19 @@ export function refreshTokenServerCookieName(slot: number): string {
  * Cookie caching the *current* access token for a slot, so a page reload can
  * resume with the token it already had instead of burning a refresh.
  */
+/**
+ * Path the cached access token is scoped to.
+ *
+ * Only `/api/auth/token` reads it: the cookie is httpOnly, so no client code
+ * can, and no other route touches it. Stored at `Path=/` it rides every page
+ * load, RSC fetch and asset request instead - one multi-kilobyte JWT per
+ * signed-in account, per request. Scoping it to the route that reads it takes
+ * it out of the document path entirely, the way the id token already is.
+ */
+export function accessTokenCookiePath(basePath?: string): string {
+  return `${basePath ?? ''}/api/auth/token`;
+}
+
 export function accessTokenCookieName(slot: number): string {
   return slot === 0 ? ACCESS_TOKEN_COOKIE : `${ACCESS_TOKEN_COOKIE}_${slot}`;
 }
