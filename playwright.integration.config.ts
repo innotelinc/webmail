@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { defineConfig } from '@playwright/test';
 
 /**
@@ -7,6 +9,23 @@ import { defineConfig } from '@playwright/test';
  * Run:  npx playwright test -c playwright.integration.config.ts
  */
 const WEBMAIL_URL = process.env.IT_WEBMAIL_URL ?? 'http://localhost:3000';
+
+/**
+ * The enterprise specs need their own throwaway rig (ent-* accounts on a VM
+ * Stalwart) and read its passwords from the environment. Without them every
+ * spec throws from requireEntEnv and the suite fails, so they are left out of
+ * a run that has no rig — they still run wherever the passwords are set.
+ */
+const ENT_RIG_CONFIGURED = Boolean(process.env.IT_ENT_PASSWORD && process.env.IT_ADMIN_PASSWORD);
+const ENT_SPECS = ENT_RIG_CONFIGURED
+  ? []
+  : readdirSync('./integration/tests')
+      .filter(
+        (file) =>
+          file.endsWith('.spec.ts') &&
+          readFileSync(path.join('./integration/tests', file), 'utf8').includes('requireEntEnv('),
+      )
+      .map((file) => `**/${file}`);
 
 /**
  * Video capture mode, overridable via IT_VIDEO. Default `retain-on-failure`
@@ -23,6 +42,7 @@ const VIDEO: VideoMode = VIDEO_MODES.includes(process.env.IT_VIDEO as VideoMode)
 
 export default defineConfig({
   testDir: './integration/tests',
+  testIgnore: ENT_SPECS,
   // next dev compiles routes lazily and each test logs in fresh, so give
   // individual tests and their polling assertions generous headroom.
   timeout: 90_000,
