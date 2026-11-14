@@ -9,19 +9,27 @@
   <a href="https://discord.gg/tYCujymGrT"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/bulwarkmail/.github/main/badges/discord-dark.svg" /><img src="https://raw.githubusercontent.com/bulwarkmail/.github/main/badges/discord.svg" alt="Discord members" height="24" /></picture></a>
 </p>
 
-<p align="center">
-  <a href="https://bulwarkmail.org">Website</a> ·
-  <a href="https://bulwarkmail.org/docs">Documentation</a> ·
-  <a href="https://demo.bulwarkmail.org">Live demo</a> ·
-  <a href="https://github.com/bulwarkmail/webmail/releases">Releases</a> ·
-  <a href="https://discord.gg/tYCujymGrT">Discord</a>
-</p>
+[![CI](https://github.com/innotelinc/webmail/actions/workflows/ci.yml/badge.svg)](https://github.com/innotelinc/webmail/actions/workflows/ci.yml)
+[![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-brightgreen.svg)](LICENSE)
+
+
+**Loomix Mail is the browser client of Loomix: email, calendars, contacts and files on your own infrastructure.** It talks to [Stalwart Mail Server](https://stalw.art/) over JMAP, puts everything behind one sign-in, and adds the administration surface, themes, plugins and PWA install that a real deployment needs.
 
 Loomix Mail is a self-hosted webmail client for [Stalwart Mail Server](https://stalw.art/). It talks to Stalwart over JMAP and puts mail, calendar, contacts and files behind one login, with one set of settings and one admin dashboard.
 
-<p align="center">
-  <a href="https://bulwarkmail.org/docs/features/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/dark-laptop-phone.webp" /><img src="screenshots/light-laptop-phone.webp" alt="Loomix inbox on a laptop, with the same message open on a phone" width="100%" /></picture></a>
-</p>
+## Why Loomix Mail
+
+| Problem | Answer |
+| --- | --- |
+| Mail, calendar and contacts are separate apps. | One client over JMAP, with one sign-in and one search. |
+| A hosted client hides the administration surface. | The deployment's own admin pages, themes and plugins ship in the same app. |
+| A webmail is a second identity system. | Sign-in is the family's Cerulean SSO, and the mail server keeps the mail. |
+
+Its place in the stack is [docs/stack.md](docs/stack.md); the canonical
+definition of the shared layers is the
+[Innotel Platform Stack](https://github.com/innotelinc/innotel-platform-stack).
+
+## What it does
 
 ## Contents
 
