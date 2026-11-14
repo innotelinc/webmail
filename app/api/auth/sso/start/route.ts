@@ -185,7 +185,10 @@ export async function POST(request: NextRequest) {
       code_verifier: codeVerifier,
       redirect_uri,
       created_at: Date.now(),
-      ...(requestedSlot !== null ? { slot: requestedSlot } : {}),
+      // A plain sign-in takes the slot /complete picks when the code comes
+      // back; only "+ Add Account" fixes its slot up front, so a second tab
+      // adding an account cannot have its slot taken over.
+      ...(requestedSlot !== null && isAddAccount ? { slot: requestedSlot } : {}),
       ...(serverId ? { server_id: serverId } : {}),
       // Who must answer (RFC 9207): /complete refuses a code from another issuer.
       ...(typeof metadata.issuer === 'string' && metadata.issuer ? { issuer: metadata.issuer } : {}),
