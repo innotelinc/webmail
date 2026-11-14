@@ -845,6 +845,12 @@ function LoginPageContent() {
           sessionStorage.setItem("mobile_state", mobileState);
         } catch { /* sessionStorage unavailable */ }
       }
+      // Record the slot this login is meant for before the round trip. The
+      // callback reads it back, so a second tab adding an account cannot have
+      // its slot taken over by whichever slot is free when /sso/complete runs.
+      try {
+        sessionStorage.setItem("oauth_cookie_slot", useAccountStore.getState().getNextCookieSlot().toString());
+      } catch { /* sessionStorage unavailable */ }
       const res = await apiFetch('/api/auth/sso/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -854,6 +860,7 @@ function LoginPageContent() {
           locale: params.locale,
           server_id: selectedServer?.id,
           remember: persistProviderSession,
+          add_account: isAddAccountMode,
           // In the browser the desktop app opened, its word counts: the flag is in the app.
           ...(freshLoginRequired() || (isDesktopHandoff && searchParams.get("fresh_login") === "1") ? { fresh_login: true } : {}),
           ...(isMobileHandoff
@@ -891,7 +898,7 @@ function LoginPageContent() {
     } catch {
       setOauthLoading(false);
     }
-  }, [params.locale, selectedServer?.id, serverUrl, desktopPolicy, tDesktopPolicy, persistProviderSession, isMobileHandoff, isDesktopHandoff, searchParams, mobileRedirectUri, mobileState, mobileChallenge]);
+  }, [params.locale, selectedServer?.id, serverUrl, desktopPolicy, tDesktopPolicy, persistProviderSession, isAddAccountMode, isMobileHandoff, isDesktopHandoff, searchParams, mobileRedirectUri, mobileState, mobileChallenge]);
 
   useEffect(() => {
     // After signing out, show the login page rather than signing straight
@@ -1108,7 +1115,11 @@ function LoginPageContent() {
     authUrl.searchParams.set("code_challenge_method", "S256");
     authUrl.searchParams.set("login_hint", account);
     if (isAddAccountMode) {
-      authUrl.searchParams.set("prompt", "select_account");
+      // Some providers (PocketID, Zitadel) only show their account picker for
+      // select_account; others (Authentik) ignore that value and only honour
+      // login. Asking for both makes "+ Add Account" leave the IdP's current
+      // session instead of silently returning the account already signed in.
+      authUrl.searchParams.set("prompt", "select_account login");
     }
     if (freshLoginRequired()) authUrl.searchParams.set("prompt", "login");
 
@@ -1212,7 +1223,11 @@ function LoginPageContent() {
     const hint = loginHintFrom(formData.username);
     if (hint) authUrl.searchParams.set("login_hint", hint);
     if (isAddAccountMode) {
-      authUrl.searchParams.set("prompt", "select_account");
+      // Some providers (PocketID, Zitadel) only show their account picker for
+      // select_account; others (Authentik) ignore that value and only honour
+      // login. Asking for both makes "+ Add Account" leave the IdP's current
+      // session instead of silently returning the account already signed in.
+      authUrl.searchParams.set("prompt", "select_account login");
     }
     if (freshLoginRequired()) authUrl.searchParams.set("prompt", "login");
 
